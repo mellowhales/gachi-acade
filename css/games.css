@@ -1,0 +1,2933 @@
+/* =====================================================================
+   P2P 아케이드 — 게임별 스타일 (대형화 & 중앙 정렬 둥근 카드형 디자인)
+   ===================================================================== */
+
+/* =====================================================================
+   공통 게임 UI
+   ===================================================================== */
+
+/* 점수판 */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.score-box {
+  flex: 1;
+  padding: 16px 22px;
+  text-align: center;
+}
+.score-box.me   { border-right: 1px solid var(--border); }
+
+.score-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--t3);
+  margin-bottom: 4px;
+}
+.score-value { font-size: 2.2rem; font-weight: 900; line-height: 1; }
+.score-box.me .score-value   { color: var(--sky); }
+.score-box.opponent .score-value { color: var(--coral); }
+
+.score-divider {
+  padding: 0 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--t4);
+}
+
+/* 턴 표시 배지 */
+.turn-indicator {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.turn-indicator .turn-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 22px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--t2);
+  box-shadow: var(--shadow-sm);
+}
+.turn-indicator .turn-label.my-turn {
+  color: var(--green-deep);
+  border-color: var(--green-border);
+  background: var(--green-tint);
+}
+.turn-indicator .turn-label.opp-turn {
+  color: var(--coral);
+  border-color: var(--coral-border);
+  background: var(--coral-tint);
+}
+
+/* 타이머 바 */
+.timer-bar-wrap {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-sub);
+}
+.timer-bar {
+  height: 100%;
+  background: var(--green);
+  border-radius: 999px;
+  transition: width 0.1s linear, background 0.3s;
+}
+.timer-bar.warning  { background: var(--yellow); }
+.timer-bar.critical { background: var(--coral); }
+
+.timer-text {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--t1);
+  margin-bottom: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.timer-text.warning  { color: var(--yellow); }
+.timer-text.critical { color: var(--coral); }
+
+/* =====================================================================
+   오목 (반응형 유동적 바둑판)
+   ===================================================================== */
+.gomoku-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.gomoku-canvas-wrap {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 4px solid #c99c5c;
+  touch-action: none;
+  box-shadow: var(--shadow-lg);
+  background: #eac68e;
+  /* 3열 레이아웃 중앙 공간 및 화면 높이에 맞춰 유동적으로 조절 */
+  width: min(62vh, 580px, 100%);
+  height: min(62vh, 580px, 100%);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+#gomoku-canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: crosshair;
+}
+
+.gomoku-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--t2);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================================
+   베스킨라빈스 31
+   ===================================================================== */
+.baskin-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.baskin-card {
+  width: 100%;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.baskin-counter {
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: var(--t1);
+  line-height: 1;
+  letter-spacing: -3px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-card);
+  padding: 4px 0;
+  width: 100%;
+}
+.baskin-counter span { color: var(--green); }
+
+.baskin-current-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--t2);
+  text-align: center;
+}
+
+.baskin-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.baskin-num {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  color: var(--t3);
+  transition: all 0.15s ease;
+}
+
+/* 플레이어별 턴 색상 구분 (라이트 모드) */
+.baskin-num.called-p0 {
+  border-color: #48bb78 !important;
+  background: rgba(72, 187, 120, 0.18) !important;
+  color: #276749 !important;
+  font-weight: 900 !important;
+}
+.baskin-num.called-p1 {
+  border-color: #3182ce !important;
+  background: rgba(49, 130, 206, 0.18) !important;
+  color: #2b6cb0 !important;
+  font-weight: 900 !important;
+}
+.baskin-num.called-p2 {
+  border-color: #805ad5 !important;
+  background: rgba(128, 90, 213, 0.18) !important;
+  color: #6b46c1 !important;
+  font-weight: 900 !important;
+}
+.baskin-num.called-p3 {
+  border-color: #dd6b20 !important;
+  background: rgba(221, 107, 32, 0.18) !important;
+  color: #c05621 !important;
+  font-weight: 900 !important;
+}
+.baskin-num.called-p4 {
+  border-color: #d69e2e !important;
+  background: rgba(214, 158, 46, 0.18) !important;
+  color: #b7791f !important;
+  font-weight: 900 !important;
+}
+
+.baskin-num.called-31 {
+  background: var(--coral) !important;
+  border-color: var(--coral) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+  transform: scale(1.1);
+}
+
+.baskin-pick-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+}
+
+.baskin-pick-btn {
+  flex: 1;
+  max-width: 140px;
+  height: 70px;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  color: var(--t1);
+  font-family: var(--font);
+  font-size: 1.35rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.baskin-pick-btn:hover:not(:disabled) {
+  background: var(--green);
+  border-color: var(--green);
+  color: #ffffff;
+  box-shadow: var(--shadow-green);
+  transform: translateY(-2px);
+}
+.baskin-pick-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* =====================================================================
+   끝말잇기 (상단 메인 스테이지 + 하단 독립 입력창)
+   ===================================================================== */
+.wordchain-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.wc-header-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.wc-timer-bars {
+  width: 100%;
+}
+
+.wc-stage-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.wc-stage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.wc-target-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.wc-current-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wc-sub-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--t3);
+  letter-spacing: 1px;
+}
+
+.wc-focus-word-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+}
+
+.wc-focus-char {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: var(--green-deep);
+  line-height: 1;
+  text-shadow: 0 4px 12px rgba(72, 187, 120, 0.25);
+  transition: all 0.15s ease;
+  padding: 4px 16px;
+  border-radius: var(--radius-lg);
+}
+
+.wc-focus-char.bounce-pop {
+  animation: wcBouncePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  color: #ffffff;
+  background: var(--green);
+  box-shadow: 0 8px 24px rgba(72, 187, 120, 0.4);
+}
+
+.wc-focus-char.error-bounce {
+  animation: wcErrorBounce 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  color: #ffffff;
+  background: #e53e3e;
+  box-shadow: 0 8px 24px rgba(229, 62, 62, 0.4);
+}
+
+@keyframes wcBouncePop {
+  0% { transform: scale(0.6); opacity: 0; }
+  50% { transform: scale(1.18); opacity: 1; }
+  75% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes wcErrorBounce {
+  0% { transform: scale(0.7) translateX(0); opacity: 0; }
+  25% { transform: scale(1.15) translateX(-8px); opacity: 1; }
+  50% { transform: scale(1.05) translateX(8px); }
+  75% { transform: scale(0.98) translateX(-4px); }
+  100% { transform: scale(1) translateX(0); opacity: 1; }
+}
+
+.wc-dueum-hint {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--t4);
+  min-height: 18px;
+}
+
+/* 상단 전광판 에러 / 실패 메시지 */
+.wc-notice-board {
+  min-height: 28px;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  border-radius: var(--radius);
+  padding: 6px 16px;
+  display: none;
+}
+.wc-notice-board.show {
+  display: inline-block;
+}
+.wc-notice-board.error {
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+.wc-notice-board.validating {
+  color: var(--green-deep);
+  background: var(--green-tint);
+  border: 1px solid var(--green-border);
+}
+.wc-notice-board.shake {
+  animation: wcShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes wcShake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* 🌟 끝말잇기 이전 입력 기록 타임라인 칩 리뉴얼 🌟 */
+.wordchain-chain {
+  width: 100%;
+  min-height: 96px;
+  max-height: 160px;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.wc-history-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: chipSlideIn 0.25s ease-out;
+}
+
+@keyframes chipSlideIn {
+  from { transform: scale(0.7) translateY(6px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.wc-chip-num {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--t4);
+}
+
+.wc-chip-author {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--t3);
+  padding-right: 4px;
+  border-right: 1px solid var(--border-sub);
+}
+
+.wc-chip-word {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: var(--t1);
+  letter-spacing: -0.2px;
+}
+
+.wc-history-chip.start-chip {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+.wc-history-chip.start-chip .wc-chip-word {
+  color: var(--t2);
+}
+
+.wc-history-chip.me-chip {
+  background: var(--green-tint);
+  border-color: var(--green-border);
+}
+.wc-history-chip.me-chip .wc-chip-word {
+  color: var(--green-deep);
+}
+
+.wc-history-chip.opp-chip {
+  background: var(--sky-tint);
+  border-color: var(--sky-border);
+}
+.wc-history-chip.opp-chip .wc-chip-word {
+  color: var(--sky);
+}
+
+.wc-history-chip.is-latest {
+  border-width: 2px;
+  box-shadow: 0 0 12px rgba(72, 187, 120, 0.4);
+  transform: scale(1.05);
+}
+
+.wc-chip-badge {
+  font-size: 0.62rem;
+  font-weight: 900;
+  background: var(--green);
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* =====================================================================
+   사과게임 (대형화)
+   ===================================================================== */
+.apple-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.apple-scores-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.apple-score-card {
+  flex: 1;
+  min-width: 110px;
+  max-width: 150px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.apple-score-card.me  { border-left: 4px solid var(--green); background: var(--green-tint); }
+.apple-score-card.opp { border-left: 4px solid var(--sky); }
+
+.apple-score-card .label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--t2);
+  margin-bottom: 1px;
+}
+.apple-score-card .val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--t1);
+}
+.apple-score-card.me .val { color: var(--green-deep); }
+
+.apple-grid-wrap {
+  user-select: none;
+  touch-action: none;
+  padding: 2px;
+  display: flex;
+  justify-content: center;
+}
+
+#apple-canvas {
+  display: block;
+  border-radius: var(--radius-lg);
+  border: 4px solid #e0d5c1;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.09), 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: #faf8f5;
+  cursor: crosshair;
+}
+
+/* =====================================================================
+   타자연습 대결 (대형화)
+   ===================================================================== */
+.typing-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 820px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.typing-card {
+  width: 100%;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.typing-prompt-box {
+  width: 100%;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px 28px;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.9;
+  letter-spacing: 0.4px;
+  color: var(--t3);
+  word-break: break-all;
+}
+
+.typing-char { position: relative; }
+.typing-char.correct { color: var(--green-deep); }
+.typing-char.wrong   {
+  color: var(--coral);
+  background: var(--coral-tint);
+  border-radius: 4px;
+}
+.typing-char.cursor::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--green);
+  animation: cursorBlink 0.9s ease-in-out infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.typing-input-field {
+  width: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 24px;
+  font-family: var(--font);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--t1);
+  outline: none;
+  transition: all 0.15s;
+}
+.typing-input-field:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px rgba(72,187,120,0.15);
+}
+.typing-input-field:disabled { opacity: 0.4; background: var(--bg-hover); }
+
+.typing-progress-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.typing-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.progress-who {
+  width: 60px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-align: right;
+  flex-shrink: 0;
+}
+.progress-who.me  { color: var(--green-deep); }
+.progress-who.opp { color: var(--sky); }
+
+.progress-track {
+  flex: 1;
+  height: 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.15s ease;
+}
+.progress-fill.me  { background: var(--green); }
+.progress-fill.opp { background: var(--sky); }
+
+.progress-pct {
+  width: 50px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.progress-pct.me  { color: var(--green-deep); }
+.progress-pct.opp { color: var(--sky); }
+
+.typing-opp-preview {
+  width: 100%;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--t3);
+  min-height: 40px;
+  word-break: break-all;
+}
+.typing-opp-preview span { color: var(--coral); font-weight: 700; }
+
+/* =====================================================================
+   체스 (Chess - 8x8 클래식 우드/에메랄드 체스판 & 8분 체스 시계)
+   ===================================================================== */
+.chess-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.chess-header-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.chess-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--coral-tint);
+  border: 1.5px solid var(--coral);
+  color: var(--coral);
+  font-size: 0.85rem;
+  font-weight: 900;
+  border-radius: var(--radius-sm);
+  animation: checkPulse 1s infinite alternate ease-in-out;
+}
+
+@keyframes checkPulse {
+  0% { transform: scale(1); box-shadow: 0 0 4px rgba(229,62,62,0.3); }
+  100% { transform: scale(1.04); box-shadow: 0 0 14px rgba(229,62,62,0.6); }
+}
+
+/* ⏱️ 체스 시계 바 (각자 8분 타이머) */
+.chess-clock-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.chess-clock-bar.is-running {
+  background: var(--green-tint);
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(72, 187, 120, 0.35);
+}
+
+.chess-clock-bar.is-critical {
+  background: var(--coral-tint) !important;
+  border-color: var(--coral) !important;
+  animation: checkPulse 0.8s infinite alternate ease-in-out;
+}
+
+.clock-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clock-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.clock-color-dot.white-dot {
+  background: #ffffff;
+  border: 2px solid #64748b;
+}
+.clock-color-dot.black-dot {
+  background: #1e293b;
+  border: 2px solid #0f172a;
+}
+
+.clock-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--t1);
+}
+
+.clock-digital {
+  font-family: monospace, var(--font);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--t2);
+  font-variant-numeric: tabular-nums;
+}
+.chess-clock-bar.is-running .clock-digital {
+  color: var(--green-deep);
+}
+.chess-clock-bar.is-critical .clock-digital {
+  color: var(--coral) !important;
+}
+
+/* 체스판 메인 카드 */
+.chess-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.chess-board-container {
+  width: min(84vw, 420px);
+  height: min(84vw, 420px);
+  aspect-ratio: 1 / 1;
+  padding: 6px;
+  background: #533824; /* 클래식 딥 우드 테두리 */
+  border-radius: var(--radius);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.15);
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.chess-board {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.chess-square {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: filter 0.1s ease;
+}
+
+/* 체스판 컬러: 모던 에메랄드/크림 톤 */
+.chess-square.light { background: #eeeed2; }
+.chess-square.dark  { background: #769656; }
+
+.chess-square:hover {
+  filter: brightness(1.08);
+}
+
+.chess-square.selected {
+  background: #f7ec59 !important;
+}
+
+.chess-square.last-move {
+  background: rgba(247, 236, 89, 0.65) !important;
+}
+
+.chess-square.in-check {
+  background: radial-gradient(circle, #e53e3e 0%, rgba(229,62,62,0.45) 65%, transparent 100%) !important;
+}
+
+/* 이동 가능 점 (Dot) */
+.chess-move-dot {
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* 캡처 가능 타겟 링 (Capture Ring) */
+.chess-capture-ring {
+  position: absolute;
+  inset: 6%;
+  border: 3.5px solid rgba(229, 62, 62, 0.75);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+  animation: ringPulse 1s infinite alternate;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  100% { transform: scale(1.02); opacity: 1; }
+}
+
+/* 🌟 고화질 정밀 벡터 SVG 기물 래퍼 */
+.chess-piece-wrap {
+  width: 84%;
+  height: 84%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  cursor: grab;
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+.chess-piece-wrap:active {
+  cursor: grabbing;
+}
+.chess-square:hover .chess-piece-wrap {
+  transform: scale(1.14) translateY(-2px);
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.35));
+}
+
+.svg-piece {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 좌표 라벨 */
+.chess-coord-rank {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.chess-coord-file {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.chess-square.light .chess-coord-rank,
+.chess-square.light .chess-coord-file { color: #769656; }
+.chess-square.dark .chess-coord-rank,
+.chess-square.dark .chess-coord-file { color: #eeeed2; }
+
+/* 프로모션 모달 */
+.chess-promotion-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.chess-promotion-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.chess-promotion-box h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--t1);
+}
+.promotion-choices {
+  display: flex;
+  gap: 10px;
+}
+.btn-promo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 60px;
+}
+.btn-promo:hover {
+  background: var(--green-tint);
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+.promo-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.promo-icon .svg-piece {
+  width: 100%;
+  height: 100%;
+}
+.promo-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--t2);
+}
+
+/* =====================================================================
+   쿼리도 (Quoridor - 9x9 원목 보드 & 벽 설치 배틀)
+   ===================================================================== */
+.quoridor-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.quoridor-header-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.qd-goal-hint {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--green-deep);
+  background: var(--green-tint);
+  border: 1px solid var(--green-border);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+/* 조작 모드 툴바 */
+.quoridor-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+}
+
+.qd-tool-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--t2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.qd-tool-btn:hover {
+  background: var(--green-tint);
+  border-color: var(--green-border);
+  color: var(--green-deep);
+}
+.qd-tool-btn.active {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.4);
+}
+.qd-tool-btn.active b {
+  color: #ffffff !important;
+}
+
+.wall-icon-h {
+  width: 18px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 2px;
+  display: inline-block;
+}
+.wall-icon-v {
+  width: 6px;
+  height: 18px;
+  background: currentColor;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* 쿼리도 보드 메인 카드 */
+.quoridor-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.quoridor-board-container {
+  width: min(86vw, 430px);
+  height: min(86vw, 430px);
+  aspect-ratio: 1 / 1;
+  padding: 12px;
+  background: #5c3a21; /* 앤티크 딥 우드 보드 베이스 */
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.18);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 9x9 셀 그리드 */
+.quoridor-cells-grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  gap: 6px;
+  position: relative;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* 위에 겹쳐지는 절대 벽 레이어 */
+.quoridor-walls-layer {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  pointer-events: none;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+/* 9x9 타일 셀 */
+.qd-cell {
+  position: relative;
+  background: #deb887; /* 부드러운 오크 우드 톤 */
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.qd-cell.goal-p0 {
+  background: #d4e7d4;
+  border: 1.5px dashed #48bb78;
+}
+.qd-cell.goal-p1 {
+  background: #fce8e6;
+  border: 1.5px dashed #e53e3e;
+}
+
+.qd-cell.valid-target {
+  cursor: pointer;
+  background: #e2f0d9 !important;
+  box-shadow: 0 0 10px rgba(72, 187, 120, 0.6);
+  transform: scale(1.03);
+}
+
+.qd-move-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(72, 187, 120, 0.8);
+  animation: moveDotPulse 0.9s infinite alternate;
+}
+
+@keyframes moveDotPulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+/* 3D 폰 (Pawn) */
+.qd-pawn {
+  width: 76%;
+  height: 76%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 3;
+}
+
+.qd-pawn.pawn-p0 {
+  background: radial-gradient(circle at 35% 35%, #60a5fa, #1d4ed8);
+  border: 2px solid #ffffff;
+}
+.qd-pawn.pawn-p1 {
+  background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c);
+  border: 2px solid #ffffff;
+}
+
+.qd-pawn.is-turn {
+  animation: pawnTurnBounce 1.2s infinite ease-in-out;
+}
+
+@keyframes pawnTurnBounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50%      { transform: scale(1.1) translateY(-3px); }
+}
+
+.pawn-core {
+  width: 35%;
+  height: 35%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.quoridor-board-container.wall-mode-active {
+  cursor: crosshair !important;
+}
+
+/* 설치된 원목 벽 */
+.qd-placed-wall {
+  position: absolute;
+  background: #a0522d; /* 시에나 브라운 고급 원목 벽 */
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+  border: 1px solid #5c2c16;
+  z-index: 8;
+  pointer-events: none;
+  animation: wallPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.qd-placed-wall.wall-h { height: 10px; }
+.qd-placed-wall.wall-v { width: 10px; }
+
+@keyframes wallPopIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 호버 중인 고스트 벽 */
+.qd-ghost-wall {
+  position: absolute;
+  border-radius: 4px;
+  z-index: 7;
+  pointer-events: none;
+  transition: all 0.08s ease;
+}
+.qd-ghost-wall.wall-h { height: 10px; }
+.qd-ghost-wall.wall-v { width: 10px; }
+
+.qd-ghost-wall.valid {
+  background: rgba(72, 187, 120, 0.85);
+  box-shadow: 0 0 14px rgba(72, 187, 120, 0.9);
+}
+.qd-ghost-wall.invalid {
+  background: rgba(229, 62, 62, 0.85);
+  box-shadow: 0 0 14px rgba(229, 62, 62, 0.9);
+}
+
+/* =====================================================================
+   반응형 (모바일 뷰 중앙 정렬 & 가로 넘침 원천 차단)
+   ===================================================================== */
+@media (max-width: 900px) {
+  /* 1. 오목 모바일 */
+  .gomoku-wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .gomoku-canvas-wrap {
+    width: min(86vw, 420px) !important;
+    height: min(86vw, 420px) !important;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .gomoku-info-card {
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    gap: 12px;
+  }
+
+  /* 2. 사과게임 모바일 */
+  .apple-wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .apple-scores-row {
+    gap: 8px;
+  }
+  .apple-score-card {
+    min-width: 90px;
+    padding: 8px 10px;
+  }
+  .apple-grid-wrap {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .apple-grid-wrap canvas {
+    width: 100% !important;
+    max-width: min(92vw, 560px) !important;
+    height: auto !important;
+    margin: 0 auto;
+  }
+
+  /* 3. 베스킨라빈스 31 모바일 */
+  .baskin-wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .baskin-card {
+    padding: 20px 14px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .baskin-counter { font-size: 3.8rem; }
+  .baskin-progress { padding: 12px 8px; gap: 6px; }
+  .baskin-num { width: 32px; height: 32px; font-size: 0.75rem; }
+  .baskin-pick-buttons { gap: 10px; }
+  .baskin-pick-btn { height: 54px; font-size: 1.15rem; }
+
+  /* 4. 끝말잇기 모바일 */
+  .wordchain-wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .wordchain-card {
+    padding: 20px 14px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .wordchain-chain {
+    min-height: 100px;
+    max-height: 160px;
+    padding: 12px;
+  }
+  .wordchain-inline-box {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px 6px 12px;
+  }
+  .wordchain-prefix-badge { font-size: 1.25rem; }
+  .wordchain-inline-input { font-size: 1.05rem; padding: 6px 8px; }
+
+  /* 5. 타자연습 모바일 */
+  .typing-wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .typing-card {
+    padding: 20px 14px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .typing-prompt-box {
+    font-size: 1.05rem;
+    padding: 14px 12px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .typing-input-field {
+    font-size: 1rem;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .typing-opp-preview {
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* 6. 체스 모바일 */
+  .chess-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+  .chess-board-container {
+    width: min(88vw, 380px) !important;
+    height: min(88vw, 380px) !important;
+  }
+
+  /* 7. 쿼리도 모바일 */
+  .quoridor-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+  .quoridor-board-container {
+    width: min(88vw, 380px) !important;
+    height: min(88vw, 380px) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .turn-indicator .turn-label { padding: 6px 16px; font-size: 0.85rem; }
+  .timer-text { font-size: 1.2rem; }
+  .chess-board-container {
+    width: min(92vw, 340px) !important;
+    height: min(92vw, 340px) !important;
+  }
+  .quoridor-board-container {
+    width: min(92vw, 340px) !important;
+    height: min(92vw, 340px) !important;
+  }
+}
+
+/* =====================================================================
+   🎨 캐치마인드 (Catchmind - 실시간 드로잉 퀴즈 배틀)
+   ===================================================================== */
+.catchmind-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* 상단 헤더 카드 */
+.cm-header-card {
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.cm-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cm-round-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--purple);
+  background: var(--purple-tint);
+  border: 1px solid var(--purple-border);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.cm-drawer-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #dd6b20;
+}
+
+.cm-timer-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: var(--green-deep);
+  background: var(--green-tint);
+  border: 1.5px solid var(--green-border);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cm-timer-badge.gauge-warning-badge {
+  color: #b45309;
+  background: #fef3c7;
+  border-color: #fcd34d;
+}
+
+.cm-timer-badge.gauge-urgent-badge {
+  color: #c2410c;
+  background: #ffedd5;
+  border-color: #fdba74;
+}
+
+.cm-timer-badge.gauge-critical-badge {
+  color: #b91c1c;
+  background: #fee2e2;
+  border-color: #fca5a5;
+  animation: cmBadgeBounce 0.8s infinite ease-in-out;
+}
+
+@keyframes cmBadgeBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+/* ── 🌟 캐치마인드 실시간 타이머 게이지 바 ── */
+.cm-timer-gauge-wrap {
+  width: 100%;
+  margin: 3px 0;
+}
+
+.cm-timer-gauge-track {
+  width: 100%;
+  height: 9px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-sub);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.cm-timer-gauge-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981 0%, #48bb78 100%);
+  box-shadow: 0 0 8px rgba(72, 187, 120, 0.4);
+  transition: width 1s linear, background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.cm-timer-gauge-fill.gauge-warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.cm-timer-gauge-fill.gauge-urgent {
+  background: linear-gradient(90deg, #ea580c 0%, #f97316 100%);
+  box-shadow: 0 0 12px rgba(234, 88, 12, 0.6);
+}
+
+.cm-timer-gauge-fill.gauge-critical {
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.75);
+  animation: cmGaugePulse 0.8s infinite ease-in-out;
+}
+
+@keyframes cmGaugePulse {
+  0%, 100% { filter: brightness(1); opacity: 1; }
+  50% { filter: brightness(1.25); opacity: 0.85; }
+}
+
+/* 힌트 태그 배너 */
+.cm-hint-banner {
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.3px;
+  animation: slideInDown 0.25s ease;
+}
+
+.cm-hint-banner.hint-start {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.cm-hint-banner.hint-mid {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.cm-hint-banner.hint-all {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+  animation: cmBadgeBounce 1s infinite ease-in-out;
+}
+
+.cm-hint-char {
+  display: inline-block;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cm-word-banner {
+  background: var(--bg-hover);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.cm-word-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.cm-word-desc {
+  font-size: 0.78rem;
+  color: var(--t3);
+  font-weight: 600;
+}
+
+/* 캔버스 메인 카드 */
+.cm-canvas-card {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 출제자 드로잉 툴바 */
+.cm-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cm-palette-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cm-color-chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cm-color-chip:hover {
+  transform: scale(1.2);
+}
+.cm-color-chip.active {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 2px var(--green), 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.cm-tool-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+}
+
+.cm-size-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cm-size-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.cm-size-btn:hover { background: var(--bg-hover); }
+.cm-size-btn.active {
+  background: var(--green-tint);
+  border-color: var(--green-border);
+}
+
+.dot-sm { width: 4px; height: 4px; border-radius: 50%; background: #1e293b; }
+.dot-md { width: 8px; height: 8px; border-radius: 50%; background: #1e293b; }
+.dot-lg { width: 14px; height: 14px; border-radius: 50%; background: #1e293b; }
+
+.cm-action-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cm-tool-btn {
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--t2);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.cm-tool-btn:hover {
+  background: var(--green-tint);
+  border-color: var(--green);
+  color: var(--green-deep);
+}
+.cm-tool-btn.active {
+  background: var(--green) !important;
+  color: #ffffff !important;
+}
+.cm-tool-btn.danger:hover {
+  background: var(--coral-tint);
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+/* 캔버스 컨테이너 (800x500 16:10 반응형) */
+.cm-canvas-container {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#cm-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* 정답 맞힘 플로팅 배지 (캔버스를 가리지 않고 우측 상단에 세련되게 표시) */
+.cm-solved-overlay {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 20;
+  pointer-events: none;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cm-solved-overlay.hidden { display: none; }
+
+.cm-solved-badge-floating {
+  background: rgba(46, 125, 50, 0.92);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(46, 125, 50, 0.35);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+}
+.cm-solved-badge-floating i {
+  font-size: 1.2rem;
+  color: #a7f3d0;
+}
+
+.cm-guess-solved-msg {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--green-tint);
+  border: 1.5px solid var(--green-border);
+  border-radius: var(--radius);
+  color: var(--green-deep);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+.cm-guess-solved-msg.hidden { display: none; }
+
+/* 하단 답안 제출 바 */
+.cm-guess-bar {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.cm-guess-input {
+  flex: 1;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  outline: none;
+  background: var(--bg-hover);
+  transition: all 0.15s ease;
+}
+.cm-guess-input:focus {
+  border-color: var(--green);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px var(--green-tint);
+}
+
+@media (max-width: 600px) {
+  .cm-toolbar {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .cm-palette-group {
+    gap: 4px;
+  }
+  .cm-color-chip {
+    width: 18px;
+    height: 18px;
+  }
+  .cm-word-title {
+    font-size: 1.05rem;
+  }
+}
+
+/* ── 💬 참가자 사이드바 오답/정답 말풍선 (플레이어 우측 팝업 & 최상위 오버레이 덮어쓰기) ── */
+.gsp-item {
+  position: relative;
+  overflow: visible !important;
+}
+
+.gsp-speech-bubble {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e293b;
+  color: #f8fafc;
+  font-size: 0.86rem;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  z-index: 99999 !important; /* 🌟 다른 UI 요소를 모두 덮어쓰고 최상위 레이어에 표시 */
+  pointer-events: none;
+  opacity: 0;
+  animation: bubblePopRight 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  border: 1.5px solid #334155;
+  box-sizing: border-box;
+}
+
+.gsp-speech-bubble::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent #1e293b transparent transparent;
+}
+
+.gsp-speech-bubble.wrong {
+  background: #742a2a;
+  border-color: #e53e3e;
+  color: #fff5f5;
+  box-shadow: 0 8px 24px rgba(116, 42, 42, 0.45);
+}
+.gsp-speech-bubble.wrong::before {
+  border-color: transparent #742a2a transparent transparent;
+}
+
+.gsp-speech-bubble.correct {
+  background: #15803d;
+  border-color: #4ade80;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(21, 128, 61, 0.5);
+}
+.gsp-speech-bubble.correct::before {
+  border-color: transparent #15803d transparent transparent;
+}
+
+@keyframes bubblePopRight {
+  0% { opacity: 0; transform: translateY(-50%) scale(0.7); }
+  100% { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+/* ── ✅ 참가자 정답 맞힘 뱃지 스타일 ── */
+.gsp-item.is-solved {
+  border-color: var(--green) !important;
+  background: var(--green-tint) !important;
+  box-shadow: 0 0 12px rgba(72, 187, 120, 0.35) !important;
+}
+
+.gsp-solved-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 모바일 사이드바에서는 말풍선이 아래로 뜨도록 처리 */
+@media (max-width: 900px) {
+  .gsp-speech-bubble {
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%) scale(0.85);
+  }
+  .gsp-speech-bubble::before {
+    right: auto;
+    left: 50%;
+    bottom: 100%;
+    top: auto;
+    transform: translateX(-50%);
+    border-color: transparent transparent #1e293b transparent;
+  }
+  .gsp-speech-bubble.wrong::before {
+    border-color: transparent transparent #742a2a transparent;
+  }
+  .gsp-speech-bubble.correct::before {
+    border-color: transparent transparent #1c4532 transparent;
+  }
+  @keyframes bubblePop {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.6); }
+    100% { opacity: 1; transform: translateX(-50%) scale(1); }
+  }
+}
+
+/* =====================================================================
+   야추 다이스 (Yahtzee)  –  좌측 점수표 / 우측 주사위 2단 레이아웃
+   ===================================================================== */
+
+/* ─── 전체 래퍼: 좌·우 2열 ─── */
+.ytz-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 4px 0 24px;
+}
+
+/* 왼쪽: 점수표 */
+.ytz-left {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* 오른쪽: 주사위 컨트롤 */
+.ytz-right {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+/* ─── 컨트롤 카드 ─── */
+.ytz-ctrl-card {
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ─── 턴 배지 행 ─── */
+.ytz-turn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ytz-turn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  color: var(--t2);
+  transition: all 0.22s ease;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ytz-turn-badge.my-turn {
+  color: var(--green-deep);
+  border-color: var(--green-border);
+  background: var(--green-tint);
+  box-shadow: 0 0 10px rgba(56,161,105,0.2);
+}
+.ytz-turn-badge.opp-turn {
+  color: var(--coral);
+  border-color: var(--coral-border);
+  background: var(--coral-tint);
+}
+
+.ytz-roll-counter {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--t3);
+  background: var(--bg-input);
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── 주사위 그리드 (2×2 + 1) ─── */
+.ytz-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+/* 마지막(5번째) 주사위: 가운데 정렬 */
+.ytz-dice-grid .ytz-die:last-child {
+  grid-column: 1 / -1;
+  width: 50%;
+  margin: 0 auto;
+}
+
+/* ─── 주사위 버튼 ─── */
+.ytz-die {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  border-radius: 14px;
+  border: 2.5px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.15);
+  padding: 0;
+  overflow: hidden;
+}
+.ytz-die:hover:not(:disabled):not(.disabled-die) {
+  border-color: var(--sky);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 20px rgba(49,130,206,0.25);
+}
+.ytz-die.held {
+  border-color: var(--green-deep) !important;
+  background: var(--green-tint) !important;
+  box-shadow: 0 6px 18px rgba(56,161,105,0.30);
+  transform: translateY(-4px);
+}
+.ytz-die.unrolled {
+  opacity: 0.38;
+  filter: grayscale(1);
+}
+.ytz-die.disabled-die { cursor: default; }
+.ytz-die.rolling {
+  animation: diceRoll 0.08s linear infinite;
+}
+
+/* SVG 주사위 내부 */
+.ytz-die-inner {
+  width: 68%;
+  height: 68%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ytz-die-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  color: var(--t1);
+}
+.ytz-die.held .ytz-die-svg { color: var(--green-deep); }
+
+/* HOLD 라벨 */
+.ytz-hold-label {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--green-deep);
+  opacity: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+  pointer-events: none;
+}
+.ytz-die.held .ytz-hold-label { opacity: 1; }
+
+@keyframes diceRoll {
+  0%   { transform: rotate(-10deg) scale(1.08); }
+  50%  { transform: rotate(10deg)  scale(1.08); }
+  100% { transform: rotate(-10deg) scale(1.08); }
+}
+
+/* ─── 굴리기 버튼 & 힌트 ─── */
+.ytz-roll-btn {
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 11px 0;
+}
+
+.ytz-roll-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--t4);
+  margin: 0;
+  line-height: 1.4;
+  min-height: 2.2em;
+}
+
+/* ─── 점수표 ─── */
+.ytz-scoresheet {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ytz-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ytz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 220px;
+}
+
+.ytz-th-cat {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--t3);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.ytz-th-player {
+  text-align: center;
+  padding: 10px 8px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--t2);
+  min-width: 60px;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.ytz-th-player.active-turn {
+  background: var(--green-tint);
+  color: var(--green-deep);
+}
+
+.ytz-section-header td {
+  padding: 6px 12px;
+  background: var(--bg-input);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--t3);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.ytz-section-header td i { margin-right: 4px; }
+
+.ytz-score-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ytz-score-row:hover {
+  background: var(--bg-hover, rgba(0,0,0,0.04));
+}
+.ytz-score-row:active {
+  background: rgba(56,161,105,0.1);
+}
+
+.ytz-cat-label {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+.ytz-cat-label span {
+  display: block;
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: var(--t1);
+}
+.ytz-cat-label small {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--t4);
+  margin-top: 1px;
+}
+
+.ytz-score-cell {
+  text-align: center;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--t3);
+  cursor: default;
+  transition: background 0.13s, color 0.13s, box-shadow 0.13s;
+  min-width: 52px;
+}
+.ytz-score-cell.preview { cursor: pointer; font-style: italic; }
+.ytz-score-cell.preview.positive {
+  color: var(--green-deep);
+  background: var(--green-tint);
+}
+.ytz-score-cell.preview.positive:hover {
+  background: rgba(56,161,105,0.18);
+  box-shadow: inset 0 0 0 2px var(--green-deep);
+}
+.ytz-score-cell.preview.zero {
+  color: var(--coral);
+  background: var(--coral-tint);
+  opacity: 0.72;
+}
+.ytz-score-cell.preview.zero:hover {
+  background: rgba(229,62,62,0.10);
+  box-shadow: inset 0 0 0 2px var(--coral);
+}
+.ytz-score-cell.recorded {
+  color: var(--t1);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.ytz-bonus-row td {
+  background: rgba(56,161,105,0.04);
+  border-top: 1px solid var(--green-border, #c6f6d5);
+  border-bottom: 1px solid var(--green-border, #c6f6d5);
+}
+.ytz-bonus-cell {
+  text-align: center;
+  padding: 7px 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--green-deep);
+  border-left: 1px solid var(--border);
+}
+
+.ytz-total-row td { background: var(--bg-input); border-top: 2px solid var(--border); }
+.ytz-total-cell {
+  text-align: center;
+  padding: 9px 8px;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--t1);
+  border-left: 1px solid var(--border);
+}
+
+/* ─── 반응형: 모바일에서 상하 2단 전환 ─── */
+@media (max-width: 640px) {
+  .ytz-wrap {
+    flex-direction: column-reverse;  /* 주사위 위, 점수표 아래 */
+    gap: 12px;
+  }
+  .ytz-right {
+    width: 100%;
+  }
+  .ytz-dice-grid .ytz-die:last-child {
+    width: 46%;
+  }
+}
+
+/* =====================================================================
+   타자 대결 / 끝말잇기 - 라운드 시스템 공통 스타일
+   ===================================================================== */
+
+/* 타자 대결 라운드 헤더 */
+.typing-round-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.typing-round-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  background: var(--green-tint);
+  border: 1.5px solid var(--green-border);
+  color: var(--green-deep);
+}
+
+/* 타자/끝말잇기 참가자 승리 횟수 뱃지 (사이드바 gsp-item 내) */
+.gsp-win-count-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: var(--yellow, #d69e2e);
+  color: #fff;
+  vertical-align: middle;
+}
+
+/* 타자 대결 progress row 내 승리 뱃지 */
+.typing-win-badge {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+/* =====================================================================
+   캐치마인드 카운트다운 오버레이 애니메이션
+   ===================================================================== */
+@keyframes cmPop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =====================================================================
+   윷놀이 (Yut Nori) - 2~4인 대전 고품질 스타일
+   ===================================================================== */
+.yut-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.yut-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.yut-turn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  transition: all 0.2s ease;
+}
+.yut-turn-badge.my-turn {
+  background: var(--green-tint, #ebf8f2);
+  border: 1.5px solid var(--green-border, #c6f6d5);
+  color: var(--green-deep, #22543d);
+}
+.yut-turn-badge.opp-turn {
+  background: var(--bg-input, #edf2f7);
+  border: 1.5px solid var(--border, #e2e8f0);
+  color: var(--t2, #718096);
+}
+
+.yut-players-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.yut-player-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg-input, #f7fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.yut-pchip-count {
+  font-size: 0.76rem;
+  color: var(--t3, #a0aec0);
+  background: rgba(0,0,0,0.05);
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+/* 메인 2열 영역 (보드판 + 컨트롤) */
+.yut-main-area {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  align-items: start;
+}
+
+/* 윷판 보드 */
+.yut-board-container {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fdfbf7;
+}
+
+.yut-board {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  background: #f5eedb;
+  border: 4px solid #8c6d46;
+  border-radius: 18px;
+  box-shadow: inset 0 0 20px rgba(140, 109, 70, 0.2), 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.yut-board-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* 노드 타일 */
+.yut-node {
+  position: absolute;
+  width: 9%;
+  height: 9%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.15s ease;
+}
+
+.yut-node-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ecd9b5;
+  border: 2px solid #8c6d46;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  transition: all 0.2s ease;
+}
+
+.yut-node.is-corner .yut-node-inner {
+  background: #e2c08d;
+  border-width: 3px;
+  box-shadow: 0 0 0 2px #d69e2e, 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.yut-node.is-center .yut-node-inner {
+  background: #dd6b20;
+  border: 3px solid #742a2a;
+  box-shadow: 0 0 0 3px #fbd38d, 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.yut-node.is-start-goal .yut-node-inner {
+  background: #38a169;
+  border: 3px solid #22543d;
+  box-shadow: 0 0 0 2px #c6f6d5, 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* 이동 가능 목표 타일 하이라이트 */
+.yut-node.is-movable-target .yut-node-inner {
+  background: #fef08a !important;
+  border-color: #ca8a04 !important;
+  box-shadow: 0 0 0 4px #eab308, 0 0 16px rgba(234, 179, 8, 0.8) !important;
+  animation: yutTargetPulse 1s infinite alternate;
+}
+
+@keyframes yutTargetPulse {
+  0% { transform: scale(0.95); }
+  100% { transform: scale(1.2); }
+}
+
+/* 말 컨테이너 & 말 디자인 */
+.yut-node-pieces-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.yut-board-piece {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #ffffff;
+  pointer-events: auto;
+  cursor: default;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.yut-board-piece.my-clickable-piece {
+  cursor: pointer;
+  animation: yutMyPieceBounce 0.8s infinite alternate;
+}
+
+.yut-board-piece.stacked-piece {
+  border-width: 3px;
+  border-style: double;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 4px 10px rgba(0,0,0,0.4);
+}
+
+@keyframes yutMyPieceBounce {
+  0% { transform: scale(1) translateY(0); box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
+  100% { transform: scale(1.18) translateY(-4px); box-shadow: 0 6px 14px rgba(0,0,0,0.45); }
+}
+
+/* 우측 컨트롤 영역 */
+.yut-ctrl-area {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 윷가락 카드 */
+.yut-sticks-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.yut-sticks-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 10px;
+  background: var(--bg-input, #f7fafc);
+  border-radius: 12px;
+  width: 100%;
+}
+
+.yut-stick {
+  width: 22px;
+  height: 70px;
+  background: #d4a373;
+  border: 2px solid #8c6d46;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 평평한 면 (앞면 - 흰색/밝은 면) */
+.yut-stick.is-flat {
+  background: #fefae0;
+  border-color: #bc6c25;
+  box-shadow: inset 0 0 8px rgba(188, 108, 37, 0.2), 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.yut-stick.backdo-stick.is-flat span {
+  color: #e53e3e;
+  font-weight: 900;
+  font-size: 0.95rem;
+}
+.yut-stick.backdo-stick:not(.is-flat) span {
+  display: none;
+}
+
+.yut-sticks-display.throwing .yut-stick {
+  animation: stickRoll 0.25s infinite alternate;
+}
+
+@keyframes stickRoll {
+  0% { transform: translateY(-8px) rotate(-6deg); }
+  100% { transform: translateY(8px) rotate(6deg); }
+}
+
+.yut-result-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--t1, #2d3748);
+  min-height: 28px;
+}
+.yut-res-highlight {
+  color: var(--green-deep, #22543d);
+  font-size: 1.15rem;
+}
+
+.yut-throw-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+/* 윷패 풀 카드 */
+.yut-pool-card {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yut-pool-title, .yut-waiting-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--t2, #4a5568);
+}
+
+.yut-pool-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 42px;
+  align-items: center;
+}
+
+.yut-pool-empty {
+  font-size: 0.8rem;
+  color: var(--t3, #a0aec0);
+}
+
+.yut-pool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--bg-input, #edf2f7);
+  border: 2px solid var(--border, #cbd5e0);
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: var(--t1, #2d3748);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.yut-pool-chip.selected {
+  background: var(--green-tint, #ebf8f2);
+  border-color: var(--green-deep, #38a169);
+  color: var(--green-deep, #22543d);
+  box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.25);
+  transform: translateY(-2px);
+}
+
+.yut-chip-steps {
+  font-size: 0.78rem;
+  color: #718096;
+}
+.yut-pool-chip.selected .yut-chip-steps {
+  color: var(--green-deep, #22543d);
+}
+
+.yut-action-hint {
+  font-size: 0.78rem;
+  color: var(--t2, #718096);
+  line-height: 1.4;
+  background: var(--bg-input, #f7fafc);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+/* 대기소 말 카드 */
+.yut-waiting-card {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.yut-waiting-pieces {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.yut-piece-btn.waiting-piece {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.8);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  cursor: default;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.yut-piece-btn.waiting-piece.can-move {
+  opacity: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  animation: yutWaitingPulse 0.9s infinite alternate;
+}
+
+@keyframes yutWaitingPulse {
+  0% { transform: scale(0.97); }
+  100% { transform: scale(1.06); }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .yut-main-area {
+    grid-template-columns: 1fr;
+  }
+  .yut-board {
+    max-width: 380px;
+  }
+}
+
+
+
+/* 🖌️ 캐치마인드 실시간 붓 커서 (출제자 & 참가자 공용) */
+.cm-brush-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 25;
+  transition: transform 0.035s linear, opacity 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 1;
+  will-change: transform;
+}
+
+.cm-brush-cursor.hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.cm-brush-svg {
+  display: block;
+  transform-origin: 2px 33px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.cm-brush-tag {
+  background: rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  margin-left: 18px;
+  margin-top: -6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+/* 캔버스 커서: 출제자일 때 시스템 기본 커서 숨김 (붓 커서가 대신 매끄럽게 마우스를 따라감) */
+.cm-canvas-container.is-drawer #cm-canvas {
+  cursor: none !important;
+}
+
+.cm-canvas-container:not(.is-drawer) #cm-canvas {
+  cursor: default !important;
+}

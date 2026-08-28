@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 106" width="100" height="106">
+  <defs>
+    <!-- 3D Bottom Bevel / Extrusion Shadow -->
+    <filter id="piece_shadow_han_king" x="-15%" y="-10%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="4" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+    <linearGradient id="side_grad_han_king" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d6cebd"/>
+      <stop offset="100%" stop-color="#b0a590"/>
+    </linearGradient>
+    <linearGradient id="face_grad_han_king" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#fdfbf7"/>
+      <stop offset="100%" stop-color="#f2eee5"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#piece_shadow_han_king)">
+    <!-- 3D Side Wall (Lower Bevel / Thickness) -->
+    <polygon points="29.3,5 70.7,5 98,32.3 98,78 70.7,104 29.3,104 2,78 2,32.3" fill="url(#side_grad_han_king)" stroke="#9c907c" stroke-width="1.2" stroke-linejoin="round"/>
+    
+    <!-- 3D Lower Edge Segments for crisp depth -->
+    <polygon points="2,72 29.3,98 70.7,98 98,72 98,78 70.7,104 29.3,104 2,78" fill="#9e927e"/>
+
+    <!-- Top Main Face (Pure White / Ivory Octagon) -->
+    <polygon points="29.3,2 70.7,2 98,29.3 98,70.7 70.7,98 29.3,98 2,70.7 2,29.3" 
+             fill="url(#face_grad_han_king)" 
+             stroke="#c4baa7" 
+             stroke-width="1.6" 
+             stroke-linejoin="round"/>
+
+    <!-- Fine Inner Inset Octagonal Ring -->
+    <polygon points="31.5,7 68.5,7 93,31.5 93,68.5 68.5,93 31.5,93 7,68.5 7,31.5" 
+             fill="none" 
+             stroke="#ded6c7" 
+             stroke-width="1.2" 
+             stroke-linejoin="round"/>
+
+    <!-- Traditional Janggi Hanja Calligraphy -->
+    <text x="50" y="52" 
+          font-family="'Gungsuh', 'GungsuhChe', 'Batang', 'BatangChe', 'Hanjamin L', serif" 
+          font-size="48" 
+          font-weight="900" 
+          fill="#cc1f1a" 
+          text-anchor="middle" 
+          dominant-baseline="central"
+          style="letter-spacing: -1px;">漢</text>
+  </g>
+</svg>

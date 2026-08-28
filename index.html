@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P2P 아케이드 | 서버 없는 실시간 멀티플레이 웹 게임</title>
+  
+  <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+  <meta name="theme-color" content="#38a169" />
+
+  <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="P2P 아케이드" />
+  <meta property="og:title" content="P2P 아케이드 | 서버 없는 실시간 멀티 웹 게임" />
+  <meta property="og:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 친구와 설치 없이 4자리 번호로 1초 만에 바로 즐기세요!" />
+  <meta property="og:image" content="og-image.png" />
+  <meta property="og:image:secure_url" content="og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="P2P 아케이드 게임 플랫폼" />
+
+  <!-- 🐦 트위터 카드 (Twitter Card) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="P2P 아케이드 | 실시간 멀티플레이 웹 게임" />
+  <meta name="twitter:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 브라우저에서 바로 즐기세요!" />
+  <meta name="twitter:image" content="og-image.png" />
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/games.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN: HOME
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+
+  <!-- 왼쪽 사이드바: 게임 목록 -->
+  <aside class="home-sidebar">
+    <!-- 🌟 사이드바 상단 로고 & 타이틀 헤더 🌟 -->
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-shapes"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">P2P ARCADE</span>
+          <span class="logo-sub">웹 보드게임 모음</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 닉네임 프로필 바 (모바일에서는 좌측에 컴팩트 로고 포함) -->
+    <div class="home-user-bar">
+      <div class="mobile-logo-wrap">
+        <div class="mobile-logo-icon">
+          <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <span class="mobile-logo-title">P2P ARCADE</span>
+      </div>
+
+      <div class="user-avatar" id="home-user-avatar">?</div>
+      <div class="user-info">
+        <span class="user-label">내 닉네임</span>
+        <strong class="user-name" id="home-user-name">플레이어</strong>
+      </div>
+      <button type="button" class="btn-icon sm" id="btn-open-settings" title="환경 설정 (소리/볼륨)">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button type="button" class="btn-icon sm" id="btn-change-nickname" title="프로필 편집 (닉네임/동물 아바타)">
+        <i class="fa-solid fa-user-pen"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-games">
+      <p class="sidebar-label">게임 목록</p>
+      <ul>
+        <li class="sidebar-game-item active" data-game="gomoku">
+          <div class="sg-icon"><i class="fa-solid fa-chess-board"></i></div>
+          <div class="sg-info">
+            <strong>오목</strong>
+            <span>15×15 턴제 전략</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="chess">
+          <div class="sg-icon"><i class="fa-solid fa-chess-knight"></i></div>
+          <div class="sg-info">
+            <strong>체스</strong>
+            <span>실시간 2인 클래식 체스</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="janggi">
+          <div class="sg-icon"><i class="fa-solid fa-chess-rook"></i></div>
+          <div class="sg-info">
+            <strong>장기</strong>
+            <span>정통 2인 한국 장기</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="alkkagi">
+          <div class="sg-icon"><i class="fa-solid fa-burst"></i></div>
+          <div class="sg-info">
+            <strong>알까기</strong>
+            <span>실시간 물리 알까기 대결</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="quoridor">
+          <div class="sg-icon"><i class="fa-solid fa-border-all"></i></div>
+          <div class="sg-info">
+            <strong>쿼리도</strong>
+            <span>미로 탈출 & 벽 세우기</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="baskin31">
+          <div class="sg-icon"><i class="fa-solid fa-ice-cream"></i></div>
+          <div class="sg-info">
+            <strong>베스킨라빈스 31</strong>
+            <span>1~3 숫자 심리전</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="wordchain">
+          <div class="sg-icon"><i class="fa-solid fa-comments"></i></div>
+          <div class="sg-info">
+            <strong>끝말잇기</strong>
+            <span>15초 스피드 대결</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="apple">
+          <div class="sg-icon"><i class="fa-solid fa-apple-whole"></i></div>
+          <div class="sg-info">
+            <strong>사과게임</strong>
+            <span>60초 숫자 퍼즐</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="typing">
+          <div class="sg-icon"><i class="fa-solid fa-keyboard"></i></div>
+          <div class="sg-info">
+            <strong>타자연습 대결</strong>
+            <span>실시간 속타 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="catchmind">
+          <div class="sg-icon"><i class="fa-solid fa-paintbrush"></i></div>
+          <div class="sg-info">
+            <strong>캐치마인드</strong>
+            <span>실시간 그림 퀴즈 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="yutnori">
+          <div class="sg-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+          <div class="sg-info">
+            <strong>윷놀이</strong>
+            <span>전통 윷놀이 말판 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~4인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="yacht">
+          <div class="sg-icon"><i class="fa-solid fa-dice"></i></div>
+          <div class="sg-info">
+            <strong>야추 다이스</strong>
+            <span>3D 주사위 족보 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~4인</div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-copyright">
+        <span>© 2026 P2P Arcade. All rights reserved.</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 오른쪽: 메인 영역 (좌측: 실시간 공개 방 목록, 우측: 방 만들기/참가) -->
+  <main class="home-main">
+    <div class="home-lobby-container">
+      
+      <!-- 1. 좌측~중앙: 🌐 실시간 방 목록 (공개방 / 비밀방 필터 지원) -->
+      <div class="lobby-card card">
+        <div class="lobby-header">
+          <div class="lobby-title-area">
+            <span class="lobby-title"><i class="fa-solid fa-layer-group"></i> 방 목록</span>
+            <div class="lobby-tab-group" id="lobby-filter-tabs">
+              <button type="button" class="lobby-tab-btn active" data-lobby-tab="public" id="tab-lobby-public">
+                <i class="fa-solid fa-earth-americas"></i> 공개방
+              </button>
+              <button type="button" class="lobby-tab-btn" data-lobby-tab="private" id="tab-lobby-private">
+                <i class="fa-solid fa-lock"></i> 비밀방
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn-icon sm" id="btn-refresh-lobby" title="목록 새로고침">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+        <div class="lobby-list is-empty" id="lobby-room-list">
+          <div class="lobby-empty">
+            <i class="fa-regular fa-compass"></i>
+            <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 우측: 방 만들기 / 참가 패널 -->
+      <div class="connect-card card">
+        <div class="connect-tabs">
+          <button class="ctab active" data-tab="create" id="tab-create">
+            <i class="fa-solid fa-tower-broadcast"></i>
+            <span>방 만들기</span>
+          </button>
+          <button class="ctab" data-tab="join" id="tab-join">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>방 참가</span>
+          </button>
+        </div>
+
+        <!-- 방 만들기 패널 -->
+        <div class="ctab-panel active" id="panel-create">
+          <!-- ⚙️ 방 설정 옵션 (방 만들기 바로 위 밀착 배치) -->
+          <div class="create-room-options">
+            <!-- 1. 공개/비밀방 라디오 스위치 -->
+            <div class="create-opt-row">
+              <span class="create-opt-label"><i class="fa-solid fa-shield-halved"></i> 공개 설정</span>
+              <div class="room-type-toggle">
+                <label class="room-type-opt">
+                  <input type="radio" name="room-visibility" value="public" checked id="opt-room-public" />
+                  <span class="room-type-btn"><i class="fa-solid fa-earth-americas"></i> 공개방</span>
+                </label>
+                <label class="room-type-opt">
+                  <input type="radio" name="room-visibility" value="private" id="opt-room-private" />
+                  <span class="room-type-btn"><i class="fa-solid fa-lock"></i> 비밀방</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 비밀번호 4자리 핀 입력란 (비밀방 선택 시 표시) -->
+            <div class="create-opt-row create-password-wrap hidden" id="create-password-wrap">
+              <span class="create-opt-label"><i class="fa-solid fa-key"></i> 비밀번호</span>
+              <div class="password-pin-box">
+                <input
+                  type="password"
+                  id="input-create-room-password"
+                  class="create-pwd-input"
+                  placeholder="● ● ● ●"
+                  maxlength="4"
+                  inputmode="numeric"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <!-- 2. 최대 인원 수 스피너 (2~8인) -->
+            <div class="create-opt-row">
+              <span class="create-opt-label"><i class="fa-solid fa-users"></i> 최대 인원</span>
+              <div class="capacity-stepper">
+                <button type="button" class="btn-step" id="btn-cap-minus" title="1명 감소">
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <span class="capacity-val" id="capacity-val">5인</span>
+                <button type="button" class="btn-step" id="btn-cap-plus" title="1명 증가">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" id="btn-create-room">
+            <i class="fa-solid fa-plus"></i>
+            <span>방 만들기</span>
+          </button>
+          <div class="code-reveal hidden" id="code-reveal">
+            <div class="code-reveal-label">방 코드</div>
+            <div class="code-display">
+              <span id="host-room-code">——</span>
+              <button class="btn-icon" id="btn-copy-code" title="복사">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+            <div class="waiting-dots">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span>친구 연결 대기 중</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 방 참가 패널 -->
+        <div class="ctab-panel" id="panel-join">
+          <div class="panel-desc-box">
+            <h4>친구 방에 참가하기</h4>
+            <p>공유받은 4자리 방 코드를 입력하여 입장하세요.</p>
+          </div>
+          <div class="join-form">
+            <input
+              type="text"
+              id="input-room-code"
+              class="code-input-field"
+              placeholder="0 0 0 0"
+              maxlength="4"
+              inputmode="numeric"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="btn btn-primary btn-lg" id="btn-join-room">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i>
+              <span>입장하기</span>
+            </button>
+          </div>
+          <div class="join-status hidden" id="join-status">
+            <div class="waiting-dots">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span id="join-status-text">연결 중...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN: ROOM LOBBY
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-room" class="screen">
+  <!-- 방 헤더 -->
+  <header class="room-header">
+    <button class="btn btn-ghost btn-sm" id="btn-leave-room">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>로비로 나가기</span>
+    </button>
+    <div class="room-title">
+      <span class="room-name-label">ROOM CODE</span>
+      <span class="room-code-badge" id="room-code-display">——</span>
+      <button class="btn-icon sm" id="btn-copy-room-code" title="코드 복사">
+        <i class="fa-regular fa-copy"></i>
+      </button>
+    </div>
+    <div class="room-header-actions" style="display:flex; gap:8px;">
+      <button class="btn-icon" id="btn-room-settings" title="환경설정">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 방 본체 (3단: 좌측 참가자 / 중앙 게임선택 / 우측 채팅) -->
+  <div class="room-body" id="room-body">
+
+    <!-- 1. 왼쪽: 플레이어 목록 -->
+    <section class="room-players-panel card">
+      <div class="panel-header">
+        <h3 class="panel-title"><i class="fa-solid fa-users"></i> 참가자 목록</h3>
+        <span class="panel-badge" id="player-count-badge">1명 접속</span>
+      </div>
+      <ul class="player-list" id="player-list">
+        <!-- JS로 동적 생성 -->
+      </ul>
+      <div class="player-slots" id="player-slots">
+        <!-- 빈 슬롯 JS 생성 -->
+      </div>
+    </section>
+
+    <!-- 2. 중앙: 게임 선택 + 컨트롤 -->
+    <section class="room-center-panel card">
+      <!-- 🎮 게임 진행 중 알림 배너 -->
+      <div class="room-playing-alert hidden" id="room-playing-alert">
+        <i class="fa-solid fa-circle-play"></i>
+        <span>현재 게임이 진행 중입니다. 대기실에서 대기하시거나 채팅에 참여해 보세요!</span>
+      </div>
+
+      <div class="game-select-panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="fa-solid fa-gamepad"></i> 게임 선택</h3>
+
+          <!-- 🌟 빨간색 표시 위치: 게임선택과 힌트 사이의 세부 설정 바 🌟 -->
+          <div class="game-extra-settings-bar hidden" id="game-extra-settings-bar">
+            <!-- 1. 라운드 설정 (끝말잇기, 캐치마인드, 타자연습 대결) -->
+            <div class="extra-setting-item hidden" id="game-rounds-setting">
+              <span class="esi-label"><i class="fa-solid fa-award"></i> 라운드:</span>
+              <div class="esi-stepper">
+                <button type="button" class="btn-step" id="btn-round-minus" title="1라운드 감소">
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <span class="esi-val" id="game-round-val">3 라운드</span>
+                <button type="button" class="btn-step" id="btn-round-plus" title="1라운드 증가">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. 오목/체스 진영 선택 (셔플, 방장 흑, 방장 백) -->
+            <div class="extra-setting-item hidden" id="game-side-setting">
+              <span class="esi-label"><i class="fa-solid fa-chess"></i> 진영:</span>
+              <div class="side-select-toggle" id="side-select-toggle">
+                <button type="button" class="side-btn active" data-side="shuffle" id="btn-side-shuffle">
+                  <i class="fa-solid fa-shuffle"></i> <span>셔플</span>
+                </button>
+                <button type="button" class="side-btn" data-side="host_black" id="btn-side-black">
+                  <i class="fa-solid fa-circle" style="color:#1a202c;"></i> <span id="side-label-black">방장 흑</span>
+                </button>
+                <button type="button" class="side-btn" data-side="host_white" id="btn-side-white">
+                  <i class="fa-regular fa-circle" style="color:#718096;"></i> <span id="side-label-white">방장 백</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <span class="panel-sub" id="game-select-role-hint">방장만 변경 가능</span>
+        </div>
+
+        <div class="room-game-grid" id="room-game-grid">
+          <div class="room-game-btn" data-game="gomoku">
+            <div class="rgb-icon"><i class="fa-solid fa-chess-board"></i></div>
+            <div class="rgb-info">
+              <strong>오목</strong>
+              <span>15×15 턴제 바둑판</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
+          <div class="room-game-btn" data-game="chess">
+            <div class="rgb-icon"><i class="fa-solid fa-chess-knight"></i></div>
+            <div class="rgb-info">
+              <strong>체스</strong>
+              <span>정통 클래식 2인 체스</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
+          <div class="room-game-btn" data-game="janggi">
+            <div class="rgb-icon"><i class="fa-solid fa-chess-rook"></i></div>
+            <div class="rgb-info">
+              <strong>장기</strong>
+              <span>정통 2인 한국 장기</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
+          <div class="room-game-btn" data-game="alkkagi">
+            <div class="rgb-icon"><i class="fa-solid fa-burst"></i></div>
+            <div class="rgb-info">
+              <strong>알까기</strong>
+              <span>실시간 물리 알까기 배틀</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
+          <div class="room-game-btn" data-game="quoridor">
+            <div class="rgb-icon"><i class="fa-solid fa-border-all"></i></div>
+            <div class="rgb-info">
+              <strong>쿼리도</strong>
+              <span>9×9 미로 벽 세우기</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
+          <div class="room-game-btn" data-game="baskin31">
+            <div class="rgb-icon"><i class="fa-solid fa-ice-cream"></i></div>
+            <div class="rgb-info">
+              <strong>베스킨라빈스 31</strong>
+              <span>1~3 숫자 심리전</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
+          <div class="room-game-btn" data-game="wordchain">
+            <div class="rgb-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="rgb-info">
+              <strong>끝말잇기</strong>
+              <span>15초 한국어 어휘력</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
+          <div class="room-game-btn" data-game="apple">
+            <div class="rgb-icon"><i class="fa-solid fa-apple-whole"></i></div>
+            <div class="rgb-info">
+              <strong>사과게임</strong>
+              <span>합 10 숫자 퍼즐</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
+          <div class="room-game-btn" data-game="typing">
+            <div class="rgb-icon"><i class="fa-solid fa-keyboard"></i></div>
+            <div class="rgb-info">
+              <strong>타자연습 대결</strong>
+              <span>실시간 문장 속타전</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
+          <div class="room-game-btn" data-game="catchmind">
+            <div class="rgb-icon"><i class="fa-solid fa-paintbrush"></i></div>
+            <div class="rgb-info">
+              <strong>캐치마인드</strong>
+              <span>실시간 그림 퀴즈 배틀</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
+          <div class="room-game-btn" data-game="yutnori">
+            <div class="rgb-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+            <div class="rgb-info">
+              <strong>윷놀이</strong>
+              <span>전통 윷놀이 말판 배틀</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~4인</span>
+          </div>
+          <div class="room-game-btn" data-game="yacht">
+            <div class="rgb-icon"><i class="fa-solid fa-dice"></i></div>
+            <div class="rgb-info">
+              <strong>야추 다이스</strong>
+              <span>3D 주사위 족보 배틀</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~4인</span>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- 컨트롤 -->
+      <div class="room-controls">
+        <div class="guest-hint hidden" id="guest-wait-hint">
+          <i class="fa-solid fa-crown"></i> 방장이 게임을 선택하고 시작하기를 기다리고 있습니다.
+        </div>
+        <div class="control-row">
+          <button type="button" class="btn btn-ready" id="btn-ready">
+            <i class="fa-regular fa-circle"></i>
+            <span>준비하기</span>
+          </button>
+          <button type="button" class="btn btn-start hidden" id="btn-start-game" disabled>
+            <i class="fa-solid fa-play"></i>
+            <span>게임 시작</span>
+          </button>
+        </div>
+        <p class="ready-hint" id="ready-hint">모든 참가자가 준비해야 시작할 수 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- 3. 오른쪽: 방 실시간 채팅창 -->
+    <section class="room-chat-panel card">
+      <div class="panel-header">
+        <h3 class="panel-title"><i class="fa-regular fa-comments"></i> 실시간 채팅</h3>
+        <span class="chat-count-badge" id="chat-count-badge">ROOM</span>
+      </div>
+      <div class="chat-messages-wrap" id="room-chat-messages">
+        <div class="chat-system-msg">방 채팅에 입장했습니다. 매너 있는 대화를 나눠보세요!</div>
+      </div>
+      <div class="chat-input-form">
+        <input type="text" id="room-chat-input" class="chat-input" placeholder="메시지를 입력하세요..." maxlength="100" autocomplete="off" />
+        <button type="button" class="btn btn-primary btn-chat-send" id="btn-room-chat-send">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN: GAME (좌측 참가자 + 중앙 메인게임 + 우측 실시간 채팅)
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <!-- 상단 게임 네비게이션 -->
+  <header class="game-header">
+    <button class="btn btn-ghost btn-sm" id="btn-back-to-room">
+      <i class="fa-solid fa-chevron-left"></i>
+      <span>방으로 돌아가기</span>
+    </button>
+    <div class="game-title-area">
+      <span id="current-game-title">게임</span>
+    </div>
+    <div class="game-header-actions">
+      <div class="game-room-badge">
+        <i class="fa-solid fa-hashtag"></i>
+        <span id="game-room-code">0000</span>
+      </div>
+      <button class="btn-icon" id="btn-game-settings" title="환경설정">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button type="button" class="btn btn-primary btn-sm btn-mobile-chat-toggle" id="btn-mobile-chat-toggle" title="채팅창 열기">
+        <i class="fa-regular fa-comments"></i>
+        <span>채팅</span>
+        <span class="chat-badge-dot hidden" id="mobile-chat-badge"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 모바일 채팅 팝업 전용 백드롭 -->
+  <div class="mobile-chat-backdrop hidden" id="mobile-chat-backdrop"></div>
+
+  <!-- 게임 메인 컨테이너 (3단: 좌측 참가자 / 중앙 메인게임 / 우측 인게임 채팅) -->
+  <div class="game-main-layout" id="game-main-layout">
+    <!-- 1. 좌측 상시 참가자 목록 -->
+    <aside class="game-sidebar-players card">
+      <div class="gsp-header">
+        <h4><i class="fa-solid fa-users"></i> 참가자 (<span id="gsp-count">2</span>)</h4>
+      </div>
+      <!-- 좌측 퇴장 알림 영역 -->
+      <div class="gsp-alert-container" id="gsp-alert-container"></div>
+      <ul class="gsp-list" id="gsp-player-list">
+        <!-- JS 동적 생성 -->
+      </ul>
+    </aside>
+
+    <!-- 2. 중앙 메인 게임 컨텐츠 영역 -->
+    <main class="game-play-area">
+      <div id="game-content"></div>
+    </main>
+
+    <!-- 3. 우측 인게임 실시간 채팅창 (모바일에서는 팝업 모달로 작동) -->
+    <aside class="game-chat-panel card" id="game-chat-panel">
+      <div class="gcp-header">
+        <h4><i class="fa-regular fa-comments"></i> 인게임 채팅</h4>
+        <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-mobile-chat" title="채팅창 닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="chat-messages-wrap" id="game-chat-messages">
+        <div class="chat-system-msg">게임 중 실시간 응원과 대화를 나눠보세요!</div>
+      </div>
+      <div class="chat-input-form">
+        <input type="text" id="game-chat-input" class="chat-input" placeholder="메시지 입력..." maxlength="100" autocomplete="off" />
+        <button class="btn btn-primary btn-chat-send" id="btn-game-chat-send">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 마인크래프트 P2P LAN 멀티플레이 안내 가이드 모달
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-mc-guide" class="overlay hidden">
+  <div class="mc-guide-modal card">
+    <div class="mc-guide-header">
+      <div class="mc-guide-title">
+        <i class="fa-solid fa-tower-broadcast" style="color:#48bb78;"></i>
+        <h3>WebRTC P2P LAN 멀티플레이 가이드</h3>
+      </div>
+      <button type="button" class="btn-close-settings" id="btn-close-mc-guide" title="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="mc-guide-body">
+      <div class="mc-guide-banner">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>별도의 서버 개설 없이 브라우저 간 WebRTC P2P로 1:1 / 다인 멀티플레이가 가능합니다!</span>
+      </div>
+
+      <div class="mc-guide-grid">
+        <!-- 호스트 가이드 -->
+        <div class="mc-guide-card host-card">
+          <div class="mg-card-header">
+            <span class="mg-badge host">방장 (호스트)</span>
+            <h4>방 만들기 (서버 열기)</h4>
+          </div>
+          <ol class="mg-steps">
+            <li><strong>Singleplayer</strong>를 눌러 월드를 생성하거나 기존 월드에 접속합니다.</li>
+            <li>키보드 <strong>ESC</strong> 키를 누른 후 <strong>[Open to LAN]</strong> 버튼을 클릭합니다.</li>
+            <li>게임 모드를 선택하고 <strong>[Start LAN World]</strong>를 누릅니다.</li>
+            <li>화면에 표시되는 <strong>WebRTC 초대 코드 (또는 주소)</strong>를 복사하여 친구에게 전달합니다.</li>
+          </ol>
+        </div>
+
+        <!-- 게스트 가이드 -->
+        <div class="mc-guide-card guest-card">
+          <div class="mg-card-header">
+            <span class="mg-badge guest">참가자 (게스트)</span>
+            <h4>친구 방에 참가하기</h4>
+          </div>
+          <ol class="mg-steps">
+            <li>마인크래프트 메인 화면에서 <strong>Multiplayer</strong>를 클릭합니다.</li>
+            <li>하단의 <strong>[Direct Connect]</strong> 버튼을 클릭합니다.</li>
+            <li>친구(호스트)에게 공유받은 <strong>WebRTC 초대 코드</strong>를 입력창에 붙여넣습니다.</li>
+            <li><strong>[Join Server]</strong>를 누르면 친구의 월드로 즉시 입장됩니다!</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mc-guide-tips">
+        <strong><i class="fa-solid fa-lightbulb" style="color:var(--yellow);"></i> 유용한 팁:</strong>
+        <p>게임 플레이 중 마우스 시점이 창 밖으로 나가지 않도록 <strong>화면을 클릭하면 마우스 포인터 락(Pointer Lock)</strong>이 활성화됩니다. 마우스 커서를 빼내려면 <strong>ESC</strong> 키를 누르세요.</p>
+      </div>
+    </div>
+
+    <div class="mc-guide-footer">
+      <button type="button" class="btn btn-primary" id="btn-confirm-mc-guide" style="width:100%;background:#2e7d32;border-color:#2e7d32;">
+        <span>확인 및 게임 계속하기</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 결과
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-result" class="overlay hidden">
+  <div class="result-modal card">
+    <div class="result-confetti" id="result-confetti"></div>
+    <div class="result-icon-wrap" id="result-icon">
+      <i class="fa-solid fa-trophy"></i>
+    </div>
+    <h2 id="result-title">승리!</h2>
+    <p id="result-message">축하합니다! 대결에서 승리하셨습니다.</p>
+    <div class="result-score-row" id="result-score-row"></div>
+    <div class="result-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="btn-result-back-room" style="width:100%;">
+        <i class="fa-solid fa-house"></i>
+        <span>방으로 돌아가기</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 환경 설정 (BGM 및 효과음 볼륨 스와이프 조절)
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-settings" class="overlay hidden">
+  <div class="settings-modal card">
+    <div class="settings-header">
+      <h3><i class="fa-solid fa-gear"></i> 환경 설정</h3>
+      <button type="button" class="btn-close-settings" id="btn-close-settings" title="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <div class="settings-body">
+      <!-- 테마 설정 (라이트 모드 / 다크 모드 전환 토글) -->
+      <div class="setting-item">
+        <div class="setting-meta">
+          <div class="setting-title">
+            <i class="fa-solid fa-circle-half-stroke" style="color:var(--yellow);"></i>
+            <span>화면 테마</span>
+          </div>
+          <div class="theme-toggle-group" id="theme-toggle-group">
+            <button type="button" class="btn-theme-toggle active" id="btn-theme-light" data-theme="light">
+              <i class="fa-solid fa-sun"></i>
+              <span>라이트</span>
+            </button>
+            <button type="button" class="btn-theme-toggle" id="btn-theme-dark" data-theme="dark">
+              <i class="fa-solid fa-moon"></i>
+              <span>다크</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 배경음악 (BGM) 설정 -->
+      <div class="setting-item">
+        <div class="setting-meta">
+          <div class="setting-title">
+            <i class="fa-solid fa-music" style="color:var(--sky);"></i>
+            <span>배경음악 (BGM)</span>
+          </div>
+          <button type="button" class="btn-sound-toggle" id="btn-toggle-bgm-mute">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+        <div class="slider-row">
+          <input type="range" id="slider-bgm-vol" min="0" max="100" value="35" class="sound-range-slider" />
+          <span class="vol-text" id="text-bgm-vol">35%</span>
+        </div>
+      </div>
+
+      <!-- 효과음 (SFX) 설정 -->
+      <div class="setting-item">
+        <div class="setting-meta">
+          <div class="setting-title">
+            <i class="fa-solid fa-volume-high" style="color:var(--green);"></i>
+            <span>효과음 (SFX)</span>
+          </div>
+          <button type="button" class="btn-sound-toggle" id="btn-toggle-sfx-mute">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+        <div class="slider-row">
+          <input type="range" id="slider-sfx-vol" min="0" max="100" value="70" class="sound-range-slider" />
+          <span class="vol-text" id="text-sfx-vol">70%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-footer">
+      <button type="button" class="btn btn-primary" id="btn-confirm-settings" style="width:100%;">
+        <span>확인</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     POPUP: 프로필 편집 말풍선 팝업 (동물 아이콘 + 색상 + 닉네임)
+═══════════════════════════════════════════════════════════════ -->
+<div id="profile-bubble-popup" class="profile-bubble-popup hidden">
+  <div class="profile-bubble-arrow"></div>
+  <div class="profile-bubble-header">
+    <div class="profile-bubble-title">
+      <i class="fa-solid fa-user-pen"></i>
+      <span>프로필 편집</span>
+    </div>
+    <button type="button" class="btn-icon sm profile-bubble-close" id="btn-close-profile" title="닫기">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="profile-preview-area">
+    <div class="profile-preview-avatar" id="profile-preview-avatar">
+      <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+    </div>
+    <div class="profile-preview-name" id="profile-preview-name">익명</div>
+    <button type="button" class="btn btn-secondary btn-sm" id="btn-random-profile" style="margin-top:4px;gap:6px;padding:4px 10px;font-size:0.78rem;">
+      <i class="fa-solid fa-dice"></i>
+      <span>랜덤 아바타</span>
+    </button>
+  </div>
+
+  <!-- 닉네임 입력 -->
+  <div class="profile-section">
+    <label class="profile-section-label">닉네임</label>
+    <input
+      type="text"
+      id="profile-input-nick"
+      class="profile-input-nick"
+      placeholder="익명"
+      maxlength="8"
+      autocomplete="off"
+      spellcheck="false"
+    />
+  </div>
+
+  <!-- 동물 아이콘 선택 -->
+  <div class="profile-section">
+    <label class="profile-section-label">동물 아이콘</label>
+    <div class="avatar-icon-grid" id="avatar-icon-grid"></div>
+  </div>
+
+  <!-- 배경 색상 선택 -->
+  <div class="profile-section">
+    <label class="profile-section-label">프로필 배경 색상</label>
+    <div class="avatar-color-grid" id="avatar-color-grid"></div>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="profile-btn-row">
+    <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
+      <span>취소</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
+      <i class="fa-solid fa-check"></i>
+      <span>저장</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 카운트다운 (사과게임, 끝말잇기, 타자연습 시작 전 3, 2, 1)
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-countdown" class="overlay countdown-overlay hidden">
+  <div class="countdown-modal">
+    <div class="countdown-number-wrap">
+      <span class="countdown-number" id="countdown-number">3</span>
+    </div>
+    <div class="countdown-sub" id="countdown-sub">잠시 후 게임이 시작됩니다!</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 로딩
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-loading" class="overlay hidden">
+  <div class="loading-modal card" style="text-align:center;">
+    <div class="loading-ring">
+      <div></div><div></div><div></div><div></div>
+    </div>
+    <p id="loading-text" style="margin-bottom:12px;">연결 중...</p>
+    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-loading" style="padding:6px 18px;font-size:0.85rem;border-radius:var(--radius-sm);">
+      <i class="fa-solid fa-xmark"></i>
+      <span>연결 취소</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 비밀방 비밀번호 입력 모달
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-room-password" class="overlay hidden">
+  <div class="pwd-modal card" style="max-width:320px;width:88%;text-align:center;padding:24px 20px;display:flex;flex-direction:column;gap:14px;border-radius:var(--radius-lg);">
+    <div style="width:48px;height:48px;border-radius:50%;background:var(--yellow-tint);border:1.5px solid var(--yellow-border);color:var(--yellow);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:1.3rem;">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+    <h3 style="font-size:1.15rem;font-weight:800;color:var(--t1);margin:0;">비밀번호 입력</h3>
+    <input
+      type="password"
+      id="input-join-password"
+      class="code-input-field"
+      placeholder="● ● ● ●"
+      maxlength="4"
+      inputmode="numeric"
+      autocomplete="off"
+      style="font-size:1.4rem;letter-spacing:6px;height:44px;text-align:center;background:var(--bg-hover);"
+    />
+    <div style="display:flex;gap:8px;margin-top:2px;">
+      <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-pwd" style="flex:1;">
+        <span>취소</span>
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-pwd" style="flex:1;">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>입장</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DROPDOWN: 방장 참가자 관리 메뉴 (강퇴)
+═══════════════════════════════════════════════════════════════ -->
+<div id="host-action-dropdown" class="host-action-dropdown hidden">
+  <div class="host-action-target-name" id="host-action-target-name">플레이어</div>
+  <button type="button" class="host-action-btn kick" id="btn-host-kick">
+    <i class="fa-solid fa-user-xmark"></i>
+    <span>강퇴하기</span>
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOAST
+═══════════════════════════════════════════════════════════════ -->
+<div class="toast hidden" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+  import RAPIER from 'https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.14.0/+esm';
+  try {
+    await RAPIER.init();
+    window.RAPIER = RAPIER;
+    window.dispatchEvent(new CustomEvent('rapier-ready'));
+    console.log('[Rapier3D] WebAssembly 물리 엔진 초기화 완료 (v' + RAPIER.version() + ')');
+  } catch (e) {
+    console.error('[Rapier3D] 초기화 오류:', e);
+  }
+</script>
+<script src="js/sound.js"></script>
+<script src="js/dict.js"></script>
+<script src="js/p2p.js"></script>
+<script src="js/games/gomoku.js"></script>
+<script src="js/games/chess.js"></script>
+<script src="js/games/janggi.js"></script>
+<script src="js/games/alkkagi.js"></script>
+<script src="js/games/quoridor.js"></script>
+<script src="js/games/baskin31.js"></script>
+<script src="js/games/wordchain.js"></script>
+<script src="js/games/apple.js"></script>
+<script src="js/games/typing.js"></script>
+<script src="js/games/catchmind.js"></script>
+<script src="js/games/yutnori.js"></script>
+<script src="js/games/yacht.js"></script>
+<script type="module" src="js/firebase.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
