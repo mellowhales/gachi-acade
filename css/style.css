@@ -5615,9 +5615,29 @@ html, body {
   border-color: var(--border) !important;
 }
 
-[data-theme="dark"] .room-card {
+/* ── 로비 방 카드 (Lobby Room Card) 다크모드 적용 ── */
+[data-theme="dark"] .lobby-room-card {
   background: var(--bg-card) !important;
   border-color: var(--border) !important;
+  color: var(--t1) !important;
+}
+
+[data-theme="dark"] .lobby-room-card:hover {
+  border-color: var(--green) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 방 카드 내부 배지 및 서브 요소 텍스트 색상 대응 */
+[data-theme="dark"] .lrc-code-badge,
+[data-theme="dark"] .lrc-count-badge,
+[data-theme="dark"] .lrc-status-badge {
+  background: var(--bg-subtle) !important;
+  color: var(--t2) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .lrc-host-name {
+  color: var(--t1) !important;
 }
 [data-theme="dark"] .room-card:hover {
   border-color: var(--green) !important;
