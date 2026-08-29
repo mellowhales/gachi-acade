@@ -529,7 +529,7 @@
             </div>
           </div>
           <button type="button" class="btn ${isPlaying ? 'btn-danger is-playing-btn' : 'btn-primary'} btn-sm lrc-join-btn ${isFull ? 'disabled' : ''}">
-            <span>${isPlaying ? '진행 중 입장' : (isFull ? '마감' : (isLock ? '비밀번호' : '입장'))}</span>
+            <span>${isPlaying ? '진행 중 | 관전' : (isFull ? '마감' : (isLock ? '비밀번호' : '입장'))}</span>
             <i class="fa-solid ${isLock ? 'fa-lock' : 'fa-arrow-right-to-bracket'}"></i>
           </button>
         </div>
@@ -1617,11 +1617,36 @@
   /* =====================================================================
      실시간 채팅 기능 (방 & 인게임 양방향 동기화)
      ===================================================================== */
+/* =====================================================================
+     실시간 채팅 기능 (방 & 인게임 양방향 동기화)
+     ===================================================================== */
+  const BAD_WORDS = ['시발', '씨발', '병신', '개새끼', '존나', '지랄', '엠창', '느금']; // 필요에 따라 단어 추가
+  let _lastChatTime = 0;
+  const CHAT_COOLDOWN = 1000; // 1초 쿨타임
+
   function _sendChatMessage(inputElId) {
     const inputEl = $(inputElId);
     if (!inputEl) return;
     const text = inputEl.value.trim();
     if (!text) return;
+
+    // 1. 도배 제한 (1초 쿨타임 검사)
+    const nowTs = Date.now();
+    if (nowTs - _lastChatTime < CHAT_COOLDOWN) {
+      if (typeof showToast === 'function') {
+        showToast('메시지를 너무 빠르게 보낼 수 없습니다.', 'warn');
+      }
+      return;
+    }
+
+    // 2. 욕설 검열 (*로 치환)
+    let cleanText = text;
+    BAD_WORDS.forEach(word => {
+      const regex = new RegExp(word, 'gi');
+      cleanText = cleanText.replace(regex, '***');
+    });
+
+    _lastChatTime = nowTs;
 
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -1633,7 +1658,7 @@
       senderId: P2P.getMyId(),
       senderName: myNickname,
       isHost: P2P.isHost(),
-      text: text,
+      text: cleanText, // 검열된 텍스트 적용
       time: timeStr
     };
 
