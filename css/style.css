@@ -5756,6 +5756,16 @@ html, body {
   background: var(--bg-card) !important;
   border-color: var(--border) !important;
 }
+/* 방 카드 내부의 모든 자식 요소 배경을 투명하게 설정 */
+[data-theme="dark"] .room-card * {
+  background-color: transparent;
+}
+
+/* 방 카드 헤더 등 특정 영역이 개별 배경을 써야 한다면 지정 */
+[data-theme="dark"] .room-card-header {
+  background: var(--bg-card) !important;
+  border-bottom-color: var(--border-sub) !important;
+}
 
 /* ── 다크 모드: 게임별 세부 디자인 최적화 ── */
 [data-theme="dark"] .cat-cell {
