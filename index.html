@@ -364,22 +364,41 @@
     </div>
   </header>
 
-  <!-- 방 본체 (3단: 좌측 참가자 / 중앙 게임선택 / 우측 채팅) -->
+<!-- 방 본체 (3단: 좌측 참가자 / 중앙 게임선택 / 우측 채팅) -->
   <div class="room-body" id="room-body">
 
-    <!-- 1. 왼쪽: 플레이어 목록 -->
-    <section class="room-players-panel card">
-      <div class="panel-header">
-        <h3 class="panel-title"><i class="fa-solid fa-users"></i> 참가자 목록</h3>
-        <span class="panel-badge" id="player-count-badge">1명 접속</span>
+    <!-- 1. 왼쪽 영역 (참가자 목록 + 이모지 패널) -->
+    <div class="room-left-panel">
+      <!-- 기존 참가자 목록 패널 -->
+      <section class="room-players-panel card">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="fa-solid fa-users"></i> 참가자 목록</h3>
+          <span class="panel-badge" id="player-count-badge">1명 접속</span>
+        </div>
+        <ul class="player-list" id="player-list">
+          <!-- JS로 동적 생성 -->
+        </ul>
+        <div class="player-slots" id="player-slots">
+          <!-- 빈 슬롯 JS 생성 -->
+        </div>
+      </section>
+
+      <!-- 신규: 감정표현 이모지 패널 -->
+      <div class="room-emoji-panel card">
+        <button type="button" class="btn-emoji" data-emoji="😂" title="웃기">
+          <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f602.svg" alt="😂" class="emoji-img">
+        </button>
+        <button type="button" class="btn-emoji" data-emoji="👏" title="박수">
+          <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f44f.svg" alt="👏" class="emoji-img">
+        </button>
+        <button type="button" class="btn-emoji" data-emoji="😮" title="놀람">
+          <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f65f.svg" alt="😮" class="emoji-img">
+        </button>
+        <button type="button" class="btn-emoji" data-emoji="🎉" title="축하">
+          <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" alt="🎉" class="emoji-img">
+        </button>
       </div>
-      <ul class="player-list" id="player-list">
-        <!-- JS로 동적 생성 -->
-      </ul>
-      <div class="player-slots" id="player-slots">
-        <!-- 빈 슬롯 JS 생성 -->
-      </div>
-    </section>
+    </div>
 
     <!-- 2. 중앙: 게임 선택 + 컨트롤 -->
     <section class="room-center-panel card">

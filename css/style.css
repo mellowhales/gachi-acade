@@ -1454,13 +1454,61 @@ body {
   box-sizing: border-box;
 }
 
-.room-center-panel {
+.room-left-panel {
   align-self: flex-start !important;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: 12px;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* 기존 참가자 패널 (이모지 패널 공간 확보를 위해 max-height 살짝 조절) */
+.room-players-panel {
+  width: 100%;
+  height: auto;
+  max-height: 550px; /* 620px에서 이모지 패널 높이만큼 차감 */
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+/* 🌟 2. 신규 이모지 감정표현 패널 */
+.room-emoji-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 10px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+/* 이모지 버튼 스타일 */
+.btn-emoji {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.btn-emoji:hover {
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+  transform: scale(1.25);
+}
+
+.btn-emoji:active {
+  transform: scale(0.95);
 }
 
 .room-chat-panel {

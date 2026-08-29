@@ -1,6 +1,6 @@
 /**
  * wordchain.js - 끝말잇기
- * - 전체 시간 225초 (기존 150초의 1.5배), 턴 시간은 전체 시간에 비례
+ * - 전체 시간 150초 (기존 150초), 턴 시간은 전체 시간에 비례
  * - 3라운드 제도: 각 라운드 종료(시간 초과) 시 생존자 승리, 3라운드 중 최다 승리가 최종 승리
  * - 단어 제출 성공 시 1초 연출 동안 타이머 일시정지 (억울한 시간초과 방지)
  * - 라운드 전환 시 단어 목록 및 알림판 완벽 초기화
@@ -22,7 +22,7 @@ const WordchainGame = (() => {
     '뉴': '유', '뉵': '육', '니': '이', '닉': '익', '닐': '일', '님': '임', '닙': '입'
   };
 
-  const TOTAL_GAME_TIME = 225.0; // 전체 게임 시간 (225초)
+  const TOTAL_GAME_TIME = 150.0; // 전체 게임 시간 (150초)
   let MAX_ROUNDS        = 3;     // 총 라운드 수 (동적 설정)
   const START_WORDS = ['하늘','바다','산','강','꽃','나무','구름','별','달','해','사과','나비','가방','우주','사랑'];
 
@@ -42,10 +42,13 @@ const WordchainGame = (() => {
 
   let currentRound = 1;
   let roundWins    = {}; // { [playerId]: winCount }
+  let roundScores = {};
 
   let playersList = [];
   let _onResult = null;
   let _context = null;
+
+  
 
   function init(container, onResult, context) {
     if (typeof KkutuDict !== 'undefined') { KkutuDict.ensureLoaded(); }
