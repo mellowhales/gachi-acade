@@ -6538,6 +6538,96 @@ html, body {
   color: var(--t1) !important;
 }
 
+/* 아바타 영역 내 절대 좌표 지정을 위한 설정 */
+.player-list li, .player-avatar {
+  position: relative;
+}
+
+/* 프로필 아바타 우상단 이모지 팝업 버블 */
+.profile-emoji-bubble {
+  position: absolute;
+  top: 18px;   /* 🌟 위에서 아래로 내려서 우하단 배치 (필요시 20px~24px 조절) */
+  left: 22px;  /* 🌟 기존 32px에서 약간 왼쪽으로 당김 */
+  width: 22px; /* 🌟 기존 30px에서 22px로 축소 */
+  height: 22px;
+  z-index: 20;
+  pointer-events: none;
+  animation: emojiPopBounce 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.profile-emoji-bubble img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+/* 뿅 나타나서 통통 튀다 스르륵 사라지는 애니메이션 */
+@keyframes emojiPopBounce {
+  0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+  25% { transform: scale(1.3) rotate(8deg); opacity: 1; }
+  40% { transform: scale(0.95) rotate(-3deg); opacity: 1; }
+  55% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+  80% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.4) translateY(-12px); opacity: 0; }
+}
 
 
+/* 인게임 좌측 영역 세로 정렬 */
+.game-left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 240px; /* 기존 인게임 사이드바 너비에 맞춤 */
+  box-sizing: border-box;
+}
 
+.game-sidebar-players {
+  width: 100%;
+}
+
+/* 인게임 이모지 패널 */
+.game-emoji-panel {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  padding: 8px 10px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* 인게임 플레이어 리스트 아이템 상대 좌표 설정 (이모지 팝업용) */
+.gsp-list li, .gsp-avatar {
+  position: relative !important;
+}
+
+/* 인게임 사이드바 및 리스트 오버플로우 잘림 방지 */
+.game-sidebar-players,
+.gsp-list,
+.gsp-list li {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* 인게임 아바타 영역 절대 좌표 기준 설정 */
+.gsp-avatar, .gsp-list li > div:first-child {
+  position: relative !important;
+}
+
+/* 🌟 인게임 화면(작은 아바타) 전용 이모지 위치 및 크기 조절 */
+.gsp-avatar .profile-emoji-bubble {
+  width: 22px;
+  height: 16px;
+  top: 16px;         /* 아바타 하단에 맞게 위로 끌어올림 (기존 22px -> 16px) */
+  left: 16px;        /* 왼쪽으로 당김 (기존 26px -> 16px) */
+}
+
+/* 관전자 아바타는 투명도가 있어서 이모지도 흐려지는 것 방지 */
+.gsp-spectator-item .gsp-avatar .profile-emoji-bubble {
+  opacity: 1 !important; 
+}

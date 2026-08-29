@@ -113,6 +113,8 @@
   // 방장 관리 액션 대상 플레이어
   let selectedTargetPlayer = null;
   let lastKnownTurnPlayerIdOrIdx = null; // 🌟 현재 턴 인덱스/ID 영구 기억 변수
+  // 활성화된 프로필 이모지 상태 저장 객체
+ const activeProfileEmojis = {}; // { playerId: { emojiSrc, timeoutId } }
 
   /* ── DOM 헬퍼 ── */
   const $ = (id) => document.getElementById(id);
@@ -1432,6 +1434,11 @@
       _appendChatMessage(data, false);
       // 메시지를 보낸 게스트를 제외한 다른 게스트들에게만 릴레이 브로드캐스트
       P2P.send(data, null, senderPeerId);
+    }else if (data.type === 'profile_emoji') {
+      // 🌟 호스트 화면에 이모지 표시
+      _showProfileEmoji(data.senderId, data.emojiSrc);
+      // 🌟 메시지를 보낸 게스트를 제외한 다른 게스트들에게 릴레이 전송!
+      P2P.send(data, null, senderPeerId);
     }
   }
 
@@ -1611,8 +1618,14 @@
       if (data.senderId && data.senderId === P2P.getMyId()) return;
       // 상대방이 보낸 채팅 메시지 수신 및 렌더링
       _appendChatMessage(data, false);
+    } else if (data.type === 'profile_emoji') {
+      // 🌟 게스트 수신부: 내가 보낸 이모지의 에코 반사는 무시하고 화면에 표시
+      if (data.senderId && data.senderId === P2P.getMyId()) return;
+      _showProfileEmoji(data.senderId, data.emojiSrc);
     }
   }
+
+  
 
   /* =====================================================================
      실시간 채팅 기능 (방 & 인게임 양방향 동기화)
@@ -1828,6 +1841,9 @@
       const canManage = amIHost && !isThisHost && !isMe;
 
       const li = document.createElement('li');
+
+      li.setAttribute('data-player-id', p.id);
+      li.setAttribute('data-id', p.id);
       li.className = 'player-item' + 
         (isMe ? ' is-me' : '') +
         (isInActiveGame ? ' is-in-game' : (isReadyGuest ? ' ready' : (isThisHost ? ' host-item' : ''))) + 
@@ -2313,7 +2329,7 @@
     if (!listEl) return;
     listEl.innerHTML = '';
 
-    // 1. 게임 플레이어 목록 렌더링
+// 1. 게임 플레이어 목록 렌더링
     list.forEach((p, idx) => {
       const isMe = (String(p.id) === myId);
       const isTurn = _checkIsPlayerTurn(p, idx, currentTurnPlayerIdOrIdx, gameKey);
@@ -2324,6 +2340,11 @@
       const canManage = amIHost && !p.isHost && !isMe;
       const li = document.createElement('li');
       li.id = `gsp-item-${idx}`;
+
+      // 🌟 [추가 1] 인게임 플레이어 ID 속성 부여
+      li.setAttribute('data-player-id', p.id);
+      li.setAttribute('data-id', p.id);
+
       li.className = 'gsp-item' + (isMe ? ' is-me' : '') + (isTurn ? ' is-current-turn' : '') + (canManage ? ' can-manage' : '');
 
       li.innerHTML = `
@@ -2364,6 +2385,11 @@
         const amIHost = P2P.isHost() || isHostPlayer;
         const canManage = amIHost && !sp.isHost && !isMe;
         const li = document.createElement('li');
+
+        // 🌟 [추가 2] 관전자 ID 속성 부여
+        li.setAttribute('data-player-id', sp.id);
+        li.setAttribute('data-id', sp.id);
+
         li.className = 'gsp-item gsp-spectator-item' + (isMe ? ' is-me' : '') + (canManage ? ' can-manage' : '');
 
         li.innerHTML = `
@@ -2391,7 +2417,18 @@
         listEl.appendChild(li);
       });
     }
+    // 🌟 사이드바 재렌더링 후 현재 활성화된 이모지가 있다면 즉시 복원
+    if (typeof activeProfileEmojis !== 'undefined') {
+      Object.keys(activeProfileEmojis).forEach(pId => {
+        if (activeProfileEmojis[pId]) {
+          _renderProfileEmojiDOM(pId, activeProfileEmojis[pId].emojiSrc);
+        }
+      });
+    }
 
+    if (typeof currentGameModule !== 'undefined' && currentGameModule && typeof currentGameModule.onSidebarRedrawn === 'function') {
+      currentGameModule.onSidebarRedrawn();
+    }
     if (typeof currentGameModule !== 'undefined' && currentGameModule && typeof currentGameModule.onSidebarRedrawn === 'function') {
       currentGameModule.onSidebarRedrawn();
     }
@@ -2792,6 +2829,93 @@
     });
   }
 
+  /* =====================================================================
+     프로필 이모지 감정표현 (내 화면 렌더링 + P2P 동기화)
+     ===================================================================== */
+
+  // 1. 이모지 버튼 클릭 이벤트 (위임 방식)
+// 이모지 버튼 클릭 이벤트 (대기실 + 인게임 통합 감지)
+  document.addEventListener('click', (e) => {
+    
+    // 🚨 원인: 기존에는 e.target.closest('.room-emoji-panel .btn-emoji') 였음
+    // 🌟 픽스: 대기실과 인게임 패널 모두 감지하도록 쉼표(,)로 두 클래스를 모두 넣어줍니다.
+    const btn = e.target.closest('.room-emoji-panel .btn-emoji, .game-emoji-panel .btn-emoji');
+    
+    if (!btn) return;
+
+    const img = btn.querySelector('img');
+    if (!img || !img.src) return;
+
+    const myId = String(P2P.getMyId()); // 확실한 문자열 비교를 위해 String 감싸기
+    const emojiSrc = img.src;
+
+    // 내 화면에 띄우기
+    if (typeof _showProfileEmoji === 'function') {
+      _showProfileEmoji(myId, emojiSrc);
+    }
+
+    // 다른 사람들에게 전송
+    try {
+      P2P.send({
+        type: 'profile_emoji',
+        senderId: myId,
+        emojiSrc: emojiSrc
+      });
+    } catch (_) {}
+  });
+
+// 1. 프로필 이모지 실행 및 상태 관리 함수
+  function _showProfileEmoji(playerId, emojiSrc) {
+    if (!playerId || !emojiSrc) return;
+
+    // 기존 타이머가 존재하면 취소
+    if (activeProfileEmojis[playerId]) {
+      clearTimeout(activeProfileEmojis[playerId].timeoutId);
+    }
+
+    // 1.8초 동안 상태 유지 후 자동 삭제
+    const timeoutId = setTimeout(() => {
+      delete activeProfileEmojis[playerId];
+      _removeProfileEmojiDOM(playerId);
+    }, 1800);
+
+    activeProfileEmojis[playerId] = { emojiSrc, timeoutId };
+
+    // DOM에 이모지 출력
+    _renderProfileEmojiDOM(playerId, emojiSrc);
+  }
+
+  // 2. DOM 요소에 실제 이모지 버블 생성하는 보조 함수
+  function _renderProfileEmojiDOM(playerId, emojiSrc) {
+    const targets = document.querySelectorAll(`[data-player-id="${playerId}"], [data-id="${playerId}"]`);
+    
+    targets.forEach(playerEl => {
+      const avatarEl = playerEl.querySelector('.player-avatar') || 
+                       playerEl.querySelector('.gsp-avatar') || 
+                       playerEl.querySelector('div') || 
+                       playerEl;
+
+      if (!avatarEl) return;
+
+      const oldBubble = avatarEl.querySelector('.profile-emoji-bubble');
+      if (oldBubble) oldBubble.remove();
+
+      const bubble = document.createElement('div');
+      bubble.className = 'profile-emoji-bubble';
+      bubble.innerHTML = `<img src="${_escapeHtml(emojiSrc)}" alt="emoji">`;
+
+      avatarEl.appendChild(bubble);
+    });
+  }
+
+  // 3. 이모지 버블 제거 보조 함수
+  function _removeProfileEmojiDOM(playerId) {
+    const targets = document.querySelectorAll(`[data-player-id="${playerId}"], [data-id="${playerId}"]`);
+    targets.forEach(playerEl => {
+      const bubble = playerEl.querySelector('.profile-emoji-bubble');
+      if (bubble) bubble.remove();
+    });
+  }
   /* ── 🖱️ PC 인게임 화면 잘림 시 마우스 상하 드래그 스크롤 지원 ── */
   function _initInGameDragScroll() {
     const gameScreen = $('screen-game');
