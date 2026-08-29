@@ -1474,41 +1474,51 @@ body {
 }
 
 /* 🌟 2. 신규 이모지 감정표현 패널 */
+/* 이모지 패널 (한 줄 가로 정렬 고정) */
 .room-emoji-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 8px 10px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  padding: 10px 12px;
   background: var(--card-bg, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   box-sizing: border-box;
+  width: 100%;
 }
 
-/* 이모지 버튼 스타일 */
+/* 이모지 버튼 */
 .btn-emoji {
   background: transparent;
   border: none;
-  font-size: 1.4rem;
-  line-height: 1;
-  padding: 6px 8px;
+  padding: 6px;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  user-select: none;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  flex: 1; /* 4개 버튼 동일 비율 분배 */
 }
 
 .btn-emoji:hover {
-  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
-  transform: scale(1.25);
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.06));
+  transform: scale(1.2);
 }
 
 .btn-emoji:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
+}
+
+/* 이모지 SVG 이미지 크기 정의 */
+.btn-emoji .emoji-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
 }
 
 .room-chat-panel {
