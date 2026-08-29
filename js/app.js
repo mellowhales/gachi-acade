@@ -2803,7 +2803,7 @@
 
 
 
-  /* =====================================================================
+/* =====================================================================
      Virtual Routing / History popstate
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
@@ -2831,9 +2831,9 @@
       return;
     }
 
-    // 2. Handle leaving game to room
+    // 2. Handle leaving game (Currently in 'game' screen)
     if (screens['game'] && screens['game'].classList.contains('active')) {
-      if (targetScreen === 'room') {
+      if (targetScreen === 'room' || targetScreen === 'home') {
         _hideResultOverlay();
         if (P2P.isHost()) {
           try { P2P.send({ type: 'return_to_room' }); } catch (_) {}
@@ -2846,23 +2846,34 @@
             });
           } catch (_) {}
         }
-        _exitGameToRoom(false);
-        return;
-      } else if (targetScreen === 'home') {
-        if (!P2P.isHost()) {
-          try { P2P.send({ type: 'guest_leave_room', name: myNickname }); } catch (_) {}
+
+        // 제스처 등으로 인게임에서 곧바로 홈(로비)까지 뒤로가기 된 경우 예외 처리
+        if (targetScreen === 'home') {
+          if (!P2P.isHost()) {
+            try { P2P.send({ type: 'guest_leave_room', name: myNickname }); } catch (_) {}
+          }
+          _leaveRoom(false);
+        } else {
+          _exitGameToRoom(false);
         }
-        _leaveRoom(false);
         return;
       }
     }
 
-    // 3. Handle leaving room to home
+    // 3. Handle leaving room to home (Currently in 'room' screen)
     if (screens['room'] && screens['room'].classList.contains('active')) {
-      if (targetScreen === 'home') {
+      // 방 화면에서 뒤로가기를 눌렀을 때 targetScreen이 'home'이거나
+      // 히스토리 스택 꼬임으로 'game'이 들어오더라도 무조건 로비(home)로 퇴장 처리
+      if (targetScreen === 'home' || targetScreen === 'game') {
         if (!P2P.isHost()) {
           try { P2P.send({ type: 'guest_leave_room', name: myNickname }); } catch (_) {}
         }
+        
+        // targetScreen이 'game'인 경우, 히스토리 상태를 'home'으로 강제 교체하여 스택 정상화
+        if (targetScreen === 'game') {
+          _replaceHistory({ screen: 'home' });
+        }
+        
         _leaveRoom(false);
         return;
       }

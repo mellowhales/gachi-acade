@@ -3085,17 +3085,27 @@ html, body {
     gap: 8px;
   }
 
-  /* 인게임 화면 (모바일 상하 스크롤 100% 허용 & 온전한 윷판) */
-  #screen-game {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    min-height: 100vh !important;
-    height: auto !important;
-    max-height: none !important;
-    width: 100%;
-    max-width: 100vw;
-    -webkit-overflow-scrolling: touch;
-  }
+/* 1. 인게임 화면 CSS 보완 */
+#screen-game {
+  width: 100%;
+  min-height: 100dvh !important; /* 모바일 주소창 가변 대응 */
+  height: auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  touch-action: pan-y !important; /* 모바일 상하 스크롤 강제 허용 */
+  -webkit-overflow-scrolling: touch;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 2. 윷판 컨테이너 크기 고정 (UI 일그러짐 방지 예시) */
+.yut-board-area {
+  width: min(90vw, 420px); /* 모바일 폭에 맞추되 최대 420px */
+  aspect-ratio: 1 / 1;      /* 1:1 정사각형 비율 유지 */
+  flex-shrink: 0;           /* 스크롤 시 화면이 눌리거나 찌그러지지 않음 */
+}
 
   .game-header {
     position: sticky;
