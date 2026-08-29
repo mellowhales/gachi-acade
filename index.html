@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P2P 아케이드 | 서버 없는 실시간 멀티플레이 웹 게임</title>
+  <title>가치아케이드 | 서버 없는 실시간 멀티플레이 웹 게임</title>
   
   <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -13,19 +13,19 @@
 
   <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="P2P 아케이드" />
-  <meta property="og:title" content="P2P 아케이드 | 서버 없는 실시간 멀티 웹 게임" />
+  <meta property="og:site_name" content="가치아케이드" />
+  <meta property="og:title" content="가치아케이드 | 서버 없는 실시간 멀티 웹 게임" />
   <meta property="og:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 친구와 설치 없이 4자리 번호로 1초 만에 바로 즐기세요!" />
   <meta property="og:image" content="og-image.png" />
   <meta property="og:image:secure_url" content="og-image.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="P2P 아케이드 게임 플랫폼" />
+  <meta property="og:image:alt" content="가치아케이드" />
 
   <!-- 🐦 트위터 카드 (Twitter Card) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="P2P 아케이드 | 실시간 멀티플레이 웹 게임" />
+  <meta name="twitter:title" content="가치아케이드 | 실시간 멀티플레이 웹 게임" />
   <meta name="twitter:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 브라우저에서 바로 즐기세요!" />
   <meta name="twitter:image" content="og-image.png" />
 
@@ -52,8 +52,8 @@
           <i class="fa-solid fa-shapes"></i>
         </div>
         <div class="logo-text">
-          <span class="logo-title">P2P ARCADE</span>
-          <span class="logo-sub">웹 보드게임 모음</span>
+          <span class="logo-title">가치아케이드</span>
+          <span class="logo-sub">멀티 웹 게임</span>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
         <div class="mobile-logo-icon">
           <i class="fa-solid fa-gamepad"></i>
         </div>
-        <span class="mobile-logo-title">P2P ARCADE</span>
+        <span class="mobile-logo-title">가치아케이드</span>
       </div>
 
       <div class="user-avatar" id="home-user-avatar">?</div>
@@ -184,7 +184,7 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-copyright">
-        <span>© 2026 P2P Arcade. All rights reserved.</span>
+        <span>© 2026 GachiArcade. All rights reserved.</span>
       </div>
     </div>
   </aside>
@@ -636,71 +636,6 @@
         </button>
       </div>
     </aside>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     OVERLAY: 마인크래프트 P2P LAN 멀티플레이 안내 가이드 모달
-═══════════════════════════════════════════════════════════════ -->
-<div id="overlay-mc-guide" class="overlay hidden">
-  <div class="mc-guide-modal card">
-    <div class="mc-guide-header">
-      <div class="mc-guide-title">
-        <i class="fa-solid fa-tower-broadcast" style="color:#48bb78;"></i>
-        <h3>WebRTC P2P LAN 멀티플레이 가이드</h3>
-      </div>
-      <button type="button" class="btn-close-settings" id="btn-close-mc-guide" title="닫기">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-
-    <div class="mc-guide-body">
-      <div class="mc-guide-banner">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>별도의 서버 개설 없이 브라우저 간 WebRTC P2P로 1:1 / 다인 멀티플레이가 가능합니다!</span>
-      </div>
-
-      <div class="mc-guide-grid">
-        <!-- 호스트 가이드 -->
-        <div class="mc-guide-card host-card">
-          <div class="mg-card-header">
-            <span class="mg-badge host">방장 (호스트)</span>
-            <h4>방 만들기 (서버 열기)</h4>
-          </div>
-          <ol class="mg-steps">
-            <li><strong>Singleplayer</strong>를 눌러 월드를 생성하거나 기존 월드에 접속합니다.</li>
-            <li>키보드 <strong>ESC</strong> 키를 누른 후 <strong>[Open to LAN]</strong> 버튼을 클릭합니다.</li>
-            <li>게임 모드를 선택하고 <strong>[Start LAN World]</strong>를 누릅니다.</li>
-            <li>화면에 표시되는 <strong>WebRTC 초대 코드 (또는 주소)</strong>를 복사하여 친구에게 전달합니다.</li>
-          </ol>
-        </div>
-
-        <!-- 게스트 가이드 -->
-        <div class="mc-guide-card guest-card">
-          <div class="mg-card-header">
-            <span class="mg-badge guest">참가자 (게스트)</span>
-            <h4>친구 방에 참가하기</h4>
-          </div>
-          <ol class="mg-steps">
-            <li>마인크래프트 메인 화면에서 <strong>Multiplayer</strong>를 클릭합니다.</li>
-            <li>하단의 <strong>[Direct Connect]</strong> 버튼을 클릭합니다.</li>
-            <li>친구(호스트)에게 공유받은 <strong>WebRTC 초대 코드</strong>를 입력창에 붙여넣습니다.</li>
-            <li><strong>[Join Server]</strong>를 누르면 친구의 월드로 즉시 입장됩니다!</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class="mc-guide-tips">
-        <strong><i class="fa-solid fa-lightbulb" style="color:var(--yellow);"></i> 유용한 팁:</strong>
-        <p>게임 플레이 중 마우스 시점이 창 밖으로 나가지 않도록 <strong>화면을 클릭하면 마우스 포인터 락(Pointer Lock)</strong>이 활성화됩니다. 마우스 커서를 빼내려면 <strong>ESC</strong> 키를 누르세요.</p>
-      </div>
-    </div>
-
-    <div class="mc-guide-footer">
-      <button type="button" class="btn btn-primary" id="btn-confirm-mc-guide" style="width:100%;background:#2e7d32;border-color:#2e7d32;">
-        <span>확인 및 게임 계속하기</span>
-      </button>
-    </div>
   </div>
 </div>
 
