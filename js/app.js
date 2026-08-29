@@ -410,33 +410,35 @@
     if ($('home-user-name')) $('home-user-name').textContent = myNickname || '익명';
   }
 
-  /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (공개방 / 비밀방 탭 필터링) ── */
-  let _currentLobbyTab = 'public'; // 'public' | 'private'
+  /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (전체 / 공개방 / 비밀방 탭 필터링) ── */
+  let _currentLobbyTab = 'all'; // 'all' | 'public' | 'private'
   let _latestLobbyRoomsData = null;
 
   function _initFirebaseLobby() {
+    const tabAll = $('tab-lobby-all');
     const tabPublic = $('tab-lobby-public');
     const tabPrivate = $('tab-lobby-private');
 
-    if (tabPublic) {
-      tabPublic.addEventListener('click', () => {
-        if (_currentLobbyTab === 'public') return;
-        _currentLobbyTab = 'public';
-        tabPublic.classList.add('active');
-        if (tabPrivate) tabPrivate.classList.remove('active');
-        _renderLobbyRooms(_latestLobbyRoomsData);
-      });
-    }
+    const tabs = [
+      { el: tabAll, type: 'all' },
+      { el: tabPublic, type: 'public' },
+      { el: tabPrivate, type: 'private' }
+    ];
 
-    if (tabPrivate) {
-      tabPrivate.addEventListener('click', () => {
-        if (_currentLobbyTab === 'private') return;
-        _currentLobbyTab = 'private';
-        tabPrivate.classList.add('active');
-        if (tabPublic) tabPublic.classList.remove('active');
-        _renderLobbyRooms(_latestLobbyRoomsData);
-      });
-    }
+    // 탭 클릭 이벤트 리스너 통합 등록
+    tabs.forEach(({ el, type }) => {
+      if (el) {
+        el.addEventListener('click', () => {
+          if (_currentLobbyTab === type) return;
+          _currentLobbyTab = type;
+
+          // 클릭한 탭만 active 추가, 나머지는 제거
+          tabs.forEach(t => t.el && t.el.classList.toggle('active', t.type === type));
+
+          _renderLobbyRooms(_latestLobbyRoomsData);
+        });
+      }
+    });
 
     if (window.FirebaseLobby && typeof window.FirebaseLobby.onLobbyUpdate === 'function') {
       window.FirebaseLobby.onLobbyUpdate(_renderLobbyRooms);
@@ -458,12 +460,19 @@
       return !!room.isPrivate || !!room.hasPassword || String(room.isPrivate) === 'true' || String(room.hasPassword) === 'true';
     };
 
+    // 탭 종류별 안내 메시지 반환
+    const getEmptyText = () => {
+      if (_currentLobbyTab === 'public') return '현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!';
+      if (_currentLobbyTab === 'private') return '현재 열려있는 비밀방이 없습니다.<br>비밀방을 직접 만들어 친구를 초대해 보세요!';
+      return '현재 열려있는 방이 없습니다.<br>새로운 방을 직접 만들어 보세요!';
+    };
+
     if (!roomsData || typeof roomsData !== 'object' || Object.keys(roomsData).length === 0) {
       listEl.classList.add('is-empty');
       listEl.innerHTML = `
         <div class="lobby-empty">
           <i class="fa-regular fa-compass"></i>
-          <p>${_currentLobbyTab === 'public' ? '현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!' : '현재 열려있는 비밀방이 없습니다.<br>비밀방을 직접 만들어 친구를 초대해 보세요!'}</p>
+          <p>${getEmptyText()}</p>
         </div>
       `;
       return;
@@ -471,10 +480,12 @@
 
     const allEntries = Object.entries(roomsData).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
 
-    // 🌟 탭에 따라 공개방 / 비밀방 필터링
+    // 🌟 탭에 따라 전체 / 공개방 / 비밀방 필터링
     const roomEntries = allEntries.filter(([code, room]) => {
       const lock = isLockRoom(room);
-      return _currentLobbyTab === 'public' ? !lock : lock;
+      if (_currentLobbyTab === 'public') return !lock;
+      if (_currentLobbyTab === 'private') return lock;
+      return true; // 'all' 탭일 때는 모든 방 표시
     });
 
     if (roomEntries.length === 0) {
@@ -482,7 +493,7 @@
       listEl.innerHTML = `
         <div class="lobby-empty">
           <i class="fa-regular fa-compass"></i>
-          <p>${_currentLobbyTab === 'public' ? '현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!' : '현재 열려있는 비밀방이 없습니다.<br>비밀방을 직접 만들어 친구를 초대해 보세요!'}</p>
+          <p>${getEmptyText()}</p>
         </div>
       `;
       return;
@@ -543,7 +554,6 @@
       listEl.appendChild(card);
     });
   }
-
   // 로비 새로고침 버튼 애니메이션
   if ($('btn-refresh-lobby')) {
     $('btn-refresh-lobby').addEventListener('click', () => {
