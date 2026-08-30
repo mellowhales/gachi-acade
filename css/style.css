@@ -6631,3 +6631,13 @@ html, body {
 .gsp-spectator-item .gsp-avatar .profile-emoji-bubble {
   opacity: 1 !important; 
 }
+
+/* Netlify 주입 배지 및 팝업 카드 강제 숨김 */
+#nl-badge,
+.nl-badge,
+#nl-card {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
