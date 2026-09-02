@@ -315,8 +315,9 @@
     if (chkAutoReady) {
       localStorage.setItem('arcade_auto_ready', chkAutoReady.checked ? 'true' : 'false');
     }
-    if (_backHistoryIfModal('settings')) return;
+    // 🌟 모달 즉시 닫기 (두 번 눌러야 닫히는 버그 완전 해결)
     if ($('overlay-settings')) $('overlay-settings').classList.add('hidden');
+    _backHistoryIfModal('settings');
   }
 
   function _updateSettingsMuteButtons(isBgmMuted, isSfxMuted) {
@@ -1539,9 +1540,16 @@
 
       if ($('room-code-display')) $('room-code-display').textContent = currentRoomCode;
 
-      // 🎮 현재 게임 화면(screen-game)에 있을 때는 대기실로 튕기지 않음
+      // 🎮 현재 게임 화면(screen-game)에 있을 때는 사이드바 갱신
       if (screens.game.classList.contains('active')) {
         _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
+      } else if (isRoomGameActive) {
+        // 🌟 게임이 이미 진행 중(isRoomGameActive)인데 아직 게임 화면에 들어가지 못한 경우 즉시 게임 화면으로 진입!
+        console.log('[Guest] 활성 게임 감지 -> 게임 화면으로 즉시 자동 진입:', selectedGameKey);
+        const myId = String(P2P.getMyId() || '');
+        const amIPlayer = activeGamePlayers.some(p => String(p.id) === myId);
+        const isSpectator = !amIPlayer && activeGamePlayers.length > 0;
+        _launchGame(selectedGameKey, activeGamePlayers.length > 0 ? activeGamePlayers : roomPlayers, null, selectedGameRounds, selectedGameSideMode, isSpectator);
       } else if (!screens.room.classList.contains('active')) {
         _enterRoomScreen();
       } else {
@@ -1557,7 +1565,7 @@
         }
         if (Array.isArray(data.activePlayerIds) && data.activePlayerIds.length > 0) {
           const mapped = data.activePlayerIds.map(id => roomPlayers.find(p => String(p.id) === String(id))).filter(Boolean);
-        if (mapped.length > 0) activeGamePlayers = mapped;
+          if (mapped.length > 0) activeGamePlayers = mapped;
         } else if (!isRoomGameActive) {
           activeGamePlayers = [];
         }
@@ -1570,6 +1578,12 @@
         
         if (screens.game.classList.contains('active')) {
           _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
+        } else if (isRoomGameActive) {
+          // 🌟 실시간 참가자 갱신 시에도 게임 활성 상태면 즉시 게임 화면 진입
+          const myIdStr = String(myId || '');
+          const amIPlayer = activeGamePlayers.some(p => String(p.id) === myIdStr);
+          const isSpectator = !amIPlayer && activeGamePlayers.length > 0;
+          _launchGame(selectedGameKey, activeGamePlayers.length > 0 ? activeGamePlayers : roomPlayers, null, selectedGameRounds, selectedGameSideMode, isSpectator);
         } else {
           _updateRoomUI();
         }
@@ -1597,7 +1611,7 @@
       isRoomGameActive = true;
       if (typeof data.targetRounds === 'number') selectedGameRounds = data.targetRounds;
       if (data.sideMode) selectedGameSideMode = data.sideMode;
-      _launchGame(data.game, activeGamePlayers, data.startWord);
+      _launchGame(data.game, activeGamePlayers, data.startWord, selectedGameRounds, selectedGameSideMode);
 
     } else if (data.type === 'return_to_room') {
       _exitGameToRoom();
@@ -3006,6 +3020,10 @@
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
     // 1. Close modals if they are open
+    if ($('overlay-settings') && !$('overlay-settings').classList.contains('hidden')) {
+      $('overlay-settings').classList.add('hidden');
+      return;
+    }
     if ($('overlay-room-password') && !$('overlay-room-password').classList.contains('hidden')) {
       $('overlay-room-password').classList.add('hidden');
       return;
@@ -3060,19 +3078,15 @@
 
     // 3. Handle leaving room to home (Currently in 'room' screen)
     if (screens['room'] && screens['room'].classList.contains('active')) {
-      // 방 화면에서 뒤로가기를 눌렀을 때 targetScreen이 'home'이거나
-      // 히스토리 스택 꼬임으로 'game'이 들어오더라도 무조건 로비(home)로 퇴장 처리
-      if (targetScreen === 'home' || targetScreen === 'game') {
+      if (targetScreen === 'home') {
         if (!P2P.isHost()) {
           try { P2P.send({ type: 'guest_leave_room', name: myNickname }); } catch (_) {}
         }
-        
-        // targetScreen이 'game'인 경우, 히스토리 상태를 'home'으로 강제 교체하여 스택 정상화
-        if (targetScreen === 'game') {
-          _replaceHistory({ screen: 'home' });
-        }
-        
         _leaveRoom(false);
+        return;
+      }
+      if (targetScreen === 'game') {
+        showScreen('game', false);
         return;
       }
     }
