@@ -232,46 +232,49 @@ const YutnoriGame = (() => {
     }
 
     let node = currentNode;
+    // 코너(5, 10, 22)에 정확히 착지했을 때만 대각 경로 결정 (이미 지나온 말은 기존 route 유지)
     let route = currentRoute || 'OUTER';
-
-    if (currentNode === 5) route = 'DIAG_5';
-    else if (currentNode === 10) route = 'DIAG_10';
-    else if (currentNode === 22) route = 'CENTER';
+    if (currentNode === 5 && route === 'OUTER') route = 'DIAG_5';
+    else if (currentNode === 10 && route === 'OUTER') route = 'DIAG_10';
+    else if (currentNode === 22 && (route === 'DIAG_5' || route === 'DIAG_10')) route = 'CENTER';
 
     for (let s = 0; s < steps; s++) {
       if (node === 'FINISH') return 'FINISH';
 
       if (route === 'OUTER') {
-        if (node === 19) node = (s === steps - 1) ? 0 : 'FINISH';
+        if (node === 19) { node = 0; }
         else if (node === 0) return 'FINISH';
         else node = node + 1;
       } else if (route === 'DIAG_5') {
-        if (node === 5) node = 20;
-        else if (node === 20) node = 21;
-        else if (node === 21) node = 22;
-        else if (node === 22) node = 23;
-        else if (node === 23) node = 24;
-        else if (node === 24) node = 15;
+        if (node === 5) { node = 20; }
+        else if (node === 20) { node = 21; }
+        else if (node === 21) { node = 22; }
+        else if (node === 22) { node = 23; }
+        else if (node === 23) { node = 24; }
+        else if (node === 24) { node = 15; }
         else if (node === 15) { node = 16; route = 'OUTER'; }
-        else if (node === 19) node = (s === steps - 1) ? 0 : 'FINISH';
+        else if (node === 19) { node = 0; }
         else if (node === 0) return 'FINISH';
-        else node = node + 1;
+        else { node = node + 1; }
       } else if (route === 'DIAG_10') {
-        if (node === 10) node = 25;
-        else if (node === 25) node = 26;
-        else if (node === 26) node = 22;
-        else if (node === 22) node = 27;
-        else if (node === 27) node = 28;
-        else if (node === 28) node = (s === steps - 1) ? 0 : 'FINISH';
+        if (node === 10) { node = 25; }
+        else if (node === 25) { node = 26; }
+        else if (node === 26) { node = 22; }
+        else if (node === 22) { node = 27; }
+        else if (node === 27) { node = 28; }
+        else if (node === 28) { node = 0; route = 'OUTER'; }
         else if (node === 0) return 'FINISH';
+        else { node = node + 1; }
       } else if (route === 'CENTER') {
-        if (node === 22) node = 27;
-        else if (node === 27) node = 28;
-        else if (node === 28) node = (s === steps - 1) ? 0 : 'FINISH';
+        if (node === 22) { node = 27; }
+        else if (node === 27) { node = 28; }
+        else if (node === 28) { node = 0; route = 'OUTER'; }
         else if (node === 0) return 'FINISH';
+        else { node = node + 1; }
       }
     }
 
+    if (node === 0) return 'FINISH';
     return node;
   }
 
@@ -283,14 +286,21 @@ const YutnoriGame = (() => {
       return 'OUTER';
     }
 
-    if (currentNode === 5) return 'DIAG_5';
-    if (currentNode === 10) return 'DIAG_10';
-    if (currentNode === 22) return 'CENTER';
-
+    // 시작 route 결정 (코너 착지 시에만 변경)
     let r = currentRoute || 'OUTER';
-    if (r === 'DIAG_5') {
-      let node = currentNode;
-      for (let s = 0; s < steps; s++) {
+    if (currentNode === 5 && r === 'OUTER') r = 'DIAG_5';
+    else if (currentNode === 10 && r === 'OUTER') r = 'DIAG_10';
+    else if (currentNode === 22 && (r === 'DIAG_5' || r === 'DIAG_10')) r = 'CENTER';
+
+    // 이동 후 최종 route를 시뮬레이션
+    let node = currentNode;
+    for (let s = 0; s < steps; s++) {
+      if (node === 0 || node === 'FINISH') break;
+
+      if (r === 'OUTER') {
+        if (node === 19) node = 0;
+        else node = node + 1;
+      } else if (r === 'DIAG_5') {
         if (node === 5) node = 20;
         else if (node === 20) node = 21;
         else if (node === 21) node = 22;
@@ -299,6 +309,22 @@ const YutnoriGame = (() => {
         else if (node === 24) node = 15;
         else if (node === 15) { node = 16; r = 'OUTER'; }
         else if (node === 19) node = 0;
+        else if (node === 0) break;
+        else node = node + 1;
+      } else if (r === 'DIAG_10') {
+        if (node === 10) node = 25;
+        else if (node === 25) node = 26;
+        else if (node === 26) node = 22;
+        else if (node === 22) node = 27;
+        else if (node === 27) node = 28;
+        else if (node === 28) { node = 0; r = 'OUTER'; }
+        else if (node === 0) break;
+        else node = node + 1;
+      } else if (r === 'CENTER') {
+        if (node === 22) node = 27;
+        else if (node === 27) node = 28;
+        else if (node === 28) { node = 0; r = 'OUTER'; }
+        else if (node === 0) break;
         else node = node + 1;
       }
     }
@@ -1203,11 +1229,41 @@ const YutnoriGame = (() => {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
+  /* ── 인게임 탈주 처리 ── */
+  function removePlayer(playerId) {
+    // 호스트: 상태 머신에서 제거
+    if (P2P.isHost() && _hostState) {
+      const idx = _hostState.players.findIndex(p => String(p.id) === String(playerId));
+      if (idx !== -1) {
+        _hostState.players.splice(idx, 1);
+        if (_hostState.currentTurnIdx >= _hostState.players.length) {
+          _hostState.currentTurnIdx = 0;
+        }
+        if (_hostState.players.length === 1) {
+          _hostState.status = 'GAME_OVER';
+          _hostState.winner = _hostState.players[0];
+        }
+        _hostBroadcastState();
+      }
+    }
+    // 클라이언트: 로컬 표시용 목록에서도 제거
+    if (_clientState && _clientState.players) {
+      const cidx = _clientState.players.findIndex(p => String(p.id) === String(playerId));
+      if (cidx !== -1) {
+        _clientState.players.splice(cidx, 1);
+        if (_clientState.currentTurnIdx >= _clientState.players.length) {
+          _clientState.currentTurnIdx = 0;
+        }
+      }
+    }
+  }
+
   return {
     init,
     destroy,
     rematch,
     onMessage,
-    sendSnapshotTo
+    sendSnapshotTo,
+    removePlayer
   };
 })();

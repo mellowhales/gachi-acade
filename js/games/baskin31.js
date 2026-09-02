@@ -245,5 +245,19 @@ const Baskin31Game = (() => {
     P2P.offMessage(_onMessage);
   }
 
-  return { init, rematch, destroy, sendSnapshotTo };
+  /* ── 인게임 탈주 처리 ── */
+  function removePlayer(playerId) {
+    const idx = playersList.findIndex(p => String(p.id) === String(playerId));
+    if (idx === -1) return;
+    playersList.splice(idx, 1);
+    if (currentTurnIndex >= playersList.length) currentTurnIndex = 0;
+    if (playersList.length === 1) {
+      const winner = playersList[0];
+      const myId = (_context && _context.myId) || '';
+      const iWon = String(winner.id) === String(myId) || (winner.isHost && P2P.isHost());
+      setTimeout(() => { _onResult && _onResult(iWon); }, 1500);
+    }
+  }
+
+  return { init, rematch, destroy, sendSnapshotTo, removePlayer };
 })();

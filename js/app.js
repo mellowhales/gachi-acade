@@ -298,12 +298,23 @@
     if ($('text-bgm-vol')) $('text-bgm-vol').textContent = `${bgmVol}%`;
     if ($('text-sfx-vol')) $('text-sfx-vol').textContent = `${sfxVol}%`;
 
+    // 자동 준비 체크박스 상태 복원
+    const chkAutoReady = $('chk-auto-ready');
+    if (chkAutoReady) {
+      chkAutoReady.checked = (localStorage.getItem('arcade_auto_ready') === 'true');
+    }
+
     _updateSettingsMuteButtons(isBgmMuted, isSfxMuted);
 
     if ($('overlay-settings')) $('overlay-settings').classList.remove('hidden');
   }
 
   function _closeSettingsModal() {
+    // 자동 준비 설정 저장
+    const chkAutoReady = $('chk-auto-ready');
+    if (chkAutoReady) {
+      localStorage.setItem('arcade_auto_ready', chkAutoReady.checked ? 'true' : 'false');
+    }
     if (_backHistoryIfModal('settings')) return;
     if ($('overlay-settings')) $('overlay-settings').classList.add('hidden');
   }
@@ -720,6 +731,7 @@
 
   // 홈 화면 탭 전환
   $('tab-create').addEventListener('click', () => {
+    Sound.playClick();
     $('tab-create').classList.add('active');
     $('tab-join').classList.remove('active');
     $('panel-create').classList.add('active');
@@ -727,6 +739,7 @@
   });
 
   $('tab-join').addEventListener('click', () => {
+    Sound.playClick();
     $('tab-join').classList.add('active');
     $('tab-create').classList.remove('active');
     $('panel-join').classList.add('active');
@@ -955,10 +968,12 @@
 
     if (btnMinus && btnPlus && capVal) {
       btnMinus.addEventListener('click', () => {
+        Sound.playClick();
         createRoomCapacity = Math.max(2, createRoomCapacity - 1);
         capVal.textContent = `${createRoomCapacity}인`;
       });
       btnPlus.addEventListener('click', () => {
+        Sound.playClick();
         createRoomCapacity = Math.min(8, createRoomCapacity + 1);
         capVal.textContent = `${createRoomCapacity}인`;
       });
@@ -1105,10 +1120,12 @@
      3. 방 생성 및 참가
      ===================================================================== */
   $('btn-create-room').addEventListener('click', () => {
+    Sound.playClick();
     _startHostRoom();
   });
 
   $('btn-join-room').addEventListener('click', () => {
+    Sound.playClick();
     const rawVal = $('input-room-code').value;
     const code = String(rawVal || '').replace(/\s+/g, '').trim();
     if (code.length !== 4) {
@@ -1417,6 +1434,11 @@
       const rPlayer = roomPlayers.find(p => p.id === senderPeerId);
       if (rPlayer) { rPlayer.isReady = false; rPlayer.isSpectating = false; }
 
+      // 🌟 게임 모듈에 탈주자 제거 알림 → 남은 인원끼리 게임 계속
+      if (currentGameModule && typeof currentGameModule.removePlayer === 'function') {
+        currentGameModule.removePlayer(senderPeerId);
+      }
+
       // 남아있는 다른 모든 게스트들에게 브로드캐스트
       P2P.send({
         type: 'player_left_game_broadcast',
@@ -1584,6 +1606,10 @@
       // 다른 플레이어가 게임에서 나감
       console.log('[Guest] player_left_game_broadcast 수신:', data.name);
       activeGamePlayers = activeGamePlayers.filter(p => p.id !== data.playerId);
+      // 🌟 게임 모듈에 탈주자 제거 알림 → 남은 인원끼리 게임 계속
+      if (currentGameModule && typeof currentGameModule.removePlayer === 'function') {
+        currentGameModule.removePlayer(data.playerId);
+      }
       _showInGameAlert(`${data.name}님이 게임을 나갔습니다.`);
       _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
 
@@ -2001,6 +2027,7 @@
       }
 
       if (gKey && GAMES[gKey]) {
+        Sound.playClick();
         selectedGameKey = gKey;
         _broadcastRoomState();
         _updateRoomUI();
@@ -2022,6 +2049,7 @@
   $('btn-start-game').addEventListener('click', () => {
     const amIHost = P2P.isHost() || isHostPlayer;
     if (!amIHost && !isDevMode) return;
+    Sound.playStart();
     const curGameDef = GAMES[selectedGameKey];
     if (curGameDef && curGameDef.maxPlayers && roomPlayers.length > curGameDef.maxPlayers) {
       showToast(`${curGameDef.title}은(는) ${curGameDef.maxPlayers}인 전용 게임입니다.`, 'warn');
@@ -2655,7 +2683,18 @@
         window.FirebaseLobby.updateRoomStatus(currentRoomCode, 'waiting');
       }
     } else {
-      isMyReady = false;
+      // 🌟 자동 준비: 설정이 켜진 경우 방으로 돌아오자마자 자동 준비 전환
+      const autoReady = localStorage.getItem('arcade_auto_ready') === 'true';
+      if (autoReady) {
+        isMyReady = true;
+        setTimeout(() => {
+          P2P.send({ type: 'toggle_ready', isReady: true });
+          Sound.playReady();
+          _updateRoomUI();
+        }, 300);
+      } else {
+        isMyReady = false;
+      }
     }
 
     _enterRoomScreen(pushState);

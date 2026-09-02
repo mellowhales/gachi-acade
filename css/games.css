@@ -1743,26 +1743,40 @@
 }
 
 .cm-palette-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(10, 22px);
+  gap: 5px;
   align-items: center;
-  gap: 6px;
 }
 
 .cm-color-chip {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  padding: 0;
 }
 .cm-color-chip:hover {
   transform: scale(1.2);
+  z-index: 2;
 }
 .cm-color-chip.active {
-  transform: scale(1.25);
-  box-shadow: 0 0 0 2px var(--green), 0 2px 6px rgba(0,0,0,0.3);
+  transform: scale(1.28);
+  box-shadow: 0 0 0 2px var(--green), 0 2px 6px rgba(0,0,0,0.35);
+  border-color: #ffffff;
+  z-index: 3;
+}
+
+[data-theme="dark"] .cm-color-chip {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+[data-theme="dark"] .cm-color-chip.active {
+  box-shadow: 0 0 0 2px var(--green), 0 2px 6px rgba(0,0,0,0.6);
+  border-color: #ffffff;
 }
 
 .cm-tool-divider {
@@ -1933,7 +1947,8 @@
     gap: 6px;
   }
   .cm-palette-group {
-    gap: 4px;
+    grid-template-columns: repeat(10, 18px);
+    gap: 3px;
   }
   .cm-color-chip {
     width: 18px;

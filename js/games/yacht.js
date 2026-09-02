@@ -1256,5 +1256,19 @@ const YachtGame = (() => {
     if (layout) layout.classList.remove('yacht-wide-mode');
   }
 
-  return { init, destroy, sendSnapshotTo };
+  /* ── 인게임 탈주 처리 ── */
+  function removePlayer(playerId) {
+    const idx = players.findIndex(p => String(p.id) === String(playerId));
+    if (idx === -1) return;
+    players.splice(idx, 1);
+    if (currentTurnIdx >= players.length) currentTurnIdx = 0;
+    if (players.length === 1) {
+      const winner = players[0];
+      const myId = (_context && _context.myId) || '';
+      const iWon = String(winner.id) === String(myId) || (winner.isHost && P2P.isHost());
+      setTimeout(() => { _onResult && _onResult(iWon); }, 1500);
+    }
+  }
+
+  return { init, destroy, sendSnapshotTo, removePlayer };
 })();

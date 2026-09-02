@@ -6641,3 +6641,194 @@ html, body {
   pointer-events: none !important;
   opacity: 0 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   이모지 버튼 다크모드 스타일
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .room-emoji-panel,
+[data-theme="dark"] .game-emoji-panel {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .btn-emoji:hover {
+  background-color: var(--bg-hover, rgba(255, 255, 255, 0.08));
+}
+
+/* 이모지 SVG는 트위터 twemoji라 자체 색상이 있으므로 별도 filter 불필요 */
+
+/* ═══════════════════════════════════════════════════════════════
+   토글 스위치 (자동 준비 설정 등)
+   ═══════════════════════════════════════════════════════════════ */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--border, #cbd5e0);
+  border-radius: 24px;
+  transition: background 0.2s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--green, #38a169);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.setting-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted, #718096);
+  margin-top: 4px;
+  padding-left: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   모바일 UX 종합 개선 (≤ 480px 기준 소형 스마트폰 최적화)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 모든 버튼의 최소 터치 영역 44px 보장 */
+button, .btn, .btn-icon, .btn-emoji, .btn-theme-toggle,
+.btn-sound-toggle, .room-game-btn, .seg-btn {
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+@media (max-width: 480px) {
+  /* ─── 홈 화면: 게임 카드 1열 배치 ─── */
+  .home-game-list {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .sidebar-game-item {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+  }
+
+  /* ─── 방 화면: 게임 선택 카드 스크롤 ─── */
+  .room-game-list-wrap {
+    max-height: 220px !important;
+    overflow-y: auto !important;
+  }
+
+  .room-game-btn {
+    padding: 8px 10px !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* ─── 참가자 목록 최대 높이 제한 ─── */
+  #player-list {
+    max-height: 180px !important;
+    overflow-y: auto !important;
+  }
+
+  /* ─── 설정 모달: 하단 시트 스타일 ─── */
+  #overlay-settings {
+    align-items: flex-end !important;
+  }
+
+  .settings-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* ─── 인게임: 게임 영역 최대 활용 ─── */
+  .game-main-layout {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  .game-side-panel {
+    display: none !important;
+  }
+
+  /* ─── 채팅창 입력 폰트 크기 (iOS 줌 방지) ─── */
+  #room-chat-input,
+  #game-chat-input,
+  #wc-input,
+  input[type="text"],
+  input[type="number"],
+  input[type="password"] {
+    font-size: 16px !important; /* iOS 자동줌 방지 */
+  }
+
+  /* ─── 이모지 버튼 패널 ─── */
+  .room-emoji-panel,
+  .game-emoji-panel {
+    gap: 4px !important;
+    padding: 8px !important;
+  }
+
+  .btn-emoji .emoji-img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* ─── 결과 모달 ─── */
+  .result-modal {
+    padding: 16px !important;
+    margin: 8px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* 극소형 화면 추가 조정 */
+  .btn-emoji .emoji-img {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .player-item {
+    padding: 6px 8px !important;
+  }
+
+  .room-code-display {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ─── iOS Safe Area 지원 ─── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .game-chat-panel,
+  .settings-modal,
+  .result-modal {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
+

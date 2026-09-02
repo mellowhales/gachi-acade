@@ -42,7 +42,8 @@ const WordchainGame = (() => {
 
   let currentRound = 1;
   let roundWins    = {}; // { [playerId]: winCount }
-  let roundScores = {};
+  let roundScores  = {}; // { [playerId]: totalScore } — 누적 점수 (글자수 기반)
+  let playerScores = {}; // alias for roundScores (점수제 메인 변수)
 
   let playersList = [];
   let _onResult = null;
@@ -58,6 +59,7 @@ const WordchainGame = (() => {
     MAX_ROUNDS = (_context && typeof _context.targetRounds === 'number') ? Math.max(1, Math.min(8, _context.targetRounds)) : 3;
     currentRound = 1;
     roundWins = {};
+    playerScores = {};
     words = [];
     lastWord = '';
     usedWords = new Set();
@@ -72,7 +74,8 @@ const WordchainGame = (() => {
       : [{ id: 'host', name: '호스트', isHost: true }];
 
     roundWins = {};
-    playersList.forEach(p => { roundWins[p.id] = 0; });
+    playerScores = {};
+    playersList.forEach(p => { roundWins[p.id] = 0; playerScores[p.id] = 0; });
 
     const initialWord = _context.startWord || '하늘';
     usedWords.add(initialWord);
@@ -317,6 +320,13 @@ const WordchainGame = (() => {
     lastWord = word;
     words.push({ word, playerName });
 
+    // 🌟 글자 수 기반 점수 계산 (글자수 × 1.5점)
+    if (isLocal) {
+      const myId = _context.myId || 'me';
+      const wordScore = Math.floor(word.length * 1.5);
+      playerScores[myId] = (playerScores[myId] || 0) + wordScore;
+    }
+
     _renderChain();
     _updateStageDisplay();
 
@@ -326,16 +336,20 @@ const WordchainGame = (() => {
     currentTurnIndex = nextIdx;
 
     if (isLocal) {
+      const myId = _context.myId || 'me';
       P2P.send({
         type: 'wc_word',
         word: word,
         nextTurnIndex: nextIdx,
         totalTimeLeft: totalTimeLeft,
-        whoName: playerName
+        whoName: playerName,
+        scoreGain: Math.floor(word.length * 1.5),
+        scorerId: myId
       });
     }
 
     _updateTurnUI();
+    _updateSidebarWins();
     _startTurnTimer();
   }
 
@@ -516,6 +530,11 @@ const WordchainGame = (() => {
       // 🌟 상대방이 단어 제출 시 내 로컬 타이머도 즉시 일시정지
       _stopTimer();
 
+      // 🌟 상대방 점수 반영
+      if (data.scorerId && typeof data.scoreGain === 'number') {
+        playerScores[data.scorerId] = (playerScores[data.scorerId] || 0) + data.scoreGain;
+      }
+
       if (typeof data.totalTimeLeft === 'number') totalTimeLeft = data.totalTimeLeft;
       const focusEl  = document.getElementById('wc-focus-char');
       const subLabel = document.getElementById('wc-stage-sub-label');
@@ -545,6 +564,7 @@ const WordchainGame = (() => {
     } else if (data.type === 'wc_round_result') {
       // 호스트가 보내는 라운드 결과 -> 게스트도 새 라운드 시작!
       if (data.roundWins) Object.assign(roundWins, data.roundWins);
+      if (data.playerScores) Object.assign(playerScores, data.playerScores);
       _updateSidebarWins();
       setTimeout(() => {
         _startNextRound(data.nextRound, data.startWord);
@@ -568,11 +588,13 @@ const WordchainGame = (() => {
     } else if (data.type === 'wc_final') {
       // 게임 최종 결과
       if (data.roundWins) Object.assign(roundWins, data.roundWins);
+      if (data.playerScores) Object.assign(playerScores, data.playerScores);
       if (!gameOver) {
         gameOver = true;
         const myId = _context.myId || '';
         const iWon = (String(data.winnerId) === String(myId));
         _stopTimer();
+        _updateSidebarWins();
         _showStageNotice(iWon ? '<i class="fa-solid fa-trophy"></i> 최종 승리!' : `<i class="fa-solid fa-trophy"></i> ${data.winnerName}님 최종 우승!`, false);
         const input  = document.getElementById('wc-input');
         const submit = document.getElementById('wc-submit');
@@ -600,6 +622,15 @@ const WordchainGame = (() => {
       actualWinnerName = winner ? winner.name  : '';
     }
 
+    // 🌟 탈락자 점수 20% 차감 패널티
+    const loserId = iWon ? (actualWinnerId ? '' : myId) : myId;
+    const loserIdActual = iWon
+      ? playersList.find(p => p.name === loserName)?.id || ''
+      : myId;
+    if (loserIdActual && playerScores[loserIdActual] !== undefined) {
+      playerScores[loserIdActual] = Math.max(0, Math.floor(playerScores[loserIdActual] * 0.8));
+    }
+
     if (iWon && myId) {
       roundWins[myId] = (roundWins[myId] || 0) + 1;
     } else if (actualWinnerId && !iWon) {
@@ -618,12 +649,14 @@ const WordchainGame = (() => {
     // 호스트가 다음 라운드 또는 최종 결과 발행
     if (P2P.isHost()) {
       const snap = JSON.parse(JSON.stringify(roundWins));
+      const scoreSnap = JSON.parse(JSON.stringify(playerScores));
       if (currentRound < MAX_ROUNDS) {
         const nextRound = currentRound + 1;
         const nextStartWord = START_WORDS[Math.floor(Math.random() * START_WORDS.length)];
         P2P.send({
           type: 'wc_round_result',
           roundWins: snap,
+          playerScores: scoreSnap,
           nextRound: nextRound,
           startWord: nextStartWord
         });
@@ -631,12 +664,18 @@ const WordchainGame = (() => {
           _startNextRound(nextRound, nextStartWord);
         }, 2500);
       } else {
-        let maxWins = 0, finalWinnerId = null, finalWinnerName = '';
+        // 🌟 최종 승자: 점수 기반 (동점이면 라운드 승리 수로 타이브레이크)
+        let maxScore = -1, finalWinnerId = null, finalWinnerName = '';
         playersList.forEach(p => {
+          const s = playerScores[p.id] || 0;
           const w = roundWins[p.id] || 0;
-          if (w > maxWins) { maxWins = w; finalWinnerId = p.id; finalWinnerName = p.name; }
+          if (s > maxScore || (s === maxScore && w > (roundWins[finalWinnerId] || 0))) {
+            maxScore = s;
+            finalWinnerId = p.id;
+            finalWinnerName = p.name;
+          }
         });
-        P2P.send({ type:'wc_final', winnerId:finalWinnerId, winnerName:finalWinnerName, roundWins:snap });
+        P2P.send({ type:'wc_final', winnerId:finalWinnerId, winnerName:finalWinnerName, roundWins:snap, playerScores:scoreSnap });
         gameOver = true;
         setTimeout(() => {
           const myWon = (String(finalWinnerId) === String(myId));
@@ -686,6 +725,7 @@ const WordchainGame = (() => {
       const item = document.getElementById(`gsp-item-${idx}`);
       if (!item) return;
       const wins = roundWins[p.id] || 0;
+      const score = playerScores[p.id] || 0;
       let badge = item.querySelector('.gsp-win-count-badge');
       if (!badge) {
         badge = document.createElement('span');
@@ -693,12 +733,9 @@ const WordchainGame = (() => {
         const meta = item.querySelector('.gsp-meta');
         if (meta) meta.appendChild(badge);
       }
-      if (wins > 0) {
-        badge.innerHTML = `<i class="fa-solid fa-trophy"></i> ${wins}승`;
-        badge.style.display = '';
-      } else {
-        badge.style.display = 'none';
-      }
+      // 🌟 점수와 승리 수 함께 표시
+      badge.innerHTML = `<i class="fa-solid fa-star"></i> ${score}점${wins > 0 ? ` &nbsp;<i class="fa-solid fa-trophy"></i> ${wins}승` : ''}`;
+      badge.style.display = '';
     });
   }
 
@@ -718,6 +755,35 @@ const WordchainGame = (() => {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  /* ── 인게임 플레이어 탈주 처리 ── */
+  function removePlayer(playerId) {
+    if (gameOver) return;
+    const idx = playersList.findIndex(p => String(p.id) === String(playerId));
+    if (idx === -1) return;
+
+    playersList.splice(idx, 1);
+
+    // 턴 인덱스 재조정
+    if (currentTurnIndex >= playersList.length) {
+      currentTurnIndex = 0;
+    }
+
+    // 남은 플레이어가 1명이면 자동 승리
+    if (playersList.length === 1) {
+      _stopTimer();
+      gameOver = true;
+      const winner = playersList[0];
+      const myId = _context.myId || '';
+      const iWon = (String(winner.id) === String(myId)) || (winner.isHost && P2P.isHost());
+      _showStageNotice(iWon ? '<i class="fa-solid fa-trophy"></i> 상대방이 나가서 승리!' : `<i class="fa-solid fa-trophy"></i> ${winner.name}님 자동 승리!`, false);
+      setTimeout(() => { _onResult && _onResult(iWon); }, 2000);
+      return;
+    }
+
+    _updateTurnUI();
+    _updateSidebarWins();
+  }
+
   function sendSnapshotTo(targetPeerId) {
     if (!P2P.isHost()) return;
     P2P.send({
@@ -733,5 +799,5 @@ const WordchainGame = (() => {
     }, targetPeerId);
   }
 
-  return { init, destroy, rematch, sendSnapshotTo };
+  return { init, destroy, rematch, sendSnapshotTo, removePlayer };
 })();

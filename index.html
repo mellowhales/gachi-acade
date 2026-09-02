@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>가치아케이드 | 서버 없는 실시간 멀티플레이 웹 게임</title>
   
   <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 -->
@@ -766,6 +769,21 @@
           <input type="range" id="slider-sfx-vol" min="0" max="100" value="70" class="sound-range-slider" />
           <span class="vol-text" id="text-sfx-vol">70%</span>
         </div>
+      </div>
+
+      <!-- 자동 준비 (연전용) 설정 -->
+      <div class="setting-item">
+        <div class="setting-meta">
+          <div class="setting-title">
+            <i class="fa-solid fa-bolt" style="color:var(--yellow);"></i>
+            <span>자동 준비 (연전용)</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="chk-auto-ready">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-desc">게임 종료 후 방으로 돌아올 때 자동으로 준비 상태로 전환합니다.</div>
       </div>
     </div>
 
