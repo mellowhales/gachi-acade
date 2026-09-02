@@ -3094,11 +3094,17 @@ html, body {
 }
 
 @media (max-width: 960px) {
-  /* 방 로비 화면 */
+  /* ── 방 로비 화면 (모바일 상하 스크롤 완벽 지원 및 중첩 스크롤 트랩 방지) ── */
   #screen-room {
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 100vh;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain;
     width: 100%;
     max-width: 100vw;
   }
@@ -3108,34 +3114,54 @@ html, body {
     flex-wrap: wrap;
     width: 100%;
     box-sizing: border-box;
+    flex-shrink: 0;
   }
   .room-body {
-    display: flex;
-    flex-direction: column;
-    padding: 16px 12px 32px 12px;
-    gap: 16px;
-    width: 100%;
-    max-width: 100vw;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 14px 12px 48px 12px !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    flex: none !important;
   }
+  .room-left-panel {
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  /* 🌟 참가자 목록 카드: 모바일에서는 내부 스크롤을 풀어 전체 화면 스크롤과 일체화 (위로 올릴 때 갇히는 버그 완전 해결) */
   .room-players-panel {
-    order: 1;
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box;
+  }
+  #player-list {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .room-center-panel {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
     box-sizing: border-box;
   }
   .room-chat-panel {
-    order: 2;
-    width: 100%;
-    max-width: 100%;
-    height: 260px;
-    box-sizing: border-box;
-  }
-  .room-center-panel {
-    order: 3;
-    width: 100%;
-    max-width: 100%;
+    order: 3 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 280px !important;
     box-sizing: border-box;
   }
   .room-game-grid {
@@ -6710,125 +6736,5 @@ html, body {
   color: var(--text-muted, #718096);
   margin-top: 4px;
   padding-left: 2px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   모바일 UX 종합 개선 (≤ 480px 기준 소형 스마트폰 최적화)
-   ═══════════════════════════════════════════════════════════════ */
-
-/* 모든 버튼의 최소 터치 영역 44px 보장 */
-button, .btn, .btn-icon, .btn-emoji, .btn-theme-toggle,
-.btn-sound-toggle, .room-game-btn, .seg-btn {
-  min-height: 36px;
-  touch-action: manipulation;
-}
-
-@media (max-width: 480px) {
-  /* ─── 홈 화면: 게임 카드 1열 배치 ─── */
-  .home-game-list {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-  }
-
-  .sidebar-game-item {
-    flex-direction: row !important;
-    align-items: center !important;
-    padding: 10px 12px !important;
-    gap: 10px !important;
-  }
-
-  /* ─── 방 화면: 게임 선택 카드 스크롤 ─── */
-  .room-game-list-wrap {
-    max-height: 220px !important;
-    overflow-y: auto !important;
-  }
-
-  .room-game-btn {
-    padding: 8px 10px !important;
-    font-size: 0.82rem !important;
-  }
-
-  /* ─── 참가자 목록 최대 높이 제한 ─── */
-  #player-list {
-    max-height: 180px !important;
-    overflow-y: auto !important;
-  }
-
-  /* ─── 설정 모달: 하단 시트 스타일 ─── */
-  #overlay-settings {
-    align-items: flex-end !important;
-  }
-
-  .settings-modal {
-    width: 100% !important;
-    max-width: 100% !important;
-    border-radius: 20px 20px 0 0 !important;
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
-    max-height: 85vh !important;
-    overflow-y: auto !important;
-  }
-
-  /* ─── 인게임: 게임 영역 최대 활용 ─── */
-  .game-main-layout {
-    flex-direction: column !important;
-    gap: 0 !important;
-  }
-
-  .game-side-panel {
-    display: none !important;
-  }
-
-  /* ─── 채팅창 입력 폰트 크기 (iOS 줌 방지) ─── */
-  #room-chat-input,
-  #game-chat-input,
-  #wc-input,
-  input[type="text"],
-  input[type="number"],
-  input[type="password"] {
-    font-size: 16px !important; /* iOS 자동줌 방지 */
-  }
-
-  /* ─── 이모지 버튼 패널 ─── */
-  .room-emoji-panel,
-  .game-emoji-panel {
-    gap: 4px !important;
-    padding: 8px !important;
-  }
-
-  .btn-emoji .emoji-img {
-    width: 24px !important;
-    height: 24px !important;
-  }
-
-  /* ─── 결과 모달 ─── */
-  .result-modal {
-    padding: 16px !important;
-    margin: 8px !important;
-  }
-}
-
-@media (max-width: 360px) {
-  /* 극소형 화면 추가 조정 */
-  .btn-emoji .emoji-img {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
-  .player-item {
-    padding: 6px 8px !important;
-  }
-
-  .room-code-display {
-    font-size: 1.2rem !important;
-  }
-}
-
-/* ─── iOS Safe Area 지원 ─── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .game-chat-panel,
-  .settings-modal,
-  .result-modal {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-  }
 }
 
