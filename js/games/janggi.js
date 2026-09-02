@@ -159,8 +159,33 @@ const JanggiGame = (() => {
         <div class="janggi-card">
           <div class="janggi-board-container" id="jg-board-container">
             <div class="janggi-wood-board" id="jg-board">
-              <!-- SVG 정밀 격자선 + 궁성 사선 + 정통 화점(성점) 레이어 -->
+              <!-- SVG 정밀 격자선 + 궁성 사선 + 정통 화점(성점) + 접이식 중앙 접힌 자국 & 쇠경첩 레이어 -->
               <svg class="janggi-grid-svg" viewBox="0 0 420 470" preserveAspectRatio="none">
+                <defs>
+                  <!-- 🌟 접이식 접힌 홈 음영 그라데이션 -->
+                  <linearGradient id="jg-fold-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="rgba(70, 35, 10, 0)" />
+                    <stop offset="35%" stop-color="rgba(50, 25, 5, 0.35)" />
+                    <stop offset="50%" stop-color="rgba(30, 15, 5, 0.75)" />
+                    <stop offset="65%" stop-color="rgba(255, 245, 215, 0.6)" />
+                    <stop offset="100%" stop-color="rgba(255, 245, 215, 0)" />
+                  </linearGradient>
+
+                  <!-- 🌟 쇠경첩 메탈릭 실린더 그라데이션 -->
+                  <linearGradient id="jg-hinge-metal" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#334155" />
+                    <stop offset="25%" stop-color="#cbd5e1" />
+                    <stop offset="55%" stop-color="#475569" />
+                    <stop offset="85%" stop-color="#1e293b" />
+                    <stop offset="100%" stop-color="#0f172a" />
+                  </linearGradient>
+
+                  <!-- 🌟 쇠경첩 그림자 필터 -->
+                  <filter id="jg-hinge-shadow" x="-20%" y="-40%" width="140%" height="200%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,0.5)" />
+                  </filter>
+                </defs>
+
                 <!-- 외곽 테두리선 (굵은 흑색선 2.5px) -->
                 <rect x="25" y="25" width="370" height="420" class="jg-border-line" />
 
@@ -193,6 +218,32 @@ const JanggiGame = (() => {
                     </g>
                   `;
                 }).join('')}
+
+                <!-- 🌟 정통 접이식 장기판 중앙 접힌 자국 (음영 홈 & 하이라이트) -->
+                <rect x="0" y="232" width="420" height="6" fill="url(#jg-fold-grad)" />
+                <line x1="0" y1="235" x2="420" y2="235" stroke="#3d210b" stroke-width="1.2" />
+                <line x1="0" y1="236" x2="420" y2="236" stroke="rgba(255, 255, 255, 0.45)" stroke-width="0.8" />
+
+                <!-- 🌟 좌우 2번째 칸 중앙 쇠클립 / 경첩 (Left: x=94.375, Right: x=325.625) -->
+                <!-- 좌측 쇠경첩 -->
+                <g class="jg-hinge" filter="url(#jg-hinge-shadow)">
+                  <rect x="73.375" y="230.5" width="42" height="9" rx="4.5" fill="url(#jg-hinge-metal)" stroke="#1e293b" stroke-width="0.8" />
+                  <!-- 3단 분할선 -->
+                  <line x1="87.375" y1="231" x2="87.375" y2="239" stroke="#0f172a" stroke-width="1.2" />
+                  <line x1="88.375" y1="231.5" x2="88.375" y2="238.5" stroke="rgba(255, 255, 255, 0.4)" stroke-width="0.8" />
+                  <line x1="101.375" y1="231" x2="101.375" y2="239" stroke="#0f172a" stroke-width="1.2" />
+                  <line x1="102.375" y1="231.5" x2="102.375" y2="238.5" stroke="rgba(255, 255, 255, 0.4)" stroke-width="0.8" />
+                </g>
+
+                <!-- 우측 쇠경첩 -->
+                <g class="jg-hinge" filter="url(#jg-hinge-shadow)">
+                  <rect x="304.625" y="230.5" width="42" height="9" rx="4.5" fill="url(#jg-hinge-metal)" stroke="#1e293b" stroke-width="0.8" />
+                  <!-- 3단 분할선 -->
+                  <line x1="318.625" y1="231" x2="318.625" y2="239" stroke="#0f172a" stroke-width="1.2" />
+                  <line x1="319.625" y1="231.5" x2="319.625" y2="238.5" stroke="rgba(255, 255, 255, 0.4)" stroke-width="0.8" />
+                  <line x1="332.625" y1="231" x2="332.625" y2="239" stroke="#0f172a" stroke-width="1.2" />
+                  <line x1="333.625" y1="231.5" x2="333.625" y2="238.5" stroke="rgba(255, 255, 255, 0.4)" stroke-width="0.8" />
+                </g>
               </svg>
 
               <!-- 기물 및 인터랙션 레이어 -->

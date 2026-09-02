@@ -33,6 +33,13 @@ const AlkkagiGame = (() => {
     maxY: BOARD_MARGIN + BOARD_HEIGHT
   };
 
+  // 🌟 접이식 장기판 쇠경첩 장애물 (알까기 충돌체)
+  // Left: cx = 50 + 94.375 = 144.375, Right: cx = 50 + 325.625 = 375.625, cy = 50 + 235 = 285
+  const HINGES = [
+    { cx: 144.375, cy: 285, hw: 21, hh: 4.5, r: 4.5 },
+    { cx: 375.625, cy: 285, hw: 21, hh: 4.5, r: 4.5 }
+  ];
+
   // 진영: 'cho' (초, 楚, 청색, 선공), 'han' (한, 漢, 적색, 후공)
   let mySide = 'cho';
   let currentTurn = 'cho';
@@ -593,6 +600,56 @@ const AlkkagiGame = (() => {
           }
         }
       }
+
+      // 3. 🌟 접이식 장기판 중앙 쇠경첩(Hinges) 장애물 탄성 충돌 및 반사
+      pieces.forEach(p => {
+        if (p.isDead || p.isFalling) return;
+
+        HINGES.forEach(h => {
+          // 캡슐 형태: 선분 (h.cx - (h.hw - h.r), h.cy) ~ (h.cx + (h.hw - h.r), h.cy)
+          const segMinX = h.cx - (h.hw - h.r);
+          const segMaxX = h.cx + (h.hw - h.r);
+          const closestX = Math.max(segMinX, Math.min(segMaxX, p.x));
+          const closestY = h.cy;
+
+          const dx = p.x - closestX;
+          const dy = p.y - closestY;
+          const dist = Math.hypot(dx, dy);
+          const minDist = p.radius + h.r;
+
+          if (dist < minDist) {
+            let nx = 0;
+            let ny = 0;
+            if (dist > 0.0001) {
+              nx = dx / dist;
+              ny = dy / dist;
+            } else {
+              ny = (p.y < h.cy) ? -1 : 1;
+            }
+
+            const overlap = minDist - dist;
+            p.x += nx * overlap;
+            p.y += ny * overlap;
+
+            // 법선 방향 속도 성분
+            const vn = p.vx * nx + p.vy * ny;
+            if (vn < 0) {
+              const HINGE_RESTITUTION = 0.88; // 묵직한 메탈 탄성 반발
+              p.vx -= (1 + HINGE_RESTITUTION) * vn * nx;
+              p.vy -= (1 + HINGE_RESTITUTION) * vn * ny;
+              stillMoving = true;
+
+              const now = performance.now();
+              if (Math.abs(vn) > 0.3 && (now - lastHitSoundTime > 40)) {
+                lastHitSoundTime = now;
+                if (typeof Sound !== 'undefined' && Sound.playAlkkagiHit) {
+                  Sound.playAlkkagiHit(Math.abs(vn) * 0.12);
+                }
+              }
+            }
+          }
+        });
+      });
     }
 
     const hasFalling = pieces.some(p => p.isFalling);
@@ -825,6 +882,99 @@ const AlkkagiGame = (() => {
       ctx.lineTo(sx, sy + 4);
       ctx.stroke();
     });
+
+    // 🌟 정통 접이식 장기판 중앙 접힌 자국 (음영 홈 & 하이라이트)
+    const cy = by + 235;
+    const foldGrad = ctx.createLinearGradient(0, cy - 3, 0, cy + 3);
+    foldGrad.addColorStop(0, 'rgba(70, 35, 10, 0)');
+    foldGrad.addColorStop(0.35, 'rgba(50, 25, 5, 0.35)');
+    foldGrad.addColorStop(0.5, 'rgba(30, 15, 5, 0.75)');
+    foldGrad.addColorStop(0.65, 'rgba(255, 245, 215, 0.6)');
+    foldGrad.addColorStop(1, 'rgba(255, 245, 215, 0)');
+    ctx.fillStyle = foldGrad;
+    ctx.fillRect(bx, cy - 3, bw, 6);
+
+    ctx.beginPath();
+    ctx.moveTo(bx, cy);
+    ctx.lineTo(bx + bw, cy);
+    ctx.strokeStyle = '#3d210b';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(bx, cy + 1);
+    ctx.lineTo(bx + bw, cy + 1);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // 🌟 좌우 2번째 칸 중앙 쇠클립 / 경첩 렌더링
+    HINGES.forEach(h => {
+      _drawMetalHinge(ctx, h.cx, h.cy, h.hw, h.hh, h.r);
+    });
+  }
+
+  function _drawMetalHinge(context, cx, cy, hw, hh, r) {
+    context.save();
+
+    // 그림자
+    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    context.shadowBlur = 4;
+    context.shadowOffsetY = 2;
+
+    // 쇠경첩 메탈릭 그라데이션 본체
+    const grad = context.createLinearGradient(0, cy - hh, 0, cy + hh);
+    grad.addColorStop(0.0, '#334155');
+    grad.addColorStop(0.25, '#cbd5e1');
+    grad.addColorStop(0.55, '#475569');
+    grad.addColorStop(0.85, '#1e293b');
+    grad.addColorStop(1.0, '#0f172a');
+
+    context.fillStyle = grad;
+    _fillRoundedRect(context, cx - hw, cy - hh, hw * 2, hh * 2, r);
+
+    context.restore();
+
+    // 외곽선
+    context.save();
+    context.strokeStyle = '#1e293b';
+    context.lineWidth = 0.8;
+    _strokeRoundedRect(context, cx - hw, cy - hh, hw * 2, hh * 2, r);
+
+    // 3단 배럴 분할선 (2줄의 홈)
+    [-7, 7].forEach(offset => {
+      const sx = cx + offset;
+      context.beginPath();
+      context.moveTo(sx, cy - hh + 0.5);
+      context.lineTo(sx, cy + hh - 0.5);
+      context.strokeStyle = '#0f172a';
+      context.lineWidth = 1.2;
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(sx + 1, cy - hh + 1);
+      context.lineTo(sx + 1, cy + hh - 1);
+      context.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      context.lineWidth = 0.8;
+      context.stroke();
+    });
+
+    context.restore();
+  }
+
+  function _strokeRoundedRect(context, x, y, width, height, radius) {
+    context.beginPath();
+    context.moveTo(x + radius, y);
+    context.lineTo(x + width - radius, y);
+    context.quadraticCurveTo(x + width, y, x + width, y + radius);
+    context.lineTo(x + width, y + height - radius);
+    context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    context.lineTo(x + radius, y + height);
+    context.quadraticCurveTo(x, y + height, x, y + height - radius);
+    context.lineTo(x, y + radius);
+    context.quadraticCurveTo(x, y, x + radius, y);
+    context.closePath();
+    context.stroke();
   }
 
   function _fillRoundedRect(context, x, y, width, height, radius) {
