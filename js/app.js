@@ -1540,16 +1540,9 @@
 
       if ($('room-code-display')) $('room-code-display').textContent = currentRoomCode;
 
-      // 🎮 현재 게임 화면(screen-game)에 있을 때는 사이드바 갱신
+      // 🎮 현재 게임 화면(screen-game)에 있을 때는 사이드바 갱신, 아니면 방 UI 갱신
       if (screens.game.classList.contains('active')) {
         _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
-      } else if (isRoomGameActive) {
-        // 🌟 게임이 이미 진행 중(isRoomGameActive)인데 아직 게임 화면에 들어가지 못한 경우 즉시 게임 화면으로 진입!
-        console.log('[Guest] 활성 게임 감지 -> 게임 화면으로 즉시 자동 진입:', selectedGameKey);
-        const myId = String(P2P.getMyId() || '');
-        const amIPlayer = activeGamePlayers.some(p => String(p.id) === myId);
-        const isSpectator = !amIPlayer && activeGamePlayers.length > 0;
-        _launchGame(selectedGameKey, activeGamePlayers.length > 0 ? activeGamePlayers : roomPlayers, null, selectedGameRounds, selectedGameSideMode, isSpectator);
       } else if (!screens.room.classList.contains('active')) {
         _enterRoomScreen();
       } else {
@@ -1578,12 +1571,6 @@
         
         if (screens.game.classList.contains('active')) {
           _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
-        } else if (isRoomGameActive) {
-          // 🌟 실시간 참가자 갱신 시에도 게임 활성 상태면 즉시 게임 화면 진입
-          const myIdStr = String(myId || '');
-          const amIPlayer = activeGamePlayers.some(p => String(p.id) === myIdStr);
-          const isSpectator = !amIPlayer && activeGamePlayers.length > 0;
-          _launchGame(selectedGameKey, activeGamePlayers.length > 0 ? activeGamePlayers : roomPlayers, null, selectedGameRounds, selectedGameSideMode, isSpectator);
         } else {
           _updateRoomUI();
         }
