@@ -461,7 +461,7 @@ body {
   align-items: start;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   html, body {
     height: 100% !important;
     min-height: 100% !important;
@@ -3996,13 +3996,6 @@ html, body {
     display: inline-flex !important;
   }
 
-  /* 🌟 윷놀이 모바일 레이아웃: 온전하고 선명한 윷판 + 자연스러운 세로 스크롤 🌟 */
-  .yut-game-container {
-    height: auto !important;
-    gap: 14px !important;
-    padding: 4px 6px !important;
-    overflow: visible !important;
-    width: 100% !important;
   /* 🌟 [모바일 UI] 윷놀이 프로필 완주 배지 (0/4) 스타일 🌟 */
   .yut-gsp-finished-badge {
     display: inline-flex !important;
