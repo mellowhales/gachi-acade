@@ -1086,6 +1086,11 @@
     // 진영 지원 게임: 오목, 체스, 장기, 알까기
     const isSideGame = ['gomoku', 'chess', 'janggi', 'alkkagi'].includes(selectedGameKey);
 
+    const selectPanel = document.querySelector('.game-select-panel');
+    if (selectPanel) {
+      selectPanel.classList.toggle('has-extra-settings', isRoundGame || isSideGame);
+    }
+
     if (isRoundGame) {
       bar.classList.remove('hidden');
       roundsItem.classList.remove('hidden');
