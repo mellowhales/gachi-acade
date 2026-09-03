@@ -367,6 +367,14 @@
     </div>
   </header>
 
+  <!-- 방 모바일 채팅 토글 플로팅 버튼 & 백드롭 -->
+  <button type="button" class="btn btn-primary btn-sm btn-mobile-chat-toggle" id="btn-room-mobile-chat-toggle" title="채팅창 열기">
+    <i class="fa-regular fa-comments"></i>
+    <span>채팅</span>
+    <span class="chat-badge-dot hidden" id="room-mobile-chat-badge"></span>
+  </button>
+  <div class="mobile-chat-backdrop hidden" id="room-mobile-chat-backdrop"></div>
+
 <!-- 방 본체 (3단: 좌측 참가자 / 중앙 게임선택 / 우측 채팅) -->
   <div class="room-body" id="room-body">
 
@@ -573,10 +581,13 @@
     </section>
 
     <!-- 3. 오른쪽: 방 실시간 채팅창 -->
-    <section class="room-chat-panel card">
+    <section class="room-chat-panel card" id="room-chat-panel">
       <div class="panel-header">
         <h3 class="panel-title"><i class="fa-regular fa-comments"></i> 실시간 채팅</h3>
         <span class="chat-count-badge" id="chat-count-badge">ROOM</span>
+        <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-room-mobile-chat" title="채팅창 닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
       <div class="chat-messages-wrap" id="room-chat-messages">
         <div class="chat-system-msg">방 채팅에 입장했습니다. 매너 있는 대화를 나눠보세요!</div>

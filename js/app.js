@@ -1766,10 +1766,16 @@
 
     // 모바일에서 채팅창이 닫혀있는 동안 상대방 메시지 도착 시 뱃지 표시
     if (!isMe) {
-      const chatPanel = $('game-chat-panel');
-      const badge = $('mobile-chat-badge');
-      if (chatPanel && !chatPanel.classList.contains('mobile-open') && badge) {
-        badge.classList.remove('hidden');
+      const gameChatPanel = $('game-chat-panel');
+      const gameBadge = $('mobile-chat-badge');
+      if (gameChatPanel && !gameChatPanel.classList.contains('mobile-open') && gameBadge) {
+        gameBadge.classList.remove('hidden');
+      }
+
+      const roomChatPanel = $('room-chat-panel');
+      const roomBadge = $('room-mobile-chat-badge');
+      if (roomChatPanel && !roomChatPanel.classList.contains('mobile-open') && roomBadge) {
+        roomBadge.classList.remove('hidden');
       }
     }
 
@@ -1800,6 +1806,31 @@
   if ($('btn-mobile-chat-toggle')) $('btn-mobile-chat-toggle').addEventListener('click', _openMobileChat);
   if ($('btn-close-mobile-chat')) $('btn-close-mobile-chat').addEventListener('click', _closeMobileChat);
   if ($('mobile-chat-backdrop')) $('mobile-chat-backdrop').addEventListener('click', _closeMobileChat);
+
+  // ── 📱 모바일 방(대기실) 채팅 팝업 제어 ──
+  function _openRoomMobileChat() {
+    _pushHistory({ modal: 'room_chat' }, '#room_chat');
+    const chatPanel = $('room-chat-panel');
+    const backdrop = $('room-mobile-chat-backdrop');
+    const badge = $('room-mobile-chat-badge');
+    if (chatPanel) chatPanel.classList.add('mobile-open');
+    if (backdrop) backdrop.classList.remove('hidden');
+    if (badge) badge.classList.add('hidden');
+    const input = $('room-chat-input');
+    if (input) setTimeout(() => input.focus(), 150);
+  }
+
+  function _closeRoomMobileChat() {
+    if (_backHistoryIfModal('room_chat')) return;
+    const chatPanel = $('room-chat-panel');
+    const backdrop = $('room-mobile-chat-backdrop');
+    if (chatPanel) chatPanel.classList.remove('mobile-open');
+    if (backdrop) backdrop.classList.add('hidden');
+  }
+
+  if ($('btn-room-mobile-chat-toggle')) $('btn-room-mobile-chat-toggle').addEventListener('click', _openRoomMobileChat);
+  if ($('btn-close-room-mobile-chat')) $('btn-close-room-mobile-chat').addEventListener('click', _closeRoomMobileChat);
+  if ($('room-mobile-chat-backdrop')) $('room-mobile-chat-backdrop').addEventListener('click', _closeRoomMobileChat);
 
   // 채팅 이벤트 바인딩
   $('btn-room-chat-send').addEventListener('click', () => _sendChatMessage('room-chat-input'));
@@ -3015,8 +3046,14 @@
       $('overlay-room-password').classList.add('hidden');
       return;
     }
-    if ($('profile-bubble-popup') && !$('profile-bubble-popup').classList.contains('hidden')) {
-      $('profile-bubble-popup').classList.add('hidden');
+    if ($('room-chat-panel') && $('room-chat-panel').classList.contains('mobile-open')) {
+      $('room-chat-panel').classList.remove('mobile-open');
+      if ($('room-mobile-chat-backdrop')) $('room-mobile-chat-backdrop').classList.add('hidden');
+      return;
+    }
+    if ($('game-chat-panel') && $('game-chat-panel').classList.contains('mobile-open')) {
+      $('game-chat-panel').classList.remove('mobile-open');
+      if ($('mobile-chat-backdrop')) $('mobile-chat-backdrop').classList.add('hidden');
       return;
     }
     if ($('overlay-result') && !$('overlay-result').classList.contains('hidden')) {
