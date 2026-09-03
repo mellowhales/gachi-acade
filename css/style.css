@@ -4003,28 +4003,68 @@ html, body {
     padding: 4px 6px !important;
     overflow: visible !important;
     width: 100% !important;
+  /* 🌟 [모바일 UI] 윷놀이 프로필 완주 배지 (0/4) 스타일 🌟 */
+  .yut-gsp-finished-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    background: var(--green-tint, #f0fff4) !important;
+    color: var(--green-deep, #22543d) !important;
+    border: 1px solid var(--green-border, #bbf7d0) !important;
+    border-radius: 6px !important;
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    padding: 1.5px 6px !important;
+    flex-shrink: 0 !important;
+    line-height: 1.2 !important;
+    margin-right: 4px !important;
+  }
+
+  /* 🌟 [모바일 UI] 모든 게임의 게임판 상단 [닉네임 차례] / [턴] 표시 및 윷놀이 중복 알약 전체 제거 🌟 */
+  .turn-indicator,
+  .yut-turn-badge,
+  #yut-turn-badge,
+  #yh-turn-label,
+  .yut-score-pills,
+  #yut-score-pills,
+  .gomoku-wrap .turn-indicator,
+  .chess-wrap .turn-indicator,
+  .quoridor-wrap .turn-indicator,
+  .janggi-header-area .turn-indicator,
+  .alkkagi-header-area .turn-indicator,
+  .baskin-wrap .turn-indicator,
+  .wordchain-wrap .turn-indicator,
+  .yacht-header #yh-turn-label {
+    display: none !important;
+  }
+
+  /* 🌟 윷놀이 모바일 레이아웃: 온전하고 선명한 윷판 + 자연스러운 세로 스크롤 🌟 */
+  .yut-game-container {
+    height: auto !important;
+    gap: 10px !important;
+    padding: 4px 6px !important;
+    overflow: visible !important;
+    width: 100% !important;
     max-width: 480px !important;
     margin: 0 auto !important;
   }
   .yut-header-bar {
-    gap: 8px !important;
-    padding: 4px 6px !important;
-    justify-content: space-between !important;
-  }
-  .yut-turn-badge {
-    font-size: 0.92rem !important;
-    padding: 6px 14px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 2px 0 !important;
+    min-height: unset !important;
   }
   .yut-banner-msg {
     font-size: 0.88rem !important;
-    padding: 6px 14px !important;
+    padding: 4px 14px !important;
   }
-  .yut-score-pills {
-    gap: 6px !important;
-  }
-  .yut-score-pill {
-    font-size: 0.8rem !important;
-    padding: 3px 10px !important;
+  .alkkagi-header-area,
+  .janggi-header-area {
+    justify-content: flex-end !important;
+    min-height: unset !important;
+    padding: 2px 0 !important;
+    margin-bottom: 4px !important;
   }
   .yut-main-layout {
     display: flex !important;

@@ -2545,11 +2545,16 @@
         ? '<span style="font-size:0.75rem;font-weight:800;color:var(--t2);margin-right:5px;">0점</span><span style="color:#ea580c;font-weight:900;"><i class="fa-solid fa-paintbrush"></i> 출제자</span>'
         : '<span style="font-size:0.75rem;font-weight:800;color:var(--t2);margin-right:5px;">0점</span><span style="color:var(--t3);font-weight:700;"><i class="fa-solid fa-magnifying-glass"></i> 맞히는 중</span>';
     } else if (gKey === 'yutnori') {
-      const icons = ['빨강 말', '파랑 말', '초록 말', '노랑 말'];
-      const myColorName = icons[idx % icons.length] || `${idx + 1}번 플레이어`;
-      return isTurn
-        ? `<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> ${myColorName} (현재 턴)</span>`
-        : `<span style="color:var(--t2);font-weight:700;">${myColorName}</span>`;
+      const icons = ['빨강', '파랑', '초록', '노랑'];
+      const myColorName = icons[idx % icons.length] || `${idx + 1}번`;
+      let finCount = 0;
+      if (window.Yutnori && typeof window.Yutnori.getPlayerFinishedCount === 'function') {
+        finCount = window.Yutnori.getPlayerFinishedCount(idx);
+      }
+      return `<span class="yut-gsp-finished-badge"><i class="fa-solid fa-flag-checkered"></i> ${finCount}/4</span>` +
+        (isTurn
+          ? `<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> ${myColorName}</span>`
+          : `<span style="color:var(--t2);font-weight:700;">${myColorName}</span>`);
     } else {
       // 야추, 베스킨31, 끝말잇기 등
       return isTurn

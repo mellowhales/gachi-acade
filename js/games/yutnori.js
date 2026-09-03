@@ -1034,6 +1034,26 @@ const YutnoriGame = (() => {
       ).join('');
     }
 
+    // 🌟 [모바일 UI] 인게임 프로필 카드에 완주 말 개수 (0/4) 실시간 표시
+    if (state && Array.isArray(state.players)) {
+      state.players.forEach((p, idx) => {
+        const itemEl = document.getElementById('gsp-item-' + idx) ||
+                       document.querySelector('.gsp-item[data-player-id="' + p.id + '"]') ||
+                       document.querySelector('.gsp-item[data-id="' + p.id + '"]');
+        if (itemEl) {
+          let scoreBadge = itemEl.querySelector('.yut-gsp-finished-badge');
+          if (!scoreBadge) {
+            scoreBadge = document.createElement('span');
+            scoreBadge.className = 'yut-gsp-finished-badge';
+            const metaEl = itemEl.querySelector('.gsp-info') || itemEl.querySelector('.gsp-meta') || itemEl;
+            metaEl.appendChild(scoreBadge);
+          }
+          const finCount = p.finishedCount || 0;
+          scoreBadge.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> ${finCount}/${NUM_PIECES}`;
+        }
+      });
+    }
+
     // 4. 던지기 버튼 제어
     const powerBtn = document.getElementById('btn-yut-power');
     const btnMainText = document.getElementById('yut-btn-main-text');
@@ -1270,12 +1290,22 @@ const YutnoriGame = (() => {
     }
   }
 
+  function getPlayerFinishedCount(idxOrId) {
+    const st = _hostState || _clientState;
+    if (!st || !Array.isArray(st.players)) return 0;
+    const p = (typeof idxOrId === 'number')
+      ? st.players[idxOrId]
+      : st.players.find(pl => String(pl.id) === String(idxOrId));
+    return p ? (p.finishedCount || 0) : 0;
+  }
+
   return {
     init,
     destroy,
     rematch,
     onMessage,
     sendSnapshotTo,
-    removePlayer
+    removePlayer,
+    getPlayerFinishedCount
   };
 })();
