@@ -3342,12 +3342,13 @@ html, body {
     flex-shrink: 0 !important;
   }
 
-  /* 🌟 모바일 채팅 버튼: 상단바에서 분리하여 화면 우하단 원형 플로팅 액션 버튼(FAB)으로 배치 🌟 */
+  /* 🌟 모바일 채팅 버튼: 화면 좌측 하단 원형 플로팅 액션 버튼(FAB)으로 배치 🌟 */
   .btn-mobile-chat-toggle {
     display: flex !important;
     position: fixed !important;
     bottom: 22px !important;
-    right: 18px !important;
+    left: 18px !important;
+    right: auto !important;
     z-index: 999 !important;
     width: 48px !important;
     height: 48px !important;
@@ -3378,7 +3379,7 @@ html, body {
     height: 10px !important;
   }
 
-  /* 🌟 인게임 본체 레이아웃 및 간단한 참가자 목록 🌟 */
+  /* 🌟 인게임 본체 레이아웃 및 2열 그리드 참가자 목록 🌟 */
   .game-main-layout {
     display: flex !important;
     flex-direction: column !important;
@@ -3405,11 +3406,11 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  /* 참가자 목록: 가로 꽉 차면서 간단하고 슬림한 프로필 칩으로 표시 */
+  /* 참가자 목록: 2열 그리드(2 columns), 사람이 늘어날수록 행이 늘어남 */
   .game-sidebar-players {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 6px 10px !important;
+    padding: 6px 8px !important;
     border-radius: var(--radius-sm) !important;
     border: 1px solid var(--border) !important;
     background: var(--bg-card) !important;
@@ -3421,31 +3422,50 @@ html, body {
     display: none !important; /* 불필요한 '참가자 (2)' 제목 숨김으로 화면 높이 확보 */
   }
   .gsp-list {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 8px !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    padding: 2px 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px 8px !important;
     width: 100% !important;
+    padding: 2px 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
   }
-  .gsp-list::-webkit-scrollbar { display: none; }
   .gsp-item {
-    flex: 0 0 auto !important;
-    padding: 4px 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 5px 8px !important;
     font-size: 0.78rem !important;
-    border-radius: 20px !important;
+    border-radius: 12px !important;
     gap: 6px !important;
+    overflow: hidden !important;
+    background: var(--bg-subtle, #f7fafc) !important;
+    border: 1px solid var(--border-sub, #edf2f7) !important;
+  }
+  .gsp-item.is-turn-active {
+    border-color: var(--green) !important;
+    background: var(--green-tint, #f0fff4) !important;
   }
   .gsp-avatar {
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 0.7rem !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    font-size: 0.72rem !important;
+    flex-shrink: 0 !important;
+  }
+  .gsp-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
   .gsp-name {
     font-size: 0.8rem !important;
     font-weight: 700 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   /* 인게임 이모지 패널 */

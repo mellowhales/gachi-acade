@@ -721,7 +721,12 @@ const YutnoriGame = (() => {
   /* =====================================================================
      5. 캐릭터 선선택 -> 이동 위치 클릭
      ===================================================================== */
+  let _lastPieceSelectTime = 0;
   function _onPieceSelect(pieceId) {
+    const now = Date.now();
+    if (now - _lastPieceSelectTime < 350) return; // 🌟 모바일 터치 시 pointerdown -> click 연쇄 발생으로 즉시 놔지는 버그 완전 해결
+    _lastPieceSelectTime = now;
+
     if (typeof Sound !== 'undefined' && Sound.playPieceSelect) Sound.playPieceSelect();
     if (!_clientState) return;
     const curPlayer = _clientState.players[_clientState.currentTurnIdx];
@@ -764,7 +769,12 @@ const YutnoriGame = (() => {
     });
   }
 
+  let _lastDestClickTime = 0;
   function _onDestinationNodeClick(destItem) {
+    const now = Date.now();
+    if (now - _lastDestClickTime < 350) return;
+    _lastDestClickTime = now;
+
     if (typeof Sound !== 'undefined' && Sound.playPieceMove) Sound.playPieceMove();
     if (!_clientState || _selectedPieceId === null || !destItem) return;
 
@@ -1097,6 +1107,7 @@ const YutnoriGame = (() => {
 
             if (canSelect) {
               const handleTouchOrClick = (e) => {
+                if (e.cancelable) e.preventDefault();
                 e.stopPropagation();
                 _onPieceSelect(p.id);
               };
@@ -1201,6 +1212,7 @@ const YutnoriGame = (() => {
 
           if (canSelect) {
             const handlePieceTouch = (e) => {
+              if (e.cancelable) e.preventDefault();
               e.stopPropagation();
               _onPieceSelect(piece.id);
             };
