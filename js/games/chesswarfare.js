@@ -390,7 +390,7 @@ const ChessWarfareGame = (() => {
     // 2. 초기 기물 배치 (소수 정예) 및 폰 요새화
     Object.entries(INITIAL_PIECES['w']).forEach(([coord, type]) => {
       if (boardState[coord]) {
-        boardState[coord].piece = { type, color: 'w' };
+        boardState[coord].piece = { type, color: 'w', isStunned: false };
         boardState[coord].owner = 'White';
         if (type === 'p') {
           boardState[coord].isFortified = true; // 폰이 서 있는 타일은 방어 상태
@@ -400,7 +400,7 @@ const ChessWarfareGame = (() => {
 
     Object.entries(INITIAL_PIECES['b']).forEach(([coord, type]) => {
       if (boardState[coord]) {
-        boardState[coord].piece = { type, color: 'b' };
+        boardState[coord].piece = { type, color: 'b', isStunned: false };
         boardState[coord].owner = 'Black';
         if (type === 'p') {
           boardState[coord].isFortified = true; // 폰이 서 있는 타일은 방어 상태
@@ -686,6 +686,12 @@ const ChessWarfareGame = (() => {
     if (!tile || !tile.piece) return [];
 
     const piece = tile.piece;
+
+    // 💫 기절(Stun) 상태 제약: 폰을 처치한 기물은 이번 턴 동안 어떤 행동도 할 수 없음
+    if (piece.isStunned) {
+      return [];
+    }
+
     const myColor = piece.color;
     const oppColor = (myColor === 'w') ? 'b' : 'w';
     const moves = [];
@@ -963,6 +969,15 @@ const ChessWarfareGame = (() => {
     toTile.piece = movingPiece;
     fromTile.piece = null;
 
+    // 💫 폰을 처치한 경우: 그 턴 동안 폰을 처치한 기물 기절(Stun) 적용!
+    const isPawnCapture = (targetPiece && targetPiece.type === 'p');
+    if (isPawnCapture) {
+      movingPiece.isStunned = true;
+      if (typeof showToast === 'function' && isLocal) {
+        showToast('💫 폰 처치 후유증! 기물이 이번 턴 동안 기절(스턴)되었습니다.', 'warn');
+      }
+    }
+
     // 폰이 서 있는 타일은 내부적으로 '방어 상태(Fortified)'가 됨
     if (movingPiece.type === 'p') {
       toTile.isFortified = true;
@@ -1093,6 +1108,13 @@ const ChessWarfareGame = (() => {
     validMoves = [];
     selectedSpawnPiece = null;
     validSpawnCoords = [];
+
+    // 💫 턴 전환 시 모든 기물의 기절(Stun) 상태 해제 (그 턴 동안만 지속)
+    Object.values(boardState).forEach(t => {
+      if (t.piece && t.piece.isStunned) {
+        t.piece.isStunned = false;
+      }
+    });
 
     if (!endedByRounds && !gameOver) {
       _calculateSupplyLines();
@@ -1870,8 +1892,24 @@ const ChessWarfareGame = (() => {
           tileEl.classList.remove('isolated-piece-tile');
         }
 
-        // 조작 가능한 내 기물 표시
-        if (isTurn && tileData.piece.color === activeColor) {
+        // 💫 폰 처치 후 기절(Stunned Piece) 배지 표시 (머리 위 스턴 아이콘)
+        let stunBadgeEl = tileEl.querySelector('.cw-stunned-badge');
+        if (tileData.piece.isStunned) {
+          if (!stunBadgeEl) {
+            stunBadgeEl = document.createElement('div');
+            stunBadgeEl.className = 'cw-stunned-badge';
+            stunBadgeEl.setAttribute('title', '💫 기절 상태: 폰을 처치하여 이번 턴 동안 행동 불가');
+            stunBadgeEl.innerHTML = '<i class="fa-solid fa-bolt"></i>';
+            tileEl.appendChild(stunBadgeEl);
+          }
+          tileEl.classList.add('stunned-piece-tile');
+        } else {
+          if (stunBadgeEl) tileEl.removeChild(stunBadgeEl);
+          tileEl.classList.remove('stunned-piece-tile');
+        }
+
+        // 조작 가능한 내 기물 표시 (기절 기물은 조작 불가이므로 제외)
+        if (isTurn && tileData.piece.color === activeColor && !tileData.piece.isStunned) {
           tileEl.classList.add('my-piece-tile');
         } else {
           tileEl.classList.remove('my-piece-tile');
@@ -1882,10 +1920,13 @@ const ChessWarfareGame = (() => {
         }
         const badgeEl = tileEl.querySelector('.cw-isolated-badge');
         if (badgeEl) tileEl.removeChild(badgeEl);
+        const stunBadgeEl = tileEl.querySelector('.cw-stunned-badge');
+        if (stunBadgeEl) tileEl.removeChild(stunBadgeEl);
 
         tileEl.classList.remove('has-piece');
         tileEl.classList.remove('my-piece-tile');
         tileEl.classList.remove('isolated-piece-tile');
+        tileEl.classList.remove('stunned-piece-tile');
       }
     });
   }
@@ -2111,6 +2152,19 @@ const ChessWarfareGame = (() => {
       selectedSpawnPiece = null;
       validSpawnCoords = [];
 
+      // 💫 기절(Stun) 상태 기물 클릭 시 조작 차단 및 안내
+      if (tile.piece.isStunned) {
+        selectedCoord = null;
+        validMoves = [];
+        _updateHighlights();
+        _updateUI();
+        _playSound('warn');
+        if (typeof showToast === 'function') {
+          showToast('💫 기절(Stun) 상태! 폰을 처치한 기물은 이번 턴 동안 행동할 수 없습니다.', 'warn');
+        }
+        return;
+      }
+
       if (selectedCoord === coord) {
         // 이미 선택된 기물을 다시 누르면 선택 해제
         selectedCoord = null;
@@ -2332,6 +2386,7 @@ const ChessWarfareGame = (() => {
     getValidMoves,
     isPieceIsolated: (coord) => _isPieceIsolated(boardState[coord]),
     isPieceSupplied: (coord) => _isPieceSupplied(boardState[coord]),
+    isPieceStunned: (coord) => !!(boardState[coord] && boardState[coord].piece && boardState[coord].piece.isStunned),
     testMove,
     testEndTurn,
     testSpawn

@@ -687,6 +687,39 @@
   filter: drop-shadow(0 0 3px rgba(229, 62, 62, 0.8));
 }
 
+/* 💫 폰 처치 후 기절(Stun) 뱃지 및 기물 스타일 */
+.cw-stunned-badge {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ecc94b;
+  border: 1.5px solid #744210;
+  color: #744210;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(236, 201, 75, 0.95);
+  z-index: 12;
+  pointer-events: none !important;
+  animation: stunShake 1.2s infinite ease-in-out;
+}
+@keyframes stunShake {
+  0% { transform: rotate(0deg) scale(0.9); }
+  25% { transform: rotate(-15deg) scale(1.1); }
+  50% { transform: rotate(15deg) scale(1.1); }
+  75% { transform: rotate(-10deg) scale(1); }
+  100% { transform: rotate(0deg) scale(0.9); }
+}
+
+.cw-tile.stunned-piece-tile .cw-piece {
+  filter: grayscale(0.55) brightness(0.85) drop-shadow(0 0 4px rgba(236, 201, 75, 0.75));
+  opacity: 0.85;
+}
+
 /* 소환 가능 타일 하이라이트 */
 .cw-tile.spawn-valid {
   cursor: pointer !important;
