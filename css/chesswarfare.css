@@ -538,6 +538,28 @@
   font-weight: 900;
 }
 
+/* 상단 헤더 골드 텍스트 */
+.cw-header-gold {
+  color: #b7791f;
+  margin-left: 2px;
+  font-weight: 900;
+}
+.cw-header-gold i {
+  color: #d69e2e;
+  font-size: 0.72rem;
+  margin-right: 2px;
+}
+
+/* 골드 수급 시 반짝이는 펄스 연출 */
+.pulse-gold {
+  animation: cwGoldPulse 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+@keyframes cwGoldPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); filter: brightness(1.25); }
+  100% { transform: scale(1); }
+}
+
 /* 기물 소환 상점 바 */
 .cw-shop-bar {
   display: flex;
@@ -717,6 +739,9 @@
 }
 [data-theme="dark"] .cw-gold-badge strong {
   color: #f6e05e;
+}
+[data-theme="dark"] .cw-header-gold {
+  color: #ecc94b;
 }
 [data-theme="dark"] .cw-tile.spawn-valid {
   box-shadow: inset 0 0 0 2px #48bb78, 0 0 10px rgba(72, 187, 120, 0.8) !important;

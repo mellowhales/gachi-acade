@@ -80,8 +80,8 @@ const ChessWarfareGame = (() => {
   // 💰 골드(Gold) 자원 및 기물 소환 상태
   const SPAWN_COSTS = { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 8 };
   const SPAWN_NAMES = { 'p': '폰', 'n': '나이트', 'b': '비숍', 'r': '룩', 'q': '퀸' };
-  let whiteGold = 2; // 시작 시 각 2골드 기본 지급
-  let blackGold = 2;
+  let whiteGold = 0; // 시작 시 0에서 1턴 시작 골드(+2G) 수급으로 정상 시작
+  let blackGold = 0;
   let selectedSpawnPiece = null; // 'p' | 'n' | 'b' | 'r' | 'q' | null
   let validSpawnCoords = []; // 소환 가능 타일 좌표 목록
 
@@ -351,8 +351,8 @@ const ChessWarfareGame = (() => {
     validMoves = [];
     selectedSpawnPiece = null;
     validSpawnCoords = [];
-    whiteGold = 2;
-    blackGold = 2;
+    whiteGold = 0;
+    blackGold = 0;
 
     // 1. 모든 16x16 타일 생성 및 중립 설정
     for (let r = 0; r < 16; r++) {
@@ -536,7 +536,7 @@ const ChessWarfareGame = (() => {
    * 🌟 3단계 & 4단계: 턴 시작 시 골드 수급 로직 및 코인 유입 시각화 🌟
    * 보급이 연결된 내 킹(+2 Gold), 보급이 연결된 내 점령 거점(+1 Gold 씩)
    */
-  function _awardTurnStartGold(side) {
+  function _awardTurnStartGold(side, showAnimation = true) {
     let goldGained = 0;
     const myColor = (side === 'White') ? 'w' : 'b';
     const coinSources = [];
@@ -564,9 +564,16 @@ const ChessWarfareGame = (() => {
       blackGold += goldGained;
     }
 
-    // 🌟 6. 코인이 보급을 통해 들어오는 걸 시각화 🌟
-    if (coinSources.length > 0 && typeof document !== 'undefined') {
-      _playCoinInflowAnimation(coinSources);
+    // 🌟 코인이 보급을 통해 들어오는 걸 시각화 🌟
+    if (showAnimation && coinSources.length > 0 && typeof document !== 'undefined') {
+      const isSingle = _isSinglePlayer();
+      const mySide = _getMySide();
+      if (isSingle || side === mySide) {
+        _playCoinInflowAnimation(coinSources, 'cw-gold-badge');
+      } else {
+        const oppBadgeId = (side === 'White') ? 'cw-white-badge' : 'cw-black-badge';
+        _playCoinInflowAnimation(coinSources, oppBadgeId);
+      }
     }
 
     return goldGained;
@@ -575,8 +582,8 @@ const ChessWarfareGame = (() => {
   /**
    * 코인이 보급선을 통해 상단 골드 뱃지로 날아가는 시각화 연출
    */
-  function _playCoinInflowAnimation(sources) {
-    const badgeEl = document.getElementById('cw-gold-badge');
+  function _playCoinInflowAnimation(sources, targetBadgeId = 'cw-gold-badge') {
+    const badgeEl = document.getElementById(targetBadgeId);
     if (!badgeEl || !_container) return;
 
     const badgeRect = badgeEl.getBoundingClientRect();
@@ -615,7 +622,7 @@ const ChessWarfareGame = (() => {
           if (coinEl.parentNode) coinEl.parentNode.removeChild(coinEl);
           _playSound('coin');
           badgeEl.classList.add('pulse-gold');
-          setTimeout(() => badgeEl.classList.remove('pulse-gold'), 300);
+          setTimeout(() => badgeEl.classList.remove('pulse-gold'), 400);
         }, 850);
       }, idx * 160);
     });
@@ -1039,7 +1046,7 @@ const ChessWarfareGame = (() => {
     let turnSwitched = false;
     if (currentAP <= 0) {
       turnSwitched = true;
-      _switchTurn();
+      _switchTurn(isLocal);
     }
 
     // P2P 동기화 전송 (로컬 이동 시)
@@ -1066,8 +1073,9 @@ const ChessWarfareGame = (() => {
 
   /**
    * 턴 전환 및 라운드(40턴) 카운트 통합 처리
+   * @param {boolean} [awardGold=true] - 턴 시작 골드 지급 여부 (P2P 수신 시 중복 지급 방지 위해 false)
    */
-  function _switchTurn() {
+  function _switchTurn(awardGold = true) {
     let endedByRounds = false;
     if (currentTurn === 'White') {
       currentTurn = 'Black';
@@ -1088,7 +1096,9 @@ const ChessWarfareGame = (() => {
 
     if (!endedByRounds && !gameOver) {
       _calculateSupplyLines();
-      _awardTurnStartGold(currentTurn);
+      if (awardGold) {
+        _awardTurnStartGold(currentTurn);
+      }
       _playSound('turn');
     }
     return endedByRounds;
@@ -1103,7 +1113,7 @@ const ChessWarfareGame = (() => {
     // 내 턴이 아니면 턴 종료 불가
     if (isLocal && !_isMyTurn()) return;
 
-    _switchTurn();
+    _switchTurn(isLocal);
 
     if (isLocal && typeof P2P !== 'undefined') {
       P2P.send({
@@ -1132,11 +1142,13 @@ const ChessWarfareGame = (() => {
     const currentSide = currentTurn;
     const myPieceColor = (currentSide === 'White') ? 'w' : 'b';
 
-    // 골드 차감
-    if (currentSide === 'White') {
-      whiteGold = Math.max(0, whiteGold - cost);
-    } else {
-      blackGold = Math.max(0, blackGold - cost);
+    // 골드 차감 (로컬 행동일 때만 직접 차감, P2P 수신 시에는 data.whiteGold/blackGold로 이미 동기화됨)
+    if (isLocal) {
+      if (currentSide === 'White') {
+        whiteGold = Math.max(0, whiteGold - cost);
+      } else {
+        blackGold = Math.max(0, blackGold - cost);
+      }
     }
 
     // 기물 배치 & 해당 타일 영토 점령
@@ -1173,7 +1185,7 @@ const ChessWarfareGame = (() => {
     let turnSwitched = false;
     if (currentAP <= 0) {
       turnSwitched = true;
-      _switchTurn();
+      _switchTurn(isLocal);
     }
 
     // P2P 동기화 전송
@@ -1598,9 +1610,15 @@ const ChessWarfareGame = (() => {
     _initState();
     _renderGameLayout();
 
+    // 🌟 1라운드 1턴 시작: White 플레이어에게 턴 시작 골드 수급 실행 (+2G)
+    _awardTurnStartGold('White');
+    _updateUI();
+
     if (isLocal && typeof P2P !== 'undefined') {
       P2P.send({
-        type: 'cw_room_start'
+        type: 'cw_room_start',
+        whiteGold,
+        blackGold
       });
     }
   }
@@ -1618,9 +1636,9 @@ const ChessWarfareGame = (() => {
       <div class="cw-container">
         <!-- 상단 헤더: 영토 점유 현황 및 라운드 표시 -->
         <div class="cw-header-bar">
-          <div class="cw-score-badge white">
+          <div class="cw-score-badge white" id="cw-white-badge">
             <i class="fa-solid fa-flag"></i>
-            <span>White: <strong id="cw-white-score">8칸</strong></span>
+            <span>White: <strong id="cw-white-score">8칸</strong> · <strong id="cw-white-gold" class="cw-header-gold"><i class="fa-solid fa-coins"></i> 2G</strong></span>
           </div>
 
           <div class="cw-round-badge" id="cw-round-badge" title="40턴 제한 시스템">
@@ -1629,9 +1647,9 @@ const ChessWarfareGame = (() => {
             <strong id="cw-round-text">1 / ${MAX_ROUNDS}</strong>
           </div>
 
-          <div class="cw-score-badge black">
+          <div class="cw-score-badge black" id="cw-black-badge">
             <i class="fa-solid fa-flag"></i>
-            <span>Black: <strong id="cw-black-score">8칸</strong></span>
+            <span>Black: <strong id="cw-black-score">8칸</strong> · <strong id="cw-black-gold" class="cw-header-gold"><i class="fa-solid fa-coins"></i> 0G</strong></span>
           </div>
         </div>
 
@@ -1646,7 +1664,7 @@ const ChessWarfareGame = (() => {
           <!-- 보유 골드(Gold) 뱃지 -->
           <div class="cw-gold-badge" id="cw-gold-badge" title="현재 보유 골드 (매 턴 킹/거점 보급으로 수급)">
             <i class="fa-solid fa-coins"></i>
-            <span>골드</span>
+            <span id="cw-gold-label">내 골드</span>
             <strong id="cw-gold-count">2</strong>
           </div>
 
@@ -1952,14 +1970,21 @@ const ChessWarfareGame = (() => {
     const blackScoreEl = document.getElementById('cw-black-score');
     if (blackScoreEl) blackScoreEl.textContent = `${blackCount}칸`;
 
+    // 1-1. 상단 헤더 골드 동시 투명 표시
+    const whiteGoldEl = document.getElementById('cw-white-gold');
+    if (whiteGoldEl) whiteGoldEl.innerHTML = `<i class="fa-solid fa-coins"></i> ${whiteGold}G`;
+    const blackGoldEl = document.getElementById('cw-black-gold');
+    if (blackGoldEl) blackGoldEl.innerHTML = `<i class="fa-solid fa-coins"></i> ${blackGold}G`;
+
     // 2. 턴 뱃지 업데이트
     const isTurn = _isMyTurn();
     const mySide = _getMySide();
+    const isSingle = _isSinglePlayer();
     const turnBadgeEl = document.getElementById('cw-turn-badge');
     if (turnBadgeEl) {
       turnBadgeEl.className = `cw-turn-badge ${isTurn ? 'my-turn' : 'opp-turn'}`;
       let turnDesc;
-      if (_isSinglePlayer()) {
+      if (isSingle) {
         turnDesc = `${currentTurn} 턴 (자유 조작)`;
       } else {
         turnDesc = isTurn
@@ -1984,24 +2009,31 @@ const ChessWarfareGame = (() => {
       }
     }
 
-    // 4. 골드 보유량 텍스트 업데이트
-    const curGold = (currentTurn === 'White') ? whiteGold : blackGold;
+    // 4. 골드 보유량 텍스트 업데이트 (2인 멀티 시 '내 골드' 고정, 1인 모드 시 현재 턴 골드)
+    const myGold = (mySide === 'White') ? whiteGold : blackGold;
+    const currentTurnGold = (currentTurn === 'White') ? whiteGold : blackGold;
+    const playerGold = isSingle ? currentTurnGold : myGold;
+
+    const goldLabelEl = document.getElementById('cw-gold-label');
     const goldCountEl = document.getElementById('cw-gold-count');
+    if (goldLabelEl) {
+      goldLabelEl.textContent = isSingle ? `${currentTurn} 골드` : '내 골드';
+    }
     if (goldCountEl) {
-      goldCountEl.textContent = curGold;
+      goldCountEl.textContent = playerGold;
     }
 
     // 5. 상점 기물 소환 버튼 상태 업데이트
-    const activeColor = _isSinglePlayer()
+    const activeColor = isSingle
       ? (currentTurn === 'White' ? 'w' : 'b')
-      : (_getMySide() === 'White' ? 'w' : 'b');
+      : (mySide === 'White' ? 'w' : 'b');
 
     if (_container) {
       const shopButtons = _container.querySelectorAll('.btn-cw-spawn');
       shopButtons.forEach(btn => {
         const pType = btn.getAttribute('data-piece');
         const cost = SPAWN_COSTS[pType] || 1;
-        const canAfford = isTurn && !gameOver && (currentAP > 0) && (curGold >= cost);
+        const canAfford = isTurn && !gameOver && (currentAP > 0) && (playerGold >= cost);
 
         btn.disabled = !canAfford;
         btn.classList.toggle('selected', selectedSpawnPiece === pType);
@@ -2105,6 +2137,29 @@ const ChessWarfareGame = (() => {
   }
 
   /**
+   * 내 턴이 시작되었을 때 코인 유입 비행 애니메이션 연출 헬퍼
+   */
+  function _triggerTurnStartCoinAnimation(side) {
+    if (typeof document === 'undefined') return;
+    const myColor = (side === 'White') ? 'w' : 'b';
+    const coinSources = [];
+    Object.values(boardState).forEach(t => {
+      if (t.piece && t.piece.type === 'k' && t.piece.color === myColor && _isPieceSupplied(t)) {
+        coinSources.push({ coord: t.coord, amount: 2 });
+      }
+    });
+    FORTRESS_COORDS.forEach(coord => {
+      const t = boardState[coord];
+      if (t && t.owner === side && t.isSupplied) {
+        coinSources.push({ coord: t.coord, amount: 1 });
+      }
+    });
+    if (coinSources.length > 0) {
+      _playCoinInflowAnimation(coinSources, 'cw-gold-badge');
+    }
+  }
+
+  /**
    * P2P 메시지 수신 처리 핸들러
    */
   function onMessage(data, senderId) {
@@ -2112,6 +2167,9 @@ const ChessWarfareGame = (() => {
 
     if (data.type === 'cw_room_start') {
       _startActualGame(false);
+      if (typeof data.whiteGold === 'number') whiteGold = data.whiteGold;
+      if (typeof data.blackGold === 'number') blackGold = data.blackGold;
+      _updateUI();
     } else if (data.type === 'cw_move') {
       if (typeof data.whiteGold === 'number') whiteGold = data.whiteGold;
       if (typeof data.blackGold === 'number') blackGold = data.blackGold;
@@ -2123,17 +2181,25 @@ const ChessWarfareGame = (() => {
       } else if (data.isAnnihilation) {
         gameOver = true;
         _showGameOverBanner(data.nextTurn === 'White' ? 'Black' : 'White', 'annihilation');
+      } else if (data.turnSwitched && currentTurn === _getMySide()) {
+        _triggerTurnStartCoinAnimation(currentTurn);
       }
     } else if (data.type === 'cw_end_turn') {
       if (typeof data.whiteGold === 'number') whiteGold = data.whiteGold;
       if (typeof data.blackGold === 'number') blackGold = data.blackGold;
       if (typeof data.currentRound === 'number') currentRound = data.currentRound;
       _endTurn(false);
+      if (currentTurn === _getMySide()) {
+        _triggerTurnStartCoinAnimation(currentTurn);
+      }
     } else if (data.type === 'cw_spawn') {
       if (typeof data.whiteGold === 'number') whiteGold = data.whiteGold;
       if (typeof data.blackGold === 'number') blackGold = data.blackGold;
       if (typeof data.currentRound === 'number') currentRound = data.currentRound;
       _executeSpawn(data.pieceType, data.coord, false);
+      if (data.turnSwitched && currentTurn === _getMySide()) {
+        _triggerTurnStartCoinAnimation(currentTurn);
+      }
     }
   }
 
@@ -2150,6 +2216,8 @@ const ChessWarfareGame = (() => {
       viewState = 'game';
       _initState();
       _renderGameLayout();
+      _awardTurnStartGold('White');
+      _updateUI();
     } else {
       viewState = 'room';
       _renderMain();
@@ -2223,16 +2291,16 @@ const ChessWarfareGame = (() => {
     return gameOver;
   }
 
-  function startGame() {
-    _startActualGame(false);
+  function startGame(isLocal = true) {
+    _startActualGame(isLocal);
   }
 
   function testMove(from, to) {
-    _executeMove(from, to, false);
+    _executeMove(from, to, true);
   }
 
   function testEndTurn() {
-    _endTurn(false);
+    _endTurn(true);
   }
 
   function getGold(side) {
@@ -2240,7 +2308,7 @@ const ChessWarfareGame = (() => {
   }
 
   function testSpawn(pieceType, coord) {
-    _executeSpawn(pieceType, coord, false);
+    _executeSpawn(pieceType, coord, true);
   }
 
   function getValidMoves(coord) {
