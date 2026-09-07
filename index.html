@@ -38,6 +38,7 @@
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/games.css" />
+  <link rel="stylesheet" href="css/chesswarfare.css?v=4.1" />
 </head>
 <body>
 
@@ -99,6 +100,14 @@
           <div class="sg-info">
             <strong>체스</strong>
             <span>실시간 2인 클래식 체스</span>
+          </div>
+          <div class="sg-tag tag-2p">2인 전용</div>
+        </li>
+        <li class="sidebar-game-item" data-game="chesswarfare">
+          <div class="sg-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="sg-info">
+            <strong>체스 워페어</strong>
+            <span>16×16 영토 점령전</span>
           </div>
           <div class="sg-tag tag-2p">2인 전용</div>
         </li>
@@ -476,6 +485,14 @@
             </div>
             <span class="rgb-tag tag-2p">2인 전용</span>
           </div>
+          <div class="room-game-btn" data-game="chesswarfare">
+            <div class="rgb-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="rgb-info">
+              <strong>체스 워페어</strong>
+              <span>16×16 전장 영토전</span>
+            </div>
+            <span class="rgb-tag tag-2p">2인 전용</span>
+          </div>
           <div class="room-game-btn" data-game="janggi">
             <div class="rgb-icon"><i class="fa-solid fa-chess-rook"></i></div>
             <div class="rgb-info">
@@ -782,19 +799,18 @@
         </div>
       </div>
 
-      <!-- 자동 준비 (연전용) 설정 -->
+      <!-- 자동 준비 설정 -->
       <div class="setting-item">
         <div class="setting-meta">
           <div class="setting-title">
             <i class="fa-solid fa-bolt" style="color:var(--yellow);"></i>
-            <span>자동 준비 (연전용)</span>
+            <span>자동 준비</span>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="chk-auto-ready">
             <span class="toggle-slider"></span>
           </label>
         </div>
-        <div class="setting-desc">게임 종료 후 방으로 돌아올 때 자동으로 준비 상태로 전환합니다.</div>
       </div>
     </div>
 
@@ -973,6 +989,7 @@
 <script src="js/games/catchmind.js"></script>
 <script src="js/games/yutnori.js"></script>
 <script src="js/games/yacht.js"></script>
+<script src="js/games/chesswarfare.js?v=4.1"></script>
 <script type="module" src="js/firebase.js"></script>
 <script src="js/app.js"></script>
 </body>

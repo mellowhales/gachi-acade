@@ -1,0 +1,1216 @@
+/* =====================================================================
+   ⚔️ 체스 워페어 (Chess Warfare) 16x16 전장 스타일시트
+   ===================================================================== */
+
+.cw-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  gap: 8px;
+  user-select: none;
+}
+
+/* 상단 상황판 요약 (1행: 영토 점유 현황) */
+.cw-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 580px;
+  padding: 6px 14px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.06));
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.cw-score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.cw-score-badge.white {
+  background: rgba(66, 153, 225, 0.15);
+  color: #2b6cb0;
+  border: 1px solid rgba(66, 153, 225, 0.4);
+}
+.cw-score-badge.black {
+  background: rgba(229, 62, 62, 0.15);
+  color: #c53030;
+  border: 1px solid rgba(229, 62, 62, 0.4);
+}
+
+.cw-title-badge {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: var(--t1, #1a202c);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 🌟 상단 2행: 턴 및 AP(Action Point) 시스템 컨트롤 바 🌟 */
+.cw-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 580px;
+  padding: 6px 12px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.06));
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+/* 현재 턴 뱃지 */
+.cw-turn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 4px 12px;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+.cw-turn-badge.my-turn {
+  background: var(--green-tint, #f0fff4);
+  color: var(--green-deep, #22543d);
+  border: 1.5px solid var(--green, #38a169);
+  box-shadow: 0 0 8px rgba(72, 187, 120, 0.35);
+}
+.cw-turn-badge.opp-turn {
+  background: var(--bg-hover, #edf2f7);
+  color: var(--t2, #4a5568);
+  border: 1px solid var(--border, #cbd5e0);
+}
+
+/* AP(Action Point) 게이지 뱃지 */
+.cw-ap-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--bg-hover, #f7fafc);
+  border: 1px solid var(--border, #e2e8f0);
+}
+.cw-ap-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--t2, #4a5568);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cw-ap-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cw-ap-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #a0aec0;
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cw-ap-dot.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ecc94b, #d69e2e);
+  border-color: #b7791f;
+  box-shadow: 0 2px 6px rgba(214, 158, 46, 0.4);
+  transform: scale(1.06);
+}
+
+/* 턴 종료 버튼 */
+.btn-cw-end-turn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+}
+.btn-cw-end-turn.active {
+  background: linear-gradient(135deg, #48bb78, #2f855a);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(72, 187, 120, 0.35);
+}
+.btn-cw-end-turn.active:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.45);
+}
+.btn-cw-end-turn:disabled,
+.btn-cw-end-turn.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--bg-hover, #edf2f7);
+  color: var(--t3, #a0aec0);
+  border-color: var(--border, #e2e8f0);
+}
+
+/* 전장 보드 프레임 */
+.cw-board-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: #2d3748;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), inset 0 0 12px rgba(0,0,0,0.35);
+  box-sizing: border-box;
+}
+
+/* 상하좌우 좌표 라벨 레이아웃 */
+.cw-board-with-coords {
+  display: grid;
+  grid-template-columns: 20px auto 20px;
+  grid-template-rows: 20px auto 20px;
+  align-items: center;
+  justify-items: center;
+  gap: 2px;
+}
+
+.cw-coords-top,
+.cw-coords-bottom {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  width: 100%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #a0aec0;
+  text-align: center;
+}
+
+.cw-coords-left,
+.cw-coords-right {
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(16, 1fr);
+  height: 100%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #a0aec0;
+  align-items: center;
+  text-align: center;
+}
+.cw-coords-left { grid-column: 1; }
+.cw-coords-right { grid-column: 3; }
+
+/* 16x16 사각형 그리드 전장 (#board) */
+#board.cw-board {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: repeat(16, 1fr);
+  width: min(86vw, 520px);
+  height: min(86vw, 520px);
+  background: #f7fafc;
+  border: 2px solid #1a202c;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* 타일 기본 스타일 */
+.cw-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.18s ease;
+  user-select: none;
+}
+
+/* 내 기물이 있는 타일: 커서 인터랙션 */
+.cw-tile.my-piece-tile {
+  cursor: pointer !important;
+}
+.cw-tile.my-piece-tile:hover {
+  filter: brightness(1.12);
+}
+
+/* 🌟 선택된 타일 하이라이트 (영토 색상보다 최상위 우선순위) 🌟 */
+.cw-tile.selected,
+.cw-tile.selected[data-owner="White"],
+.cw-tile.selected[data-owner="Black"],
+.cw-tile.selected[data-owner="Neutral"],
+.cw-tile.selected.tile-light,
+.cw-tile.selected.tile-dark,
+.cw-tile.selected[data-owner="White"].tile-dark,
+.cw-tile.selected[data-owner="Black"].tile-dark,
+.cw-tile.selected[data-owner="Neutral"].tile-dark {
+  box-shadow: inset 0 0 0 3px #d69e2e, 0 0 14px rgba(214, 158, 46, 0.95) !important;
+  background-color: #fef08a !important; /* 선명한 황금빛 노란색 */
+  z-index: 15 !important;
+}
+
+/* 🌟 이동 가능 칸 표시 (Valid Move Dot & Capture Ring) 🌟 */
+.cw-tile.valid-move {
+  cursor: pointer !important;
+  z-index: 12 !important;
+  box-shadow: inset 0 0 0 1.5px rgba(49, 130, 206, 0.65) !important;
+}
+.cw-tile.valid-move:hover {
+  filter: brightness(1.2);
+}
+.cw-tile.valid-move::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: #3182ce;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 0 8px rgba(49, 130, 206, 0.95);
+  pointer-events: none !important;
+  z-index: 20 !important;
+  animation: validDotPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 적 기물 공격 가능 칸 */
+.cw-tile.valid-move.can-capture {
+  box-shadow: inset 0 0 0 2px rgba(229, 62, 62, 0.85) !important;
+}
+.cw-tile.valid-move.can-capture::after {
+  width: 86%;
+  height: 86%;
+  background: rgba(229, 62, 62, 0.3) !important;
+  border: 3px solid #e53e3e !important;
+  box-shadow: 0 0 10px rgba(229, 62, 62, 0.95) !important;
+  animation: captureRingPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes validDotPop {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@keyframes captureRingPulse {
+  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) scale(1.04); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+}
+
+/* 기본 체스 체커보드 패턴 (Neutral) */
+.cw-tile.tile-light {
+  background-color: #f0d9b5;
+}
+.cw-tile.tile-dark {
+  background-color: #b58863;
+}
+
+/* 🌟 영토 렌더링 🌟 */
+/* White 영토: 연한 파란색 계열 */
+.cw-tile[data-owner="White"] {
+  background-color: #bee3f8 !important; /* Soft sky blue */
+  box-shadow: inset 0 0 0 1px rgba(66, 153, 225, 0.45);
+}
+.cw-tile[data-owner="White"].tile-dark {
+  background-color: #90cdf4 !important;
+}
+
+/* Black 영토: 연한 빨간색 계열 */
+.cw-tile[data-owner="Black"] {
+  background-color: #fed7d7 !important; /* Soft coral red */
+  box-shadow: inset 0 0 0 1px rgba(229, 62, 62, 0.45);
+}
+.cw-tile[data-owner="Black"].tile-dark {
+  background-color: #feb2b2 !important;
+}
+
+/* 🌟 거점 (Fortress) 마커 🌟 */
+.cw-fortress-marker {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cw-fortress-icon {
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  background: rgba(229, 62, 62, 0.88);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px rgba(229, 62, 62, 0.6), inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: clamp(0.55rem, 1.3vw, 0.8rem);
+  animation: fortressPulse 2s infinite ease-in-out;
+}
+
+@keyframes fortressPulse {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 0 4px rgba(229, 62, 62, 0.5);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 10px rgba(229, 62, 62, 0.85);
+  }
+  100% {
+    transform: scale(0.92);
+    box-shadow: 0 0 4px rgba(229, 62, 62, 0.5);
+  }
+}
+
+/* 기물이 거점에 있을 때 거점 아이콘은 기물 뒤 배경 마커로 축소 배치 */
+.cw-tile.has-piece .cw-fortress-icon {
+  width: 88%;
+  height: 88%;
+  background: rgba(229, 62, 62, 0.35);
+  border-width: 1.5px;
+  animation: none;
+}
+.cw-tile.has-piece .cw-fortress-icon i {
+  display: none; /* 기물 뒤에서는 깃발 텍스트 숨기고 붉은 원 링으로만 표시 */
+}
+
+/* 🌟 기물 SVG 렌더링 🌟 */
+.cw-piece,
+.cw-piece svg,
+.cw-piece svg * {
+  pointer-events: none !important;
+}
+.cw-piece {
+  position: relative;
+  z-index: 5;
+  width: 84%;
+  height: 84%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cw-piece svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* 모바일 전용 반응형 미세조정 */
+@media (max-width: 960px) {
+  .cw-container {
+    padding: 4px 6px;
+    gap: 6px;
+  }
+  .cw-header-bar,
+  .cw-action-bar {
+    padding: 4px 10px;
+  }
+  .cw-ap-label span {
+    display: none; /* 작은 화면에서 '남은 AP' 텍스트 숨기고 번개 아이콘만 */
+  }
+  .cw-board-with-coords {
+    grid-template-columns: 14px auto 14px;
+    grid-template-rows: 14px auto 14px;
+  }
+  .cw-coords-top,
+  .cw-coords-bottom,
+  .cw-coords-left,
+  .cw-coords-right {
+    font-size: 0.5rem;
+  }
+  #board.cw-board {
+    width: min(90vw, 390px);
+    height: min(90vw, 390px);
+  }
+}
+
+/* 다크모드 대응 */
+[data-theme="dark"] .cw-board-frame {
+  background: #1a202c;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(0,0,0,0.6);
+}
+[data-theme="dark"] .cw-tile.tile-light {
+  background-color: #718096;
+}
+[data-theme="dark"] .cw-tile.tile-dark {
+  background-color: #4a5568;
+}
+[data-theme="dark"] .cw-tile[data-owner="White"] {
+  background-color: #2b6cb0 !important;
+}
+[data-theme="dark"] .cw-tile[data-owner="White"].tile-dark {
+  background-color: #2c5282 !important;
+}
+[data-theme="dark"] .cw-tile[data-owner="Black"] {
+  background-color: #9b2c2c !important;
+}
+[data-theme="dark"] .cw-tile[data-owner="Black"].tile-dark {
+  background-color: #742a2a !important;
+}
+
+/* 🌟 다크모드에서도 선택 및 이동 가능 하이라이트 최상위 유지 🌟 */
+[data-theme="dark"] .cw-tile.selected,
+[data-theme="dark"] .cw-tile.selected[data-owner="White"],
+[data-theme="dark"] .cw-tile.selected[data-owner="Black"],
+[data-theme="dark"] .cw-tile.selected[data-owner="Neutral"],
+[data-theme="dark"] .cw-tile.selected.tile-light,
+[data-theme="dark"] .cw-tile.selected.tile-dark,
+[data-theme="dark"] .cw-tile.selected[data-owner="White"].tile-dark,
+[data-theme="dark"] .cw-tile.selected[data-owner="Black"].tile-dark {
+  background-color: #d69e2e !important;
+  box-shadow: inset 0 0 0 3px #ecc94b, 0 0 14px rgba(236, 201, 75, 0.95) !important;
+  z-index: 15 !important;
+}
+
+[data-theme="dark"] .cw-tile.valid-move {
+  box-shadow: inset 0 0 0 1.5px rgba(99, 179, 237, 0.8) !important;
+}
+[data-theme="dark"] .cw-tile.valid-move::after {
+  background: #4299e1;
+  border-color: #ffffff;
+  box-shadow: 0 0 10px rgba(66, 153, 225, 0.95);
+}
+[data-theme="dark"] .cw-tile.valid-move.can-capture::after {
+  background: rgba(245, 101, 101, 0.35) !important;
+  border-color: #fc8181 !important;
+}
+
+/* =====================================================================
+   💰 3단계: 자원(골드) 뱃지 & 기물 소환 상점 바 스타일
+   ===================================================================== */
+
+/* 상단 골드 보유량 뱃지 */
+.cw-gold-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(236, 201, 75, 0.2), rgba(214, 158, 46, 0.12));
+  border: 1px solid rgba(214, 158, 46, 0.45);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #b7791f;
+  box-shadow: 0 1px 3px rgba(214, 158, 46, 0.15);
+}
+.cw-gold-badge i {
+  color: #d69e2e;
+  font-size: 0.88rem;
+}
+.cw-gold-badge strong {
+  color: #975a16;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+/* 기물 소환 상점 바 */
+.cw-shop-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  max-width: 580px;
+  padding: 6px 12px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.06));
+  box-sizing: border-box;
+}
+.cw-shop-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--t2, #4a5568);
+  white-space: nowrap;
+}
+.cw-shop-items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.btn-cw-spawn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  min-width: 52px;
+  height: 46px;
+  background: var(--bg-hover, #f7fafc);
+  border: 1.5px solid var(--border, #cbd5e0);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  box-sizing: border-box;
+}
+.btn-cw-spawn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: #48bb78;
+  box-shadow: 0 3px 8px rgba(72, 187, 120, 0.3);
+}
+.btn-cw-spawn.selected {
+  background: #f0fff4 !important;
+  border-color: #38a169 !important;
+  box-shadow: 0 0 0 2px #38a169, 0 4px 12px rgba(56, 161, 105, 0.4) !important;
+  transform: scale(1.05);
+}
+.btn-cw-spawn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+.btn-cw-spawn .spawn-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.btn-cw-spawn .spawn-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.btn-cw-spawn .spawn-cost {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #b7791f;
+  margin-top: 1px;
+  pointer-events: none;
+}
+
+/* =====================================================================
+   🚩 3단계: 보급선 고립(Isolated) & 소환 가능 타일 하이라이트
+   ===================================================================== */
+
+/* 고립된 영토: 채도/명도 감소 및 점선 경계 */
+.cw-tile.isolated-territory {
+  filter: brightness(0.72) saturate(0.45) !important;
+  opacity: 0.78 !important;
+  outline: 1.5px dashed rgba(229, 62, 62, 0.85) !important;
+  outline-offset: -2px;
+}
+
+/* 고립된 기물 경고 뱃지 (기물 머리 위 경고 마크) */
+.cw-isolated-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e53e3e;
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(229, 62, 62, 0.9);
+  z-index: 10;
+  pointer-events: none !important;
+  animation: isolatedWarn 1.2s infinite ease-in-out;
+}
+@keyframes isolatedWarn {
+  0% { transform: scale(0.9); box-shadow: 0 0 3px rgba(229, 62, 62, 0.6); }
+  50% { transform: scale(1.22); box-shadow: 0 0 9px rgba(229, 62, 62, 1); }
+  100% { transform: scale(0.9); box-shadow: 0 0 3px rgba(229, 62, 62, 0.6); }
+}
+
+/* 고립된 기물 실루엣 붉은색 경고 하이라이트 */
+.cw-tile.isolated-piece-tile .cw-piece {
+  filter: drop-shadow(0 0 3px rgba(229, 62, 62, 0.8));
+}
+
+/* 소환 가능 타일 하이라이트 */
+.cw-tile.spawn-valid {
+  cursor: pointer !important;
+  z-index: 13 !important;
+  box-shadow: inset 0 0 0 2px #38a169, 0 0 8px rgba(56, 161, 105, 0.65) !important;
+  background-color: rgba(72, 187, 120, 0.28) !important;
+}
+.cw-tile.spawn-valid:hover {
+  background-color: rgba(72, 187, 120, 0.45) !important;
+  filter: brightness(1.15);
+}
+.cw-tile.spawn-valid::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44%;
+  height: 44%;
+  border-radius: 50%;
+  background: #38a169;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px rgba(56, 161, 105, 0.95);
+  pointer-events: none !important;
+  z-index: 20 !important;
+  animation: spawnPulse 1s infinite ease-in-out;
+}
+@keyframes spawnPulse {
+  0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.75; }
+  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.75; }
+}
+
+/* 3단계 다크모드 대응 */
+[data-theme="dark"] .cw-shop-bar {
+  background: var(--bg-card, #2d3748);
+  border-color: var(--border, #4a5568);
+}
+[data-theme="dark"] .btn-cw-spawn {
+  background: #1a202c;
+  border-color: #4a5568;
+}
+[data-theme="dark"] .btn-cw-spawn .spawn-cost {
+  color: #ecc94b;
+}
+[data-theme="dark"] .cw-gold-badge {
+  background: rgba(236, 201, 75, 0.15);
+  border-color: rgba(236, 201, 75, 0.35);
+  color: #ecc94b;
+}
+[data-theme="dark"] .cw-gold-badge strong {
+  color: #f6e05e;
+}
+[data-theme="dark"] .cw-tile.spawn-valid {
+  box-shadow: inset 0 0 0 2px #48bb78, 0 0 10px rgba(72, 187, 120, 0.8) !important;
+  background-color: rgba(72, 187, 120, 0.32) !important;
+}
+[data-theme="dark"] .cw-tile.isolated-territory {
+  filter: brightness(0.55) saturate(0.35) !important;
+  outline-color: rgba(245, 101, 101, 0.85) !important;
+}
+
+/* =====================================================================
+   ⚔️ 4단계: 폰 요새화(Fortified), 고속도로, 턴 카운터, 코인 유입, 가상 룸/로비
+   ===================================================================== */
+
+/* 1. 폰(Pawn) 요새화 방어막 스타일 */
+.cw-tile.fortified {
+  box-shadow: inset 0 0 0 2px rgba(236, 201, 75, 0.85), 0 0 6px rgba(236, 201, 75, 0.4) !important;
+}
+.cw-tile-shield {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: rgba(214, 158, 46, 0.9);
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  pointer-events: none;
+  animation: shieldPulse 2s infinite ease-in-out;
+}
+@keyframes shieldPulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* 방어막 파괴 시각 이펙트 */
+.cw-shield-break-fx {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  font-size: 1.4rem;
+  color: #ecc94b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  pointer-events: none;
+  animation: shieldBreakAnim 0.7s forwards ease-out;
+}
+@keyframes shieldBreakAnim {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; filter: drop-shadow(0 0 8px #f56565); }
+  40% { transform: translate(-50%, -50%) scale(1.4) rotate(15deg); opacity: 1; filter: drop-shadow(0 0 14px #e53e3e); }
+  100% { transform: translate(-50%, -50%) scale(2.2) rotate(35deg); opacity: 0; }
+}
+
+/* 2. 고속도로 기동력 보너스 칸 하이라이트 */
+.cw-tile.valid-highway {
+  box-shadow: inset 0 0 0 2px #3182ce, 0 0 10px rgba(49, 130, 206, 0.7) !important;
+}
+.cw-tile.valid-highway::after {
+  background: #3182ce !important;
+  box-shadow: 0 0 10px rgba(49, 130, 206, 0.95) !important;
+}
+.cw-highway-badge {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background: rgba(49, 130, 206, 0.9);
+  color: #fff;
+  font-size: 0.5rem;
+  padding: 1px 3px;
+  border-radius: 3px;
+  z-index: 18;
+  font-weight: 800;
+}
+
+/* 3. 40턴 제한 카운터 뱃지 */
+.cw-round-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(128, 90, 213, 0.12);
+  color: #6b46c1;
+  border: 1px solid rgba(128, 90, 213, 0.35);
+}
+.cw-round-badge strong {
+  color: #805ad5;
+  font-weight: 900;
+}
+
+/* 4. 보급선 코인 유입 비행 애니메이션 */
+.cw-flying-coin {
+  position: fixed;
+  z-index: 99999;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+  color: #744210;
+  font-size: 0.85rem;
+  font-weight: 900;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(214, 158, 46, 0.65), 0 0 10px rgba(236, 201, 75, 0.8);
+  pointer-events: none;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.85s ease;
+}
+
+/* 5. 가상 로비 및 방 화면 UI 프레임 */
+.cw-virtual-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  min-height: 600px;
+  margin: 0 auto;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.08));
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 가상 로비 사이드바 */
+.cw-virtual-sidebar {
+  width: 220px;
+  background: var(--bg-panel, #f7fafc);
+  border-right: 1px solid var(--border, #e2e8f0);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.cw-vsidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--t1, #1a202c);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+.cw-vsidebar-title {
+  color: var(--green, #38a169);
+}
+.cw-vsidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.cw-vsidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--t2, #718096);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cw-vsidebar-item.active {
+  background: var(--green-tint, #f0fff4);
+  color: var(--green-deep, #22543d);
+  border: 1px solid var(--green, #38a169);
+}
+.cw-vsidebar-item.disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.cw-vsidebar-badge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(229, 62, 62, 0.12);
+  color: #e53e3e;
+  font-weight: 800;
+}
+
+/* 가상 방 화면 */
+.cw-virtual-room {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 30px;
+  box-sizing: border-box;
+  background: var(--bg-card, #ffffff);
+  justify-content: space-between;
+}
+.cw-vroom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.cw-vroom-code {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg-hover, #edf2f7);
+  color: var(--t2, #4a5568);
+}
+.cw-vroom-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--t1, #1a202c);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 참가자 명단 카드 */
+.cw-vroom-players {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.cw-vroom-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--border, #e2e8f0);
+  background: var(--bg-panel, #f7fafc);
+  position: relative;
+  text-align: center;
+  gap: 8px;
+}
+.cw-vroom-card.host-card {
+  border-color: #4299e1;
+  background: rgba(66, 153, 225, 0.05);
+}
+.cw-vroom-card.guest-card {
+  border-color: #f56565;
+  background: rgba(245, 101, 101, 0.05);
+}
+.cw-vroom-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.cw-vroom-card.host-card .cw-vroom-avatar {
+  background: #3182ce;
+  box-shadow: 0 0 12px rgba(49, 130, 206, 0.5);
+}
+.cw-vroom-card.guest-card .cw-vroom-avatar {
+  background: #e53e3e;
+  box-shadow: 0 0 12px rgba(229, 62, 62, 0.5);
+}
+.cw-vroom-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--t1, #1a202c);
+}
+.cw-vroom-role {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+.cw-vroom-card.host-card .cw-vroom-role {
+  background: #ebf8ff;
+  color: #2b6cb0;
+}
+.cw-vroom-card.guest-card .cw-vroom-role {
+  background: #fff5f5;
+  color: #c53030;
+}
+.cw-vroom-ready-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #38a169;
+}
+
+/* 게임 규칙 안내 요약 카드 */
+.cw-vroom-rules {
+  background: var(--bg-hover, #edf2f7);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  color: var(--t2, #4a5568);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.cw-vroom-rules strong {
+  color: var(--t1, #1a202c);
+}
+.cw-vroom-rules ul {
+  margin: 6px 0 0 18px;
+  padding: 0;
+}
+
+/* 게임 시작 버튼 */
+.btn-cw-start-game {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(56, 161, 105, 0.4);
+  transition: all 0.2s ease;
+}
+.btn-cw-start-game:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(56, 161, 105, 0.55);
+}
+.btn-cw-start-game:active {
+  transform: translateY(1px);
+}
+
+/* 인게임에서 대기실로 돌아가기 버튼 */
+.btn-cw-to-room {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  background: var(--bg-panel, #edf2f7);
+  color: var(--t2, #4a5568);
+  border: 1px solid var(--border, #cbd5e0);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-cw-to-room:hover {
+  background: var(--bg-hover, #e2e8f0);
+  color: var(--t1, #1a202c);
+}
+
+/* 점수 승리 및 게임 종료 오버레이 */
+.cw-result-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+  box-sizing: border-box;
+}
+.cw-result-modal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  text-align: center;
+  box-sizing: border-box;
+}
+.cw-result-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+.cw-score-table {
+  width: 100%;
+  margin: 16px 0;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cw-score-table th, .cw-score-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+.cw-score-table th {
+  background: var(--bg-hover, #f7fafc);
+  font-weight: 800;
+  color: var(--t2, #4a5568);
+}
+.cw-score-table tr.total-row td {
+  font-size: 1.05rem;
+  font-weight: 900;
+  border-bottom: 2px solid var(--t1, #1a202c);
+}
+.btn-cw-modal-close {
+  margin-top: 14px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--green, #38a169);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* 4단계 반응형 */
+@media (max-width: 768px) {
+  .cw-virtual-wrapper {
+    flex-direction: column;
+  }
+  .cw-virtual-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border, #e2e8f0);
+    padding: 10px 14px;
+  }
+  .cw-vsidebar-menu {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .cw-vsidebar-item {
+    white-space: nowrap;
+  }
+  .cw-vroom-players {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* 4단계 다크모드 대응 */
+[data-theme="dark"] .cw-virtual-wrapper {
+  background: var(--bg-card, #2d3748);
+  border-color: var(--border, #4a5568);
+}
+[data-theme="dark"] .cw-virtual-sidebar {
+  background: var(--bg-panel, #1a202c);
+  border-color: var(--border, #4a5568);
+}
+[data-theme="dark"] .cw-virtual-room {
+  background: var(--bg-card, #2d3748);
+}
+[data-theme="dark"] .cw-vroom-card {
+  background: #1a202c;
+  border-color: #4a5568;
+}
+[data-theme="dark"] .cw-vroom-rules {
+  background: #1a202c;
+  color: var(--t2, #a0aec0);
+}
+[data-theme="dark"] .cw-result-modal {
+  background: #2d3748;
+  color: #f7fafc;
+}
+[data-theme="dark"] .cw-score-table th {
+  background: #1a202c;
+  color: #cbd5e0;
+}
+[data-theme="dark"] .cw-score-table td {
+  border-color: #4a5568;
+}
+[data-theme="dark"] .cw-round-badge {
+  background: rgba(183, 148, 244, 0.15);
+  border-color: rgba(183, 148, 244, 0.35);
+  color: #b794f4;
+}
+

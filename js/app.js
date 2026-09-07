@@ -7,9 +7,10 @@
 
   /* ── 게임 목록 정의 ── */
   const GAMES = {
-    gomoku:    { module: GomokuGame,    title: '오목',          maxPlayers: 2, isTurnBased: true },
-    chess:     { module: ChessGame,     title: '체스',          maxPlayers: 2, isTurnBased: true },
-    janggi:    { module: JanggiGame,    title: '장기',          maxPlayers: 2, isTurnBased: true },
+    gomoku:       { module: GomokuGame,       title: '오목',          maxPlayers: 2, isTurnBased: true },
+    chess:        { module: ChessGame,        title: '체스',          maxPlayers: 2, isTurnBased: true },
+    chesswarfare: { module: ChessWarfareGame, title: '체스 워페어',    maxPlayers: 2, isTurnBased: true },
+    janggi:       { module: JanggiGame,       title: '장기',          maxPlayers: 2, isTurnBased: true },
     alkkagi:   { module: AlkkagiGame,   title: '알까기',        maxPlayers: 2, isTurnBased: true },
     quoridor:  { module: QuoridorGame,  title: '쿼리도',        maxPlayers: 2, isTurnBased: true },
     baskin31:  { module: Baskin31Game,  title: '베스킨라빈스 31', maxPlayers: 8, isTurnBased: true },
@@ -1083,8 +1084,8 @@
 
     // 라운드 지원 게임: 끝말잇기, 캐치마인드, 타자연습 대결
     const isRoundGame = ['wordchain', 'catchmind', 'typing'].includes(selectedGameKey);
-    // 진영 지원 게임: 오목, 체스, 장기, 알까기
-    const isSideGame = ['gomoku', 'chess', 'janggi', 'alkkagi'].includes(selectedGameKey);
+    // 진영 지원 게임: 오목, 체스, 체스워페어, 장기, 알까기
+    const isSideGame = ['gomoku', 'chess', 'chesswarfare', 'janggi', 'alkkagi'].includes(selectedGameKey);
 
     const selectPanel = document.querySelector('.game-select-panel');
     if (selectPanel) {
@@ -2110,8 +2111,8 @@
         } else {
           finalPlayers = [hostP, guestP];
         }
-      } else if (selectedGameKey === 'chess') {
-        // 체스: 0번=백(선공), 1번=흑(후공)
+      } else if (selectedGameKey === 'chess' || selectedGameKey === 'chesswarfare') {
+        // 체스 / 체스 워페어: 0번=백(선공), 1번=흑(후공)
         if (selectedGameSideMode === 'host_white') {
           finalPlayers = [hostP, guestP];
         } else if (selectedGameSideMode === 'host_black') {
@@ -2532,6 +2533,10 @@
       return idx === 0
         ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (백 차례)</span>' : '<i class="fa-regular fa-circle" style="color:#718096;"></i> 1번 (백)')
         : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (흑 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#1a1a1a;"></i> 2번 (흑)');
+    } else if (gKey === 'chesswarfare') {
+      return idx === 0
+        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (White 선공)</span>' : '<i class="fa-solid fa-circle" style="color:#3182ce;"></i> 1번 (White)')
+        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (Black 후공)</span>' : '<i class="fa-solid fa-circle" style="color:#e53e3e;"></i> 2번 (Black)');
     } else if (gKey === 'quoridor') {
       return idx === 0
         ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (하단 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#3182ce;"></i> 1번 (하단)')
