@@ -700,14 +700,12 @@ const ChessWarfareGame = (() => {
     const rIdx = tile.rankIdx;
 
     // 🌟 고립(Isolated) 기물 제약:
-    // 보급선이 끊겼거나 아군 영토가 아닌 타일에 서 있는 기물은 무조건 8방향 '최대 1칸'만 이동 가능!
+    // 보급선이 끊겼거나 아군 영토가 아닌 타일에 서 있는 기물은 상하좌우 4방향 '최대 1칸'만 이동 가능!
     if (_isPieceIsolated(tile)) {
-      const dirs8 = [
-        [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],           [0, 1],
-        [1, -1],  [1, 0],  [1, 1]
+      const dirs4 = [
+        [-1, 0], [1, 0], [0, -1], [0, 1]
       ];
-      dirs8.forEach(([dx, dy]) => {
+      dirs4.forEach(([dx, dy]) => {
         const nx = fIdx + dx;
         const ny = rIdx + dy;
         if (_isValidCoord(nx, ny)) {
@@ -799,64 +797,78 @@ const ChessWarfareGame = (() => {
       [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => checkRay(dx, dy));
     }
 
-    // 3. Pawn (p): 전진 및 대각선 공격 + 고속도로 2칸 보너스
+    // 3. Pawn (p): 상하좌우 4방향 이동/공격 + 전진 대각선 공격 + 4방향 고속도로 2칸 보너스
     else if (piece.type === 'p') {
       const mySide = (myColor === 'w') ? 'White' : 'Black';
       const forwardDir = (myColor === 'w') ? 1 : -1; // White는 1->16(+), Black은 16->1(-)
       const startRankIdx = (myColor === 'w') ? 1 : 14; // White: rank '2'(idx 1), Black: rank '15'(idx 14)
+      const dirs4 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
-      // 1칸 전진
-      const f1Y = rIdx + forwardDir;
-      if (_isValidCoord(fIdx, f1Y)) {
-        const f1Coord = _getCoord(fIdx, f1Y);
-        if (!boardState[f1Coord].piece) {
-          moves.push(f1Coord);
+      // ① 상하좌우 4방향 1칸 이동 및 공격 (빈 칸 이동 또는 적 기물 캡처)
+      dirs4.forEach(([dx, dy]) => {
+        const nx = fIdx + dx;
+        const ny = rIdx + dy;
+        if (_isValidCoord(nx, ny)) {
+          const targetCoord = _getCoord(nx, ny);
+          const targetTile = boardState[targetCoord];
+          if (!targetTile.piece || targetTile.piece.color === oppColor) {
+            if (!moves.includes(targetCoord)) {
+              moves.push(targetCoord);
+            }
+          }
+        }
 
-          // 2칸 전진 (시작 위치이고 앞 1칸 및 2칸 모두 빈칸일 때)
-          if (rIdx === startRankIdx) {
-            const f2Y = rIdx + forwardDir * 2;
-            if (_isValidCoord(fIdx, f2Y)) {
-              const f2Coord = _getCoord(fIdx, f2Y);
-              if (!boardState[f2Coord].piece) {
-                moves.push(f2Coord);
+        // 🌟 아군 영토 기동력 보너스 (고속도로 룰): 상하좌우 4방향 2칸 이동
+        // 출발, 중간, 도착이 모두 아군 보급 영토일 때 2칸 이동 허용
+        if (tile.owner === mySide && _isPieceSupplied(tile)) {
+          const midX = fIdx + dx;
+          const midY = rIdx + dy;
+          const destX = fIdx + dx * 2;
+          const destY = rIdx + dy * 2;
+          if (_isValidCoord(midX, midY) && _isValidCoord(destX, destY)) {
+            const midCoord = _getCoord(midX, midY);
+            const destCoord = _getCoord(destX, destY);
+            const midTile = boardState[midCoord];
+            const destTile = boardState[destCoord];
+            const isMidSupplied = midTile.owner === mySide && (midTile.isSupplied || (mySide === 'White' ? midTile.whiteSupplied : midTile.blackSupplied));
+            const isDestSupplied = destTile.owner === mySide && (destTile.isSupplied || (mySide === 'White' ? destTile.whiteSupplied : destTile.blackSupplied));
+            if (isMidSupplied && !midTile.piece) {
+              if (isDestSupplied && (!destTile.piece || destTile.piece.color === oppColor)) {
+                if (!moves.includes(destCoord)) {
+                  moves.push(destCoord);
+                }
               }
             }
           }
         }
-      }
+      });
 
-      // 🌟 2. 아군 영토 기동력 보너스 (고속도로 룰)
-      // 출발, 중간, 도착이 모두 아군 보급 영토이면 어디서든 2칸 전진 가능
-      if (tile.owner === mySide && _isPieceSupplied(tile)) {
+      // ② 시작 위치 2칸 전진 (기존 체스 룰: 전방 1칸 및 2칸 모두 빈칸일 때)
+      if (rIdx === startRankIdx) {
         const f1Y = rIdx + forwardDir;
         const f2Y = rIdx + forwardDir * 2;
         if (_isValidCoord(fIdx, f1Y) && _isValidCoord(fIdx, f2Y)) {
           const f1Coord = _getCoord(fIdx, f1Y);
           const f2Coord = _getCoord(fIdx, f2Y);
-          const midTile = boardState[f1Coord];
-          const destTile = boardState[f2Coord];
-          const isMidSupplied = midTile.owner === mySide && (midTile.isSupplied || (mySide === 'White' ? midTile.whiteSupplied : midTile.blackSupplied));
-          const isDestSupplied = destTile.owner === mySide && (destTile.isSupplied || (mySide === 'White' ? destTile.whiteSupplied : destTile.blackSupplied));
-          if (isMidSupplied && !midTile.piece) {
-            if (isDestSupplied && !destTile.piece) {
-              if (!moves.includes(f2Coord)) {
-                moves.push(f2Coord);
-              }
+          if (!boardState[f1Coord].piece && !boardState[f2Coord].piece) {
+            if (!moves.includes(f2Coord)) {
+              moves.push(f2Coord);
             }
           }
         }
       }
 
-      // 대각선 공격 (좌/우 앞 대각선)
+      // ③ 대각선 공격 (좌/우 앞 대각선 적 기물 캡처 호환)
       [-1, 1].forEach(dx => {
         const nx = fIdx + dx;
         const ny = rIdx + forwardDir;
         if (_isValidCoord(nx, ny)) {
           const diagCoord = _getCoord(nx, ny);
           const diagTile = boardState[diagCoord];
-          // 적 기물이 있는 경우에만 공격 이동 가능
           if (diagTile.piece && diagTile.piece.color === oppColor) {
-            moves.push(diagCoord);
+            if (!moves.includes(diagCoord)) {
+              moves.push(diagCoord);
+            }
           }
         }
       });
@@ -906,6 +918,7 @@ const ChessWarfareGame = (() => {
     const fromTile = boardState[from];
     const toTile = boardState[to];
     if (!fromTile || !toTile || !fromTile.piece) return;
+    if (fromTile.piece.isStunned) return; // 💫 기절(Stun) 상태 기물은 이동 불가
 
     const movingPiece = fromTile.piece;
     const targetPiece = toTile.piece;
@@ -1077,7 +1090,8 @@ const ChessWarfareGame = (() => {
         whiteGold,
         blackGold,
         isKingCapture: false,
-        isAnnihilation: false
+        isAnnihilation: false,
+        isStunned: !!movingPiece.isStunned
       });
     }
 
@@ -2126,6 +2140,19 @@ const ChessWarfareGame = (() => {
 
     const tile = boardState[coord];
 
+    // 💫 기절(Stun) 상태 기물 클릭 시 즉각 차단 및 선택 무효화 (이번 턴 동안 아예 선택도 불가)
+    if (tile && tile.piece && tile.piece.isStunned) {
+      selectedCoord = null;
+      validMoves = [];
+      _updateHighlights();
+      _updateUI();
+      _playSound('warn');
+      if (typeof showToast === 'function') {
+        showToast('💫 기절(Stun) 상태! 폰을 처치한 기물은 이번 턴 동안 선택 및 조작이 불가능합니다.', 'warn');
+      }
+      return;
+    }
+
     // 🌟 1. 기물 소환(Spawn) 모드 활성화 시 -> 소환 가능한 타일 클릭 시 소환 실행!
     if (selectedSpawnPiece) {
       if (validSpawnCoords.includes(coord)) {
@@ -2229,6 +2256,10 @@ const ChessWarfareGame = (() => {
       if (typeof data.blackGold === 'number') blackGold = data.blackGold;
       if (typeof data.currentRound === 'number') currentRound = data.currentRound;
       _executeMove(data.from, data.to, false);
+      if (data.isStunned && boardState[data.to] && boardState[data.to].piece) {
+        boardState[data.to].piece.isStunned = true;
+        _updateBoardTiles();
+      }
       if (data.isKingCapture) {
         gameOver = true;
         _showGameOverBanner(data.nextTurn === 'White' ? 'Black' : 'White', 'king');

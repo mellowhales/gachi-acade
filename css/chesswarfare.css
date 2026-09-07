@@ -715,9 +715,20 @@
   100% { transform: rotate(0deg) scale(0.9); }
 }
 
+/* 💫 폰 처치 후 기절(Stun) 뱃지 및 기물 스타일 (선택 원천 차단) */
+.cw-tile.stunned-piece-tile {
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+  box-shadow: inset 0 0 0 1.5px rgba(214, 158, 46, 0.6) !important;
+}
+
 .cw-tile.stunned-piece-tile .cw-piece {
-  filter: grayscale(0.55) brightness(0.85) drop-shadow(0 0 4px rgba(236, 201, 75, 0.75));
-  opacity: 0.85;
+  filter: grayscale(0.7) brightness(0.75) drop-shadow(0 0 6px #ecc94b) !important;
+  opacity: 0.65 !important;
+}
+
+.cw-tile.stunned-piece-tile.selected {
+  box-shadow: none !important;
 }
 
 /* 소환 가능 타일 하이라이트 */
