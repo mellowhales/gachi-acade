@@ -499,9 +499,15 @@ const RussianRouletteGame = (() => {
     // 다음 생존 플레이어로 순환
     let nextIdx = (currentTurnIndex + turnDirection + playersList.length) % playersList.length;
     let loopLimit = 0;
-    while (playersList[nextIdx].isDead && loopLimit < playersList.length) {
+    while (playersList[nextIdx] && playersList[nextIdx].isDead && loopLimit < playersList.length) {
       nextIdx = (nextIdx + turnDirection + playersList.length) % playersList.length;
       loopLimit++;
+    }
+
+    // 버그7 수정: 생존자가 없으면 게임 종료
+    if (loopLimit >= playersList.length || !playersList[nextIdx] || playersList[nextIdx].isDead) {
+      _checkGameOver();
+      return;
     }
 
     // 수갑 체크
@@ -510,11 +516,14 @@ const RussianRouletteGame = (() => {
       nextPlayer.handcuffed = false;
       _addLog(`⛓️ [${nextPlayer.name}]님은 수갑에 묶여 이번 턴을 통과합니다!`, 'important');
       // 다음 사람으로 재순환
-      nextIdx = (nextIdx + turnDirection + playersList.length) % playersList.length;
-      loopLimit = 0;
-      while (playersList[nextIdx].isDead && loopLimit < playersList.length) {
-        nextIdx = (nextIdx + turnDirection + playersList.length) % playersList.length;
-        loopLimit++;
+      let skip = (nextIdx + turnDirection + playersList.length) % playersList.length;
+      let skipLimit = 0;
+      while (playersList[skip] && playersList[skip].isDead && skipLimit < playersList.length) {
+        skip = (skip + turnDirection + playersList.length) % playersList.length;
+        skipLimit++;
+      }
+      if (skipLimit < playersList.length && playersList[skip] && !playersList[skip].isDead) {
+        nextIdx = skip;
       }
     }
 
@@ -563,6 +572,7 @@ const RussianRouletteGame = (() => {
 
   // 실탄/공포탄 발사 로직
   function _processShoot(shooterIdx, targetIdx) {
+    _stopTurnTimer(); // 버그1 수정: 격발 즉시 타이머 중단
     const shooter = playersList[shooterIdx];
     const target = playersList[targetIdx];
     if (!shooter || !target) return;
@@ -709,8 +719,10 @@ const RussianRouletteGame = (() => {
         const currentBullet = cylinder[chamberIndex];
         secretPeek = currentBullet;
         logMsg = `🔍 [${actor.name}]님이 돋보기로 현재 탄창을 은밀하게 들여다보았습니다.`;
-        // 비밀 패킷을 사용자에게만 전송
-        if (String(actor.id) === String(_context.myId || '')) {
+        // 개선3 수정: 호스트인 경우도 포함하여 비밀 peek 처리
+        const myId = String(_context.myId || '');
+        const isActorMe = (String(actor.id) === myId) || (actor.isHost && P2P.isHost());
+        if (isActorMe) {
           _showPeekModal(currentBullet);
         } else {
           P2P.send({ type: 'rr_peek_secret', bullet: currentBullet }, actor.id);
@@ -727,10 +739,14 @@ const RussianRouletteGame = (() => {
         break;
       }
       case 'cuffs': {
-        const target = playersList[targetIdx];
+        // 버그5 수정: targetIdx undefined 방어 로직
+        const target = (targetIdx !== undefined && targetIdx !== null) ? playersList[targetIdx] : null;
         if (target && !target.isDead) {
           target.handcuffed = true;
           logMsg = `⛓️ [${actor.name}]님이 [${target.name}]님에게 수갑을 채웠습니다! (다음 턴 강제 스킵)`;
+        } else {
+          // 버그4 수정: target 없거나 죽어있을 때 빈 로그 방지
+          logMsg = `⛓️ [${actor.name}]님이 수갑을 사용했으나 유효한 대상이 없었습니다.`;
         }
         break;
       }
@@ -908,10 +924,7 @@ const RussianRouletteGame = (() => {
           <!-- 아이템 인벤토리 -->
           <div class="rr-items-tray" id="rr-items-tray">
             <span class="rr-items-title"><i class="fa-solid fa-briefcase"></i> 내 소지품:</span>
-            <div class="rr-item-slot empty" id="slot-0"></div>
-            <div class="rr-item-slot empty" id="slot-1"></div>
-            <div class="rr-item-slot empty" id="slot-2"></div>
-            <div class="rr-item-slot empty" id="slot-3"></div>
+            <!-- 아이템 슬롯: JS로 동적 생성 -->
           </div>
 
           <!-- 액션 실시간 로그 -->
@@ -1071,7 +1084,9 @@ const RussianRouletteGame = (() => {
     const btnSpin = document.getElementById('btn-rr-spin');
 
     if (btnSelf) btnSelf.disabled = !(isMine && !gameOver);
-    if (btnOpp) btnOpp.disabled = !(isMine && !gameOver);
+    // 버그6 수정: 살아있는 상대가 없으면 상대 쏘기 버튼 비활성화
+    const hasLivingOpponents = playersList.some((p, idx) => !p.isDead && idx !== currentTurnIndex);
+    if (btnOpp) btnOpp.disabled = !(isMine && !gameOver && hasLivingOpponents);
     if (btnSpin) btnSpin.disabled = !(isMine && !gameOver && !spunThisTurn);
 
     // 안내 배너
@@ -1106,37 +1121,38 @@ const RussianRouletteGame = (() => {
     }
   }
 
-  function _renderItemSlots() {
-    const myId = String((_context && _context.myId) || '');
-    const me = playersList.find(p => (String(p.id) === myId) || (p.isHost && P2P.isHost()));
-    const myItems = me ? me.items : [];
-    const isMine = _isMyTurn();
+function _renderItemSlots() {
+  const myId = String((_context && _context.myId) || '');
+  const me = playersList.find(p => (String(p.id) === myId) || (p.isHost && P2P.isHost()));
+  const myItems = me ? me.items : [];
+  const tray = document.getElementById('rr-items-tray');
+  if (!tray) return;
 
-    for (let s = 0; s < 4; s++) {
-      const slotEl = document.getElementById(`slot-${s}`);
-      if (!slotEl) continue;
+  // 기존 slot 요소만 제거 (타이틀 유지)
+  tray.querySelectorAll('.rr-item-slot').forEach(el => el.remove());
 
-      if (s < myItems.length) {
-        const itemKey = myItems[s];
-        const def = ITEM_DEFS[itemKey] || { name: itemKey, icon: 'fa-solid fa-cube', desc: '' };
-        slotEl.className = 'rr-item-slot';
-        slotEl.title = `[${def.name}] ${def.desc}`;
-        slotEl.innerHTML = `
-          <i class="${def.icon}"></i>
-          <span class="rr-item-badge">${s + 1}</span>
-        `;
-        slotEl.onclick = () => {
-          if (!isMine || gameOver) return;
-          _handleUseItemClick(itemKey);
-        };
-      } else {
-        slotEl.className = 'rr-item-slot empty';
-        slotEl.title = '빈 슬롯';
-        slotEl.innerHTML = '';
-        slotEl.onclick = null;
-      }
+  const maxSlots = 4;
+  for (let s = 0; s < maxSlots; s++) {
+    const slotEl = document.createElement('div');
+    if (s < myItems.length) {
+      const itemKey = myItems[s];
+      const def = ITEM_DEFS[itemKey] || { name: itemKey, icon: 'fa-solid fa-cube', desc: '' };
+      slotEl.className = 'rr-item-slot';
+      slotEl.title = `[${def.name}] ${def.desc}`;
+      slotEl.innerHTML = `<i class="${def.icon}"></i><span class="rr-item-badge">${s + 1}</span>`;
+      const capturedKey = itemKey;
+      // 버그3 수정: isMine 클로저 캡처 대신 _isMyTurn() 직접 호출
+      slotEl.onclick = () => {
+        if (!_isMyTurn() || gameOver) return;
+        _handleUseItemClick(capturedKey);
+      };
+    } else {
+      slotEl.className = 'rr-item-slot empty';
+      slotEl.title = '빈 슬롯';
     }
+    tray.appendChild(slotEl);
   }
+}
 
   // 아이템 클릭 핸들러
   function _handleUseItemClick(itemKey) {
@@ -1213,13 +1229,22 @@ const RussianRouletteGame = (() => {
     modal.classList.remove('hidden');
   }
 
+  // 개선5: XSS 방지를 위한 HTML 이스케이프 함수
+  function _escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function _addLog(msg, type = 'normal') {
     logs.push({ msg, type });
     if (logs.length > 20) logs.shift();
 
     const logWrap = document.getElementById('rr-log-wrap');
     if (logWrap) {
-      logWrap.innerHTML = logs.map(l => `<div class="rr-log-entry ${l.type}">${l.msg}</div>`).join('');
+      logWrap.innerHTML = logs.map(l => `<div class="rr-log-entry ${l.type}">${_escHtml(l.msg)}</div>`).join('');
       logWrap.scrollTop = logWrap.scrollHeight;
     }
   }
@@ -1246,8 +1271,12 @@ const RussianRouletteGame = (() => {
       RRSound.playSpin();
       if (cylinderEl) {
         cylinderEl.classList.remove('spinning');
-        void cylinderEl.offsetWidth;
+        void cylinderEl.offsetWidth; // reflow
         cylinderEl.classList.add('spinning');
+        // 개선4 수정: 애니메이션 종료 후 spinning 클래스 제거 (재사용 가능하도록)
+        setTimeout(() => {
+          if (cylinderEl) cylinderEl.classList.remove('spinning');
+        }, 900);
       }
     } else if (data.action === 'use_item') {
       if (data.itemKey === 'saw') RRSound.playSaw();
@@ -1310,6 +1339,14 @@ const RussianRouletteGame = (() => {
       }
       case 'rr_action_result': {
         _applyActionResult(data);
+        // 버그2 수정: 클라이언트 측 shoot/spin 후 UI 멈춤 방지 - 타이머 리셋
+        if (!gameOver && !P2P.isHost()) {
+          if (data.action === 'shoot_self' || data.action === 'shoot_opp' || data.action === 'spin') {
+            // 호스트가 advanceTurn 처리 후 새 상태 보낼 것을 기다리지 않고 타이머만 리셋
+            // 실제 턴 전환은 호스트가 send하는 다음 패킷에 의해 처리됨
+            _stopTurnTimer();
+          }
+        }
         break;
       }
       case 'rr_peek_secret': {
