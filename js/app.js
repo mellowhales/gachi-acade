@@ -14,6 +14,7 @@
     alkkagi:   { module: AlkkagiGame,   title: '알까기',        maxPlayers: 2, isTurnBased: true },
     quoridor:  { module: QuoridorGame,  title: '쿼리도',        maxPlayers: 2, isTurnBased: true },
     baskin31:  { module: Baskin31Game,  title: '베스킨라빈스 31', maxPlayers: 8, isTurnBased: true },
+    roulette:  { module: RussianRouletteGame, title: '러시안 룰렛', maxPlayers: 8, isTurnBased: true },
     wordchain: { module: WordchainGame, title: '끝말잇기',      maxPlayers: 8, isTurnBased: true },
     apple:     { module: AppleGame,     title: '사과게임',        maxPlayers: 8, isTurnBased: false },
     typing:    { module: TypingGame,    title: '타자연습 대결',    maxPlayers: 8, isTurnBased: false },
@@ -2789,6 +2790,13 @@
       tag: '2~5인 • 심리 턴제',
       tagClass: 'tag-multi',
       desc: '자신의 턴마다 1개에서 3개까지 연속된 숫자를 부를 수 있습니다. 마지막 31을 부르게 되는 플레이어가 패배하는 스릴 넘치는 심리 게임입니다.'
+    },
+    roulette: {
+      title: '러시안 룰렛',
+      icon: 'fa-solid fa-skull-crossbones',
+      tag: '2~8인 • 심리 서바이벌',
+      tagClass: 'tag-multi',
+      desc: '실탄과 공포탄이 장전된 리볼버 권총으로 벌이는 극한의 심리전! 자신을 쏘아 생존하면 연속 턴을 얻고, 돋보기·수갑·톱날 등 다양한 아이템을 활용하여 최후의 1인이 되세요!'
     },
     wordchain: {
       title: '끝말잇기',
