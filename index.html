@@ -908,6 +908,14 @@
     <div class="avatar-color-grid" id="avatar-color-grid"></div>
   </div>
 
+  <!-- 내 전적 보기 버튼 -->
+  <div style="margin-bottom: 12px;">
+    <button type="button" class="btn btn-secondary btn-sm" id="btn-open-my-stats" style="width:100%; padding:9px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <i class="fa-solid fa-chart-simple" style="color:var(--primary);"></i>
+      <span>내 전적 보기</span>
+    </button>
+  </div>
+
   <!-- 버튼 -->
   <div class="profile-btn-row">
     <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
@@ -985,6 +993,72 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
+     MODAL: 게임 전적 상세 모달 (상대방 / 내 전적 공용)
+═══════════════════════════════════════════════════════════════ -->
+<div id="stats-modal" class="overlay stats-modal-overlay hidden">
+  <div class="stats-modal-card card">
+    <div class="stats-modal-header">
+      <div class="stats-user-profile">
+        <div class="stats-user-avatar" id="stats-user-avatar">
+          <i class="fa-solid fa-user" id="stats-user-icon"></i>
+        </div>
+        <div class="stats-user-info">
+          <div class="stats-user-name" id="stats-user-name">플레이어</div>
+          <div class="stats-user-tag" id="stats-user-tag">게임 전적 기록</div>
+        </div>
+      </div>
+      <button type="button" class="btn-icon sm" id="btn-close-stats-modal" title="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 총 전적 요약 카드 -->
+    <div class="stats-summary-card">
+      <div class="stats-summary-item">
+        <span class="stats-summary-label">총 판수</span>
+        <strong class="stats-summary-val" id="stats-total-plays">0</strong>
+      </div>
+      <div class="stats-summary-divider"></div>
+      <div class="stats-summary-item">
+        <span class="stats-summary-label">승리</span>
+        <strong class="stats-summary-val win" id="stats-total-wins">0</strong>
+      </div>
+      <div class="stats-summary-divider"></div>
+      <div class="stats-summary-item">
+        <span class="stats-summary-label">패배</span>
+        <strong class="stats-summary-val lose" id="stats-total-losses">0</strong>
+      </div>
+      <div class="stats-summary-divider"></div>
+      <div class="stats-summary-item">
+        <span class="stats-summary-label">무승부</span>
+        <strong class="stats-summary-val draw" id="stats-total-draws">0</strong>
+      </div>
+      <div class="stats-summary-divider"></div>
+      <div class="stats-summary-item highlight">
+        <span class="stats-summary-label">승률</span>
+        <strong class="stats-summary-val rate" id="stats-win-rate">0%</strong>
+      </div>
+    </div>
+
+    <!-- 승률 막대 게이지 -->
+    <div class="stats-gauge-wrap">
+      <div class="stats-gauge-track">
+        <div class="stats-gauge-fill" id="stats-gauge-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- 게임별 전적 목록 섹션 -->
+    <div class="stats-games-title">
+      <i class="fa-solid fa-gamepad"></i>
+      <span>게임별 상세 전적</span>
+    </div>
+    <div class="stats-games-list" id="stats-games-list">
+      <!-- JS로 14개 게임별 행 렌더링 -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
      OVERLAY: 카운트다운 (사과게임, 끝말잇기, 타자연습 시작 전 3, 2, 1)
 ═══════════════════════════════════════════════════════════════ -->
 <div id="overlay-countdown" class="overlay countdown-overlay hidden">
@@ -1044,10 +1118,14 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     DROPDOWN: 방장 참가자 관리 메뉴 (강퇴)
+     DROPDOWN: 참가자 프로필 메뉴 (전적 보기 & 방장 강퇴)
 ═══════════════════════════════════════════════════════════════ -->
 <div id="host-action-dropdown" class="host-action-dropdown hidden">
   <div class="host-action-target-name" id="host-action-target-name">플레이어</div>
+  <button type="button" class="host-action-btn stats" id="btn-host-view-stats">
+    <i class="fa-solid fa-chart-simple"></i>
+    <span>전적 보기</span>
+  </button>
   <button type="button" class="host-action-btn kick" id="btn-host-kick">
     <i class="fa-solid fa-user-xmark"></i>
     <span>강퇴하기</span>

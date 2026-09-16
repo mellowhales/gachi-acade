@@ -586,29 +586,46 @@
     });
   }
 
-  /* ── 👑 방장 관리 드롭다운 (강퇴 & 위임) ── */
-  function _openHostActionMenu(e, targetPlayer) {
+  /* ── 👑 참가자 프로필 & 방장 관리 드롭다운 (전적 보기 / 강퇴) ── */
+  function _openPlayerActionMenu(e, targetPlayer) {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
     }
+    if (!targetPlayer) return;
 
+    const myId = P2P.getMyId();
     const amIHost = P2P.isHost() || isHostPlayer;
-    if (!amIHost || !targetPlayer || targetPlayer.isHost || targetPlayer.id === P2P.getMyId()) return;
+    const isMe = (targetPlayer.id === myId) || (targetPlayer.isHost && amIHost);
+
+    // 만약 나 자신을 클릭한 경우 내 전적 모달 바로 오픈
+    if (isMe) {
+      _openPlayerStatsModal();
+      return;
+    }
 
     selectedTargetPlayer = targetPlayer;
     const dropdown = $('host-action-dropdown');
     const nameEl = $('host-action-target-name');
+    const btnKick = $('btn-host-kick');
+    const btnStats = $('btn-host-view-stats');
     if (!dropdown || !nameEl) return;
 
-    nameEl.textContent = `${targetPlayer.name}님 관리`;
+    nameEl.textContent = `${targetPlayer.name}님`;
+
+    // 강퇴 버튼은 오직 방장이고, 대상이 방장이 아닐 때만 표시
+    const canKick = amIHost && !targetPlayer.isHost;
+    if (btnKick) {
+      btnKick.style.display = canKick ? 'flex' : 'none';
+    }
+
     dropdown.classList.remove('hidden');
 
     // 마우스/클릭 타겟 위치 기반 최적 포지셔닝
     const targetEl = e.currentTarget || e.target;
     const rect = targetEl.getBoundingClientRect();
-    const dropdownWidth = 175;
-    const dropdownHeight = 115;
+    const dropdownWidth = 160;
+    const dropdownHeight = canKick ? 105 : 75;
 
     let left = rect.right - dropdownWidth;
     let top = rect.bottom + 6;
@@ -620,6 +637,9 @@
     dropdown.style.left = `${left}px`;
     dropdown.style.top = `${top}px`;
   }
+
+  // 기존 호환성 유지 alias
+  const _openHostActionMenu = _openPlayerActionMenu;
 
   function _closeHostActionMenu() {
     const dropdown = $('host-action-dropdown');
@@ -645,6 +665,17 @@
 
   window.addEventListener('resize', _closeHostActionMenu);
   window.addEventListener('scroll', _closeHostActionMenu, true);
+
+  // [전적 보기] 버튼 클릭
+  if ($('btn-host-view-stats')) {
+    $('btn-host-view-stats').addEventListener('click', () => {
+      const target = selectedTargetPlayer;
+      _closeHostActionMenu();
+      if (target) {
+        _openPlayerStatsModal(target);
+      }
+    });
+  }
 
   // [강퇴하기] 버튼 클릭
   if ($('btn-host-kick')) {
@@ -815,8 +846,8 @@
     }, 50);
   }
 
-  function _closeProfileModal() {
-    if (_backHistoryIfModal('profile')) return;
+  function _closeProfileModal(skipHistory = false) {
+    if (!skipHistory && _backHistoryIfModal('profile')) return;
     const popup = $('profile-bubble-popup');
     if (popup) {
       popup.classList.add('hidden');
@@ -906,6 +937,7 @@
         me.name = myNickname;
         me.avatarIcon = myAvatarIcon;
         me.avatarColor = myAvatarColor;
+        me.stats = _getMyStats();
       }
       _renderRoomPlayers();
       if (isHostPlayer) {
@@ -915,7 +947,8 @@
           type: 'guest_update_profile',
           name: myNickname,
           avatarIcon: myAvatarIcon,
-          avatarColor: myAvatarColor
+          avatarColor: myAvatarColor,
+          stats: _getMyStats()
         });
       }
     }
@@ -1004,7 +1037,7 @@
       const btnOpen = $('btn-open-auth-modal');
       if (btnOpen) {
         btnOpen.addEventListener('click', () => {
-          _closeProfileModal();
+          _closeProfileModal(true);
           _openAuthModal('signin');
         });
       }
@@ -1155,7 +1188,7 @@
     const btnOpen = $('btn-open-auth-modal');
     if (btnOpen) {
       btnOpen.addEventListener('click', () => {
-        _closeProfileModal();
+        _closeProfileModal(true);
         _openAuthModal('signin');
       });
     }
@@ -1216,6 +1249,243 @@
       });
     } else {
       _updateProfileAuthUI(null);
+    }
+  }
+
+  /* =====================================================================
+     📊 게임 전적 시스템 (게임별/전체 전적 로컬 & Supabase 동기화 & 모달)
+     ===================================================================== */
+  const GAME_STATS_KEY = 'arcade_user_stats';
+
+  const GAME_STATS_META = {
+    gomoku: { title: '오목', icon: 'fa-solid fa-chess-board' },
+    chess: { title: '체스', icon: 'fa-solid fa-chess' },
+    janggi: { title: '장기', icon: 'fa-solid fa-gem' },
+    alkkagi: { title: '알까기', icon: 'fa-solid fa-circle-dot' },
+    quoridor: { title: '쿼리도', icon: 'fa-solid fa-border-all' },
+    baskin31: { title: '배스킨라빈스 31', icon: 'fa-solid fa-ice-cream' },
+    roulette: { title: '러시안 룰렛', icon: 'fa-solid fa-skull-crossbones' },
+    wordchain: { title: '끝말잇기', icon: 'fa-solid fa-spell-check' },
+    apple: { title: '사과게임', icon: 'fa-solid fa-apple-whole' },
+    typing: { title: '타자연습', icon: 'fa-solid fa-keyboard' },
+    catchmind: { title: '캐치마인드', icon: 'fa-solid fa-palette' },
+    yutnori: { title: '윷놀이', icon: 'fa-solid fa-dice' },
+    yacht: { title: '요트 다이스', icon: 'fa-solid fa-dice-five' },
+    chesswarfare: { title: '체스 워페어', icon: 'fa-solid fa-chess-knight' }
+  };
+
+  function _createEmptyStats() {
+    const stats = {
+      total: { plays: 0, wins: 0, losses: 0, draws: 0 },
+      games: {}
+    };
+    Object.keys(GAME_STATS_META).forEach(key => {
+      stats.games[key] = { plays: 0, wins: 0, losses: 0, draws: 0 };
+    });
+    return stats;
+  }
+
+  function _getMyStats() {
+    try {
+      const raw = localStorage.getItem(GAME_STATS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          if (!parsed.total) parsed.total = { plays: 0, wins: 0, losses: 0, draws: 0 };
+          if (!parsed.games) parsed.games = {};
+          Object.keys(GAME_STATS_META).forEach(k => {
+            if (!parsed.games[k]) parsed.games[k] = { plays: 0, wins: 0, losses: 0, draws: 0 };
+          });
+          return parsed;
+        }
+      }
+    } catch (_) {}
+    return _createEmptyStats();
+  }
+
+  function _saveMyStats(stats) {
+    if (!stats || typeof stats !== 'object') return;
+    try {
+      localStorage.setItem(GAME_STATS_KEY, JSON.stringify(stats));
+    } catch (_) {}
+
+    // Supabase 로그인 상태라면 클라우드에도 저장
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, { stats }).catch(() => {});
+    }
+
+    // 대기방에 있다면 P2P 방 참가자들에게 최신 stats 공유
+    if (currentRoomCode && roomPlayers.length > 0) {
+      const myId = P2P.getMyId();
+      const me = roomPlayers.find(p => p.id === myId);
+      if (me) me.stats = stats;
+      if (isHostPlayer) {
+        _hostBroadcastRoomState();
+      } else {
+        P2P.send({
+          type: 'guest_update_profile',
+          name: myNickname,
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          stats: stats
+        });
+      }
+    }
+  }
+
+  function _recordGameStats(gameKey, resultType) { // 'win' | 'lose' | 'draw'
+    if (!gameKey) gameKey = selectedGameKey;
+    const stats = _getMyStats();
+
+    // 1. 전체 전적
+    stats.total.plays = (stats.total.plays || 0) + 1;
+    if (resultType === 'win') {
+      stats.total.wins = (stats.total.wins || 0) + 1;
+    } else if (resultType === 'lose') {
+      stats.total.losses = (stats.total.losses || 0) + 1;
+    } else if (resultType === 'draw') {
+      stats.total.draws = (stats.total.draws || 0) + 1;
+    }
+
+    // 2. 게임별 전적
+    if (!stats.games[gameKey]) {
+      stats.games[gameKey] = { plays: 0, wins: 0, losses: 0, draws: 0 };
+    }
+    const gStat = stats.games[gameKey];
+    gStat.plays = (gStat.plays || 0) + 1;
+    if (resultType === 'win') {
+      gStat.wins = (gStat.wins || 0) + 1;
+    } else if (resultType === 'lose') {
+      gStat.losses = (gStat.losses || 0) + 1;
+    } else if (resultType === 'draw') {
+      gStat.draws = (gStat.draws || 0) + 1;
+    }
+
+    _saveMyStats(stats);
+  }
+
+  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false) {
+    const s = stats || _createEmptyStats();
+    const tot = s.total || { plays: 0, wins: 0, losses: 0, draws: 0 };
+    const plays = tot.plays || 0;
+    const wins = tot.wins || 0;
+    const losses = tot.losses || 0;
+    const draws = tot.draws || 0;
+    const winRate = plays > 0 ? Math.round((wins / plays) * 100) : 0;
+
+    const avEl = $('stats-user-avatar');
+    const nameEl = $('stats-user-name');
+    const tagEl = $('stats-user-tag');
+    if (avEl) {
+      avEl.style.background = avatarColor || '#38a169';
+      avEl.innerHTML = `<i class="${avatarIcon || 'fa-solid fa-dog'}"></i>`;
+    }
+    if (nameEl) nameEl.textContent = name || '플레이어';
+    if (tagEl) tagEl.textContent = isMe ? '내 게임 전적 기록' : '상대방 게임 전적 기록';
+
+    if ($('stats-total-plays')) $('stats-total-plays').textContent = plays;
+    if ($('stats-total-wins')) $('stats-total-wins').textContent = wins;
+    if ($('stats-total-losses')) $('stats-total-losses').textContent = losses;
+    if ($('stats-total-draws')) $('stats-total-draws').textContent = draws;
+    if ($('stats-win-rate')) $('stats-win-rate').textContent = `${winRate}%`;
+
+    const gaugeFill = $('stats-gauge-fill');
+    if (gaugeFill) gaugeFill.style.width = `${winRate}%`;
+
+    const listEl = $('stats-games-list');
+    if (listEl) {
+      listEl.innerHTML = Object.entries(GAME_STATS_META).map(([key, meta]) => {
+        const g = (s.games && s.games[key]) || { plays: 0, wins: 0, losses: 0, draws: 0 };
+        const gPlays = g.plays || 0;
+        const gWins = g.wins || 0;
+        const gLosses = g.losses || 0;
+        const gDraws = g.draws || 0;
+        const gRate = gPlays > 0 ? Math.round((gWins / gPlays) * 100) : 0;
+
+        let countDesc = `${gPlays}전 ${gWins}승`;
+        if (gDraws > 0) countDesc += ` ${gDraws}무`;
+        countDesc += ` ${gLosses}패`;
+
+        const badgeClass = gPlays > 0 ? 'stats-game-rate-badge' : 'stats-game-rate-badge empty';
+        const badgeText = gPlays > 0 ? `승률 ${gRate}%` : '기록 없음';
+
+        return `
+          <div class="stats-game-row">
+            <div class="stats-game-left">
+              <div class="stats-game-icon"><i class="${meta.icon}"></i></div>
+              <div class="stats-game-info">
+                <span class="stats-game-name">${meta.title}</span>
+                <span class="stats-game-counts">${countDesc}</span>
+              </div>
+            </div>
+            <div class="stats-game-right">
+              <span class="${badgeClass}">${badgeText}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  async function _openPlayerStatsModal(playerData = null) {
+    const modal = $('stats-modal');
+    if (!modal) return;
+
+    const myId = P2P.getMyId();
+    const isMe = !playerData || (playerData.id === myId) || (playerData.isHost && P2P.isHost());
+
+    if (isMe) {
+      const myStats = _getMyStats();
+      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true);
+      modal.classList.remove('hidden');
+    } else {
+      // 상대방
+      const targetName = playerData.name || '상대방';
+      const targetIcon = playerData.avatarIcon || 'fa-solid fa-paw';
+      const targetColor = playerData.avatarColor || '#718096';
+
+      // 1) playerData에 stats가 이미 있는 경우
+      if (playerData.stats) {
+        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false);
+      } else {
+        // 2) 임시 렌더링 후 Supabase 조회 시도
+        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false);
+        if (typeof AppSupabase !== 'undefined' && playerData.supabaseId) {
+          const userRecord = await AppSupabase.fetchUserStats(playerData.supabaseId);
+          if (userRecord && userRecord.stats) {
+            playerData.stats = userRecord.stats;
+            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false);
+          }
+        }
+      }
+      modal.classList.remove('hidden');
+    }
+  }
+
+  function _closeStatsModal() {
+    const modal = $('stats-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function _initStatsUI() {
+    const btnMyStats = $('btn-open-my-stats');
+    if (btnMyStats) {
+      btnMyStats.addEventListener('click', (e) => {
+        e.stopPropagation();
+        _closeProfileModal(true);
+        _openPlayerStatsModal();
+      });
+    }
+
+    const btnClose = $('btn-close-stats-modal');
+    if (btnClose) btnClose.addEventListener('click', _closeStatsModal);
+
+    const modal = $('stats-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) _closeStatsModal();
+      });
     }
   }
 
@@ -1456,7 +1726,8 @@
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         isHost: true,
-        isReady: true
+        isReady: true,
+        stats: _getMyStats()
       }];
       selectedGameKey = 'gomoku';
 
@@ -1545,7 +1816,8 @@
         name: myNickname || '익명',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
-        password: inputPassword || ''
+        password: inputPassword || '',
+        stats: _getMyStats()
       });
 
       hideLoading();
@@ -1636,7 +1908,8 @@
         avatarColor: data.avatarColor || _getRandomAvatarColor(),
         isHost: false,
         isReady: false,
-        isSpectator: isJoiningMidGame
+        isSpectator: isJoiningMidGame,
+        stats: data.stats || null
       };
 
       if (existingIdx !== -1) {
@@ -1688,6 +1961,7 @@
         if (data.name) player.name = data.name;
         if (data.avatarIcon) player.avatarIcon = data.avatarIcon;
         if (data.avatarColor) player.avatarColor = data.avatarColor;
+        if (data.stats) player.stats = data.stats;
         _broadcastRoomState();
         _updateRoomUI();
       }
@@ -2209,21 +2483,20 @@
         ${readyBadgeHtml}
       `;
 
-      if (canManage) {
-        const triggerBtn = li.querySelector('.btn-manage-trigger');
-        if (triggerBtn) {
-          triggerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            _openHostActionMenu(e, p);
-          });
-        }
-        li.addEventListener('click', (e) => {
-          if (!e.target.closest('.btn-manage-trigger')) {
-            _openHostActionMenu(e, p);
-          }
+      // 🌟 참가자 클릭 이벤트 (전적 보기 & 방장 관리 메뉴)
+      const triggerBtn = li.querySelector('.btn-manage-trigger');
+      if (triggerBtn) {
+        triggerBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          _openPlayerActionMenu(e, p);
         });
       }
+      li.addEventListener('click', (e) => {
+        if (!e.target.closest('.btn-manage-trigger')) {
+          _openPlayerActionMenu(e, p);
+        }
+      });
 
       listEl.appendChild(li);
     });
@@ -2701,16 +2974,19 @@
         </div>
       `;
 
-      if (canManage) {
-        const triggerBtn = li.querySelector('.btn-manage-trigger');
-        if (triggerBtn) {
-          triggerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            _openHostActionMenu(e, p);
-          });
-        }
+      const triggerBtn = li.querySelector('.btn-manage-trigger');
+      if (triggerBtn) {
+        triggerBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          _openPlayerActionMenu(e, p);
+        });
       }
+      li.addEventListener('click', (e) => {
+        if (!e.target.closest('.btn-manage-trigger')) {
+          _openPlayerActionMenu(e, p);
+        }
+      });
 
       listEl.appendChild(li);
     });
@@ -2745,16 +3021,19 @@
           </div>
         `;
 
-        if (canManage) {
-          const triggerBtn = li.querySelector('.btn-manage-trigger');
-          if (triggerBtn) {
-            triggerBtn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              _openHostActionMenu(e, sp);
-            });
-          }
+        const triggerBtn = li.querySelector('.btn-manage-trigger');
+        if (triggerBtn) {
+          triggerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            _openPlayerActionMenu(e, sp);
+          });
         }
+        li.addEventListener('click', (e) => {
+          if (!e.target.closest('.btn-manage-trigger')) {
+            _openPlayerActionMenu(e, sp);
+          }
+        });
 
         listEl.appendChild(li);
       });
@@ -2867,6 +3146,25 @@
 
   // 게임 결과 콜백
   function _handleGameResult(win, drawInfo, customLeaderboard) {
+    // 🌟 전적 집계 자동 기록
+    try {
+      let resultType = 'lose';
+      if (customLeaderboard && customLeaderboard.length > 0) {
+        const winner = customLeaderboard[0];
+        const iAmWinner = (winner.name === myNickname) || (winner.id && String(winner.id) === String(P2P.getMyId()));
+        resultType = iAmWinner ? 'win' : 'lose';
+      } else if (drawInfo && typeof drawInfo === 'object') {
+        resultType = 'draw';
+      } else if (win === true) {
+        resultType = 'win';
+      } else {
+        resultType = 'lose';
+      }
+      _recordGameStats(selectedGameKey, resultType);
+    } catch (e) {
+      console.warn('[Stats] 전적 기록 오류:', e);
+    }
+
     _showResultOverlay(win, drawInfo, customLeaderboard);
   }
 
@@ -3328,7 +3626,8 @@
   _initSidebarGameTooltips();
   _initInGameDragScroll();
   _initSupabaseAuthUI();
-  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증)');
+  _initStatsUI();
+  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템)');
 
 
 
@@ -3337,6 +3636,10 @@
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
     // 1. Close modals if they are open
+    if ($('stats-modal') && !$('stats-modal').classList.contains('hidden')) {
+      $('stats-modal').classList.add('hidden');
+      return;
+    }
     if ($('auth-modal') && !$('auth-modal').classList.contains('hidden')) {
       $('auth-modal').classList.add('hidden');
       return;

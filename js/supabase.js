@@ -198,7 +198,8 @@ const AppSupabase = (() => {
         return {
           nickname: data.nickname || '플레이어',
           avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
-          avatarColor: data.avatar_color || '#38a169'
+          avatarColor: data.avatar_color || '#38a169',
+          stats: data.stats || null
         };
       }
 
@@ -208,7 +209,8 @@ const AppSupabase = (() => {
         return {
           nickname: meta.nickname || '플레이어',
           avatarIcon: meta.avatar_icon || 'fa-solid fa-dog',
-          avatarColor: meta.avatar_color || '#38a169'
+          avatarColor: meta.avatar_color || '#38a169',
+          stats: meta.stats || null
         };
       }
 
@@ -234,16 +236,17 @@ const AppSupabase = (() => {
       updated_at: new Date().toISOString()
     };
     if (profileData.email) payload.email = profileData.email;
+    if (profileData.stats !== undefined) payload.stats = profileData.stats;
 
     try {
       // 1. user_metadata 업데이트
-      client.auth.updateUser({
-        data: {
-          nickname: payload.nickname,
-          avatar_icon: payload.avatar_icon,
-          avatar_color: payload.avatar_color
-        }
-      }).catch(() => {});
+      const metaData = {
+        nickname: payload.nickname,
+        avatar_icon: payload.avatar_icon,
+        avatar_color: payload.avatar_color
+      };
+      if (payload.stats) metaData.stats = payload.stats;
+      client.auth.updateUser({ data: metaData }).catch(() => {});
 
       // 2. profiles 테이블 upsert
       const { error } = await client
@@ -260,6 +263,36 @@ const AppSupabase = (() => {
     }
   }
 
+  /**
+   * 특정 유저의 전적 및 프로필 조회 (상대방 전적 확인용)
+   */
+  async function fetchUserStats(userId) {
+    const client = getClient();
+    if (!client || !userId) return null;
+
+    try {
+      const { data, error } = await client
+        .from('profiles')
+        .select('id, nickname, avatar_icon, avatar_color, stats')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          nickname: data.nickname || '플레이어',
+          avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
+          avatarColor: data.avatar_color || '#38a169',
+          stats: data.stats || null
+        };
+      }
+      return null;
+    } catch (err) {
+      console.warn('[Supabase] 상대 전적 조회 에러:', err);
+      return null;
+    }
+  }
+
   return {
     isConfigured,
     getClient,
@@ -270,7 +303,8 @@ const AppSupabase = (() => {
     signIn,
     signOut,
     loadProfile,
-    saveProfile
+    saveProfile,
+    fetchUserStats
   };
 })();
 
