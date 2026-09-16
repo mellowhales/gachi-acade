@@ -928,7 +928,7 @@ const CatchmindGame = (() => {
       : [{ id: myId, name: _context.myNickname || '호스트', isHost: true }];
 
     round       = 1;
-    totalRounds = (_context && typeof _context.targetRounds === 'number') ? Math.max(1, Math.min(8, _context.targetRounds)) : 3;
+    totalRounds = (_context && typeof _context.targetRounds === 'number') ? Math.max(1, Math.min(20, _context.targetRounds)) : 3;
     drawerIdx   = 0;
     scores      = {};
     players.forEach(p => { scores[p.id] = 0; });
@@ -936,6 +936,9 @@ const CatchmindGame = (() => {
     isGameOver  = false;
     isDrawingLocked = false;
     isTransitioningRound = false;
+    isWaitingWordChoice = false;
+    clearTimeout(_wordChoiceAutoTimer);
+    _wordChoiceAutoTimer = null;
 
     strokes = [];
     redoStack = [];
@@ -973,22 +976,6 @@ const CatchmindGame = (() => {
             letter-spacing:1px;
           ">다음 라운드 준비 중...</div>
         </div>
-
-        <!-- 제시어 3지선다 선택 오버레이 (출제자 전용) -->
-        <div id="cm-word-choice-overlay" style="
-          display:none; position:absolute; inset:0;
-          background:rgba(15, 23, 42, 0.88); border-radius:16px;
-          align-items:center; justify-content:center; flex-direction:column; gap:20px;
-          z-index:99998; backdrop-filter:blur(6px); pointer-events:auto;
-        ">
-          <div style="font-size:1.4rem; font-weight:800; color:#edf2f7; letter-spacing:0.5px;">
-            <i class="fa-solid fa-palette" style="color:var(--green); margin-right:8px;"></i>
-            제시어를 선택하세요!
-          </div>
-          <div id="cm-word-choice-btns" style="display:flex; flex-direction:column; gap:12px; width:260px;"></div>
-          <div style="font-size:0.85rem; color:#94a3b8; margin-top:4px;">15초 안에 선택하지 않으면 자동으로 첫 번째 단어가 선택됩니다.</div>
-        </div>
-
 
         <div class="cm-header-card card">
           <div class="cm-meta-row">
@@ -1073,6 +1060,21 @@ const CatchmindGame = (() => {
 
           <div class="cm-canvas-container" id="cm-canvas-container">
             <canvas id="cm-canvas" width="800" height="500"></canvas>
+
+            <!-- 🖌️ 제시어 3지선다 선택 / 대기 오버레이 (도화지 캔버스 영역 전용) -->
+            <div id="cm-word-choice-overlay" style="
+              display:none; position:absolute; inset:0;
+              background:rgba(15, 23, 42, 0.82); border-radius:inherit;
+              align-items:center; justify-content:center; flex-direction:column; gap:16px;
+              z-index:50; backdrop-filter:blur(5px); pointer-events:auto; padding:24px;
+            ">
+              <div id="cm-word-choice-title" style="font-size:1.4rem; font-weight:900; color:#edf2f7; letter-spacing:0.5px; text-shadow:0 2px 8px rgba(0,0,0,0.6); text-align:center;">
+                <i class="fa-solid fa-palette" style="color:var(--green); margin-right:8px;"></i>
+                <span>제시어를 선택하세요!</span>
+              </div>
+              <div id="cm-word-choice-btns" style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; width:100%; max-width:440px;"></div>
+              <div id="cm-word-choice-sub" style="font-size:0.88rem; color:#94a3b8; margin-top:2px; text-align:center;">⏱️ 15초 안에 선택하지 않으면 자동으로 첫 번째 단어가 선택됩니다.</div>
+            </div>
 
             <!-- 🖌️ 출제자 & 참가자 공용 실시간 붓 커서 레이어 -->
             <div id="cm-brush-cursor" class="cm-brush-cursor hidden">
@@ -1811,24 +1813,51 @@ const CatchmindGame = (() => {
     activeStroke = null;
     _redrawCanvas();
 
-    // 내가 출제자인 경우 → 3지선다 오버레이 표시 후 선택 대기
+    // 출제자 여부 판별
+    wordChoices = _pickWordChoices();
+    isWaitingWordChoice = true;
+
     const amIDrawer = (String(curDrawer.id) === String(myId)) || (curDrawer.isHost && isHost);
     if (amIDrawer) {
-      wordChoices = _pickWordChoices();
-      isWaitingWordChoice = true;
+      // 1) 호스트 본인이 출제자: 3지선다 선택 오버레이 표시
       _showWordChoiceOverlay(wordChoices, curDrawer);
-      return; // 제시어 선택 완료 시 _hostStartTimerWithWord() 호출
+      // 다른 플레이어들에게 대기 화면 안내 패킷 전송
+      P2P.send({
+        type: 'WAIT_WORD_CHOICE',
+        round, totalRounds, drawerIdx,
+        drawerId: curDrawer.id,
+        drawerName: curDrawer.name
+      });
+      return;
     }
 
-    // 호스트가 비출제자인 경우 (이론상 드물지만) → 단어 임의 선택 후 바로 진행
-    const randWord = _pickNextWord();
-    _hostStartTimerWithWord(randWord, curDrawer);
+    // 2) 게스트가 출제자: 모든 참가자에게 선택 요청 패킷 브로드캐스트
+    P2P.send({
+      type: 'CHOOSE_WORD_REQ',
+      round, totalRounds, drawerIdx,
+      drawerId: curDrawer.id,
+      drawerName: curDrawer.name,
+      choices: wordChoices
+    });
+
+    // 호스트 화면은 대기 화면 표시
+    _showWordChoiceWaiting(curDrawer.name);
+
+    // 호스트 안전 타이머: 16초 내에 게스트 응답 없으면 첫 번째 단어로 자동 시작
+    clearTimeout(_wordChoiceAutoTimer);
+    _wordChoiceAutoTimer = setTimeout(() => {
+      if (isWaitingWordChoice) {
+        _hostStartTimerWithWord(wordChoices[0] || _pickNextWord(), curDrawer);
+      }
+    }, 16000);
   }
 
   function _hostStartTimerWithWord(chosenWord, curDrawer) {
     currentWord = chosenWord;
     wordLength  = chosenWord.length;
     isWaitingWordChoice = false;
+    clearTimeout(_wordChoiceAutoTimer);
+    _wordChoiceAutoTimer = null;
 
     clearInterval(hostTimerInterval);
     hostTimerInterval = setInterval(() => {
@@ -1863,46 +1892,86 @@ const CatchmindGame = (() => {
 
   function _showWordChoiceOverlay(choices, curDrawer) {
     const overlay = document.getElementById('cm-word-choice-overlay');
+    const title = document.getElementById('cm-word-choice-title');
     const btnsWrap = document.getElementById('cm-word-choice-btns');
+    const sub = document.getElementById('cm-word-choice-sub');
     if (!overlay || !btnsWrap) {
-      // DOM 없으면 첫 번째 선택으로 진행
-      _hostStartTimerWithWord(choices[0] || _pickNextWord(), curDrawer);
+      if (isHost) {
+        _hostStartTimerWithWord(choices[0] || _pickNextWord(), curDrawer);
+      } else {
+        P2P.send({ type: 'WORD_CHOSEN', word: choices[0] || '' });
+      }
       return;
     }
 
+    if (title) {
+      title.innerHTML = '<i class="fa-solid fa-palette" style="color:var(--green); margin-right:8px;"></i><span>제시어를 선택하세요!</span>';
+    }
+    if (sub) {
+      sub.innerHTML = '⏱️ 15초 안에 선택하지 않으면 자동으로 첫 번째 단어가 선택됩니다.';
+    }
+
+    btnsWrap.style.display = 'flex';
     btnsWrap.innerHTML = choices.map((word, idx) => `
       <button type="button" class="btn btn-primary" data-word="${word}" style="
-        width:100%; padding:14px 20px; font-size:1.15rem; font-weight:800;
-        border-radius:12px; letter-spacing:0.5px;
+        flex: 1 1 110px; min-width: 100px; max-width: 200px; padding: 14px 16px; font-size: 1.15rem; font-weight: 800;
+        border-radius: 12px; letter-spacing: 0.5px;
         background: ${idx===0?'linear-gradient(135deg,#38a169,#2f855a)':idx===1?'linear-gradient(135deg,#3182ce,#2b6cb0)':'linear-gradient(135deg,#805ad5,#6b46c1)'};
-        color:white; border:none; cursor:pointer;
+        color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         transition: transform 0.15s ease, filter 0.15s ease;
       ">${word}</button>
     `).join('');
 
     overlay.style.display = 'flex';
 
-    // 버튼 클릭 핸들러
-    btnsWrap.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const chosen = btn.dataset.word;
-        overlay.style.display = 'none';
-        clearTimeout(_wordChoiceAutoTimer);
-        _wordChoiceAutoTimer = null;
+    const onSelectWord = (chosen) => {
+      overlay.style.display = 'none';
+      clearTimeout(_wordChoiceAutoTimer);
+      _wordChoiceAutoTimer = null;
+
+      if (isHost) {
         if (isWaitingWordChoice) {
           _hostStartTimerWithWord(chosen, curDrawer);
         }
+      } else {
+        // 게스트 출제자: 호스트에게 선택 결과 전송
+        P2P.send({ type: 'WORD_CHOSEN', word: chosen });
+      }
+    };
+
+    // 버튼 클릭 핸들러
+    btnsWrap.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        onSelectWord(btn.dataset.word);
       });
     });
 
     // 15초 후 자동 선택 (첫 번째 단어)
     clearTimeout(_wordChoiceAutoTimer);
     _wordChoiceAutoTimer = setTimeout(() => {
-      if (isWaitingWordChoice) {
-        overlay.style.display = 'none';
-        _hostStartTimerWithWord(choices[0] || _pickNextWord(), curDrawer);
-      }
+      onSelectWord(choices[0] || _pickNextWord());
     }, 15000);
+  }
+
+  function _showWordChoiceWaiting(drawerName) {
+    const overlay = document.getElementById('cm-word-choice-overlay');
+    const title = document.getElementById('cm-word-choice-title');
+    const btnsWrap = document.getElementById('cm-word-choice-btns');
+    const sub = document.getElementById('cm-word-choice-sub');
+    if (!overlay) return;
+
+    if (title) {
+      title.innerHTML = '<i class="fa-solid fa-hourglass-half fa-spin" style="color:var(--yellow); margin-right:8px;"></i><span>제시어 선택 대기 중...</span>';
+    }
+    if (btnsWrap) {
+      btnsWrap.style.display = 'none';
+      btnsWrap.innerHTML = '';
+    }
+    if (sub) {
+      sub.innerHTML = `<span style="font-size:1rem; color:#e2e8f0;"><b style="color:var(--green); font-size:1.1rem;">${drawerName}</b> 님이 제시어를 고르고 있습니다. 잠시만 기다려주세요!</span>`;
+    }
+
+    overlay.style.display = 'flex';
   }
 
 
@@ -2149,6 +2218,13 @@ const CatchmindGame = (() => {
     _redrawCanvas();
     _resetSidebarSolvedBadges();
     _hideCountdownOverlay();
+
+    // 🌟 제시어 3지선다/대기 오버레이 닫기 및 상태 정리
+    const choiceOverlay = document.getElementById('cm-word-choice-overlay');
+    if (choiceOverlay) choiceOverlay.style.display = 'none';
+    clearTimeout(_wordChoiceAutoTimer);
+    _wordChoiceAutoTimer = null;
+    isWaitingWordChoice = false;
 
     const safeIdx    = ((drawerIdx % players.length) + players.length) % players.length;
     const curDrawer  = players[safeIdx] || { id: data.drawerId, name: data.drawerName };
@@ -2499,6 +2575,66 @@ const CatchmindGame = (() => {
     }
 
     switch (data.type) {
+      case 'CHOOSE_WORD_REQ': {
+        round = data.round || round;
+        totalRounds = data.totalRounds || totalRounds;
+        drawerIdx = (typeof data.drawerIdx === 'number') ? data.drawerIdx : drawerIdx;
+        const safeIdx = ((drawerIdx % players.length) + players.length) % players.length;
+        const curDrawer = players[safeIdx] || { id: data.drawerId, name: data.drawerName };
+        const amIDrawer = (String(curDrawer.id) === String(myId)) || (curDrawer.isHost && isHost);
+
+        strokes = [];
+        redoStack = [];
+        activeStroke = null;
+        _redrawCanvas();
+        _hideCountdownOverlay();
+
+        const roundBadge = document.getElementById('cm-round-badge');
+        const drawerName = document.getElementById('cm-drawer-name');
+        if (roundBadge) roundBadge.textContent = `Round ${round}/${totalRounds}`;
+        if (drawerName) drawerName.textContent = amIDrawer ? '내가 그릴 차례입니다!' : `${curDrawer.name}님이 그리는 중`;
+
+        if (amIDrawer) {
+          _showWordChoiceOverlay(data.choices, curDrawer);
+        } else {
+          _showWordChoiceWaiting(curDrawer.name);
+        }
+        break;
+      }
+
+      case 'WAIT_WORD_CHOICE': {
+        round = data.round || round;
+        totalRounds = data.totalRounds || totalRounds;
+        drawerIdx = (typeof data.drawerIdx === 'number') ? data.drawerIdx : drawerIdx;
+        const safeIdx = ((drawerIdx % players.length) + players.length) % players.length;
+        const curDrawer = players[safeIdx] || { id: data.drawerId, name: data.drawerName };
+
+        strokes = [];
+        redoStack = [];
+        activeStroke = null;
+        _redrawCanvas();
+        _hideCountdownOverlay();
+
+        const roundBadge = document.getElementById('cm-round-badge');
+        const drawerName = document.getElementById('cm-drawer-name');
+        if (roundBadge) roundBadge.textContent = `Round ${round}/${totalRounds}`;
+        if (drawerName) drawerName.textContent = `${curDrawer.name}님이 그리는 중`;
+
+        _showWordChoiceWaiting(curDrawer.name);
+        break;
+      }
+
+      case 'WORD_CHOSEN': {
+        if (isHost && isWaitingWordChoice) {
+          clearTimeout(_wordChoiceAutoTimer);
+          _wordChoiceAutoTimer = null;
+          const safeIdx = ((drawerIdx % players.length) + players.length) % players.length;
+          const curDrawer = players[safeIdx] || { id: myId, name: '출제자' };
+          _hostStartTimerWithWord(data.word, curDrawer);
+        }
+        break;
+      }
+
       case 'START_ROUND':
         _handleStartRound(data);
         break;
@@ -2635,6 +2771,7 @@ const CatchmindGame = (() => {
     clearInterval(hostTimerInterval); hostTimerInterval = null;
     clearInterval(countdownInterval); countdownInterval = null;
     clearTimeout(nextRoundTimeout);    nextRoundTimeout = null;
+    clearTimeout(_wordChoiceAutoTimer); _wordChoiceAutoTimer = null;
   }
 
   function onSidebarRedrawn() {

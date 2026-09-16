@@ -2998,3 +2998,16 @@
   display: flex;
   align-items: center;
 }
+
+/* ══ 제시어 3지선다 버튼 애니메이션 ══ */
+#cm-word-choice-btns button {
+  transition: transform 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.15s ease, box-shadow 0.16s ease !important;
+}
+#cm-word-choice-btns button:hover {
+  transform: translateY(-3px) scale(1.04) !important;
+  filter: brightness(1.12) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+}
+#cm-word-choice-btns button:active {
+  transform: translateY(0) scale(0.97) !important;
+}
