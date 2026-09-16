@@ -1332,33 +1332,10 @@
         _updateProfileAuthUI(user);
 
         if (user) {
-          // 로그인 시 클라우드 프로필 로드
+          // 로그인 시 클라우드 프로필 로드 및 복원
           const profile = await AppSupabase.loadProfile(user.id);
           if (profile) {
-            if (profile.nickname) {
-              myNickname = profile.nickname;
-              localStorage.setItem('arcade_nick', myNickname);
-            }
-            if (profile.avatarIcon) {
-              myAvatarIcon = profile.avatarIcon;
-              localStorage.setItem('arcade_avatar_icon', myAvatarIcon);
-            }
-            if (profile.avatarColor) {
-              myAvatarColor = profile.avatarColor;
-              localStorage.setItem('arcade_avatar_color', myAvatarColor);
-            }
-            if (typeof profile.coins === 'number') {
-              myCoins = profile.coins;
-              localStorage.setItem('arcade_user_coins', String(myCoins));
-            }
-            if (typeof profile.level === 'number' && profile.level >= 1) {
-              myLevel = Math.min(MAX_LEVEL, profile.level);
-              localStorage.setItem('arcade_user_level', String(myLevel));
-            }
-            if (typeof profile.exp === 'number' && profile.exp >= 0) {
-              myExp = profile.exp;
-              localStorage.setItem('arcade_user_exp', String(myExp));
-            }
+            _applyLoadedProfile(profile, user.id);
           } else {
             // 소셜 로그인 첫 접속 등의 경우 로컬 프로필로 DB 최초 등록
             AppSupabase.saveProfile(user.id, {
@@ -1367,14 +1344,13 @@
               avatarColor: myAvatarColor,
               coins: myCoins || 0,
               level: myLevel || 1,
-              exp: myExp || 0
+              exp: myExp || 0,
+              stats: _getMyStats()
             }).catch(() => {});
           }
           _updateHomeUserBar();
         } else {
-          // 로그아웃 시 코인 0으로 리셋
-          myCoins = 0;
-          localStorage.removeItem('arcade_user_coins');
+          // 로그아웃 시
           _updateHomeUserBar();
         }
       });
@@ -1385,18 +1361,7 @@
         if (user) {
           const profile = await AppSupabase.loadProfile(user.id);
           if (profile) {
-            if (typeof profile.coins === 'number') {
-              myCoins = profile.coins;
-              localStorage.setItem('arcade_user_coins', String(myCoins));
-            }
-            if (typeof profile.level === 'number' && profile.level >= 1) {
-              myLevel = Math.min(MAX_LEVEL, profile.level);
-              localStorage.setItem('arcade_user_level', String(myLevel));
-            }
-            if (typeof profile.exp === 'number' && profile.exp >= 0) {
-              myExp = profile.exp;
-              localStorage.setItem('arcade_user_exp', String(myExp));
-            }
+            _applyLoadedProfile(profile, user.id);
           }
           _updateHomeUserBar();
         }
@@ -1459,19 +1424,120 @@
     return _createEmptyStats();
   }
 
+  // 🌟 클라우드 전적과 로컬 전적의 안전한 병합 (쿠키 삭제 후 로그인 시 전적 초기화 방지)
+  function _mergeStats(cloudStats, localStats) {
+    if (!cloudStats && !localStats) return _createEmptyStats();
+    if (!cloudStats) return localStats;
+    if (!localStats) return cloudStats;
+
+    const cloudPlays = (cloudStats.total && cloudStats.total.plays) || 0;
+    const localPlays = (localStats.total && localStats.total.plays) || 0;
+
+    // 만약 한쪽에만 플레이 기록이 있다면 그 쪽을 우선 적용
+    if (cloudPlays === 0 && localPlays > 0) return localStats;
+    if (localPlays === 0) return cloudStats;
+
+    // 둘 다 기록이 있으면 큰 값을 유지하도록 안전 병합
+    const merged = _createEmptyStats();
+    merged.total.plays = Math.max(cloudPlays, localPlays);
+    merged.total.wins = Math.max(cloudStats.total?.wins || 0, localStats.total?.wins || 0);
+    merged.total.losses = Math.max(cloudStats.total?.losses || 0, localStats.total?.losses || 0);
+    merged.total.draws = Math.max(cloudStats.total?.draws || 0, localStats.total?.draws || 0);
+
+    Object.keys(GAME_STATS_META).forEach(k => {
+      const cg = cloudStats.games?.[k] || { plays: 0, wins: 0, losses: 0, draws: 0 };
+      const lg = localStats.games?.[k] || { plays: 0, wins: 0, losses: 0, draws: 0 };
+      merged.games[k] = {
+        plays: Math.max(cg.plays, lg.plays),
+        wins: Math.max(cg.wins, lg.wins),
+        losses: Math.max(cg.losses, lg.losses),
+        draws: Math.max(cg.draws, lg.draws)
+      };
+    });
+    return merged;
+  }
+
+  // 🌟 로그인 시 Supabase에서 불러온 계정 프로필 및 전적을 로컬과 UI에 완벽 복원
+  function _applyLoadedProfile(profile, userId = null) {
+    if (!profile) return;
+
+    // 1. 닉네임 복원
+    if (profile.nickname) {
+      myNickname = profile.nickname;
+      localStorage.setItem('arcade_nick', myNickname);
+      if ($('profile-input-nick')) $('profile-input-nick').value = myNickname;
+      if ($('home-user-name')) $('home-user-name').textContent = myNickname;
+    }
+
+    // 2. 아바타 아이콘 복원
+    if (profile.avatarIcon) {
+      myAvatarIcon = profile.avatarIcon;
+      localStorage.setItem('arcade_avatar_icon', myAvatarIcon);
+      _tempSelectedIcon = myAvatarIcon;
+    }
+
+    // 3. 아바타 배경 색상 복원
+    if (profile.avatarColor) {
+      myAvatarColor = profile.avatarColor;
+      localStorage.setItem('arcade_avatar_color', myAvatarColor);
+      _tempSelectedColor = myAvatarColor;
+    }
+
+    // 4. 보유 코인 복원
+    if (typeof profile.coins === 'number') {
+      myCoins = profile.coins;
+      localStorage.setItem('arcade_user_coins', String(myCoins));
+    }
+
+    // 5. 레벨 & 경험치 복원
+    if (typeof profile.level === 'number' && profile.level >= 1) {
+      myLevel = Math.min(MAX_LEVEL, profile.level);
+      localStorage.setItem('arcade_user_level', String(myLevel));
+    }
+    if (typeof profile.exp === 'number' && profile.exp >= 0) {
+      myExp = profile.exp;
+      localStorage.setItem('arcade_user_exp', String(myExp));
+    }
+
+    // 6. 🌟 게임 전적(stats) 복원 & 병합 (쿠키/스토리지 삭제 후 로그인 시 완벽 복원!)
+    const localStats = _getMyStats();
+    const mergedStats = _mergeStats(profile.stats, localStats);
+    localStorage.setItem(GAME_STATS_KEY, JSON.stringify(mergedStats));
+
+    // 클라우드와 로컬에 차이가 있다면 클라우드에도 즉시 동기화
+    if (userId && typeof AppSupabase !== 'undefined') {
+      AppSupabase.saveProfile(userId, {
+        nickname: myNickname,
+        avatarIcon: myAvatarIcon,
+        avatarColor: myAvatarColor,
+        coins: myCoins,
+        level: myLevel,
+        exp: myExp,
+        stats: mergedStats
+      }).catch(() => {});
+    }
+
+    _updateHomeUserBar();
+    _updateCoinsUI();
+    _updateLevelUI();
+  }
+
   function _saveMyStats(stats) {
     if (!stats || typeof stats !== 'object') return;
     try {
       localStorage.setItem(GAME_STATS_KEY, JSON.stringify(stats));
     } catch (_) {}
 
-    // Supabase 로그인 상태라면 클라우드에도 저장 (프로필 리셋 방지를 위해 현재 닉네임/아바타 함께 전달)
+    // Supabase 로그인 상태라면 클라우드에도 저장 (모든 정보 동봉하여 덮어쓰기 방지)
     if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
       const user = AppSupabase.getCurrentUser();
       AppSupabase.saveProfile(user.id, {
         nickname: myNickname,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        coins: myCoins,
+        level: myLevel,
+        exp: myExp,
         stats: stats
       }).catch(() => {});
     }
@@ -1479,7 +1545,7 @@
     // 대기방에 있다면 P2P 방 참가자들에게 최신 stats 공유
     if (currentRoomCode && roomPlayers.length > 0) {
       const myId = P2P.getMyId();
-      const me = roomPlayers.find(p => p.id === myId);
+      const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
       if (me) me.stats = stats;
       if (isHostPlayer) {
         _broadcastRoomState();
@@ -1602,6 +1668,15 @@
     const isMe = !playerData || (playerData.id === myId) || (playerData.isHost && P2P.isHost());
 
     if (isMe) {
+      if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+        const user = AppSupabase.getCurrentUser();
+        try {
+          const profile = await AppSupabase.loadProfile(user.id);
+          if (profile) {
+            _applyLoadedProfile(profile, user.id);
+          }
+        } catch (_) {}
+      }
       const myStats = _getMyStats();
       _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel);
       modal.classList.remove('hidden');

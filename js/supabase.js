@@ -204,7 +204,7 @@ const AppSupabase = (() => {
   }
 
   /**
-   * 클라우드 프로필 로드 (DB profiles 테이블 -> user_metadata 순서)
+   * 클라우드 프로필 로드 (DB profiles 테이블 + user_metadata 이중 백업 통합)
    */
   async function loadProfile(userId) {
     const client = getClient();
@@ -212,36 +212,72 @@ const AppSupabase = (() => {
 
     try {
       // 1. profiles 테이블 조회 시도
-      const { data, error } = await client
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (!error && data) {
-        return {
-          nickname: data.nickname || null,
-          avatarIcon: data.avatar_icon || null,
-          avatarColor: data.avatar_color || null,
-          stats: data.stats || null,
-          coins: typeof data.coins === 'number' ? data.coins : (parseInt(data.coins, 10) || 0),
-          level: typeof data.level === 'number' ? data.level : (parseInt(data.level, 10) || 1),
-          exp: typeof data.exp === 'number' ? data.exp : (parseInt(data.exp, 10) || 0)
-        };
+      let tableData = null;
+      try {
+        const { data, error } = await client
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+        if (!error && data) {
+          tableData = data;
+        }
+      } catch (e) {
+        console.warn('[Supabase] profiles 테이블 조회 예외:', e);
       }
 
-      // 2. fallback: user_metadata
-      if (_currentUser && _currentUser.id === userId && _currentUser.user_metadata) {
-        const meta = _currentUser.user_metadata;
-        const oAuthName = meta.full_name || meta.name || meta.nickname || null;
+      // 2. user_metadata 확보 (이중 백업)
+      let meta = (_currentUser && _currentUser.id === userId) ? _currentUser.user_metadata : null;
+      if (!meta) {
+        try {
+          const { data: authData } = await client.auth.getUser();
+          if (authData && authData.user && authData.user.id === userId) {
+            meta = authData.user.user_metadata;
+            _currentUser = authData.user;
+          }
+        } catch (_) {}
+      }
+      meta = meta || {};
+
+      const oAuthName = meta.full_name || meta.name || meta.nickname || null;
+
+      // 3. stats 안전 파싱 (JSONB 또는 JSON 문자열 지원)
+      let rawStats = (tableData && tableData.stats) || meta.stats || null;
+      if (typeof rawStats === 'string') {
+        try { rawStats = JSON.parse(rawStats); } catch (_) {}
+      }
+
+      const nickname = (tableData && tableData.nickname) || (meta && meta.nickname) || (oAuthName ? oAuthName.slice(0, 8) : null);
+      const avatarIcon = (tableData && tableData.avatar_icon) || (meta && meta.avatar_icon) || null;
+      const avatarColor = (tableData && tableData.avatar_color) || (meta && meta.avatar_color) || null;
+
+      const coins = (tableData && typeof tableData.coins === 'number')
+        ? tableData.coins
+        : (meta && typeof meta.coins === 'number')
+          ? meta.coins
+          : (parseInt(tableData?.coins, 10) || parseInt(meta?.coins, 10) || 0);
+
+      const level = (tableData && typeof tableData.level === 'number' && tableData.level >= 1)
+        ? tableData.level
+        : (meta && typeof meta.level === 'number' && meta.level >= 1)
+          ? meta.level
+          : (parseInt(tableData?.level, 10) || parseInt(meta?.level, 10) || 1);
+
+      const exp = (tableData && typeof tableData.exp === 'number' && tableData.exp >= 0)
+        ? tableData.exp
+        : (meta && typeof meta.exp === 'number' && meta.exp >= 0)
+          ? meta.exp
+          : (parseInt(tableData?.exp, 10) || parseInt(meta?.exp, 10) || 0);
+
+      if (tableData || Object.keys(meta).length > 0) {
         return {
-          nickname: oAuthName ? oAuthName.slice(0, 8) : null,
-          avatarIcon: meta.avatar_icon || null,
-          avatarColor: meta.avatar_color || null,
-          stats: meta.stats || null,
-          coins: typeof meta.coins === 'number' ? meta.coins : 0,
-          level: typeof meta.level === 'number' ? meta.level : 1,
-          exp: typeof meta.exp === 'number' ? meta.exp : 0
+          nickname,
+          avatarIcon,
+          avatarColor,
+          stats: rawStats,
+          coins,
+          level,
+          exp
         };
       }
 
@@ -288,7 +324,11 @@ const AppSupabase = (() => {
       if (payload.exp !== undefined) metaData.exp = payload.exp;
 
       if (Object.keys(metaData).length > 0) {
-        client.auth.updateUser({ data: metaData }).catch(() => {});
+        try {
+          await client.auth.updateUser({ data: metaData });
+        } catch (authErr) {
+          console.warn('[Supabase] auth.updateUser 경고:', authErr);
+        }
       }
 
       // 2. profiles 테이블 upsert
@@ -297,7 +337,7 @@ const AppSupabase = (() => {
         .upsert(payload, { onConflict: 'id' });
 
       if (error) {
-        console.warn('[Supabase] profiles 테이블 저장 실패 (테이블 미생성 가능성):', error.message);
+        console.warn('[Supabase] profiles 테이블 저장 실패 (테이블 미생성 또는 RLS 정책 확인 필요):', error.message);
       }
       return true;
     } catch (err) {
