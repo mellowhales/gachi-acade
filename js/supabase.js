@@ -224,7 +224,9 @@ const AppSupabase = (() => {
           avatarIcon: data.avatar_icon || null,
           avatarColor: data.avatar_color || null,
           stats: data.stats || null,
-          coins: typeof data.coins === 'number' ? data.coins : (parseInt(data.coins, 10) || 0)
+          coins: typeof data.coins === 'number' ? data.coins : (parseInt(data.coins, 10) || 0),
+          level: typeof data.level === 'number' ? data.level : (parseInt(data.level, 10) || 1),
+          exp: typeof data.exp === 'number' ? data.exp : (parseInt(data.exp, 10) || 0)
         };
       }
 
@@ -237,7 +239,9 @@ const AppSupabase = (() => {
           avatarIcon: meta.avatar_icon || null,
           avatarColor: meta.avatar_color || null,
           stats: meta.stats || null,
-          coins: typeof meta.coins === 'number' ? meta.coins : 0
+          coins: typeof meta.coins === 'number' ? meta.coins : 0,
+          level: typeof meta.level === 'number' ? meta.level : 1,
+          exp: typeof meta.exp === 'number' ? meta.exp : 0
         };
       }
 
@@ -269,6 +273,8 @@ const AppSupabase = (() => {
     if (profileData.email) payload.email = profileData.email;
     if (profileData.stats !== undefined) payload.stats = profileData.stats;
     if (profileData.coins !== undefined) payload.coins = profileData.coins;
+    if (profileData.level !== undefined) payload.level = profileData.level;
+    if (profileData.exp !== undefined) payload.exp = profileData.exp;
 
     try {
       // 1. user_metadata 부분 업데이트 (전달된 필드만 반영)
@@ -278,6 +284,8 @@ const AppSupabase = (() => {
       if (payload.avatar_color) metaData.avatar_color = payload.avatar_color;
       if (payload.stats !== undefined) metaData.stats = payload.stats;
       if (payload.coins !== undefined) metaData.coins = payload.coins;
+      if (payload.level !== undefined) metaData.level = payload.level;
+      if (payload.exp !== undefined) metaData.exp = payload.exp;
 
       if (Object.keys(metaData).length > 0) {
         client.auth.updateUser({ data: metaData }).catch(() => {});
@@ -319,6 +327,15 @@ const AppSupabase = (() => {
   }
 
   /**
+   * 레벨 및 경험치 클라우드 저장
+   */
+  async function saveLevelAndExp(userId, level, exp) {
+    const client = getClient();
+    if (!client || !userId) return false;
+    return await saveProfile(userId, { level, exp });
+  }
+
+  /**
    * 특정 유저의 전적 및 프로필 조회 (상대방 전적 확인용)
    */
   async function fetchUserStats(userId) {
@@ -328,7 +345,7 @@ const AppSupabase = (() => {
     try {
       const { data, error } = await client
         .from('profiles')
-        .select('id, nickname, avatar_icon, avatar_color, stats, coins')
+        .select('id, nickname, avatar_icon, avatar_color, stats, coins, level, exp')
         .eq('id', userId)
         .maybeSingle();
 
@@ -339,7 +356,9 @@ const AppSupabase = (() => {
           avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
           avatarColor: data.avatar_color || '#38a169',
           stats: data.stats || null,
-          coins: typeof data.coins === 'number' ? data.coins : 0
+          coins: typeof data.coins === 'number' ? data.coins : 0,
+          level: typeof data.level === 'number' ? data.level : 1,
+          exp: typeof data.exp === 'number' ? data.exp : 0
         };
       }
       return null;
@@ -362,6 +381,7 @@ const AppSupabase = (() => {
     loadProfile,
     saveProfile,
     addCoins,
+    saveLevelAndExp,
     fetchUserStats
   };
 })();

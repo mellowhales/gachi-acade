@@ -8131,5 +8131,265 @@ html, body {
   background: #3a475a;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   ⭐ 1~300 레벨 및 경험치(EXP) 시스템 스타일
+═══════════════════════════════════════════════════════════════ */
+
+.user-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 로비 상단바 레벨 뱃지 */
+.user-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  background: var(--bg-hover, #edf2f7);
+  border: 1px solid var(--border, #cbd5e0);
+  color: var(--t1, #2d3748);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* 방 화면(대기방) 플레이어 목록용 레벨 뱃지 */
+.player-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-right: 5px;
+  vertical-align: middle;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
+  color: var(--t1);
+  user-select: none;
+}
+
+/* 레벨 등급별 색상 (1~300 티어) */
+.tier-bronze { /* 1 ~ 30 */
+  background: #edf2f7 !important;
+  color: #4a5568 !important;
+  border-color: #cbd5e0 !important;
+}
+.tier-silver { /* 31 ~ 70 */
+  background: #ebf8ff !important;
+  color: #2b6cb0 !important;
+  border-color: #bee3f8 !important;
+}
+.tier-gold { /* 71 ~ 120 */
+  background: #fefcbf !important;
+  color: #975a16 !important;
+  border-color: #f6e05e !important;
+}
+.tier-platinum { /* 121 ~ 180 */
+  background: #e6fffa !important;
+  color: #234e52 !important;
+  border-color: #81e6d9 !important;
+}
+.tier-diamond { /* 181 ~ 240 */
+  background: linear-gradient(135deg, #ebf8ff, #e9d8fd) !important;
+  color: #553c9a !important;
+  border-color: #b794f4 !important;
+}
+.tier-master { /* 241 ~ 300 */
+  background: linear-gradient(135deg, #fff5f5, #feebc8) !important;
+  color: #c05621 !important;
+  border-color: #f6ad55 !important;
+  box-shadow: 0 0 6px rgba(237, 137, 54, 0.45) !important;
+}
+
+/* 로비 미니 경험치 게이지 */
+.user-exp-track {
+  width: 90px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 3px;
+}
+.user-exp-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #38a169, #48bb78);
+  transition: width 0.3s ease;
+}
+
+/* 프로필 팝업 내 레벨/경험치 카드 */
+.profile-level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(56, 161, 105, 0.08);
+  border: 1px solid rgba(56, 161, 105, 0.22);
+  margin-bottom: 12px;
+}
+.profile-level-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.profile-level-tag {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--green, #38a169);
+}
+.profile-exp-text {
+  font-size: 0.76rem;
+  color: var(--t3);
+  font-weight: 700;
+}
+.profile-exp-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+.profile-exp-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #38a169, #3182ce);
+  transition: width 0.3s ease;
+}
+
+/* 게임 결과 모달 내 경험치 보상 박스 */
+.result-exp-box {
+  margin: 8px 0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(56, 161, 105, 0.1);
+  border: 1.5px solid rgba(56, 161, 105, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--green-deep, #22543d);
+  animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  box-sizing: border-box;
+}
+.result-exp-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.result-exp-main i {
+  color: #38a169;
+  font-size: 1.1rem;
+}
+.result-exp-bar-wrap {
+  width: 80%;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 2px;
+}
+.result-exp-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #38a169, #3182ce);
+  transition: width 0.4s ease;
+}
+.result-level-up-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ecc94b, #d69e2e);
+  color: #744210;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(236, 201, 75, 0.4);
+  animation: bouncePop 0.4s ease;
+}
+
+/* 간소화된 소셜 로그인 가이드 문구 */
+.auth-oauth-guide {
+  text-align: center;
+  margin: 2px 0 16px;
+}
+.auth-oauth-guide-text {
+  font-size: 0.84rem;
+  color: var(--t3);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── 다크 테마 레벨 & 경험치 대응 ── */
+[data-theme="dark"] .user-level-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+[data-theme="dark"] .player-level-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+[data-theme="dark"] .tier-bronze {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e0 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .tier-silver {
+  background: rgba(66, 153, 225, 0.15) !important;
+  color: #90cdf4 !important;
+  border-color: rgba(66, 153, 225, 0.3) !important;
+}
+[data-theme="dark"] .tier-gold {
+  background: rgba(236, 201, 75, 0.15) !important;
+  color: #f6e05e !important;
+  border-color: rgba(236, 201, 75, 0.3) !important;
+}
+[data-theme="dark"] .tier-platinum {
+  background: rgba(56, 178, 172, 0.15) !important;
+  color: #81e6d9 !important;
+  border-color: rgba(56, 178, 172, 0.3) !important;
+}
+[data-theme="dark"] .tier-diamond {
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.2), rgba(159, 122, 234, 0.2)) !important;
+  color: #d6bcfa !important;
+  border-color: rgba(159, 122, 234, 0.35) !important;
+}
+[data-theme="dark"] .tier-master {
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.2), rgba(237, 137, 54, 0.2)) !important;
+  color: #fbd38d !important;
+  border-color: rgba(237, 137, 54, 0.45) !important;
+  box-shadow: 0 0 10px rgba(237, 137, 54, 0.35) !important;
+}
+[data-theme="dark"] .user-exp-track,
+[data-theme="dark"] .profile-exp-track,
+[data-theme="dark"] .result-exp-bar-wrap {
+  background: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .profile-level-card {
+  background: rgba(56, 161, 105, 0.12);
+  border-color: rgba(56, 161, 105, 0.28);
+}
+[data-theme="dark"] .result-exp-box {
+  background: rgba(56, 161, 105, 0.15);
+  border-color: rgba(56, 161, 105, 0.4);
+  color: #9ae6b4;
+}
+
 
 

@@ -90,6 +90,14 @@
   let myCoins = parseInt(localStorage.getItem('arcade_user_coins') || '0', 10);
   const WIN_REWARD_COINS = 50;
 
+  // 🌟 1~300 레벨 및 경험치 시스템 (로컬 & 클라우드 연동)
+  const MAX_LEVEL = 300;
+  let myLevel = parseInt(localStorage.getItem('arcade_user_level') || '1', 10);
+  let myExp = parseInt(localStorage.getItem('arcade_user_exp') || '0', 10);
+  if (isNaN(myLevel) || myLevel < 1) myLevel = 1;
+  if (myLevel > MAX_LEVEL) myLevel = MAX_LEVEL;
+  if (isNaN(myExp) || myExp < 0) myExp = 0;
+
   let pendingAction = null;
   let pendingJoinCode = '';
 
@@ -424,18 +432,181 @@
      ===================================================================== */
   function _updateCoinsUI() {
     const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
-    const valEl = $('user-coin-val');
-    if (valEl) {
-      valEl.textContent = isLoggedIn ? myCoins.toLocaleString() : '0';
-    }
     const profileAmountEl = $('profile-coin-amount');
     if (profileAmountEl) {
       profileAmountEl.textContent = isLoggedIn ? `${myCoins.toLocaleString()} 코인` : '0 코인 (로그인 필요)';
     }
-    const chipEl = $('user-coin-chip');
-    if (chipEl) {
-      chipEl.title = isLoggedIn ? `내 보유 코인: ${myCoins.toLocaleString()} 코인` : '로그인 시 코인을 모을 수 있습니다';
+  }
+
+  // 🌟 레벨별 필요 경험치 계산 공식 (1 ~ 300 레벨)
+  function _getRequiredExpForNextLevel(lvl) {
+    const l = Number(lvl) || 1;
+    if (l >= MAX_LEVEL) return 0; // 최고 레벨 도달 시 0
+    return Math.floor(60 + (l - 1) * 20 + Math.pow(l - 1, 1.45) * 6);
+  }
+
+  // 🌟 레벨 구간별 티어 CSS 클래스 (브론즈, 실버, 골드, 플래티넘, 다이아몬드, 마스터)
+  function _getLevelTierClass(lvl) {
+    const l = Number(lvl) || 1;
+    if (l <= 30) return 'tier-bronze';
+    if (l <= 70) return 'tier-silver';
+    if (l <= 120) return 'tier-gold';
+    if (l <= 180) return 'tier-platinum';
+    if (l <= 240) return 'tier-diamond';
+    return 'tier-master';
+  }
+
+  // 🌟 로비 및 프로필 팝업 레벨 UI 동기화
+  function _updateLevelUI() {
+    const tierClass = _getLevelTierClass(myLevel);
+    const reqExp = _getRequiredExpForNextLevel(myLevel);
+    const isMax = myLevel >= MAX_LEVEL;
+    const pct = isMax ? 100 : (reqExp > 0 ? Math.min(100, Math.max(0, Math.floor((myExp / reqExp) * 100))) : 0);
+
+    // 1. 로비 상단바 레벨 뱃지 & 미니 게이지
+    const homeLevelEl = $('home-user-level');
+    if (homeLevelEl) {
+      homeLevelEl.textContent = `Lv.${myLevel}`;
+      homeLevelEl.className = `user-level-badge ${tierClass}`;
     }
+    const homeExpFill = $('home-user-exp-fill');
+    if (homeExpFill) {
+      homeExpFill.style.width = `${pct}%`;
+    }
+    const homeExpTrack = $('home-user-exp-track');
+    if (homeExpTrack) {
+      homeExpTrack.title = isMax
+        ? `최고 레벨 (Lv.${MAX_LEVEL} MAX)`
+        : `Lv.${myLevel} 경험치: ${myExp.toLocaleString()} / ${reqExp.toLocaleString()} EXP (${pct}%)`;
+    }
+
+    // 2. 프로필 편집 말풍선 팝업 레벨 카드
+    const profileTag = $('profile-level-tag');
+    if (profileTag) {
+      profileTag.textContent = `Lv.${myLevel}`;
+      profileTag.className = `profile-level-tag ${tierClass}`;
+    }
+    const profileExpText = $('profile-exp-text');
+    if (profileExpText) {
+      profileExpText.textContent = isMax
+        ? `MAX LEVEL (${MAX_LEVEL})`
+        : `${myExp.toLocaleString()} / ${reqExp.toLocaleString()} EXP (${pct}%)`;
+    }
+    const profileExpFill = $('profile-exp-fill');
+    if (profileExpFill) {
+      profileExpFill.style.width = `${pct}%`;
+    }
+  }
+
+  // 🌟 경험치 획득 및 레벨업 처리 (로컬스토리지, Supabase 및 대기방 P2P 동기화)
+  function _addExperience(expGain) {
+    const gain = Number(expGain) || 0;
+    if (gain <= 0) {
+      return {
+        oldLevel: myLevel,
+        newLevel: myLevel,
+        gained: 0,
+        leveledUp: false,
+        currentExp: myExp,
+        reqExp: _getRequiredExpForNextLevel(myLevel)
+      };
+    }
+
+    const oldLevel = myLevel;
+    if (myLevel < MAX_LEVEL) {
+      myExp += gain;
+      while (myLevel < MAX_LEVEL) {
+        const req = _getRequiredExpForNextLevel(myLevel);
+        if (myExp >= req) {
+          myExp -= req;
+          myLevel++;
+        } else {
+          break;
+        }
+      }
+      if (myLevel >= MAX_LEVEL) {
+        myExp = 0;
+      }
+    } else {
+      myExp = 0;
+    }
+
+    const leveledUp = myLevel > oldLevel;
+
+    localStorage.setItem('arcade_user_level', String(myLevel));
+    localStorage.setItem('arcade_user_exp', String(myExp));
+    _updateLevelUI();
+
+    // Supabase 로그인 상태라면 클라우드 DB에 비동기 저장
+    if (typeof AppSupabase !== 'undefined') {
+      const user = AppSupabase.getCurrentUser();
+      if (user && typeof AppSupabase.saveLevelAndExp === 'function') {
+        AppSupabase.saveLevelAndExp(user.id, myLevel, myExp).catch(() => {});
+      }
+    }
+
+    // P2P 룸 내 본인 객체 갱신 및 전파
+    const myId = P2P.getMyId();
+    const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
+    if (me) {
+      me.level = myLevel;
+      me.exp = myExp;
+      _updateRoomUI();
+      if (isHostPlayer) {
+        _broadcastRoomState();
+      } else {
+        P2P.send({
+          type: 'guest_update_profile',
+          name: myNickname,
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
+          stats: _getMyStats()
+        });
+      }
+    }
+
+    return {
+      oldLevel,
+      newLevel: myLevel,
+      gained: gain,
+      leveledUp,
+      currentExp: myExp,
+      reqExp: _getRequiredExpForNextLevel(myLevel)
+    };
+  }
+
+  // 🌟 게임별 진취도 및 승패에 따른 경험치 산출
+  function _calcGameProgressionExp(gameKey, resultType, contextInfo = {}) {
+    // 1. 기본 완주 경험치
+    const baseExp = 30;
+
+    // 2. 승패 보너스 (승리 50, 무승부 30, 패배 15)
+    let outcomeExp = 15;
+    if (resultType === 'win') {
+      outcomeExp = 50;
+    } else if (resultType === 'draw') {
+      outcomeExp = 30;
+    }
+
+    // 3. 게임별 진취도 보너스 (5 ~ 35 EXP)
+    let progressBonus = 15;
+    if (gameKey === 'catchmind') {
+      progressBonus = 25;
+    } else if (gameKey === 'wordchain') {
+      progressBonus = 20;
+    } else if (gameKey === 'roulette') {
+      progressBonus = 18;
+    } else if (gameKey === 'gomoku' || gameKey === 'chess' || gameKey === 'janggi') {
+      progressBonus = 22;
+    } else if (gameKey === 'othello' || gameKey === 'connect4') {
+      progressBonus = 18;
+    } else if (gameKey === 'minesweeper' || gameKey === 'apple') {
+      progressBonus = 20;
+    }
+
+    return baseExp + outcomeExp + progressBonus;
   }
 
   function _updateHomeUserBar() {
@@ -446,6 +617,7 @@
     }
     if ($('home-user-name')) $('home-user-name').textContent = myNickname || '익명';
     _updateCoinsUI();
+    _updateLevelUI();
   }
 
   /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (전체 / 공개방 / 비밀방 탭 필터링) ── */
@@ -840,6 +1012,8 @@
 
     _renderProfileModalGrids();
     _updateProfileModalPreview();
+    _updateCoinsUI();
+    _updateLevelUI();
     if (typeof _updateProfileAuthUI === 'function') {
       _updateProfileAuthUI(typeof AppSupabase !== 'undefined' ? AppSupabase.getCurrentUser() : null);
     }
@@ -954,22 +1128,26 @@
     // 현재 방에 참여 중이라면 방 참가자 정보도 즉시 동기화
     if (currentRoomCode && roomPlayers.length > 0) {
       const myId = P2P.getMyId();
-      const me = roomPlayers.find(p => p.id === myId);
+      const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
       if (me) {
         me.name = myNickname;
         me.avatarIcon = myAvatarIcon;
         me.avatarColor = myAvatarColor;
+        me.level = myLevel;
+        me.exp = myExp;
         me.stats = _getMyStats();
       }
-      _renderRoomPlayers();
+      _updateRoomUI();
       if (isHostPlayer) {
-        _hostBroadcastRoomState();
+        _broadcastRoomState();
       } else {
         P2P.send({
           type: 'guest_update_profile',
           name: myNickname,
           avatarIcon: myAvatarIcon,
           avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
           stats: _getMyStats()
         });
       }
@@ -1053,24 +1231,23 @@
       actionWrap.innerHTML = `
         <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
           <i class="fa-solid fa-right-to-bracket"></i>
-          <span>로그인 / 가입</span>
+          <span>간편 로그인</span>
         </button>
       `;
       const btnOpen = $('btn-open-auth-modal');
       if (btnOpen) {
         btnOpen.addEventListener('click', () => {
           _closeProfileModal(true);
-          _openAuthModal('signin');
+          _openAuthModal();
         });
       }
     }
   }
 
-  function _openAuthModal(initialTab = 'signin') {
+  function _openAuthModal() {
     const modal = $('auth-modal');
     if (!modal) return;
 
-    _switchAuthTab(initialTab);
     _clearAuthFeedback();
 
     // Supabase 설정 완료 여부 체크
@@ -1081,49 +1258,12 @@
     }
 
     modal.classList.remove('hidden');
-    setTimeout(() => {
-      if ($('auth-email')) $('auth-email').focus();
-    }, 100);
   }
 
   function _closeAuthModal() {
     const modal = $('auth-modal');
     if (modal) modal.classList.add('hidden');
     _clearAuthFeedback();
-  }
-
-  function _switchAuthTab(tab) {
-    _authCurrentTab = tab;
-    _clearAuthFeedback();
-
-    const btnSignin = $('auth-tab-signin');
-    const btnSignup = $('auth-tab-signup');
-    const fieldConfirm = $('auth-field-password-confirm');
-    const fieldNick = $('auth-field-nickname');
-    const titleText = $('auth-modal-title-text');
-    const submitText = $('btn-auth-submit-text');
-    const submitIcon = $('btn-auth-submit-icon');
-
-    if (btnSignin) btnSignin.classList.toggle('active', tab === 'signin');
-    if (btnSignup) btnSignup.classList.toggle('active', tab === 'signup');
-
-    if (tab === 'signup') {
-      if (fieldConfirm) fieldConfirm.classList.remove('hidden');
-      if (fieldNick) {
-        fieldNick.classList.remove('hidden');
-        const nickInput = $('auth-nickname');
-        if (nickInput && !nickInput.value) nickInput.value = myNickname || '';
-      }
-      if (titleText) titleText.textContent = '가치아케이드 회원가입';
-      if (submitText) submitText.textContent = '회원가입';
-      if (submitIcon) submitIcon.className = 'fa-solid fa-user-plus';
-    } else {
-      if (fieldConfirm) fieldConfirm.classList.add('hidden');
-      if (fieldNick) fieldNick.classList.add('hidden');
-      if (titleText) titleText.textContent = '가치아케이드 로그인';
-      if (submitText) submitText.textContent = '로그인';
-      if (submitIcon) submitIcon.className = 'fa-solid fa-right-to-bracket';
-    }
   }
 
   function _showAuthFeedback(msg, type = 'error') {
@@ -1142,89 +1282,20 @@
     }
   }
 
-  async function _handleAuthSubmit() {
-    _clearAuthFeedback();
-
-    if (typeof AppSupabase === 'undefined' || !AppSupabase.isConfigured()) {
-      _showAuthFeedback('Supabase 설정이 완료되지 않았습니다. js/supabase-config.js에 URL과 anon public key를 입력해주세요.', 'error');
-      return;
-    }
-
-    const email = $('auth-email') ? $('auth-email').value.trim() : '';
-    const password = $('auth-password') ? $('auth-password').value : '';
-
-    if (!email || !password) {
-      _showAuthFeedback('이메일과 비밀번호를 모두 입력해주세요.', 'error');
-      return;
-    }
-
-    const submitBtn = $('btn-auth-submit');
-    if (submitBtn) submitBtn.disabled = true;
-
-    try {
-      if (_authCurrentTab === 'signup') {
-        const confirmPw = $('auth-password-confirm') ? $('auth-password-confirm').value : '';
-        if (password !== confirmPw) {
-          _showAuthFeedback('비밀번호가 서로 일치하지 않습니다.', 'error');
-          if (submitBtn) submitBtn.disabled = false;
-          return;
-        }
-        if (password.length < 6) {
-          _showAuthFeedback('비밀번호는 최소 6자 이상이어야 합니다.', 'error');
-          if (submitBtn) submitBtn.disabled = false;
-          return;
-        }
-
-        const nick = ($('auth-nickname') ? $('auth-nickname').value.trim() : '') || myNickname || '플레이어';
-        const res = await AppSupabase.signUp(email, password, nick, myAvatarIcon, myAvatarColor);
-
-        if (!res.success) {
-          _showAuthFeedback(res.error || '회원가입에 실패했습니다.', 'error');
-        } else if (res.needsEmailConfirmation) {
-          _showAuthFeedback('회원가입 완료! 인증 이메일이 발송되었습니다. 메일함의 링크를 확인한 후 로그인해주세요.', 'success');
-        } else {
-          _showAuthFeedback('회원가입 및 로그인이 완료되었습니다!', 'success');
-          showToast('회원가입 및 로그인 완료!', 'success');
-          setTimeout(() => _closeAuthModal(), 800);
-        }
-      } else {
-        // 로그인
-        const res = await AppSupabase.signIn(email, password);
-        if (!res.success) {
-          _showAuthFeedback(res.error || '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
-        } else {
-          _showAuthFeedback('로그인 성공!', 'success');
-          showToast('로그인되었습니다!', 'success');
-          setTimeout(() => _closeAuthModal(), 600);
-        }
-      }
-    } catch (err) {
-      _showAuthFeedback(err.message || '오류가 발생했습니다.', 'error');
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-  }
-
   function _initSupabaseAuthUI() {
-    // 1. 이벤트 바인딩
+    // 1. 모달 열기/닫기 이벤트 바인딩
     const btnOpen = $('btn-open-auth-modal');
     if (btnOpen) {
       btnOpen.addEventListener('click', () => {
         _closeProfileModal(true);
-        _openAuthModal('signin');
+        _openAuthModal();
       });
     }
 
     const btnClose = $('btn-close-auth-modal');
     if (btnClose) btnClose.addEventListener('click', _closeAuthModal);
 
-    const btnTabSignin = $('auth-tab-signin');
-    if (btnTabSignin) btnTabSignin.addEventListener('click', () => _switchAuthTab('signin'));
-
-    const btnTabSignup = $('auth-tab-signup');
-    if (btnTabSignup) btnTabSignup.addEventListener('click', () => _switchAuthTab('signup'));
-
-    // 🌟 소셜 간편 로그인 (Google, Kakao, Naver) 이벤트 바인딩
+    // 🌟 소셜 간편 로그인 (Google & Naver 전용) 이벤트 바인딩
     const btnGoogle = $('btn-oauth-google');
     if (btnGoogle) {
       btnGoogle.addEventListener('click', async () => {
@@ -1232,17 +1303,6 @@
         const res = await AppSupabase.signInWithOAuth('google');
         if (!res.success) {
           _showAuthFeedback(res.error || 'Google 로그인에 실패했습니다.', 'error');
-        }
-      });
-    }
-
-    const btnKakao = $('btn-oauth-kakao');
-    if (btnKakao) {
-      btnKakao.addEventListener('click', async () => {
-        _showAuthFeedback('카카오 로그인 페이지로 이동 중...', 'info');
-        const res = await AppSupabase.signInWithOAuth('kakao');
-        if (!res.success) {
-          _showAuthFeedback(res.error || '카카오 로그인에 실패했습니다.', 'error');
         }
       });
     }
@@ -1258,27 +1318,6 @@
         }
       });
     }
-
-    // 🪙 상단 유저 코인 칩 클릭 이벤트
-    const coinChip = $('user-coin-chip');
-    if (coinChip) {
-      coinChip.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
-        if (!isLoggedIn) {
-          _closeProfileModal(true);
-          _openAuthModal('signin');
-        } else {
-          showToast(`🪙 현재 보유 코인: ${myCoins.toLocaleString()} 코인\n(게임 승리 시 50 코인이 지급됩니다!)`, 'info');
-        }
-      });
-    }
-
-    const form = $('auth-form');
-    if (form) form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      _handleAuthSubmit();
-    });
 
     const modal = $('auth-modal');
     if (modal) {
@@ -1312,13 +1351,23 @@
               myCoins = profile.coins;
               localStorage.setItem('arcade_user_coins', String(myCoins));
             }
+            if (typeof profile.level === 'number' && profile.level >= 1) {
+              myLevel = Math.min(MAX_LEVEL, profile.level);
+              localStorage.setItem('arcade_user_level', String(myLevel));
+            }
+            if (typeof profile.exp === 'number' && profile.exp >= 0) {
+              myExp = profile.exp;
+              localStorage.setItem('arcade_user_exp', String(myExp));
+            }
           } else {
             // 소셜 로그인 첫 접속 등의 경우 로컬 프로필로 DB 최초 등록
             AppSupabase.saveProfile(user.id, {
               nickname: myNickname,
               avatarIcon: myAvatarIcon,
               avatarColor: myAvatarColor,
-              coins: myCoins || 0
+              coins: myCoins || 0,
+              level: myLevel || 1,
+              exp: myExp || 0
             }).catch(() => {});
           }
           _updateHomeUserBar();
@@ -1335,9 +1384,19 @@
         _updateProfileAuthUI(user);
         if (user) {
           const profile = await AppSupabase.loadProfile(user.id);
-          if (profile && typeof profile.coins === 'number') {
-            myCoins = profile.coins;
-            localStorage.setItem('arcade_user_coins', String(myCoins));
+          if (profile) {
+            if (typeof profile.coins === 'number') {
+              myCoins = profile.coins;
+              localStorage.setItem('arcade_user_coins', String(myCoins));
+            }
+            if (typeof profile.level === 'number' && profile.level >= 1) {
+              myLevel = Math.min(MAX_LEVEL, profile.level);
+              localStorage.setItem('arcade_user_level', String(myLevel));
+            }
+            if (typeof profile.exp === 'number' && profile.exp >= 0) {
+              myExp = profile.exp;
+              localStorage.setItem('arcade_user_exp', String(myExp));
+            }
           }
           _updateHomeUserBar();
         }
@@ -1423,13 +1482,15 @@
       const me = roomPlayers.find(p => p.id === myId);
       if (me) me.stats = stats;
       if (isHostPlayer) {
-        _hostBroadcastRoomState();
+        _broadcastRoomState();
       } else {
         P2P.send({
           type: 'guest_update_profile',
           name: myNickname,
           avatarIcon: myAvatarIcon,
           avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
           stats: stats
         });
       }
@@ -1467,7 +1528,7 @@
     _saveMyStats(stats);
   }
 
-  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false) {
+  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false, level = 1) {
     const s = stats || _createEmptyStats();
     const tot = s.total || { plays: 0, wins: 0, losses: 0, draws: 0 };
     const plays = tot.plays || 0;
@@ -1483,7 +1544,10 @@
       avEl.style.background = avatarColor || '#38a169';
       avEl.innerHTML = `<i class="${avatarIcon || 'fa-solid fa-dog'}"></i>`;
     }
-    if (nameEl) nameEl.textContent = name || '플레이어';
+    if (nameEl) {
+      const lvl = level || 1;
+      nameEl.innerHTML = `<span class="player-level-badge ${_getLevelTierClass(lvl)}">Lv.${lvl}</span> ${_escapeHtml(name || '플레이어')}`;
+    }
     if (tagEl) tagEl.textContent = isMe ? '내 게임 전적 기록' : '상대방 게임 전적 기록';
 
     if ($('stats-total-plays')) $('stats-total-plays').textContent = plays;
@@ -1539,25 +1603,26 @@
 
     if (isMe) {
       const myStats = _getMyStats();
-      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true);
+      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel);
       modal.classList.remove('hidden');
     } else {
       // 상대방
       const targetName = playerData.name || '상대방';
       const targetIcon = playerData.avatarIcon || 'fa-solid fa-paw';
       const targetColor = playerData.avatarColor || '#718096';
+      const targetLevel = playerData.level || 1;
 
       // 1) playerData에 stats가 이미 있는 경우
       if (playerData.stats) {
-        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false);
+        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false, targetLevel);
       } else {
         // 2) 임시 렌더링 후 Supabase 조회 시도
-        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false);
+        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false, targetLevel);
         if (typeof AppSupabase !== 'undefined' && playerData.supabaseId) {
           const userRecord = await AppSupabase.fetchUserStats(playerData.supabaseId);
           if (userRecord && userRecord.stats) {
             playerData.stats = userRecord.stats;
-            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false);
+            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false, userRecord.level || targetLevel);
           }
         }
       }
@@ -1827,6 +1892,8 @@
         name: myNickname || '익명',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        level: myLevel,
+        exp: myExp,
         isHost: true,
         isReady: true,
         stats: _getMyStats()
@@ -1874,6 +1941,8 @@
         name: myNickname || '개발자',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        level: myLevel,
+        exp: myExp,
         isHost: true,
         isReady: true
       }];
@@ -1918,6 +1987,8 @@
         name: myNickname || '익명',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        level: myLevel,
+        exp: myExp,
         password: inputPassword || '',
         stats: _getMyStats()
       });
@@ -2008,6 +2079,8 @@
         name: data.name || '익명',
         avatarIcon: data.avatarIcon || _getRandomAvatarIcon(),
         avatarColor: data.avatarColor || _getRandomAvatarColor(),
+        level: typeof data.level === 'number' ? data.level : 1,
+        exp: typeof data.exp === 'number' ? data.exp : 0,
         isHost: false,
         isReady: false,
         isSpectator: isJoiningMidGame,
@@ -2063,6 +2136,8 @@
         if (data.name) player.name = data.name;
         if (data.avatarIcon) player.avatarIcon = data.avatarIcon;
         if (data.avatarColor) player.avatarColor = data.avatarColor;
+        if (typeof data.level === 'number') player.level = data.level;
+        if (typeof data.exp === 'number') player.exp = data.exp;
         if (data.stats) player.stats = data.stats;
         _broadcastRoomState();
         _updateRoomUI();
@@ -2576,6 +2651,7 @@
         <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="player-meta">
           <div class="player-name">
+            <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">Lv.${p.level || 1}</span>
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
@@ -3289,10 +3365,19 @@
       }
     }
 
-    _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo);
+    // 🌟 경험치 지급 및 레벨업 산출 (완주 기본 + 승패 + 게임별 진취도)
+    let expRewardInfo = null;
+    try {
+      const expGain = _calcGameProgressionExp(selectedGameKey, resultType, { win, drawInfo, customLeaderboard });
+      expRewardInfo = _addExperience(expGain);
+    } catch (e) {
+      console.warn('[EXP] 경험치 지급 오류:', e);
+    }
+
+    _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo, expRewardInfo);
   }
 
-  function _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo = null) {
+  function _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo = null, expRewardInfo = null) {
     const iconEl = $('result-icon');
     const titleEl = $('result-title');
     const msgEl = $('result-message');
@@ -3368,6 +3453,37 @@
       msgEl.textContent = reasonMsg || '아쉽게 패배했습니다. 다시 도전해 보세요!';
       scoreRowEl.classList.add('hidden');
       Sound.playLose();
+    }
+
+    // 🌟 경험치 및 레벨업 보상 배너 렌더링
+    const expBoxEl = $('result-exp-box');
+    if (expBoxEl) {
+      if (expRewardInfo && expRewardInfo.gained > 0) {
+        const isMax = expRewardInfo.newLevel >= MAX_LEVEL;
+        const pct = isMax ? 100 : (expRewardInfo.reqExp > 0
+          ? Math.min(100, Math.max(0, Math.floor((expRewardInfo.currentExp / expRewardInfo.reqExp) * 100)))
+          : 0);
+
+        const levelUpBadge = expRewardInfo.leveledUp
+          ? `<div class="result-level-up-badge"><i class="fa-solid fa-arrow-trend-up"></i> 레벨업! Lv.${expRewardInfo.oldLevel} → Lv.${expRewardInfo.newLevel}</div>`
+          : '';
+
+        expBoxEl.className = 'result-exp-box';
+        expBoxEl.innerHTML = `
+          ${levelUpBadge}
+          <div class="result-exp-main">
+            <i class="fa-solid fa-bolt"></i>
+            <span>+${expRewardInfo.gained} EXP 획득! (현재: Lv.${expRewardInfo.newLevel}${isMax ? ' MAX' : ` - ${pct}%`})</span>
+          </div>
+          <div class="result-exp-bar-wrap">
+            <div class="result-exp-bar-fill" style="width: ${pct}%;"></div>
+          </div>
+        `;
+        expBoxEl.classList.remove('hidden');
+      } else {
+        expBoxEl.className = 'result-exp-box hidden';
+        expBoxEl.innerHTML = '';
+      }
     }
 
     // 🪙 코인 보상 배너 렌더링
