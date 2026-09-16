@@ -1052,7 +1052,7 @@
           showToast('방장만 라운드 수를 변경할 수 있습니다.', 'info');
           return;
         }
-        selectedGameRounds = Math.min(8, selectedGameRounds + 1);
+        selectedGameRounds = Math.min(20, selectedGameRounds + 1);
         _updateGameExtraSettingsUI();
         _broadcastRoomState();
       });

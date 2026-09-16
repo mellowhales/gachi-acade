@@ -2946,3 +2946,55 @@
 .cm-canvas-container:not(.is-drawer) #cm-canvas {
   cursor: default !important;
 }
+
+/* ══ 캐치마인드 브러시 슬라이더 & 무지개 팔레트 ══ */
+.cm-slider-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--t2, #718096);
+  cursor: pointer;
+}
+.cm-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.15);
+  outline: none;
+  cursor: pointer;
+}
+.cm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--green, #38a169);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+.cm-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.cm-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--green, #38a169);
+  cursor: pointer;
+  border: 2px solid white;
+}
+.cm-rainbow-btn {
+  background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red) !important;
+  border: 2px solid rgba(255,255,255,0.8) !important;
+  position: relative;
+}
+.cm-rainbow-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+.cm-opacity-group {
+  display: flex;
+  align-items: center;
+}

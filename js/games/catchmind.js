@@ -834,8 +834,20 @@ const CatchmindGame = (() => {
     return word;
   }
 
+  // 3지선다용 단어 3개를 랜덤으로 뽑아 반환 (중복 없음)
+  function _pickWordChoices() {
+    const pool = [...WORD_POOL];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, 3);
+  }
+
+
   // ⏱️ 그리는 시간: 3분 (180초)
   const ROUND_TIME = 180;
+
 
   // 🔤 한글 초성 추출 목록
   const CHOSUNG_LIST = [
@@ -883,6 +895,11 @@ const CatchmindGame = (() => {
   let currentBrushSize = 6;
   let isEraser = false;
   let isBucket = false;
+  let currentBrushOpacity = 1.0; // 브러시 투명도 (0.1 ~ 1.0)
+  let wordChoices = [];          // 3지선다 후보 단어들
+  let isWaitingWordChoice = false; // 출제자가 제시어 선택 대기 중 여부
+  let _wordChoiceAutoTimer = null;
+
 
   // 🌟 고성능 Stroke 벡터 데이터 구조 (Undo / Redo / Clear 완벽 지원)
   let strokes = [];    // 현재 캔버스에 그려진 모든 선 배열
@@ -957,8 +974,25 @@ const CatchmindGame = (() => {
           ">다음 라운드 준비 중...</div>
         </div>
 
+        <!-- 제시어 3지선다 선택 오버레이 (출제자 전용) -->
+        <div id="cm-word-choice-overlay" style="
+          display:none; position:absolute; inset:0;
+          background:rgba(15, 23, 42, 0.88); border-radius:16px;
+          align-items:center; justify-content:center; flex-direction:column; gap:20px;
+          z-index:99998; backdrop-filter:blur(6px); pointer-events:auto;
+        ">
+          <div style="font-size:1.4rem; font-weight:800; color:#edf2f7; letter-spacing:0.5px;">
+            <i class="fa-solid fa-palette" style="color:var(--green); margin-right:8px;"></i>
+            제시어를 선택하세요!
+          </div>
+          <div id="cm-word-choice-btns" style="display:flex; flex-direction:column; gap:12px; width:260px;"></div>
+          <div style="font-size:0.85rem; color:#94a3b8; margin-top:4px;">15초 안에 선택하지 않으면 자동으로 첫 번째 단어가 선택됩니다.</div>
+        </div>
+
+
         <div class="cm-header-card card">
           <div class="cm-meta-row">
+
             <span class="cm-round-badge" id="cm-round-badge">Round ${round}/${totalRounds}</span>
             <div class="cm-drawer-badge">
               <i class="fa-solid fa-palette"></i>
@@ -983,18 +1017,39 @@ const CatchmindGame = (() => {
           </div>
         </div>
 
-        <div class="cm-canvas-card card">
+        <div class="cm-canvas-card card" style="position:relative;">
+          <!-- 컬러 휠 팔레트 팝업 -->
+          <div id="cm-color-popup" style="display:none; position:absolute; z-index:9999; background:rgba(26,28,40,0.97); border-radius:16px; border:1.5px solid rgba(255,255,255,0.12); padding:16px; box-shadow:0 8px 32px rgba(0,0,0,0.6); flex-direction:column; align-items:center; gap:12px; left:8px; top:58px;">
+            <div style="font-size:0.85rem;font-weight:700;color:#94a3b8;">🎨 색상 선택</div>
+            <canvas id="cm-color-wheel" width="180" height="180" style="border-radius:50%;cursor:crosshair;display:block;"></canvas>
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+              <div id="cm-selected-color-preview" style="width:32px;height:32px;border-radius:8px;border:2px solid #fff;background:#000000;flex-shrink:0;"></div>
+              <input type="text" id="cm-hex-input" value="#000000" maxlength="7" style="flex:1;background:#1a1c28;border:1.5px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:0.9rem;font-weight:700;padding:6px 10px;font-family:monospace;">
+            </div>
+            <button type="button" id="cm-color-confirm" style="width:100%;padding:10px;font-weight:800;font-size:0.95rem;background:linear-gradient(135deg,#38a169,#2f855a);color:white;border:none;border-radius:10px;cursor:pointer;">이 색으로 설정</button>
+          </div>
           <div class="cm-toolbar" id="cm-toolbar">
             <div class="cm-palette-group">
               ${PALETTE_COLORS.map((c,i)=>`
                 <button type="button" class="cm-color-chip ${i===0?'active':''}" style="background:${c};" data-color="${c}"></button>
               `).join('')}
+              <button type="button" class="cm-color-chip cm-rainbow-btn" id="cm-btn-rainbow" title="팔레트 열기 (모든 색 선택)"></button>
             </div>
             <div class="cm-tool-divider"></div>
             <div class="cm-size-group">
-              <button type="button" class="cm-size-btn" data-size="3" title="얇게"><span class="dot-sm"></span></button>
-              <button type="button" class="cm-size-btn active" data-size="6" title="보통"><span class="dot-md"></span></button>
-              <button type="button" class="cm-size-btn" data-size="14" title="굵게"><span class="dot-lg"></span></button>
+              <label class="cm-slider-label" title="브러시 크기: 1~40">
+                <i class="fa-solid fa-pen" style="font-size:0.8rem;"></i>
+                <input type="range" id="cm-size-slider" class="cm-slider" min="1" max="40" value="6" step="1">
+                <span id="cm-size-val" style="font-size:0.78rem;font-weight:700;min-width:22px;text-align:center;">6</span>
+              </label>
+            </div>
+            <div class="cm-tool-divider"></div>
+            <div class="cm-opacity-group">
+              <label class="cm-slider-label" title="브러시 투명도: 10%~100%">
+                <i class="fa-solid fa-droplet-slash" style="font-size:0.8rem;"></i>
+                <input type="range" id="cm-opacity-slider" class="cm-slider" min="10" max="100" value="100" step="5">
+                <span id="cm-opacity-val" style="font-size:0.78rem;font-weight:700;min-width:26px;text-align:center;">100%</span>
+              </label>
             </div>
             <div class="cm-tool-divider"></div>
             <div class="cm-action-group">
@@ -1351,6 +1406,7 @@ const CatchmindGame = (() => {
     const pts = stroke.points;
 
     ctx.save();
+    ctx.globalAlpha = (stroke.opacity !== undefined ? stroke.opacity : 1.0);
     ctx.lineCap  = 'round';
     ctx.lineJoin = 'round';
     ctx.lineWidth = stroke.isEraser ? (stroke.size * 3) : stroke.size;
@@ -1419,6 +1475,7 @@ const CatchmindGame = (() => {
       id: strokeId,
       color: isEraser ? '#ffffff' : currentColor,
       size: currentBrushSize,
+      opacity: isEraser ? 1.0 : currentBrushOpacity,
       isEraser: isEraser,
       points: [{ x: pos.x, y: pos.y }]
     };
@@ -1430,6 +1487,7 @@ const CatchmindGame = (() => {
       strokeId: activeStroke.id,
       color: activeStroke.color,
       size: activeStroke.size,
+      opacity: activeStroke.opacity,
       isEraser: activeStroke.isEraser,
       point: { x: pos.x, y: pos.y }
     };
@@ -1567,6 +1625,61 @@ const CatchmindGame = (() => {
       });
     });
 
+    // 브러시 크기 슬라이더
+    const sizeSlider = document.getElementById('cm-size-slider');
+    const sizeVal = document.getElementById('cm-size-val');
+    if (sizeSlider) {
+      sizeSlider.addEventListener('input', () => {
+        currentBrushSize = parseInt(sizeSlider.value, 10);
+        if (sizeVal) sizeVal.textContent = sizeSlider.value;
+        isBucket = false;
+        if (bb) bb.classList.remove('active');
+      });
+    }
+
+    // 브러시 투명도 슬라이더
+    const opacitySlider = document.getElementById('cm-opacity-slider');
+    const opacityVal = document.getElementById('cm-opacity-val');
+    if (opacitySlider) {
+      opacitySlider.addEventListener('input', () => {
+        currentBrushOpacity = parseInt(opacitySlider.value, 10) / 100;
+        if (opacityVal) opacityVal.textContent = opacitySlider.value + '%';
+      });
+    }
+
+    // 무지개 버튼 (컬러 휠 팔레트 팝업)
+    const rainbowBtn = document.getElementById('cm-btn-rainbow');
+    const colorPopup = document.getElementById('cm-color-popup');
+    if (rainbowBtn && colorPopup) {
+      rainbowBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = colorPopup.style.display === 'flex';
+        colorPopup.style.display = isVisible ? 'none' : 'flex';
+        if (!isVisible) _initColorWheel();
+      });
+      document.addEventListener('click', (e) => {
+        if (colorPopup && colorPopup.style.display === 'flex') {
+          if (!colorPopup.contains(e.target) && e.target !== rainbowBtn) {
+            colorPopup.style.display = 'none';
+          }
+        }
+      });
+      const confirmBtn = document.getElementById('cm-color-confirm');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          const hexInput = document.getElementById('cm-hex-input');
+          if (hexInput && /^#[0-9a-fA-F]{6}$/.test(hexInput.value)) {
+            currentColor = hexInput.value;
+            _container.querySelectorAll('.cm-color-chip').forEach(c => c.classList.remove('active'));
+            if (rainbowBtn) rainbowBtn.style.outline = '3px solid #ecc94b';
+            isEraser = false;
+            if (eb) eb.classList.remove('active');
+            colorPopup.style.display = 'none';
+          }
+        });
+      }
+    }
+
     const ub = document.getElementById('cm-btn-undo');
     if (ub) ub.addEventListener('click', _performUndo);
 
@@ -1593,6 +1706,60 @@ const CatchmindGame = (() => {
 
     const cb = document.getElementById('cm-btn-clear');
     if (cb) cb.addEventListener('click', _performClear);
+  }
+
+  function _initColorWheel() {
+    const wheelCanvas = document.getElementById('cm-color-wheel');
+    if (!wheelCanvas || wheelCanvas.dataset.initialized) return;
+    wheelCanvas.dataset.initialized = 'true';
+    const wCtx = wheelCanvas.getContext('2d');
+    const W = wheelCanvas.width, H = wheelCanvas.height;
+    const cx = W / 2, cy = H / 2, radius = W / 2;
+
+    // HSL 컬러 휠 그리기
+    for (let angle = 0; angle < 360; angle++) {
+      const start = (angle - 0.5) * Math.PI / 180;
+      const end = (angle + 1.5) * Math.PI / 180;
+      const grad = wCtx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0, 'white');
+      grad.addColorStop(0.5, `hsl(${angle}, 100%, 50%)`);
+      grad.addColorStop(1, 'black');
+      wCtx.beginPath();
+      wCtx.moveTo(cx, cy);
+      wCtx.arc(cx, cy, radius, start, end);
+      wCtx.closePath();
+      wCtx.fillStyle = grad;
+      wCtx.fill();
+    }
+
+    function pickColor(clientX, clientY) {
+      const rect = wheelCanvas.getBoundingClientRect();
+      const scX = W / rect.width, scY = H / rect.height;
+      const px = Math.round((clientX - rect.left) * scX);
+      const py = Math.round((clientY - rect.top) * scY);
+      if (px < 0 || px >= W || py < 0 || py >= H) return;
+      const pixel = wCtx.getImageData(px, py, 1, 1).data;
+      const hex = '#' + [pixel[0], pixel[1], pixel[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+      const preview = document.getElementById('cm-selected-color-preview');
+      const hexInput = document.getElementById('cm-hex-input');
+      if (preview) preview.style.background = hex;
+      if (hexInput) hexInput.value = hex;
+    }
+
+    wheelCanvas.addEventListener('click', (e) => pickColor(e.clientX, e.clientY));
+    wheelCanvas.addEventListener('mousemove', (e) => { if (e.buttons === 1) pickColor(e.clientX, e.clientY); });
+    wheelCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); pickColor(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    wheelCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); pickColor(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+
+    const hexInput = document.getElementById('cm-hex-input');
+    if (hexInput) {
+      hexInput.addEventListener('input', () => {
+        if (/^#[0-9a-fA-F]{6}$/.test(hexInput.value)) {
+          const preview = document.getElementById('cm-selected-color-preview');
+          if (preview) preview.style.background = hexInput.value;
+        }
+      });
+    }
   }
 
   function _bindGuessEvents() {
@@ -1630,9 +1797,6 @@ const CatchmindGame = (() => {
     drawerIdx = safeIdx;
     const curDrawer = players[safeIdx] || { id: myId, name: '출제자' };
 
-    const randWord = _pickNextWord();
-    currentWord = randWord;
-    wordLength  = randWord.length;
     solvedPlayers.clear();
     timeLeft        = ROUND_TIME;
     isDrawingLocked = false;
@@ -1642,6 +1806,25 @@ const CatchmindGame = (() => {
     redoStack = [];
     activeStroke = null;
     _redrawCanvas();
+
+    // 내가 출제자인 경우 → 3지선다 오버레이 표시 후 선택 대기
+    const amIDrawer = (String(curDrawer.id) === String(myId)) || (curDrawer.isHost && isHost);
+    if (amIDrawer) {
+      wordChoices = _pickWordChoices();
+      isWaitingWordChoice = true;
+      _showWordChoiceOverlay(wordChoices, curDrawer);
+      return; // 제시어 선택 완료 시 _hostStartTimerWithWord() 호출
+    }
+
+    // 호스트가 비출제자인 경우 (이론상 드물지만) → 단어 임의 선택 후 바로 진행
+    const randWord = _pickNextWord();
+    _hostStartTimerWithWord(randWord, curDrawer);
+  }
+
+  function _hostStartTimerWithWord(chosenWord, curDrawer) {
+    currentWord = chosenWord;
+    wordLength  = chosenWord.length;
+    isWaitingWordChoice = false;
 
     clearInterval(hostTimerInterval);
     hostTimerInterval = setInterval(() => {
@@ -1673,6 +1856,51 @@ const CatchmindGame = (() => {
     P2P.send(startPacket);
     _handleStartRound(startPacket);
   }
+
+  function _showWordChoiceOverlay(choices, curDrawer) {
+    const overlay = document.getElementById('cm-word-choice-overlay');
+    const btnsWrap = document.getElementById('cm-word-choice-btns');
+    if (!overlay || !btnsWrap) {
+      // DOM 없으면 첫 번째 선택으로 진행
+      _hostStartTimerWithWord(choices[0] || _pickNextWord(), curDrawer);
+      return;
+    }
+
+    btnsWrap.innerHTML = choices.map((word, idx) => `
+      <button type="button" class="btn btn-primary" data-word="${word}" style="
+        width:100%; padding:14px 20px; font-size:1.15rem; font-weight:800;
+        border-radius:12px; letter-spacing:0.5px;
+        background: ${idx===0?'linear-gradient(135deg,#38a169,#2f855a)':idx===1?'linear-gradient(135deg,#3182ce,#2b6cb0)':'linear-gradient(135deg,#805ad5,#6b46c1)'};
+        color:white; border:none; cursor:pointer;
+        transition: transform 0.15s ease, filter 0.15s ease;
+      ">${word}</button>
+    `).join('');
+
+    overlay.style.display = 'flex';
+
+    // 버튼 클릭 핸들러
+    btnsWrap.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const chosen = btn.dataset.word;
+        overlay.style.display = 'none';
+        clearTimeout(_wordChoiceAutoTimer);
+        _wordChoiceAutoTimer = null;
+        if (isWaitingWordChoice) {
+          _hostStartTimerWithWord(chosen, curDrawer);
+        }
+      });
+    });
+
+    // 15초 후 자동 선택 (첫 번째 단어)
+    clearTimeout(_wordChoiceAutoTimer);
+    _wordChoiceAutoTimer = setTimeout(() => {
+      if (isWaitingWordChoice) {
+        overlay.style.display = 'none';
+        _hostStartTimerWithWord(choices[0] || _pickNextWord(), curDrawer);
+      }
+    }, 15000);
+  }
+
 
   function _hostTimeOver() {
     if (!isHost || isGameOver || isTransitioningRound) return;
@@ -2282,6 +2510,7 @@ const CatchmindGame = (() => {
           id: data.strokeId,
           color: data.color,
           size: data.size,
+          opacity: (data.opacity !== undefined ? data.opacity : 1.0),
           isEraser: data.isEraser,
           points: [data.point]
         };
