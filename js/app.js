@@ -85,6 +85,11 @@
   if (!localStorage.getItem('arcade_nick')) {
     localStorage.setItem('arcade_nick', myNickname);
   }
+
+  // 🪙 코인 상태 변수 (로그인 계정 전용, 기본 승리 보상: 50코인)
+  let myCoins = parseInt(localStorage.getItem('arcade_user_coins') || '0', 10);
+  const WIN_REWARD_COINS = 50;
+
   let pendingAction = null;
   let pendingJoinCode = '';
 
@@ -417,6 +422,22 @@
   /* =====================================================================
      1. 홈 화면: 유저 프로필, 사이드바 & 미리보기 연동
      ===================================================================== */
+  function _updateCoinsUI() {
+    const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
+    const valEl = $('user-coin-val');
+    if (valEl) {
+      valEl.textContent = isLoggedIn ? myCoins.toLocaleString() : '0';
+    }
+    const profileAmountEl = $('profile-coin-amount');
+    if (profileAmountEl) {
+      profileAmountEl.textContent = isLoggedIn ? `${myCoins.toLocaleString()} 코인` : '0 코인 (로그인 필요)';
+    }
+    const chipEl = $('user-coin-chip');
+    if (chipEl) {
+      chipEl.title = isLoggedIn ? `내 보유 코인: ${myCoins.toLocaleString()} 코인` : '로그인 시 코인을 모을 수 있습니다';
+    }
+  }
+
   function _updateHomeUserBar() {
     const avatarEl = $('home-user-avatar');
     if (avatarEl) {
@@ -424,6 +445,7 @@
       avatarEl.style.background = myAvatarColor || '#38a169';
     }
     if ($('home-user-name')) $('home-user-name').textContent = myNickname || '익명';
+    _updateCoinsUI();
   }
 
   /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (전체 / 공개방 / 비밀방 탭 필터링) ── */
@@ -1202,6 +1224,56 @@
     const btnTabSignup = $('auth-tab-signup');
     if (btnTabSignup) btnTabSignup.addEventListener('click', () => _switchAuthTab('signup'));
 
+    // 🌟 소셜 간편 로그인 (Google, Kakao, Naver) 이벤트 바인딩
+    const btnGoogle = $('btn-oauth-google');
+    if (btnGoogle) {
+      btnGoogle.addEventListener('click', async () => {
+        _showAuthFeedback('Google 로그인 페이지로 이동 중...', 'info');
+        const res = await AppSupabase.signInWithOAuth('google');
+        if (!res.success) {
+          _showAuthFeedback(res.error || 'Google 로그인에 실패했습니다.', 'error');
+        }
+      });
+    }
+
+    const btnKakao = $('btn-oauth-kakao');
+    if (btnKakao) {
+      btnKakao.addEventListener('click', async () => {
+        _showAuthFeedback('카카오 로그인 페이지로 이동 중...', 'info');
+        const res = await AppSupabase.signInWithOAuth('kakao');
+        if (!res.success) {
+          _showAuthFeedback(res.error || '카카오 로그인에 실패했습니다.', 'error');
+        }
+      });
+    }
+
+    const btnNaver = $('btn-oauth-naver');
+    if (btnNaver) {
+      btnNaver.addEventListener('click', async () => {
+        _showAuthFeedback('네이버 로그인 요청 중...', 'info');
+        const res = await AppSupabase.signInWithOAuth('naver');
+        if (!res.success) {
+          alert('네이버 간편 로그인은 Supabase에 Custom OIDC 설정이 필요합니다.\nSupabase 대시보드에서 Provider 설정을 확인해주세요.');
+          _showAuthFeedback('네이버 OAuth가 아직 설정되지 않았습니다.', 'error');
+        }
+      });
+    }
+
+    // 🪙 상단 유저 코인 칩 클릭 이벤트
+    const coinChip = $('user-coin-chip');
+    if (coinChip) {
+      coinChip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
+        if (!isLoggedIn) {
+          _closeProfileModal(true);
+          _openAuthModal('signin');
+        } else {
+          showToast(`🪙 현재 보유 코인: ${myCoins.toLocaleString()} 코인\n(게임 승리 시 50 코인이 지급됩니다!)`, 'info');
+        }
+      });
+    }
+
     const form = $('auth-form');
     if (form) form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1236,14 +1308,39 @@
               myAvatarColor = profile.avatarColor;
               localStorage.setItem('arcade_avatar_color', myAvatarColor);
             }
-            _updateHomeUserBar();
+            if (typeof profile.coins === 'number') {
+              myCoins = profile.coins;
+              localStorage.setItem('arcade_user_coins', String(myCoins));
+            }
+          } else {
+            // 소셜 로그인 첫 접속 등의 경우 로컬 프로필로 DB 최초 등록
+            AppSupabase.saveProfile(user.id, {
+              nickname: myNickname,
+              avatarIcon: myAvatarIcon,
+              avatarColor: myAvatarColor,
+              coins: myCoins || 0
+            }).catch(() => {});
           }
+          _updateHomeUserBar();
+        } else {
+          // 로그아웃 시 코인 0으로 리셋
+          myCoins = 0;
+          localStorage.removeItem('arcade_user_coins');
+          _updateHomeUserBar();
         }
       });
 
       // 초기 세션 확인
-      AppSupabase.init().then(user => {
+      AppSupabase.init().then(async user => {
         _updateProfileAuthUI(user);
+        if (user) {
+          const profile = await AppSupabase.loadProfile(user.id);
+          if (profile && typeof profile.coins === 'number') {
+            myCoins = profile.coins;
+            localStorage.setItem('arcade_user_coins', String(myCoins));
+          }
+          _updateHomeUserBar();
+        }
       }).catch(() => {
         _updateProfileAuthUI(null);
       });
@@ -1309,10 +1406,15 @@
       localStorage.setItem(GAME_STATS_KEY, JSON.stringify(stats));
     } catch (_) {}
 
-    // Supabase 로그인 상태라면 클라우드에도 저장
+    // Supabase 로그인 상태라면 클라우드에도 저장 (프로필 리셋 방지를 위해 현재 닉네임/아바타 함께 전달)
     if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
       const user = AppSupabase.getCurrentUser();
-      AppSupabase.saveProfile(user.id, { stats }).catch(() => {});
+      AppSupabase.saveProfile(user.id, {
+        nickname: myNickname,
+        avatarIcon: myAvatarIcon,
+        avatarColor: myAvatarColor,
+        stats: stats
+      }).catch(() => {});
     }
 
     // 대기방에 있다면 P2P 방 참가자들에게 최신 stats 공유
@@ -3146,29 +3248,51 @@
 
   // 게임 결과 콜백
   function _handleGameResult(win, drawInfo, customLeaderboard) {
+    let resultType = 'lose';
+    let iAmWinner = false;
+
+    if (customLeaderboard && customLeaderboard.length > 0) {
+      const winner = customLeaderboard[0];
+      iAmWinner = (winner.name === myNickname) || (winner.id && String(winner.id) === String(P2P.getMyId()));
+      resultType = iAmWinner ? 'win' : 'lose';
+    } else if (drawInfo && typeof drawInfo === 'object') {
+      resultType = 'draw';
+    } else if (win === true) {
+      resultType = 'win';
+      iAmWinner = true;
+    } else {
+      resultType = 'lose';
+    }
+
     // 🌟 전적 집계 자동 기록
     try {
-      let resultType = 'lose';
-      if (customLeaderboard && customLeaderboard.length > 0) {
-        const winner = customLeaderboard[0];
-        const iAmWinner = (winner.name === myNickname) || (winner.id && String(winner.id) === String(P2P.getMyId()));
-        resultType = iAmWinner ? 'win' : 'lose';
-      } else if (drawInfo && typeof drawInfo === 'object') {
-        resultType = 'draw';
-      } else if (win === true) {
-        resultType = 'win';
-      } else {
-        resultType = 'lose';
-      }
       _recordGameStats(selectedGameKey, resultType);
     } catch (e) {
       console.warn('[Stats] 전적 기록 오류:', e);
     }
 
-    _showResultOverlay(win, drawInfo, customLeaderboard);
+    // 🪙 승리 코인 지급 처리 (오직 로그인된 계정에만 지급)
+    let coinRewardInfo = null;
+    if (resultType === 'win') {
+      const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
+      if (isLoggedIn) {
+        myCoins += WIN_REWARD_COINS;
+        localStorage.setItem('arcade_user_coins', String(myCoins));
+        _updateCoinsUI();
+        const user = AppSupabase.getCurrentUser();
+        if (user && typeof AppSupabase.addCoins === 'function') {
+          AppSupabase.addCoins(user.id, WIN_REWARD_COINS).catch(() => {});
+        }
+        coinRewardInfo = { granted: true, amount: WIN_REWARD_COINS, total: myCoins };
+      } else {
+        coinRewardInfo = { granted: false, reason: 'guest' };
+      }
+    }
+
+    _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo);
   }
 
-  function _showResultOverlay(win, drawInfo, customLeaderboard) {
+  function _showResultOverlay(win, drawInfo, customLeaderboard, coinRewardInfo = null) {
     const iconEl = $('result-icon');
     const titleEl = $('result-title');
     const msgEl = $('result-message');
@@ -3244,6 +3368,23 @@
       msgEl.textContent = reasonMsg || '아쉽게 패배했습니다. 다시 도전해 보세요!';
       scoreRowEl.classList.add('hidden');
       Sound.playLose();
+    }
+
+    // 🪙 코인 보상 배너 렌더링
+    const coinBoxEl = $('result-coin-box');
+    if (coinBoxEl) {
+      if (coinRewardInfo && coinRewardInfo.granted) {
+        coinBoxEl.className = 'result-coin-box reward-won';
+        coinBoxEl.innerHTML = `<i class="fa-solid fa-coins"></i> <span>+${coinRewardInfo.amount} 코인 획득! (현재: ${coinRewardInfo.total.toLocaleString()} 코인)</span>`;
+        coinBoxEl.classList.remove('hidden');
+      } else if (coinRewardInfo && !coinRewardInfo.granted) {
+        coinBoxEl.className = 'result-coin-box reward-guest';
+        coinBoxEl.innerHTML = `<i class="fa-solid fa-lock"></i> <span>로그인하시면 승리 시 코인을 모을 수 있습니다!</span>`;
+        coinBoxEl.classList.remove('hidden');
+      } else {
+        coinBoxEl.className = 'result-coin-box hidden';
+        coinBoxEl.innerHTML = '';
+      }
     }
 
     $('overlay-result').classList.remove('hidden');

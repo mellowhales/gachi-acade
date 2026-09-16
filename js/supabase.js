@@ -180,6 +180,30 @@ const AppSupabase = (() => {
   }
 
   /**
+   * OAuth 간편 로그인 (Google, Kakao, Naver 등)
+   */
+  async function signInWithOAuth(provider) {
+    const client = getClient();
+    if (!client) {
+      return { success: false, error: 'Supabase가 설정되지 않았습니다.' };
+    }
+    try {
+      const redirectUrl = window.location.origin + window.location.pathname;
+      const { data, error } = await client.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: redirectUrl
+        }
+      });
+      if (error) throw error;
+      return { success: true, data };
+    } catch (err) {
+      console.warn(`[Supabase] ${provider} OAuth 로그인 오류:`, err);
+      return { success: false, error: err.message || `${provider} 로그인 중 오류가 발생했습니다.` };
+    }
+  }
+
+  /**
    * 클라우드 프로필 로드 (DB profiles 테이블 -> user_metadata 순서)
    */
   async function loadProfile(userId) {
@@ -196,21 +220,24 @@ const AppSupabase = (() => {
 
       if (!error && data) {
         return {
-          nickname: data.nickname || '플레이어',
-          avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
-          avatarColor: data.avatar_color || '#38a169',
-          stats: data.stats || null
+          nickname: data.nickname || null,
+          avatarIcon: data.avatar_icon || null,
+          avatarColor: data.avatar_color || null,
+          stats: data.stats || null,
+          coins: typeof data.coins === 'number' ? data.coins : (parseInt(data.coins, 10) || 0)
         };
       }
 
       // 2. fallback: user_metadata
       if (_currentUser && _currentUser.id === userId && _currentUser.user_metadata) {
         const meta = _currentUser.user_metadata;
+        const oAuthName = meta.full_name || meta.name || meta.nickname || null;
         return {
-          nickname: meta.nickname || '플레이어',
-          avatarIcon: meta.avatar_icon || 'fa-solid fa-dog',
-          avatarColor: meta.avatar_color || '#38a169',
-          stats: meta.stats || null
+          nickname: oAuthName ? oAuthName.slice(0, 8) : null,
+          avatarIcon: meta.avatar_icon || null,
+          avatarColor: meta.avatar_color || null,
+          stats: meta.stats || null,
+          coins: typeof meta.coins === 'number' ? meta.coins : 0
         };
       }
 
@@ -222,31 +249,39 @@ const AppSupabase = (() => {
   }
 
   /**
-   * 클라우드 프로필 저장 (DB profiles 테이블 + user_metadata)
+   * 클라우드 프로필 부분 저장 (전달된 필드만 안전하게 업데이트하여 프로필 초기화 방지)
    */
   async function saveProfile(userId, profileData) {
     const client = getClient();
-    if (!client || !userId) return false;
+    if (!client || !userId || !profileData || typeof profileData !== 'object') return false;
 
     const payload = {
       id: userId,
-      nickname: profileData.nickname || '플레이어',
-      avatar_icon: profileData.avatarIcon || profileData.avatar_icon || 'fa-solid fa-dog',
-      avatar_color: profileData.avatarColor || profileData.avatar_color || '#38a169',
       updated_at: new Date().toISOString()
     };
+    if (profileData.nickname) payload.nickname = profileData.nickname;
+    if (profileData.avatarIcon || profileData.avatar_icon) {
+      payload.avatar_icon = profileData.avatarIcon || profileData.avatar_icon;
+    }
+    if (profileData.avatarColor || profileData.avatar_color) {
+      payload.avatar_color = profileData.avatarColor || profileData.avatar_color;
+    }
     if (profileData.email) payload.email = profileData.email;
     if (profileData.stats !== undefined) payload.stats = profileData.stats;
+    if (profileData.coins !== undefined) payload.coins = profileData.coins;
 
     try {
-      // 1. user_metadata 업데이트
-      const metaData = {
-        nickname: payload.nickname,
-        avatar_icon: payload.avatar_icon,
-        avatar_color: payload.avatar_color
-      };
-      if (payload.stats) metaData.stats = payload.stats;
-      client.auth.updateUser({ data: metaData }).catch(() => {});
+      // 1. user_metadata 부분 업데이트 (전달된 필드만 반영)
+      const metaData = {};
+      if (payload.nickname) metaData.nickname = payload.nickname;
+      if (payload.avatar_icon) metaData.avatar_icon = payload.avatar_icon;
+      if (payload.avatar_color) metaData.avatar_color = payload.avatar_color;
+      if (payload.stats !== undefined) metaData.stats = payload.stats;
+      if (payload.coins !== undefined) metaData.coins = payload.coins;
+
+      if (Object.keys(metaData).length > 0) {
+        client.auth.updateUser({ data: metaData }).catch(() => {});
+      }
 
       // 2. profiles 테이블 upsert
       const { error } = await client
@@ -264,6 +299,26 @@ const AppSupabase = (() => {
   }
 
   /**
+   * 유저 코인 증차 및 클라우드 저장
+   */
+  async function addCoins(userId, amount) {
+    const client = getClient();
+    if (!client || !userId || !amount) return null;
+
+    try {
+      const profile = await loadProfile(userId);
+      const currentCoins = (profile && typeof profile.coins === 'number') ? profile.coins : 0;
+      const newCoins = Math.max(0, currentCoins + amount);
+
+      await saveProfile(userId, { coins: newCoins });
+      return newCoins;
+    } catch (err) {
+      console.warn('[Supabase] 코인 지급 에러:', err);
+      return null;
+    }
+  }
+
+  /**
    * 특정 유저의 전적 및 프로필 조회 (상대방 전적 확인용)
    */
   async function fetchUserStats(userId) {
@@ -273,7 +328,7 @@ const AppSupabase = (() => {
     try {
       const { data, error } = await client
         .from('profiles')
-        .select('id, nickname, avatar_icon, avatar_color, stats')
+        .select('id, nickname, avatar_icon, avatar_color, stats, coins')
         .eq('id', userId)
         .maybeSingle();
 
@@ -283,7 +338,8 @@ const AppSupabase = (() => {
           nickname: data.nickname || '플레이어',
           avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
           avatarColor: data.avatar_color || '#38a169',
-          stats: data.stats || null
+          stats: data.stats || null,
+          coins: typeof data.coins === 'number' ? data.coins : 0
         };
       }
       return null;
@@ -301,9 +357,11 @@ const AppSupabase = (() => {
     getCurrentUser,
     signUp,
     signIn,
+    signInWithOAuth,
     signOut,
     loadProfile,
     saveProfile,
+    addCoins,
     fetchUserStats
   };
 })();
