@@ -787,6 +787,9 @@
 
     _renderProfileModalGrids();
     _updateProfileModalPreview();
+    if (typeof _updateProfileAuthUI === 'function') {
+      _updateProfileAuthUI(typeof AppSupabase !== 'undefined' ? AppSupabase.getCurrentUser() : null);
+    }
 
     // 🌟 위치 계산 (프로필 편집 버튼 기준 스마트 말풍선 배치)
     const btn = $('btn-change-nickname') || $('home-user-avatar');
@@ -885,6 +888,16 @@
 
     _updateHomeUserBar();
 
+    // 🌟 Supabase 로그인 상태라면 클라우드에도 저장
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        nickname: myNickname,
+        avatarIcon: myAvatarIcon,
+        avatarColor: myAvatarColor
+      }).catch(() => {});
+    }
+
     // 현재 방에 참여 중이라면 방 참가자 정보도 즉시 동기화
     if (currentRoomCode && roomPlayers.length > 0) {
       const myId = P2P.getMyId();
@@ -943,6 +956,268 @@
       }
     }
   });
+
+  /* =====================================================================
+     🔐 Supabase 인증 & 클라우드 프로필 연동
+     ===================================================================== */
+  let _authCurrentTab = 'signin'; // 'signin' | 'signup'
+
+  function _updateProfileAuthUI(user) {
+    const statusEl = $('profile-auth-status');
+    const subEl = $('profile-auth-sub');
+    const iconEl = $('profile-auth-icon');
+    const actionWrap = $('profile-auth-action');
+
+    if (!statusEl || !subEl || !actionWrap) return;
+
+    if (user && user.email) {
+      if (iconEl) iconEl.className = 'fa-solid fa-cloud-check profile-auth-icon logged-in';
+      statusEl.textContent = user.email;
+      statusEl.title = user.email;
+      subEl.textContent = '클라우드 프로필 동기화 중';
+      actionWrap.innerHTML = `
+        <button type="button" class="btn btn-outline btn-sm profile-auth-btn" id="btn-supabase-logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>로그아웃</span>
+        </button>
+      `;
+      const btnLogout = $('btn-supabase-logout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+          if (typeof AppSupabase !== 'undefined') {
+            await AppSupabase.signOut();
+            showToast('로그아웃되었습니다.', 'info');
+          }
+        });
+      }
+    } else {
+      if (iconEl) iconEl.className = 'fa-solid fa-cloud profile-auth-icon';
+      statusEl.textContent = '게스트 모드';
+      statusEl.removeAttribute('title');
+      subEl.textContent = '로그인하면 프로필이 클라우드에 보관됩니다.';
+      actionWrap.innerHTML = `
+        <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>로그인 / 가입</span>
+        </button>
+      `;
+      const btnOpen = $('btn-open-auth-modal');
+      if (btnOpen) {
+        btnOpen.addEventListener('click', () => {
+          _closeProfileModal();
+          _openAuthModal('signin');
+        });
+      }
+    }
+  }
+
+  function _openAuthModal(initialTab = 'signin') {
+    const modal = $('auth-modal');
+    if (!modal) return;
+
+    _switchAuthTab(initialTab);
+    _clearAuthFeedback();
+
+    // Supabase 설정 완료 여부 체크
+    const notice = $('auth-config-notice');
+    if (notice) {
+      const isOk = typeof AppSupabase !== 'undefined' && AppSupabase.isConfigured();
+      notice.classList.toggle('hidden', isOk);
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      if ($('auth-email')) $('auth-email').focus();
+    }, 100);
+  }
+
+  function _closeAuthModal() {
+    const modal = $('auth-modal');
+    if (modal) modal.classList.add('hidden');
+    _clearAuthFeedback();
+  }
+
+  function _switchAuthTab(tab) {
+    _authCurrentTab = tab;
+    _clearAuthFeedback();
+
+    const btnSignin = $('auth-tab-signin');
+    const btnSignup = $('auth-tab-signup');
+    const fieldConfirm = $('auth-field-password-confirm');
+    const fieldNick = $('auth-field-nickname');
+    const titleText = $('auth-modal-title-text');
+    const submitText = $('btn-auth-submit-text');
+    const submitIcon = $('btn-auth-submit-icon');
+
+    if (btnSignin) btnSignin.classList.toggle('active', tab === 'signin');
+    if (btnSignup) btnSignup.classList.toggle('active', tab === 'signup');
+
+    if (tab === 'signup') {
+      if (fieldConfirm) fieldConfirm.classList.remove('hidden');
+      if (fieldNick) {
+        fieldNick.classList.remove('hidden');
+        const nickInput = $('auth-nickname');
+        if (nickInput && !nickInput.value) nickInput.value = myNickname || '';
+      }
+      if (titleText) titleText.textContent = '가치아케이드 회원가입';
+      if (submitText) submitText.textContent = '회원가입';
+      if (submitIcon) submitIcon.className = 'fa-solid fa-user-plus';
+    } else {
+      if (fieldConfirm) fieldConfirm.classList.add('hidden');
+      if (fieldNick) fieldNick.classList.add('hidden');
+      if (titleText) titleText.textContent = '가치아케이드 로그인';
+      if (submitText) submitText.textContent = '로그인';
+      if (submitIcon) submitIcon.className = 'fa-solid fa-right-to-bracket';
+    }
+  }
+
+  function _showAuthFeedback(msg, type = 'error') {
+    const el = $('auth-feedback-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `auth-feedback-banner ${type}`;
+    el.classList.remove('hidden');
+  }
+
+  function _clearAuthFeedback() {
+    const el = $('auth-feedback-msg');
+    if (el) {
+      el.textContent = '';
+      el.className = 'auth-feedback-banner hidden';
+    }
+  }
+
+  async function _handleAuthSubmit() {
+    _clearAuthFeedback();
+
+    if (typeof AppSupabase === 'undefined' || !AppSupabase.isConfigured()) {
+      _showAuthFeedback('Supabase 설정이 완료되지 않았습니다. js/supabase-config.js에 URL과 anon public key를 입력해주세요.', 'error');
+      return;
+    }
+
+    const email = $('auth-email') ? $('auth-email').value.trim() : '';
+    const password = $('auth-password') ? $('auth-password').value : '';
+
+    if (!email || !password) {
+      _showAuthFeedback('이메일과 비밀번호를 모두 입력해주세요.', 'error');
+      return;
+    }
+
+    const submitBtn = $('btn-auth-submit');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      if (_authCurrentTab === 'signup') {
+        const confirmPw = $('auth-password-confirm') ? $('auth-password-confirm').value : '';
+        if (password !== confirmPw) {
+          _showAuthFeedback('비밀번호가 서로 일치하지 않습니다.', 'error');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+        if (password.length < 6) {
+          _showAuthFeedback('비밀번호는 최소 6자 이상이어야 합니다.', 'error');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        const nick = ($('auth-nickname') ? $('auth-nickname').value.trim() : '') || myNickname || '플레이어';
+        const res = await AppSupabase.signUp(email, password, nick, myAvatarIcon, myAvatarColor);
+
+        if (!res.success) {
+          _showAuthFeedback(res.error || '회원가입에 실패했습니다.', 'error');
+        } else if (res.needsEmailConfirmation) {
+          _showAuthFeedback('회원가입 완료! 인증 이메일이 발송되었습니다. 메일함의 링크를 확인한 후 로그인해주세요.', 'success');
+        } else {
+          _showAuthFeedback('회원가입 및 로그인이 완료되었습니다!', 'success');
+          showToast('회원가입 및 로그인 완료!', 'success');
+          setTimeout(() => _closeAuthModal(), 800);
+        }
+      } else {
+        // 로그인
+        const res = await AppSupabase.signIn(email, password);
+        if (!res.success) {
+          _showAuthFeedback(res.error || '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
+        } else {
+          _showAuthFeedback('로그인 성공!', 'success');
+          showToast('로그인되었습니다!', 'success');
+          setTimeout(() => _closeAuthModal(), 600);
+        }
+      }
+    } catch (err) {
+      _showAuthFeedback(err.message || '오류가 발생했습니다.', 'error');
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  }
+
+  function _initSupabaseAuthUI() {
+    // 1. 이벤트 바인딩
+    const btnOpen = $('btn-open-auth-modal');
+    if (btnOpen) {
+      btnOpen.addEventListener('click', () => {
+        _closeProfileModal();
+        _openAuthModal('signin');
+      });
+    }
+
+    const btnClose = $('btn-close-auth-modal');
+    if (btnClose) btnClose.addEventListener('click', _closeAuthModal);
+
+    const btnTabSignin = $('auth-tab-signin');
+    if (btnTabSignin) btnTabSignin.addEventListener('click', () => _switchAuthTab('signin'));
+
+    const btnTabSignup = $('auth-tab-signup');
+    if (btnTabSignup) btnTabSignup.addEventListener('click', () => _switchAuthTab('signup'));
+
+    const form = $('auth-form');
+    if (form) form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      _handleAuthSubmit();
+    });
+
+    const modal = $('auth-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) _closeAuthModal();
+      });
+    }
+
+    // 2. Supabase 모듈 초기화 및 리스너 연결
+    if (typeof AppSupabase !== 'undefined') {
+      AppSupabase.onAuthStateChange(async (event, session, user) => {
+        _updateProfileAuthUI(user);
+
+        if (user) {
+          // 로그인 시 클라우드 프로필 로드
+          const profile = await AppSupabase.loadProfile(user.id);
+          if (profile) {
+            if (profile.nickname) {
+              myNickname = profile.nickname;
+              localStorage.setItem('arcade_nick', myNickname);
+            }
+            if (profile.avatarIcon) {
+              myAvatarIcon = profile.avatarIcon;
+              localStorage.setItem('arcade_avatar_icon', myAvatarIcon);
+            }
+            if (profile.avatarColor) {
+              myAvatarColor = profile.avatarColor;
+              localStorage.setItem('arcade_avatar_color', myAvatarColor);
+            }
+            _updateHomeUserBar();
+          }
+        }
+      });
+
+      // 초기 세션 확인
+      AppSupabase.init().then(user => {
+        _updateProfileAuthUI(user);
+      }).catch(() => {
+        _updateProfileAuthUI(null);
+      });
+    } else {
+      _updateProfileAuthUI(null);
+    }
+  }
 
   /* =====================================================================
      ⚙️ 방 만들기 옵션 (공개/비밀방, 비밀번호, 2~8인 스피너) & 비밀번호 모달
@@ -3052,7 +3327,8 @@
   _initFirebaseLobby();
   _initSidebarGameTooltips();
   _initInGameDragScroll();
-  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동)');
+  _initSupabaseAuthUI();
+  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증)');
 
 
 
@@ -3061,6 +3337,10 @@
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
     // 1. Close modals if they are open
+    if ($('auth-modal') && !$('auth-modal').classList.contains('hidden')) {
+      $('auth-modal').classList.add('hidden');
+      return;
+    }
     if ($('overlay-settings') && !$('overlay-settings').classList.contains('hidden')) {
       $('overlay-settings').classList.add('hidden');
       return;

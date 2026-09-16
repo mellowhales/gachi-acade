@@ -7443,4 +7443,221 @@ html, body {
   margin-top: 4px;
   padding-left: 2px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Supabase 계정 연동 & 로그인/회원가입 모달 스타일
+═══════════════════════════════════════════════════════════════ */
+.profile-auth-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-subtle, #f7fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm, 8px);
+  margin-bottom: 12px;
+}
+.profile-auth-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.profile-auth-icon {
+  font-size: 1.15rem;
+  color: var(--primary, #3182ce);
+  flex-shrink: 0;
+}
+.profile-auth-icon.logged-in {
+  color: var(--green, #38a169);
+}
+.profile-auth-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.profile-auth-status {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text, #2d3748);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-auth-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted, #718096);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-auth-btn {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm, 6px);
+  flex-shrink: 0;
+}
+
+/* ── 인증 모달 ── */
+.auth-modal-overlay {
+  z-index: 10005;
+}
+.auth-modal-card {
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.auth-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.auth-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text, #1a202c);
+}
+.auth-tab-row {
+  display: flex;
+  background: var(--bg-subtle, #edf2f7);
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+.auth-tab-btn {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #718096);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.auth-tab-btn.active {
+  background: var(--bg-card, #ffffff);
+  color: var(--primary, #3182ce);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.auth-notice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(237, 137, 54, 0.12);
+  border: 1px solid rgba(237, 137, 54, 0.4);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: #c05621;
+  line-height: 1.35;
+}
+.auth-notice-banner i {
+  margin-top: 2px;
+}
+.auth-feedback-banner {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.auth-feedback-banner.error {
+  background: rgba(229, 62, 62, 0.12);
+  border: 1px solid rgba(229, 62, 62, 0.35);
+  color: #e53e3e;
+}
+.auth-feedback-banner.success {
+  background: rgba(56, 161, 105, 0.12);
+  border: 1px solid rgba(56, 161, 105, 0.35);
+  color: #2f855a;
+}
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.auth-field label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted, #4a5568);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.auth-field input {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  background: var(--bg-card, #ffffff);
+  color: var(--text, #1a202c);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-field input:focus {
+  border-color: var(--primary, #3182ce);
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.18);
+}
+.auth-submit-row {
+  margin-top: 8px;
+}
+.auth-submit-btn {
+  width: 100%;
+  padding: 11px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── 다크 테마 대응 ── */
+[data-theme="dark"] .profile-auth-box {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+[data-theme="dark"] .profile-auth-status {
+  color: #f7fafc !important;
+}
+[data-theme="dark"] .profile-auth-sub {
+  color: #a0aec0 !important;
+}
+[data-theme="dark"] .auth-modal-card {
+  background: #1a202c !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+[data-theme="dark"] .auth-modal-title {
+  color: #f7fafc !important;
+}
+[data-theme="dark"] .auth-tab-row {
+  background: #2d3748 !important;
+}
+[data-theme="dark"] .auth-tab-btn.active {
+  background: #1a202c !important;
+  color: #63b3ed !important;
+}
+[data-theme="dark"] .auth-field input {
+  background: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #f7fafc !important;
+}
+[data-theme="dark"] .auth-notice-banner {
+  background: rgba(237, 137, 54, 0.18) !important;
+  color: #fbd38d !important;
+}
 

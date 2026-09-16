@@ -865,6 +865,23 @@
     </button>
   </div>
 
+  <!-- 🌟 계정 연동 / 로그인 영역 -->
+  <div class="profile-auth-box" id="profile-auth-box">
+    <div class="profile-auth-info">
+      <i class="fa-solid fa-cloud profile-auth-icon" id="profile-auth-icon"></i>
+      <div class="profile-auth-text">
+        <span class="profile-auth-status" id="profile-auth-status">게스트 모드</span>
+        <span class="profile-auth-sub" id="profile-auth-sub">로그인하면 프로필이 클라우드에 보관됩니다.</span>
+      </div>
+    </div>
+    <div class="profile-auth-action" id="profile-auth-action">
+      <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>로그인 / 가입</span>
+      </button>
+    </div>
+  </div>
+
   <!-- 닉네임 입력 -->
   <div class="profile-section">
     <label class="profile-section-label">닉네임</label>
@@ -900,6 +917,70 @@
       <i class="fa-solid fa-check"></i>
       <span>저장</span>
     </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: Supabase 로그인 / 회원가입 모달
+═══════════════════════════════════════════════════════════════ -->
+<div id="auth-modal" class="overlay auth-modal-overlay hidden">
+  <div class="auth-modal-card card">
+    <div class="auth-modal-header">
+      <div class="auth-modal-title">
+        <i class="fa-solid fa-shield-halved" style="color:var(--green);"></i>
+        <span id="auth-modal-title-text">가치아케이드 로그인</span>
+      </div>
+      <button type="button" class="btn-icon sm" id="btn-close-auth-modal" title="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 탭 스위처 -->
+    <div class="auth-tab-row">
+      <button type="button" class="auth-tab-btn active" id="auth-tab-signin">로그인</button>
+      <button type="button" class="auth-tab-btn" id="auth-tab-signup">회원가입</button>
+    </div>
+
+    <!-- 미설정 알림 배너 (config 미입력 시 표시) -->
+    <div id="auth-config-notice" class="auth-notice-banner hidden">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        <strong>Supabase 설정이 필요합니다.</strong>
+        <p>js/supabase-config.js에 Project URL과 anon public key를 입력해주세요.</p>
+      </div>
+    </div>
+
+    <!-- 상태 메시지 배너 -->
+    <div id="auth-feedback-msg" class="auth-feedback-banner hidden"></div>
+
+    <form id="auth-form" onsubmit="return false;">
+      <div class="auth-field">
+        <label for="auth-email"><i class="fa-solid fa-envelope"></i> 이메일 주소</label>
+        <input type="email" id="auth-email" placeholder="example@email.com" required autocomplete="email">
+      </div>
+
+      <div class="auth-field">
+        <label for="auth-password"><i class="fa-solid fa-lock"></i> 비밀번호</label>
+        <input type="password" id="auth-password" placeholder="비밀번호 (6자 이상)" required autocomplete="current-password">
+      </div>
+
+      <div class="auth-field hidden" id="auth-field-password-confirm">
+        <label for="auth-password-confirm"><i class="fa-solid fa-lock-open"></i> 비밀번호 확인</label>
+        <input type="password" id="auth-password-confirm" placeholder="비밀번호를 한 번 더 입력하세요" autocomplete="new-password">
+      </div>
+
+      <div class="auth-field hidden" id="auth-field-nickname">
+        <label for="auth-nickname"><i class="fa-solid fa-signature"></i> 닉네임 (선택)</label>
+        <input type="text" id="auth-nickname" placeholder="게임에서 사용할 닉네임 (최대 8자)" maxlength="8" autocomplete="nickname">
+      </div>
+
+      <div class="auth-submit-row">
+        <button type="submit" class="btn btn-primary btn-md auth-submit-btn" id="btn-auth-submit">
+          <i class="fa-solid fa-right-to-bracket" id="btn-auth-submit-icon"></i>
+          <span id="btn-auth-submit-text">로그인</span>
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1009,6 +1090,9 @@
 <script src="js/games/yacht.js"></script>
 <script src="js/games/chesswarfare.js?v=4.1"></script>
 <script type="module" src="js/firebase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
