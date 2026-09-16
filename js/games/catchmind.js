@@ -779,9 +779,9 @@ const CatchmindGame = (() => {
     '#000000', '#4a5568', '#718096', '#cbd5e1', '#ffffff',
     '#fed7aa', '#fbcfe8', '#ed64a6', '#e53e3e', '#991b1b',
 
-    // 2행: 주황/노랑/초록/파랑/보라/갈색 계열 (10색)
+    // 2행: 주황/노랑/초록/파랑/갈색 계열 (9색 + 무지개 버튼 1개 = 10개로 딱 2줄)
     '#ed8936', '#ecc94b', '#84cc16', '#48bb78', '#15803d',
-    '#38bdf8', '#4299e1', '#1e3a8a', '#9f7aea', '#795548'
+    '#38bdf8', '#4299e1', '#1e3a8a', '#795548'
   ];
 
   /* ─── 🎲 제시어 덱 & 중복 방지 시스템 (모든 단어가 고르게 출제되고 최근 단어 중복 배제) ─── */
@@ -1605,8 +1605,12 @@ const CatchmindGame = (() => {
     const bb = document.getElementById('cm-btn-bucket');
 
     _container.querySelectorAll('.cm-color-chip').forEach(chip => {
+      if (chip.classList.contains('cm-rainbow-btn')) return;
       chip.addEventListener('click', () => {
-        _container.querySelectorAll('.cm-color-chip').forEach(c=>c.classList.remove('active'));
+        _container.querySelectorAll('.cm-color-chip').forEach(c => {
+          c.classList.remove('active');
+          if (c.classList.contains('cm-rainbow-btn')) c.style.outline = 'none';
+        });
         chip.classList.add('active');
         currentColor = chip.dataset.color;
         isEraser = false;
