@@ -199,10 +199,32 @@ const FirebaseLobby = {
   async updateOnlineUser(newPayload) {
     if (!_db || !_myUserPresenceRef) return;
     try {
-      await update(_myUserPresenceRef, { ...newPayload, lastSeen: Date.now() });
+      const payload = {
+        ...newPayload,
+        presenceKey: _myUserPresenceKey,
+        lastSeen: Date.now()
+      };
+      await set(_myUserPresenceRef, payload);
     } catch (err) {
       console.warn('[Firebase] 접속자 정보 갱신 실패:', err);
     }
+  },
+
+  /**
+   * 실시간 사이트 접속자 삭제 (로그아웃 시 기존 계정 즉시 제거)
+   */
+  async removeOnlineUser() {
+    if (!_db) return;
+    try {
+      if (_myUserPresenceRef) {
+        await remove(_myUserPresenceRef);
+      }
+    } catch (_) {}
+    _myUserPresenceRef = null;
+    _myUserPresenceKey = null;
+    try {
+      sessionStorage.removeItem('gachi_presence_key');
+    } catch (_) {}
   },
 
   /**
@@ -219,8 +241,8 @@ const FirebaseLobby = {
         Object.keys(val).forEach(key => {
           const u = val[key];
           if (u && typeof u === 'object') {
-            // 90초 이상 응답 없는 유령 세션 필터링
-            if (!u.lastSeen || (now - u.lastSeen < 90000)) {
+            // 35초 주기(하트비트 15초 대비 2회 이상) 무응답 유령 세션 즉각 필터링
+            if (!u.lastSeen || (now - u.lastSeen < 35000)) {
               users.push({ ...u, presenceKey: u.presenceKey || key });
             }
           }
@@ -250,7 +272,7 @@ const FirebaseLobby = {
         Object.keys(val).forEach(key => {
           const u = val[key];
           if (u && typeof u === 'object') {
-            if (!u.lastSeen || (now - u.lastSeen < 90000)) {
+            if (!u.lastSeen || (now - u.lastSeen < 35000)) {
               users.push({ ...u, presenceKey: u.presenceKey || key });
             }
           }

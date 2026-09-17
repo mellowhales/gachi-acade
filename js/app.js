@@ -818,7 +818,7 @@
     // 1. Firebase Realtime Database 실시간 연동 (방 목록과 동일한 WebSocket 푸시)
     const _setupFirebaseOnline = () => {
       if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
-        window.FirebaseLobby.registerOnlineUser(initialPayload);
+        window.FirebaseLobby.registerOnlineUser(_getMyPresencePayload());
         window.FirebaseLobby.onOnlineUsersUpdate((users) => {
           if (Array.isArray(users) && users.length > 0) {
             _lastOnlineUsers = users;
@@ -843,7 +843,7 @@
 
     // 2. Supabase Realtime 보조 연동 (Firebase 미응답 시 fallback)
     if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.initPresence === 'function') {
-      AppSupabase.initPresence(initialPayload, (users) => {
+      AppSupabase.initPresence(_getMyPresencePayload(), (users) => {
         if (!_lastOnlineUsers || _lastOnlineUsers.length <= 1) {
           if (Array.isArray(users) && users.length > 0) {
             _lastOnlineUsers = users;
@@ -864,12 +864,11 @@
         }, 600);
 
         try {
+          if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
           if (window.FirebaseLobby && typeof window.FirebaseLobby.refreshOnlineUsers === 'function') {
             const fbUsers = await window.FirebaseLobby.refreshOnlineUsers();
-            if (Array.isArray(fbUsers) && fbUsers.length > 0) {
-              _lastOnlineUsers = fbUsers;
-              _renderOnlineUsersList(_lastOnlineUsers);
-            }
+            _lastOnlineUsers = Array.isArray(fbUsers) && fbUsers.length > 0 ? fbUsers : [_getMyPresencePayload()];
+            _renderOnlineUsersList(_lastOnlineUsers);
           } else if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.refreshPresence === 'function') {
             await AppSupabase.refreshPresence();
           }
@@ -886,17 +885,40 @@
     const countEl = $('online-users-count');
     if (!listEl) return;
 
-    // 접속자 목록 중복 제거 및 레벨 높은 순(내림차순) 정렬
-    const rawList = Array.isArray(users) && users.length > 0 ? [...users] : [_getMyPresencePayload()];
+    let myPresenceKey = null;
+    try { myPresenceKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
+    const mySupabaseId = (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) ? AppSupabase.getCurrentUser().id : null;
+    const myPayload = _getMyPresencePayload();
+
+    // 1. 원본 목록에서 내 세션(presenceKey 또는 supabaseId)을 찾아 항상 최신의 로컬 상태(myPayload)로 강제 동기화
+    let hasMe = false;
+    const listWithMe = (Array.isArray(users) ? users : []).map(u => {
+      const isMe = (myPresenceKey && u.presenceKey === myPresenceKey) ||
+                   (mySupabaseId && u.supabaseId === mySupabaseId) ||
+                   (!mySupabaseId && !u.supabaseId && myPresenceKey && u.presenceKey === myPresenceKey);
+      if (isMe) {
+        hasMe = true;
+        return { ...myPayload, presenceKey: myPresenceKey || u.presenceKey };
+      }
+      return u;
+    });
+
+    if (!hasMe) {
+      listWithMe.push({ ...myPayload, presenceKey: myPresenceKey });
+    }
+
+    // 2. 접속자 목록 중복 제거 (presenceKey 또는 supabaseId 또는 id 기준)
     const seen = new Set();
     const uniqueUsers = [];
-    for (const u of rawList) {
+    for (const u of listWithMe) {
       const key = u.presenceKey || (u.supabaseId ? 'sb_' + u.supabaseId : (u.id || u.name));
       if (!seen.has(key)) {
         seen.add(key);
         uniqueUsers.push(u);
       }
     }
+
+    // 3. 레벨 높은 순(내림차순) 정렬
     const list = uniqueUsers.sort((a, b) => {
       const lvlA = typeof a.level === 'number' ? a.level : 1;
       const lvlB = typeof b.level === 'number' ? b.level : 1;
@@ -905,25 +927,23 @@
 
     if (countEl) countEl.textContent = `${list.length}명`;
 
-    let myPresenceKey = null;
-    try { myPresenceKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
-    const mySupabaseId = (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) ? AppSupabase.getCurrentUser().id : null;
-
     listEl.innerHTML = list.map((user, idx) => {
       const isMe = (myPresenceKey && user.presenceKey === myPresenceKey) ||
                    (mySupabaseId && user.supabaseId === mySupabaseId) ||
                    (user.name === myNickname && idx === 0);
 
-      const uname = user.name || '플레이어';
-      const uicon = user.avatarIcon || 'fa-solid fa-dog';
-      const ucolor = user.avatarColor || '#38a169';
-      const ulevel = user.level || 1;
+      // 내 자신은 항상 실시간 로컬 최신 프로필로 렌더링 (새로고침 시 과거 잔여 데이터 노출 방지)
+      const uname = isMe ? myNickname : (user.name || '플레이어');
+      const uicon = isMe ? myAvatarIcon : (user.avatarIcon || 'fa-solid fa-dog');
+      const ucolor = isMe ? myAvatarColor : (user.avatarColor || '#38a169');
+      const ulevel = isMe ? myLevel : (user.level || 1);
       const tierClass = _getLevelTierClass(ulevel);
+      const statsObj = isMe ? _getMyStats() : user.stats;
 
       let winRateStr = '전적 없음';
-      if (user.stats && user.stats.total && typeof user.stats.total.plays === 'number' && user.stats.total.plays > 0) {
-        const plays = user.stats.total.plays;
-        const wins = user.stats.total.wins || 0;
+      if (statsObj && statsObj.total && typeof statsObj.total.plays === 'number' && statsObj.total.plays > 0) {
+        const plays = statsObj.total.plays;
+        const wins = statsObj.total.wins || 0;
         const rate = Math.round((wins / plays) * 100);
         winRateStr = `${plays}전 ${wins}승 (${rate}%)`;
       }
@@ -1561,7 +1581,7 @@
         btnLogout.addEventListener('click', async () => {
           if (typeof AppSupabase !== 'undefined') {
             await AppSupabase.signOut();
-            _handleLogoutProfileReset();
+            await _handleLogoutProfileReset();
             showToast('로그아웃되었습니다. 기본 프로필로 전환되었습니다.', 'info');
           }
         });
@@ -1696,7 +1716,7 @@
           _updateHomeUserBar();
         } else {
           // 로그아웃 시 게스트 기본 프로필로 전환
-          _handleLogoutProfileReset();
+          await _handleLogoutProfileReset();
         }
       });
 
@@ -1719,7 +1739,14 @@
   }
 
   // 🌟 로그아웃 시 게스트 기본 프로필(익명, 기본 아바타, 1레벨, 0코인, 0전적)로 리셋
-  function _handleLogoutProfileReset() {
+  async function _handleLogoutProfileReset() {
+    // 1. Firebase 및 Supabase의 기존 로그인 접속자 정보 즉시 삭제 및 세션 키 초기화
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.removeOnlineUser === 'function') {
+      try { await window.FirebaseLobby.removeOnlineUser(); } catch (_) {}
+    }
+    try { sessionStorage.removeItem('gachi_presence_key'); } catch (_) {}
+
+    // 2. 로컬 프로필 게스트 기본값으로 초기화
     myNickname = '익명';
     myAvatarIcon = _getRandomAvatarIcon();
     myAvatarColor = _getRandomAvatarColor();
@@ -1744,6 +1771,16 @@
     _updateProfileModalPreview();
     _renderProfileModalGrids();
     _updateProfileAuthUI(null);
+
+    // 3. 새 게스트 접속자로 Firebase 및 Supabase에 즉각 등록
+    const guestPayload = _getMyPresencePayload();
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
+      window.FirebaseLobby.registerOnlineUser(guestPayload);
+    }
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.updatePresence === 'function') {
+      AppSupabase.updatePresence(guestPayload);
+    }
+    _renderOnlineUsersList([guestPayload]);
   }
 
   // 🌟 OAuth 리다이렉트 콜백 후 URL의 에러 및 상태 파싱

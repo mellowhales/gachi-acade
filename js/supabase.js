@@ -167,16 +167,32 @@ const AppSupabase = (() => {
    */
   async function signOut() {
     const client = getClient();
+    _currentUser = null;
+    if (_presenceChannel) {
+      try { await _presenceChannel.untrack(); } catch (_) {}
+    }
     if (!client) return { success: true };
 
     try {
-      const { error } = await client.auth.signOut();
-      if (error) return { success: false, error: error.message };
-      _currentUser = null;
-      return { success: true };
+      try {
+        await client.auth.signOut({ scope: 'local' });
+      } catch (_) {
+        await client.auth.signOut();
+      }
     } catch (err) {
-      return { success: false, error: err.message };
+      console.warn('[Supabase] signOut error:', err);
+    } finally {
+      // 로컬 스토리지의 Supabase 토큰 수동 정리 (확실한 로그아웃 보장)
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+            localStorage.removeItem(k);
+          }
+        }
+      } catch (_) {}
     }
+    return { success: true };
   }
 
 /**
