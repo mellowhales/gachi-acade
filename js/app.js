@@ -466,7 +466,7 @@
     // 1. 로비 상단바 레벨 뱃지 & 미니 게이지
     const homeLevelEl = $('home-user-level');
     if (homeLevelEl) {
-      homeLevelEl.textContent = `Lv.${myLevel}`;
+      homeLevelEl.textContent = `${myLevel}`;
       homeLevelEl.className = `user-level-badge ${tierClass}`;
     }
     const homeExpFill = $('home-user-exp-fill');
@@ -483,7 +483,7 @@
     // 2. 프로필 편집 말풍선 팝업 레벨 뱃지
     const profileTag = $('profile-level-tag');
     if (profileTag) {
-      profileTag.textContent = `Lv.${myLevel}`;
+      profileTag.textContent = `${myLevel}`;
       profileTag.className = `profile-mini-level ${tierClass}`;
     }
     const profileExpText = $('profile-exp-text');
@@ -1612,7 +1612,7 @@
     }
     if (nameEl) {
       const lvl = level || 1;
-      nameEl.innerHTML = `<span class="player-level-badge ${_getLevelTierClass(lvl)}">Lv.${lvl}</span> ${_escapeHtml(name || '플레이어')}`;
+      nameEl.innerHTML = `<span class="player-level-badge ${_getLevelTierClass(lvl)}">${lvl}</span> ${_escapeHtml(name || '플레이어')}`;
     }
     if (tagEl) tagEl.textContent = isMe ? '내 게임 전적 기록' : '상대방 게임 전적 기록';
 
@@ -2726,11 +2726,12 @@
         <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="player-meta">
           <div class="player-name">
+            <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
           </div>
-          <div class="player-role"><span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">Lv.${p.level || 1}</span></div>
+          <div class="player-role"></div>
         </div>
         ${readyBadgeHtml}
       `;

@@ -8131,79 +8131,70 @@ html, body {
    ⭐ 1~300 레벨 및 경험치(EXP) 시스템 스타일
 ═══════════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════════════
+   ⭐ 1~300 레벨 뱃지 (완전 불투명 색상 + 흰색 텍스트 + 최소형 컴팩트)
+═══════════════════════════════════════════════════════════════ */
+
 .user-name-line {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
-/* 로비 상단바 레벨 뱃지 */
-.user-level-badge {
+/* 로비 상단바 & 방 화면 & 프로필 공통 레벨 뱃지 기본형 */
+.user-level-badge,
+.player-level-badge,
+.profile-mini-level {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 7px;
-  border-radius: 6px;
-  font-size: 0.74rem;
+  min-width: 17px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: 900;
-  line-height: 1;
-  letter-spacing: 0.3px;
-  background: var(--bg-hover, #edf2f7);
-  border: 1px solid var(--border, #cbd5e0);
-  color: var(--t1, #2d3748);
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  color: #ffffff !important;
   user-select: none;
   flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* 방 화면(대기방) 플레이어 목록용 레벨 뱃지 */
 .player-level-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 6px;
-  border-radius: 5px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-right: 5px;
+  margin-right: 4px;
   vertical-align: middle;
-  background: rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--border);
-  color: var(--t1);
-  user-select: none;
 }
 
-/* 레벨 등급별 색상 (1~300 티어) */
+/* 레벨 등급별 색상 (1~300 티어) - 완전 불투명 솔리드 색상 + 흰색 글씨 */
 .tier-bronze { /* 1 ~ 30 */
-  background: #edf2f7 !important;
-  color: #4a5568 !important;
-  border-color: #cbd5e0 !important;
+  background: #8c5332 !important;
+  color: #ffffff !important;
 }
 .tier-silver { /* 31 ~ 70 */
-  background: #ebf8ff !important;
-  color: #2b6cb0 !important;
-  border-color: #bee3f8 !important;
+  background: #475569 !important;
+  color: #ffffff !important;
 }
 .tier-gold { /* 71 ~ 120 */
-  background: #fefcbf !important;
-  color: #975a16 !important;
-  border-color: #f6e05e !important;
+  background: #d97706 !important;
+  color: #ffffff !important;
 }
 .tier-platinum { /* 121 ~ 180 */
-  background: #e6fffa !important;
-  color: #234e52 !important;
-  border-color: #81e6d9 !important;
+  background: #0d9488 !important;
+  color: #ffffff !important;
 }
 .tier-diamond { /* 181 ~ 240 */
-  background: linear-gradient(135deg, #ebf8ff, #e9d8fd) !important;
-  color: #553c9a !important;
-  border-color: #b794f4 !important;
+  background: #7c3aed !important;
+  color: #ffffff !important;
 }
 .tier-master { /* 241 ~ 300 */
-  background: linear-gradient(135deg, #fff5f5, #feebc8) !important;
-  color: #c05621 !important;
-  border-color: #f6ad55 !important;
-  box-shadow: 0 0 6px rgba(237, 137, 54, 0.45) !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.5) !important;
 }
 
 /* 로비 미니 경험치 게이지 */
@@ -8331,46 +8322,35 @@ html, body {
 }
 
 /* ── 다크 테마 레벨 & 경험치 대응 ── */
-[data-theme="dark"] .user-level-badge {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #e2e8f0;
-}
-[data-theme="dark"] .player-level-badge {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #e2e8f0;
+[data-theme="dark"] .user-level-badge,
+[data-theme="dark"] .player-level-badge,
+[data-theme="dark"] .profile-mini-level {
+  color: #ffffff !important;
+  border: none !important;
 }
 [data-theme="dark"] .tier-bronze {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #cbd5e0 !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: #8c5332 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .tier-silver {
-  background: rgba(66, 153, 225, 0.15) !important;
-  color: #90cdf4 !important;
-  border-color: rgba(66, 153, 225, 0.3) !important;
+  background: #475569 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .tier-gold {
-  background: rgba(236, 201, 75, 0.15) !important;
-  color: #f6e05e !important;
-  border-color: rgba(236, 201, 75, 0.3) !important;
+  background: #d97706 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .tier-platinum {
-  background: rgba(56, 178, 172, 0.15) !important;
-  color: #81e6d9 !important;
-  border-color: rgba(56, 178, 172, 0.3) !important;
+  background: #0d9488 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .tier-diamond {
-  background: linear-gradient(135deg, rgba(66, 153, 225, 0.2), rgba(159, 122, 234, 0.2)) !important;
-  color: #d6bcfa !important;
-  border-color: rgba(159, 122, 234, 0.35) !important;
+  background: #7c3aed !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .tier-master {
-  background: linear-gradient(135deg, rgba(245, 101, 101, 0.2), rgba(237, 137, 54, 0.2)) !important;
-  color: #fbd38d !important;
-  border-color: rgba(237, 137, 54, 0.45) !important;
-  box-shadow: 0 0 10px rgba(237, 137, 54, 0.35) !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .user-exp-track,
 [data-theme="dark"] .profile-exp-track,
@@ -8414,30 +8394,13 @@ html, body {
   z-index: 2;
 }
 
-.profile-mini-level {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.72rem;
-  font-weight: 900;
-  line-height: 1.1;
-  white-space: nowrap;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--t1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  user-select: none;
-}
-
 .profile-mini-coin {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.1;
   white-space: nowrap;
@@ -8447,7 +8410,7 @@ html, body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .profile-mini-coin i {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: #f59e0b;
 }
 
@@ -8459,11 +8422,6 @@ html, body {
 }
 
 /* ── 다크 테마 대응 ── */
-[data-theme="dark"] .profile-mini-level {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.15);
-  color: #e2e8f0;
-}
 [data-theme="dark"] .profile-mini-coin {
   background: rgba(245,158,11,0.15);
   border-color: rgba(245,158,11,0.3);
@@ -8476,18 +8434,21 @@ html, body {
 @media (max-width: 960px) {
   .home-user-bar .user-name {
     font-size: 0.88rem !important;
-    max-width: 80px !important;
+    max-width: 95px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
   .home-user-bar .user-level-badge {
-    font-size: 0.68rem !important;
-    padding: 1px 5px !important;
+    font-size: 0.62rem !important;
+    min-width: 16px !important;
+    height: 15px !important;
+    line-height: 15px !important;
+    padding: 0 3px !important;
     flex-shrink: 0 !important;
   }
   .user-name-line {
-    max-width: 120px;
+    max-width: 130px;
     overflow: hidden;
   }
 }
