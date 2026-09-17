@@ -1699,16 +1699,19 @@
     if (typeof _updateFriendsBadge === 'function') {
       _updateFriendsBadge();
     }
-    const paneAdd = $('pane-friends-add');
-    if (paneAdd && paneAdd.classList.contains('active') && typeof _renderFriendsModalContent === 'function') {
+    const modalFriends = $('modal-friends');
+    if (modalFriends && !modalFriends.classList.contains('hidden') && typeof _renderFriendsModalContent === 'function') {
       _renderFriendsModalContent();
     }
   }
 
   /* =====================================================================
-     👥 친구 시스템 및 실시간 방 초대 알림
+     👥 친구 시스템 및 실시간 방 초대 알림 (상호 승인제 & 고유 식별자 지원)
      ===================================================================== */
   let _friendsList = [];
+  let _sentFriendRequests = [];
+  let _receivedFriendRequests = [];
+  let _currentInspectedPlayer = null;
   let _activeInviteTimeout = null;
 
   function _loadFriendsFromStorage() {
@@ -1741,18 +1744,85 @@
     }
   }
 
+  function _loadSentFriendRequests() {
+    try {
+      const raw = localStorage.getItem('arcade_sent_friend_requests');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) _sentFriendRequests = parsed;
+      }
+    } catch (_) {
+      _sentFriendRequests = [];
+    }
+  }
+
+  function _saveSentFriendRequests() {
+    try {
+      localStorage.setItem('arcade_sent_friend_requests', JSON.stringify(_sentFriendRequests));
+    } catch (_) {}
+  }
+
+  function _getMyUserKey() {
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser && AppSupabase.getCurrentUser()) {
+      return 'sb_' + AppSupabase.getCurrentUser().id;
+    }
+    let sessKey = null;
+    try { sessKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
+    if (sessKey) return 'pk_' + sessKey;
+    const peerId = P2P.getMyId();
+    if (peerId && peerId !== 'host' && peerId !== 'guest') return 'peer_' + peerId;
+    let localUuid = null;
+    try {
+      localUuid = localStorage.getItem('gachi_client_uuid');
+      if (!localUuid) {
+        localUuid = 'usr_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem('gachi_client_uuid', localUuid);
+      }
+    } catch (_) {
+      localUuid = 'usr_' + Math.random().toString(36).substring(2, 9);
+    }
+    return localUuid;
+  }
+
+  function _getUserUniqueKey(user) {
+    if (!user) return null;
+    if (user.supabaseId) return 'sb_' + user.supabaseId;
+    if (user.presenceKey) return 'pk_' + user.presenceKey;
+    if (user.id && user.id !== 'host' && user.id !== 'guest') return 'peer_' + user.id;
+    if (user.userKey) return user.userKey;
+    if (user.fromKey) return user.fromKey;
+    return 'nm_' + encodeURIComponent(user.name || 'player').replace(/\./g, '%2E');
+  }
+
   function _updateFriendsBadge() {
     const badge = $('friends-online-count-badge');
-    if (!badge) return;
+    const reqCount = _receivedFriendRequests.length;
     const onlineCount = _friendsList.filter(f => 
       _lastOnlineUsers.some(u => u.name === f.name)
     ).length;
 
-    if (onlineCount > 0) {
-      badge.textContent = onlineCount > 99 ? '99+' : onlineCount;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
+    if (badge) {
+      if (reqCount > 0) {
+        badge.textContent = reqCount > 99 ? '99+' : reqCount;
+        badge.style.background = 'var(--red, #ef4444)';
+        badge.classList.remove('hidden');
+      } else if (onlineCount > 0) {
+        badge.textContent = onlineCount > 99 ? '99+' : onlineCount;
+        badge.style.background = 'var(--green, #10b981)';
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    const tabBadge = $('friends-req-badge');
+    if (tabBadge) {
+      if (reqCount > 0) {
+        tabBadge.textContent = reqCount > 99 ? '99+' : reqCount;
+        tabBadge.classList.remove('hidden');
+      } else {
+        tabBadge.classList.add('hidden');
+      }
     }
   }
 
@@ -1775,15 +1845,17 @@
       b.classList.toggle('active', b.dataset.tab === tabName);
     });
     const paneList = $('pane-friends-list');
-    const paneAdd = $('pane-friends-add');
+    const paneReqs = $('pane-friends-requests');
     if (paneList) paneList.classList.toggle('active', tabName === 'list');
-    if (paneAdd) paneAdd.classList.toggle('active', tabName === 'add');
+    if (paneReqs) paneReqs.classList.toggle('active', tabName === 'requests');
     _renderFriendsModalContent();
   }
 
   function _renderFriendsModalContent() {
     const countText = $('friends-count-text');
     if (countText) countText.textContent = _friendsList.length;
+
+    _updateFriendsBadge();
 
     // 1. 내 친구 목록 렌더링
     const listWrap = $('friends-items-list');
@@ -1792,14 +1864,9 @@
         listWrap.innerHTML = `
           <div class="friends-empty-state">
             <i class="fa-solid fa-user-group"></i>
-            <p>아직 등록된 친구가 없습니다.<br>친구 추가 탭에서 친구를 추가해보세요!</p>
-            <button type="button" class="btn btn-primary btn-sm" id="btn-go-add-friend" style="margin-top:6px;">
-              <i class="fa-solid fa-user-plus"></i> 친구 찾기
-            </button>
+            <p>아직 등록된 친구가 없습니다.<br>플레이어의 <strong>프로필</strong>을 눌러 친구 신청을 보내보세요!</p>
           </div>
         `;
-        const goBtn = $('btn-go-add-friend');
-        if (goBtn) goBtn.addEventListener('click', () => _switchFriendsTab('add'));
       } else {
         const isInRoom = !!(currentRoomCode && screens.room && screens.room.classList.contains('active'));
 
@@ -1873,86 +1940,194 @@
       }
     }
 
-    // 2. 친구 추가 탭: 현재 접속 중인 플레이어 추천 목록 렌더링
-    const recWrap = $('friends-rec-list');
-    if (recWrap) {
-      // 나 자신과 이미 친구인 사람 제외
-      const nonFriendsOnline = _lastOnlineUsers.filter(u => 
-        u.name && u.name !== myNickname && !_friendsList.some(f => f.name === u.name)
-      );
-
-      if (nonFriendsOnline.length === 0) {
-        recWrap.innerHTML = `
-          <div style="padding:16px;text-align:center;color:var(--t2);font-size:0.82rem;">
-            현재 접속 중인 플레이어가 없거나 모두 이미 친구입니다.
+    // 2. 받은 신청 목록 렌더링
+    const reqWrap = $('friends-requests-list');
+    if (reqWrap) {
+      if (_receivedFriendRequests.length === 0) {
+        reqWrap.innerHTML = `
+          <div class="friends-empty-state">
+            <i class="fa-solid fa-envelope-open"></i>
+            <p>새로운 친구 신청이 없습니다.</p>
           </div>
         `;
       } else {
-        recWrap.innerHTML = nonFriendsOnline.map(u => `
-          <div class="friends-item" style="padding:8px 12px;">
+        reqWrap.innerHTML = _receivedFriendRequests.map(req => `
+          <div class="friends-request-item" data-from-key="${req.fromKey}">
             <div class="friends-avatar-box">
-              <div class="friends-avatar" style="width:34px;height:34px;font-size:0.9rem;background:${u.avatarColor || '#38a169'};">
-                <i class="${u.avatarIcon || 'fa-solid fa-user'}"></i>
+              <div class="friends-avatar" style="background:${req.fromAvatarColor || '#38a169'};">
+                <i class="${req.fromAvatarIcon || 'fa-solid fa-user'}"></i>
               </div>
-              <span class="friends-status-dot online"></span>
             </div>
             <div class="friends-info-box">
               <div class="friends-name-row">
-                <span class="friends-name" style="${u.nameColor ? `color:${u.nameColor} !important;` : ''}">${_escapeHtml(u.name)}</span>
-                <span class="friends-level-pill">Lv.${u.level || 1}</span>
+                <span class="friends-name" style="${req.fromNameColor ? `color:${req.fromNameColor} !important;` : ''}">${_escapeHtml(req.fromName)}</span>
+                <span class="friends-level-pill">Lv.${req.fromLevel || 1}</span>
+              </div>
+              <div class="friends-status-text">
+                <span>친구 신청이 도착했습니다</span>
               </div>
             </div>
-            <button type="button" class="btn btn-outline btn-sm btn-quick-add-friend" data-name="${_escapeHtml(u.name)}" style="padding:4px 10px;font-size:0.75rem;">
-              <i class="fa-solid fa-plus"></i> 친구 추가
-            </button>
+            <div class="friends-request-actions">
+              <button type="button" class="btn btn-success btn-sm btn-friend-accept" data-from-key="${req.fromKey}">
+                <i class="fa-solid fa-check"></i> 수락
+              </button>
+              <button type="button" class="btn btn-outline btn-sm btn-friend-reject" data-from-key="${req.fromKey}">
+                <i class="fa-solid fa-xmark"></i> 거절
+              </button>
+            </div>
           </div>
         `).join('');
 
-        recWrap.querySelectorAll('.btn-quick-add-friend').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const targetName = btn.dataset.name;
-            const targetUser = _lastOnlineUsers.find(u => u.name === targetName);
-            _addFriend(targetName, targetUser);
+        reqWrap.querySelectorAll('.btn-friend-accept').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fromKey = btn.dataset.fromKey;
+            const req = _receivedFriendRequests.find(r => r.fromKey === fromKey);
+            if (req) _acceptFriendRequest(req);
+          });
+        });
+
+        reqWrap.querySelectorAll('.btn-friend-reject').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fromKey = btn.dataset.fromKey;
+            const req = _receivedFriendRequests.find(r => r.fromKey === fromKey);
+            if (req) _rejectFriendRequest(req);
           });
         });
       }
     }
   }
 
-  function _addFriend(name, userData = null) {
-    if (!name || typeof name !== 'string') return;
-    const cleanName = name.trim();
-    if (!cleanName) {
-      showToast('추가할 친구의 닉네임을 입력해주세요.', 'warn');
-      return;
-    }
+  /**
+   * 📤 친구 신청 발송 (전적 모달 등에서 호출)
+   */
+  async function _sendFriendRequest(targetUser) {
+    if (!targetUser || !targetUser.name) return;
+    const cleanName = targetUser.name.trim();
+
     if (cleanName === myNickname) {
-      showToast('자기 자신은 친구로 추가할 수 없습니다.', 'warn');
-      return;
-    }
-    if (_friendsList.some(f => f.name === cleanName)) {
-      showToast(`'${cleanName}'님은 이미 친구 목록에 있습니다.`, 'info');
+      showToast('자기 자신에게는 친구 신청을 보낼 수 없습니다.', 'warn');
       return;
     }
 
-    const newFriend = {
-      name: cleanName,
-      avatarIcon: userData ? userData.avatarIcon : 'fa-solid fa-user',
-      avatarColor: userData ? userData.avatarColor : '#38a169',
-      level: userData && typeof userData.level === 'number' ? userData.level : 1,
-      profileCard: userData ? userData.profileCard : 'default',
-      nameColor: userData ? userData.nameColor : '',
-      friendId: userData ? (userData.supabaseId || userData.id || null) : null,
-      addedAt: Date.now()
+    const targetKey = _getUserUniqueKey(targetUser);
+
+    if (_friendsList.some(f => f.name === cleanName || (f.friendKey && f.friendKey === targetKey))) {
+      showToast(`'${cleanName}'님은 이미 친구입니다.`, 'info');
+      return;
+    }
+
+    if (_sentFriendRequests.includes(targetKey) || _sentFriendRequests.includes(cleanName)) {
+      showToast(`'${cleanName}'님에게 이미 친구 신청을 보냈습니다.`, 'info');
+      return;
+    }
+
+    const myKey = _getMyUserKey();
+    let mySupabaseId = null;
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser && AppSupabase.getCurrentUser()) {
+      mySupabaseId = AppSupabase.getCurrentUser().id;
+    }
+
+    const reqPayload = {
+      fromKey: myKey,
+      fromName: myNickname || '플레이어',
+      fromAvatarIcon: myAvatarIcon || 'fa-solid fa-user',
+      fromAvatarColor: myAvatarColor || '#38a169',
+      fromLevel: myLevel || 1,
+      fromProfileCard: myProfileCard || 'default',
+      fromNameColor: myNicknameColor || null,
+      fromSupabaseId: mySupabaseId,
+      targetKey: targetKey,
+      targetName: cleanName,
+      timestamp: Date.now()
     };
 
-    _friendsList.unshift(newFriend);
-    _saveFriendsToStorage();
-    showToast(`'${cleanName}'님을 친구로 추가했습니다!`, 'success');
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.sendFriendRequest === 'function') {
+      const ok = await window.FirebaseLobby.sendFriendRequest(targetKey, cleanName, reqPayload);
+      if (ok) {
+        if (!_sentFriendRequests.includes(targetKey)) _sentFriendRequests.push(targetKey);
+        if (!_sentFriendRequests.includes(cleanName)) _sentFriendRequests.push(cleanName);
+        _saveSentFriendRequests();
+
+        showToast(`'${cleanName}'님에게 친구 신청을 보냈습니다! 상대방이 수락하면 친구가 됩니다.`, 'success');
+        _updateStatsModalFriendBtn(targetUser);
+      } else {
+        showToast('친구 신청 전송에 실패했습니다. 네트워크 상태를 확인해주세요.', 'error');
+      }
+    } else {
+      showToast('Firebase 연결 상태를 확인해주세요.', 'warn');
+    }
+  }
+
+  /**
+   * 📥 친구 신청 수락
+   */
+  async function _acceptFriendRequest(req) {
+    if (!req) return;
+
+    // 내 친구 목록에 추가
+    if (!_friendsList.some(f => f.name === req.fromName || (f.friendKey && f.friendKey === req.fromKey))) {
+      _friendsList.unshift({
+        name: req.fromName,
+        avatarIcon: req.fromAvatarIcon || 'fa-solid fa-user',
+        avatarColor: req.fromAvatarColor || '#38a169',
+        level: req.fromLevel || 1,
+        profileCard: req.fromProfileCard || 'default',
+        nameColor: req.fromNameColor || '',
+        friendId: req.fromSupabaseId || null,
+        friendKey: req.fromKey || null,
+        addedAt: Date.now()
+      });
+      _saveFriendsToStorage();
+    }
+
+    // 상대방에게 수락 알림 전송
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.sendFriendAccept === 'function') {
+      let mySupabaseId = null;
+      if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser && AppSupabase.getCurrentUser()) {
+        mySupabaseId = AppSupabase.getCurrentUser().id;
+      }
+      await window.FirebaseLobby.sendFriendAccept(req.fromKey, req.fromName, {
+        fromKey: _getMyUserKey(),
+        fromName: myNickname || '플레이어',
+        fromAvatarIcon: myAvatarIcon || 'fa-solid fa-user',
+        fromAvatarColor: myAvatarColor || '#38a169',
+        fromLevel: myLevel || 1,
+        fromProfileCard: myProfileCard || 'default',
+        fromNameColor: myNicknameColor || null,
+        fromSupabaseId: mySupabaseId,
+        timestamp: Date.now()
+      });
+    }
+
+    // Firebase 및 로컬에서 신청 제거
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.removeFriendRequest === 'function') {
+      await window.FirebaseLobby.removeFriendRequest(_getMyUserKey(), myNickname, req.fromKey);
+    }
+    _receivedFriendRequests = _receivedFriendRequests.filter(r => r.fromKey !== req.fromKey);
+
+    showToast(`'${req.fromName}'님의 친구 신청을 수락했습니다! 이제 친구입니다.`, 'success');
     _renderFriendsModalContent();
 
-    const input = $('input-friend-nickname');
-    if (input) input.value = '';
+    if (_currentInspectedPlayer && _currentInspectedPlayer.name === req.fromName) {
+      _updateStatsModalFriendBtn(_currentInspectedPlayer);
+    }
+  }
+
+  /**
+   * ❌ 친구 신청 거절
+   */
+  async function _rejectFriendRequest(req) {
+    if (!req) return;
+
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.removeFriendRequest === 'function') {
+      await window.FirebaseLobby.removeFriendRequest(_getMyUserKey(), myNickname, req.fromKey);
+    }
+    _receivedFriendRequests = _receivedFriendRequests.filter(r => r.fromKey !== req.fromKey);
+
+    showToast(`'${req.fromName}'님의 친구 신청을 거절했습니다.`, 'info');
+    _renderFriendsModalContent();
   }
 
   function _removeFriend(name) {
@@ -1968,6 +2143,10 @@
 
     showToast(`'${name}'님을 친구 목록에서 삭제했습니다.`, 'info');
     _renderFriendsModalContent();
+
+    if (_currentInspectedPlayer && _currentInspectedPlayer.name === name) {
+      _updateStatsModalFriendBtn(_currentInspectedPlayer);
+    }
   }
 
   function _inviteFriendToRoom(friendName) {
@@ -2070,6 +2249,7 @@
 
   function _initFriendsSystem() {
     _loadFriendsFromStorage();
+    _loadSentFriendRequests();
 
     // Supabase 사용자라면 DB 친구 목록도 비동기 로드하여 병합
     if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.onAuthStateChange === 'function') {
@@ -2118,40 +2298,99 @@
     // 탭 전환
     const tabList = $('tab-friends-list');
     if (tabList) tabList.addEventListener('click', () => _switchFriendsTab('list'));
-    const tabAdd = $('tab-friends-add');
-    if (tabAdd) tabAdd.addEventListener('click', () => _switchFriendsTab('add'));
+    const tabReqs = $('tab-friends-requests');
+    if (tabReqs) tabReqs.addEventListener('click', () => _switchFriendsTab('requests'));
 
-    // 친구 닉네임 직접 검색 추가
-    const btnAdd = $('btn-add-friend-submit');
-    const inputAdd = $('input-friend-nickname');
-    if (btnAdd && inputAdd) {
-      btnAdd.addEventListener('click', () => {
-        _addFriend(inputAdd.value);
-      });
-      inputAdd.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          _addFriend(inputAdd.value);
-        }
-      });
-    }
+    // Firebase 실시간 리스너 등록 (초대, 친구 신청, 친구 수락)
+    const _setupFirebaseFriendListeners = () => {
+      if (!window.FirebaseLobby) return;
 
-    // Firebase 방 초대 실시간 리스너 등록
-    const _setupInviteListener = () => {
-      if (window.FirebaseLobby && typeof window.FirebaseLobby.onRoomInvite === 'function') {
+      // 1) 방 초대 리스너
+      if (typeof window.FirebaseLobby.onRoomInvite === 'function') {
         window.FirebaseLobby.onRoomInvite(myNickname, (inviteData) => {
           if (inviteData) {
             _handleReceivedRoomInvite(inviteData);
           }
         });
       }
+
+      // 2) 친구 신청 수신 리스너
+      if (typeof window.FirebaseLobby.onFriendRequests === 'function') {
+        const myKey = _getMyUserKey();
+        window.FirebaseLobby.onFriendRequests(myKey, myNickname, (requests) => {
+          const prevCount = _receivedFriendRequests.length;
+          _receivedFriendRequests = requests || [];
+          _updateFriendsBadge();
+
+          // 새 신청이 들어온 경우 알림
+          if (_receivedFriendRequests.length > prevCount) {
+            const latest = _receivedFriendRequests[_receivedFriendRequests.length - 1];
+            if (latest && latest.fromName) {
+              if (typeof Sound !== 'undefined' && typeof Sound.playWordSubmit === 'function') {
+                try { Sound.playWordSubmit(); } catch (_) {}
+              }
+              showToast(`💌 '${latest.fromName}'님으로부터 친구 신청이 도착했습니다!`, 'info');
+            }
+          }
+
+          const paneReqs = $('pane-friends-requests');
+          if (paneReqs && paneReqs.classList.contains('active')) {
+            _renderFriendsModalContent();
+          }
+        });
+      }
+
+      // 3) 친구 수락 수신 리스너 (상대방이 내 신청을 수락했을 때)
+      if (typeof window.FirebaseLobby.onFriendAccepts === 'function') {
+        const myKey = _getMyUserKey();
+        window.FirebaseLobby.onFriendAccepts(myKey, myNickname, (acceptData) => {
+          if (!acceptData || !acceptData.fromName) return;
+          const friendKey = acceptData.fromKey;
+          const friendName = acceptData.fromName;
+
+          // 보낸 신청 기록에서 제거
+          _sentFriendRequests = _sentFriendRequests.filter(k => k !== friendKey && k !== friendName);
+          _saveSentFriendRequests();
+
+          // 내 친구 목록에 추가
+          if (!_friendsList.some(f => f.name === friendName || (f.friendKey && f.friendKey === friendKey))) {
+            _friendsList.unshift({
+              name: friendName,
+              avatarIcon: acceptData.fromAvatarIcon || 'fa-solid fa-user',
+              avatarColor: acceptData.fromAvatarColor || '#38a169',
+              level: acceptData.fromLevel || 1,
+              profileCard: acceptData.fromProfileCard || 'default',
+              nameColor: acceptData.fromNameColor || '',
+              friendId: acceptData.fromSupabaseId || null,
+              friendKey: friendKey,
+              addedAt: Date.now()
+            });
+            _saveFriendsToStorage();
+
+            if (typeof Sound !== 'undefined' && typeof Sound.playWinSound === 'function') {
+              try { Sound.playWinSound(); } catch (_) {}
+            }
+            showToast(`🎉 '${friendName}'님이 친구 신청을 수락했습니다! 이제 친구입니다.`, 'success');
+            _renderFriendsModalContent();
+
+            if (_currentInspectedPlayer && _currentInspectedPlayer.name === friendName) {
+              _updateStatsModalFriendBtn(_currentInspectedPlayer);
+            }
+          }
+
+          // 통보 데이터 정리
+          if (typeof window.FirebaseLobby.removeFriendAccept === 'function') {
+            window.FirebaseLobby.removeFriendAccept(_getMyUserKey(), myNickname, friendKey);
+          }
+        });
+      }
     };
 
     if (window.FirebaseLobby && typeof window.FirebaseLobby.onRoomInvite === 'function') {
-      _setupInviteListener();
+      _setupFirebaseFriendListeners();
     } else {
       window.addEventListener('firebase-ready', () => {
-        _setupInviteListener();
+        _setupFirebaseFriendListeners();
       }, { once: true });
     }
 
@@ -3681,14 +3920,61 @@
     }
   }
 
+  function _updateStatsModalFriendBtn(targetUser) {
+    const btn = $('btn-stats-add-friend');
+    if (!btn || !targetUser || !targetUser.name) {
+      if (btn) btn.classList.add('hidden');
+      return;
+    }
+
+    const cleanName = targetUser.name.trim();
+    if (cleanName === myNickname) {
+      btn.classList.add('hidden');
+      return;
+    }
+
+    btn.classList.remove('hidden');
+    const targetKey = _getUserUniqueKey(targetUser);
+    const isFriend = _friendsList.some(f => f.name === cleanName || (f.friendKey && f.friendKey === targetKey));
+    const hasSent = _sentFriendRequests.includes(targetKey) || _sentFriendRequests.includes(cleanName);
+
+    if (isFriend) {
+      btn.className = 'btn btn-sm btn-stats-friend already-friend';
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>친구</span>';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        showToast(`'${cleanName}'님과는 이미 친구입니다.`, 'info');
+      };
+    } else if (hasSent) {
+      btn.className = 'btn btn-sm btn-stats-friend pending';
+      btn.innerHTML = '<i class="fa-solid fa-clock"></i> <span>신청 완료</span>';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        showToast(`'${cleanName}'님에게 이미 친구 신청을 보냈습니다. 상대방의 수락을 기다리고 있습니다.`, 'info');
+      };
+    } else {
+      btn.className = 'btn btn-primary btn-sm btn-stats-friend';
+      btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> <span>친구 신청</span>';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        _sendFriendRequest(targetUser);
+      };
+    }
+  }
+
   async function _openPlayerStatsModal(playerData = null) {
     const modal = $('stats-modal');
     if (!modal) return;
 
     const myId = P2P.getMyId();
     const isMe = !playerData || (playerData.id === myId) || (playerData.isHost && P2P.isHost());
+    _currentInspectedPlayer = isMe ? null : playerData;
+
+    const btnFriend = $('btn-stats-add-friend');
 
     if (isMe) {
+      if (btnFriend) btnFriend.classList.add('hidden');
+
       if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
         const user = AppSupabase.getCurrentUser();
         try {
@@ -3703,6 +3989,8 @@
       modal.classList.remove('hidden');
     } else {
       // 상대방
+      _updateStatsModalFriendBtn(playerData);
+
       const targetName = playerData.name || '상대방';
       const targetIcon = playerData.avatarIcon || 'fa-solid fa-paw';
       const targetColor = playerData.avatarColor || '#718096';
@@ -3729,6 +4017,7 @@
   }
 
   function _closeStatsModal() {
+    _currentInspectedPlayer = null;
     const modal = $('stats-modal');
     if (modal) modal.classList.add('hidden');
   }

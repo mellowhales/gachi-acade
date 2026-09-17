@@ -482,6 +482,142 @@ const FirebaseLobby = {
     } catch (_) {}
   },
 
+  /**
+   * ── 🤝 실시간 친구 신청 및 수락/거절 시스템 ──
+   */
+  async sendFriendRequest(targetKey, targetName, requestData) {
+    if (!_db || !targetKey || !requestData) return false;
+    try {
+      const cleanTargetKey = encodeURIComponent(String(targetKey).trim()).replace(/\./g, '%2E');
+      const cleanFromKey = encodeURIComponent(String(requestData.fromKey).trim()).replace(/\./g, '%2E');
+      await set(ref(_db, `friend_requests/${cleanTargetKey}/${cleanFromKey}`), requestData);
+
+      if (targetName) {
+        const cleanName = encodeURIComponent(String(targetName).trim()).replace(/\./g, '%2E');
+        await set(ref(_db, `friend_requests_by_name/${cleanName}/${cleanFromKey}`), requestData);
+      }
+      return true;
+    } catch (err) {
+      console.warn('[Firebase] 친구 신청 전송 실패:', err);
+      return false;
+    }
+  },
+
+  onFriendRequests(myKey, myNickname, callback) {
+    if (!_db || (!myKey && !myNickname)) return null;
+    try {
+      const keyRequests = {};
+      const nameRequests = {};
+
+      const notifyMerged = () => {
+        const merged = {};
+        Object.values(keyRequests).forEach(r => { if (r && r.fromKey) merged[r.fromKey] = r; });
+        Object.values(nameRequests).forEach(r => { if (r && r.fromKey) merged[r.fromKey] = r; });
+        callback(Object.values(merged));
+      };
+
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_requests/${cleanKey}`), (snapshot) => {
+          const val = snapshot.val() || {};
+          Object.keys(keyRequests).forEach(k => delete keyRequests[k]);
+          Object.assign(keyRequests, val);
+          notifyMerged();
+        });
+      }
+
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_requests_by_name/${cleanName}`), (snapshot) => {
+          const val = snapshot.val() || {};
+          Object.keys(nameRequests).forEach(k => delete nameRequests[k]);
+          Object.assign(nameRequests, val);
+          notifyMerged();
+        });
+      }
+    } catch (err) {
+      console.warn('[Firebase] 친구 신청 리스너 등록 실패:', err);
+    }
+  },
+
+  async removeFriendRequest(myKey, myNickname, fromKey) {
+    if (!_db || !fromKey) return;
+    try {
+      const cleanFromKey = encodeURIComponent(String(fromKey).trim()).replace(/\./g, '%2E');
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_requests/${cleanKey}/${cleanFromKey}`));
+      }
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_requests_by_name/${cleanName}/${cleanFromKey}`));
+      }
+    } catch (_) {}
+  },
+
+  async sendFriendAccept(targetKey, targetName, acceptData) {
+    if (!_db || !targetKey || !acceptData) return false;
+    try {
+      const cleanTargetKey = encodeURIComponent(String(targetKey).trim()).replace(/\./g, '%2E');
+      const cleanFromKey = encodeURIComponent(String(acceptData.fromKey).trim()).replace(/\./g, '%2E');
+      await set(ref(_db, `friend_accepts/${cleanTargetKey}/${cleanFromKey}`), acceptData);
+
+      if (targetName) {
+        const cleanName = encodeURIComponent(String(targetName).trim()).replace(/\./g, '%2E');
+        await set(ref(_db, `friend_accepts_by_name/${cleanName}/${cleanFromKey}`), acceptData);
+      }
+      return true;
+    } catch (err) {
+      console.warn('[Firebase] 친구 수락 알림 전송 실패:', err);
+      return false;
+    }
+  },
+
+  onFriendAccepts(myKey, myNickname, callback) {
+    if (!_db || (!myKey && !myNickname)) return null;
+    try {
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_accepts/${cleanKey}`), (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            Object.values(val).forEach(acc => {
+              if (acc && acc.fromKey) callback(acc);
+            });
+          }
+        });
+      }
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_accepts_by_name/${cleanName}`), (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            Object.values(val).forEach(acc => {
+              if (acc && acc.fromKey) callback(acc);
+            });
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('[Firebase] 친구 수락 리스너 등록 실패:', err);
+    }
+  },
+
+  async removeFriendAccept(myKey, myNickname, fromKey) {
+    if (!_db || !fromKey) return;
+    try {
+      const cleanFromKey = encodeURIComponent(String(fromKey).trim()).replace(/\./g, '%2E');
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_accepts/${cleanKey}/${cleanFromKey}`));
+      }
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_accepts_by_name/${cleanName}/${cleanFromKey}`));
+      }
+    } catch (_) {}
+  },
+
   isReady() {
     return !!_db;
   }

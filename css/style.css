@@ -138,8 +138,9 @@ body {
 .lobby-topbar-left {
   display: flex;
   align-items: center;
-  width: 40px;
-  flex: 0 0 40px;
+  gap: 8px;
+  width: auto;
+  flex: 0 0 auto;
 }
 
 .topbar-logo {
@@ -206,7 +207,7 @@ body {
   justify-content: flex-end;
 }
 
-#btn-open-settings, #btn-marketplace {
+#btn-open-settings, #btn-marketplace, #btn-open-friends {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
@@ -216,6 +217,7 @@ body {
   padding: 0;
   cursor: pointer;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 /* ── 로비 본체 (사이드바 + 메인 영역) ── */
@@ -1169,7 +1171,7 @@ body {
     margin-left: auto !important;
     flex-shrink: 0 !important;
   }
-  #btn-open-settings, #btn-marketplace {
+  #btn-open-settings, #btn-marketplace, #btn-open-friends {
     width: 32px !important;
     height: 32px !important;
   }
@@ -10336,6 +10338,124 @@ html, body {
   padding: 2px 8px;
   border-radius: 6px;
 }
+
+/* ── 친구 상단바 뱃지 & 탭 뱃지 ── */
+.friends-online-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--red, #ef4444);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--bg-card, #ffffff);
+  pointer-events: none;
+}
+[data-theme="dark"] .friends-online-badge {
+  border-color: #1e293b;
+}
+
+.friends-req-tab-badge {
+  background: var(--red, #ef4444);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* ── 전적 모달의 친구 신청 버튼 ── */
+.btn-stats-friend {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-stats-friend.already-friend {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: var(--green, #10b981) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  cursor: default !important;
+}
+.btn-stats-friend.pending {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: var(--yellow, #d97706) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  cursor: default !important;
+}
+
+/* ── 받은 친구 신청 목록 ── */
+.friends-request-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-hover, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md, 12px);
+  transition: all 0.15s ease;
+}
+[data-theme="dark"] .friends-request-item {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.friends-request-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.btn-friend-accept {
+  background: var(--green, #10b981) !important;
+  color: white !important;
+  border: none !important;
+  padding: 5px 10px !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+.btn-friend-accept:hover {
+  background: #059669 !important;
+  transform: translateY(-1px);
+}
+.btn-friend-reject {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: var(--red, #ef4444) !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  padding: 5px 9px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+.btn-friend-reject:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+}
+
 
 
 
