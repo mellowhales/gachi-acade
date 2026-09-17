@@ -802,8 +802,12 @@
   }
 
   function _syncOnlinePresence() {
+    const payload = _getMyPresencePayload();
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.updateOnlineUser === 'function') {
+      window.FirebaseLobby.updateOnlineUser(payload);
+    }
     if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.updatePresence === 'function') {
-      AppSupabase.updatePresence(_getMyPresencePayload());
+      AppSupabase.updatePresence(payload);
     }
   }
 
@@ -811,25 +815,68 @@
     const initialPayload = _getMyPresencePayload();
     _renderOnlineUsersList([initialPayload]);
 
+    // 1. Firebase Realtime Database 실시간 연동 (방 목록과 동일한 WebSocket 푸시)
+    const _setupFirebaseOnline = () => {
+      if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
+        window.FirebaseLobby.registerOnlineUser(initialPayload);
+        window.FirebaseLobby.onOnlineUsersUpdate((users) => {
+          if (Array.isArray(users) && users.length > 0) {
+            _lastOnlineUsers = users;
+            _renderOnlineUsersList(_lastOnlineUsers);
+          } else if (users === null) {
+            // Firebase 오류 시 fallback
+          } else {
+            _lastOnlineUsers = [_getMyPresencePayload()];
+            _renderOnlineUsersList(_lastOnlineUsers);
+          }
+        });
+      }
+    };
+
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
+      _setupFirebaseOnline();
+    } else {
+      window.addEventListener('firebase-ready', () => {
+        _setupFirebaseOnline();
+      }, { once: true });
+    }
+
+    // 2. Supabase Realtime 보조 연동 (Firebase 미응답 시 fallback)
     if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.initPresence === 'function') {
       AppSupabase.initPresence(initialPayload, (users) => {
-        _lastOnlineUsers = Array.isArray(users) && users.length > 0 ? users : [_getMyPresencePayload()];
-        _renderOnlineUsersList(_lastOnlineUsers);
+        if (!_lastOnlineUsers || _lastOnlineUsers.length <= 1) {
+          if (Array.isArray(users) && users.length > 0) {
+            _lastOnlineUsers = users;
+            _renderOnlineUsersList(_lastOnlineUsers);
+          }
+        }
       });
     }
 
-    // 접속자 수동 새로고침 버튼 바인딩
+    // 3. 접속자 수동 새로고침 버튼 바인딩 (무한 회전 버그 방지: 타이머 즉시 보장)
     const btnRefresh = $('btn-refresh-online-users');
     if (btnRefresh && !btnRefresh.dataset.bound) {
       btnRefresh.dataset.bound = 'true';
       btnRefresh.addEventListener('click', async () => {
         btnRefresh.classList.add('rotating');
-        if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.refreshPresence === 'function') {
-          await AppSupabase.refreshPresence();
-        }
         setTimeout(() => {
           btnRefresh.classList.remove('rotating');
         }, 600);
+
+        try {
+          if (window.FirebaseLobby && typeof window.FirebaseLobby.refreshOnlineUsers === 'function') {
+            const fbUsers = await window.FirebaseLobby.refreshOnlineUsers();
+            if (Array.isArray(fbUsers) && fbUsers.length > 0) {
+              _lastOnlineUsers = fbUsers;
+              _renderOnlineUsersList(_lastOnlineUsers);
+            }
+          } else if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.refreshPresence === 'function') {
+            await AppSupabase.refreshPresence();
+          }
+          showToast('접속자 목록을 새로고침했습니다.', 'info');
+        } catch (err) {
+          console.warn('[OnlineUsers] 새로고침 실패:', err);
+        }
       });
     }
   }
@@ -839,9 +886,18 @@
     const countEl = $('online-users-count');
     if (!listEl) return;
 
-    // 접속자 목록 레벨 높은 순(내림차순) 정렬
+    // 접속자 목록 중복 제거 및 레벨 높은 순(내림차순) 정렬
     const rawList = Array.isArray(users) && users.length > 0 ? [...users] : [_getMyPresencePayload()];
-    const list = rawList.sort((a, b) => {
+    const seen = new Set();
+    const uniqueUsers = [];
+    for (const u of rawList) {
+      const key = u.presenceKey || (u.supabaseId ? 'sb_' + u.supabaseId : (u.id || u.name));
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueUsers.push(u);
+      }
+    }
+    const list = uniqueUsers.sort((a, b) => {
       const lvlA = typeof a.level === 'number' ? a.level : 1;
       const lvlB = typeof b.level === 'number' ? b.level : 1;
       return lvlB - lvlA;

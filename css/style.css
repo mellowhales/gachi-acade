@@ -886,7 +886,7 @@ body {
 }
 
 .btn-icon.rotating i {
-  animation: spinRefresh 0.6s linear infinite;
+  animation: spinRefresh 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes spinRefresh {
@@ -6922,9 +6922,9 @@ html, body {
   --bg-active:    #3e4e68;    /* 활성 아이템 */
 
   /* ── 테두리 ── */
-  --border:       #334155;    /* 깔끔하고 선명한 테두리 (Slate 700) */
-  --border-sub:   #1e293b;    /* 서브 테두리 */
-  --border-hi:    #475569;    /* 하이라이트 테두리 */
+  --border:       rgba(255, 255, 255, 0.14);    /* 깔끔하고 선명한 테두리 */
+  --border-sub:   rgba(255, 255, 255, 0.09);    /* 카드 내부 구분선 및 서브 테두리 */
+  --border-hi:    rgba(255, 255, 255, 0.22);    /* 하이라이트 테두리 */
 
   /* ── 포인트 컬러 (표준 다크 모드 최적화 채도) ── */
   --green:        #22c55e;    /* 산뜻한 에메랄드 그린 */
@@ -6965,6 +6965,37 @@ html, body {
 }
 
 /* ── 다크모드 컴포넌트 세부 스타일링 ── */
+[data-theme="dark"] .card,
+[data-theme="dark"] .lobby-card,
+[data-theme="dark"] .online-users-card,
+[data-theme="dark"] .lobby-chat-card,
+[data-theme="dark"] .connect-card,
+[data-theme="dark"] .home-user-bar {
+  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .lobby-header,
+[data-theme="dark"] .online-card-header,
+[data-theme="dark"] .lobby-chat-header,
+[data-theme="dark"] .connect-tabs {
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .lobby-chat-form {
+  border-top: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .online-user-item {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+[data-theme="dark"] .online-user-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--green) !important;
+}
+
 [data-theme="dark"] .sidebar-header,
 [data-theme="dark"] .home-top-bar,
 [data-theme="dark"] .room-top-bar,

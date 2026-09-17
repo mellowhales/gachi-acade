@@ -150,10 +150,136 @@ const FirebaseLobby = {
     _lobbyListenerRef = null;
   },
 
+  /**
+   * 🌟 실시간 사이트 접속자 등록 (방 목록과 100% 동일한 onDisconnect 자동 삭제)
+   */
+  async registerOnlineUser(userPayload) {
+    if (!_db) return;
+    let sessionKey = null;
+    try {
+      sessionKey = sessionStorage.getItem('gachi_presence_key');
+      if (!sessionKey) {
+        sessionKey = 'usr_' + Math.random().toString(36).substring(2, 10);
+        sessionStorage.setItem('gachi_presence_key', sessionKey);
+      }
+    } catch (_) {
+      sessionKey = 'usr_' + Math.random().toString(36).substring(2, 10);
+    }
+
+    _myUserPresenceKey = sessionKey;
+    _myUserPresenceRef = ref(_db, `online_users/${sessionKey}`);
+
+    const payload = {
+      ...userPayload,
+      presenceKey: sessionKey,
+      lastSeen: Date.now()
+    };
+
+    try {
+      await set(_myUserPresenceRef, payload);
+      // 브라우저 닫힘 / 강제 종료 시 Firebase 서버에서 즉시 자동 삭제
+      dbOnDisconnect(_myUserPresenceRef).remove();
+
+      // 15초 주기 하트비트로 생존 신호 최신화
+      if (!_presenceHeartbeatInterval) {
+        _presenceHeartbeatInterval = setInterval(() => {
+          if (_myUserPresenceRef) {
+            update(_myUserPresenceRef, { lastSeen: Date.now() }).catch(() => {});
+          }
+        }, 15000);
+      }
+    } catch (err) {
+      console.warn('[Firebase] 접속자 등록 실패:', err);
+    }
+  },
+
+  /**
+   * 실시간 사이트 접속자 정보 업데이트 (닉네임/아바타/레벨 변경 시)
+   */
+  async updateOnlineUser(newPayload) {
+    if (!_db || !_myUserPresenceRef) return;
+    try {
+      await update(_myUserPresenceRef, { ...newPayload, lastSeen: Date.now() });
+    } catch (err) {
+      console.warn('[Firebase] 접속자 정보 갱신 실패:', err);
+    }
+  },
+
+  /**
+   * 실시간 사이트 접속자 목록 수신 (방 목록과 동일한 onValue 실시간 푸시)
+   */
+  onOnlineUsersUpdate(callback) {
+    if (!_db) return;
+    _onlineUsersListenerRef = ref(_db, 'online_users');
+    onValue(_onlineUsersListenerRef, (snapshot) => {
+      const val = snapshot.val();
+      const users = [];
+      if (val && typeof val === 'object') {
+        const now = Date.now();
+        Object.keys(val).forEach(key => {
+          const u = val[key];
+          if (u && typeof u === 'object') {
+            // 90초 이상 응답 없는 유령 세션 필터링
+            if (!u.lastSeen || (now - u.lastSeen < 90000)) {
+              users.push({ ...u, presenceKey: u.presenceKey || key });
+            }
+          }
+        });
+      }
+      callback(users);
+    }, (err) => {
+      console.warn('[Firebase] 접속자 목록 수신 오류:', err);
+      callback(null);
+    });
+  },
+
+  /**
+   * 접속자 목록 수동 즉시 새로고침
+   */
+  async refreshOnlineUsers() {
+    if (!_db) return null;
+    try {
+      if (_myUserPresenceRef) {
+        await update(_myUserPresenceRef, { lastSeen: Date.now() });
+      }
+      const snapshot = await get(ref(_db, 'online_users'));
+      const val = snapshot.val();
+      const users = [];
+      if (val && typeof val === 'object') {
+        const now = Date.now();
+        Object.keys(val).forEach(key => {
+          const u = val[key];
+          if (u && typeof u === 'object') {
+            if (!u.lastSeen || (now - u.lastSeen < 90000)) {
+              users.push({ ...u, presenceKey: u.presenceKey || key });
+            }
+          }
+        });
+      }
+      return users;
+    } catch (err) {
+      console.warn('[Firebase] 접속자 수동 갱신 오류:', err);
+      return null;
+    }
+  },
+
   isReady() {
     return !!_db;
   }
 };
+
+let _myUserPresenceRef = null;
+let _myUserPresenceKey = null;
+let _onlineUsersListenerRef = null;
+let _presenceHeartbeatInterval = null;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    if (_db && _myUserPresenceRef) {
+      remove(_myUserPresenceRef).catch(() => {});
+    }
+  });
+}
 
 window.FirebaseLobby = FirebaseLobby;
 
