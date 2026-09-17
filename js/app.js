@@ -1219,7 +1219,8 @@
         btnLogout.addEventListener('click', async () => {
           if (typeof AppSupabase !== 'undefined') {
             await AppSupabase.signOut();
-            showToast('로그아웃되었습니다.', 'info');
+            _handleLogoutProfileReset();
+            showToast('로그아웃되었습니다. 기본 프로필로 전환되었습니다.', 'info');
           }
         });
       }
@@ -1326,6 +1327,9 @@
       });
     }
 
+    // 🌟 OAuth 리다이렉트 콜백 후 URL의 에러 및 상태 파싱
+    _checkOAuthUrlFeedback();
+
     // 2. Supabase 모듈 초기화 및 리스너 연결
     if (typeof AppSupabase !== 'undefined') {
       AppSupabase.onAuthStateChange(async (event, session, user) => {
@@ -1350,8 +1354,8 @@
           }
           _updateHomeUserBar();
         } else {
-          // 로그아웃 시
-          _updateHomeUserBar();
+          // 로그아웃 시 게스트 기본 프로필로 전환
+          _handleLogoutProfileReset();
         }
       });
 
@@ -1370,6 +1374,70 @@
       });
     } else {
       _updateProfileAuthUI(null);
+    }
+  }
+
+  // 🌟 로그아웃 시 게스트 기본 프로필(익명, 기본 아바타, 1레벨, 0코인, 0전적)로 리셋
+  function _handleLogoutProfileReset() {
+    myNickname = '익명';
+    myAvatarIcon = _getRandomAvatarIcon();
+    myAvatarColor = _getRandomAvatarColor();
+    myCoins = 0;
+    myLevel = 1;
+    myExp = 0;
+    _tempSelectedIcon = myAvatarIcon;
+    _tempSelectedColor = myAvatarColor;
+
+    localStorage.setItem('arcade_nick', myNickname);
+    localStorage.setItem('arcade_avatar_icon', myAvatarIcon);
+    localStorage.setItem('arcade_avatar_color', myAvatarColor);
+    localStorage.setItem('arcade_user_coins', '0');
+    localStorage.setItem('arcade_user_level', '1');
+    localStorage.setItem('arcade_user_exp', '0');
+    localStorage.removeItem(GAME_STATS_KEY);
+
+    if ($('profile-input-nick')) $('profile-input-nick').value = myNickname;
+    _updateHomeUserBar();
+    _updateLevelUI();
+    _updateCoinsUI();
+    _updateProfileModalPreview();
+    _renderProfileModalGrids();
+    _updateProfileAuthUI(null);
+  }
+
+  // 🌟 OAuth 리다이렉트 콜백 후 URL의 에러 및 상태 파싱
+  function _checkOAuthUrlFeedback() {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+
+    let params = new URLSearchParams(search);
+    if (hash && hash.includes('=')) {
+      const raw = hash.startsWith('#') ? hash.slice(1) : hash;
+      const hashParams = new URLSearchParams(raw);
+      if (hashParams.has('error') || hashParams.has('error_description')) {
+        params = hashParams;
+      }
+    }
+
+    if (params.has('error') || params.has('error_description')) {
+      const err = params.get('error') || '';
+      const desc = params.get('error_description') || '';
+      const fullMsg = decodeURIComponent(desc.replace(/\+/g, ' '));
+      console.warn('[OAuth Callback Error]', err, fullMsg);
+
+      let alertMsg = `소셜 로그인에 실패했습니다.\n사유: ${fullMsg || err}`;
+      if (fullMsg.includes('external provider') || fullMsg.includes('Error getting user profile') || fullMsg.includes('id_token')) {
+        alertMsg = `[네이버 로그인 실패 안내]\n\n네이버는 OpenID Connect(id_token) 표준을 제공하지 않아 Supabase Custom OIDC에서 직접 인증 세션을 맺지 못하고 거절되었습니다.\n\n(Supabase 서버 오류: ${fullMsg})\n\n💡 해결 방법:\n1. Supabase 공식 내장 프로바이더인 'Google' 또는 'Kakao(카카오)'를 사용하시거나,\n2. 네이버 로그인을 위해선 Supabase Edge Function을 통한 OAuth 토큰 중계 브릿지가 필요합니다.`;
+      }
+
+      setTimeout(() => {
+        alert(alertMsg);
+      }, 250);
+
+      // 주소창의 지저분한 hash/query 정리
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
     }
   }
 
