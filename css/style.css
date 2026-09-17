@@ -5331,6 +5331,21 @@ html, body {
   background: var(--primary-tint, rgba(56, 161, 105, 0.1));
 }
 
+.host-action-btn.transfer {
+  color: #d97706;
+}
+.host-action-btn.transfer:hover {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+[data-theme="dark"] .host-action-btn.transfer {
+  color: #fbbf24;
+}
+[data-theme="dark"] .host-action-btn.transfer:hover {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fde68a;
+}
+
 .host-action-btn.kick {
   color: var(--coral);
 }

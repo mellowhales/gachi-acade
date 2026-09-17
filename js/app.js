@@ -287,6 +287,7 @@
   let isMyReady = false;
   let isDevMode = false;
   let isRoomGameActive = false;
+  let _isMigratingHost = false; // 방장 위임/인계 마이그레이션 진행 플래그
 
   // 현재 게임 중인 참가자 목록 (셔플된 순서)
   let activeGamePlayers = [];
@@ -1869,10 +1870,14 @@
 
     nameEl.textContent = `${targetPlayer.name}님`;
 
-    // 강퇴 버튼은 오직 방장이고, 대상이 방장이 아닐 때만 표시
-    const canKick = amIHost && !targetPlayer.isHost;
+    // 강퇴 및 방장 위임 버튼은 오직 방장이고, 대상이 방장이 아닐 때만 표시
+    const canManageTarget = amIHost && !targetPlayer.isHost;
     if (btnKick) {
-      btnKick.style.display = canKick ? 'flex' : 'none';
+      btnKick.style.display = canManageTarget ? 'flex' : 'none';
+    }
+    const btnTransfer = $('btn-host-transfer');
+    if (btnTransfer) {
+      btnTransfer.style.display = canManageTarget ? 'flex' : 'none';
     }
 
     dropdown.classList.remove('hidden');
@@ -1881,7 +1886,7 @@
     const targetEl = e.currentTarget || e.target;
     const rect = targetEl.getBoundingClientRect();
     const dropdownWidth = 160;
-    const dropdownHeight = canKick ? 105 : 75;
+    const dropdownHeight = canManageTarget ? 145 : 75;
 
     let left = rect.right - dropdownWidth;
     let top = rect.bottom + 6;
@@ -1966,6 +1971,261 @@
         showToast(`${target.name}님을 강퇴했습니다.`, 'warn');
       }
     });
+  }
+
+  // [방장 위임] 버튼 클릭
+  if ($('btn-host-transfer')) {
+    $('btn-host-transfer').addEventListener('click', async () => {
+      const amIHost = P2P.isHost() || isHostPlayer;
+      if (!amIHost || !selectedTargetPlayer) return;
+      const target = selectedTargetPlayer;
+      _closeHostActionMenu();
+
+      const ok = await showConfirmDialog({
+        title: '방장 위임',
+        message: `${target.name}님에게 방장을 위임하시겠습니까?`,
+        confirmText: '위임',
+        cancelText: '취소',
+        icon: 'fa-solid fa-crown',
+        isDanger: false
+      });
+      if (ok) {
+        _transferHostToPlayer(target);
+      }
+    });
+  }
+
+  /* =====================================================================
+     방장 위임 및 자동 승격/인계 로직
+     ===================================================================== */
+  function _reorderRoomPlayersWithHostFirst() {
+    roomPlayers.sort((a, b) => {
+      if (a.isHost && !b.isHost) return -1;
+      if (!a.isHost && b.isHost) return 1;
+      return 0;
+    });
+  }
+
+  async function _transferHostToPlayer(target) {
+    if (!selectedTargetPlayer && !target) return;
+    const targetPlayer = target || selectedTargetPlayer;
+    const targetId = targetPlayer.id;
+    const targetName = targetPlayer.name;
+    const roomCode = currentRoomCode;
+
+    if (!roomPlayers.some(p => p.id === targetId || p.name === targetName)) {
+      showToast('해당 참가자가 이미 퇴장했습니다.', 'warn');
+      return;
+    }
+
+    console.log('[Host] 방장 위임 절차 개시 ->', targetName, targetId, roomCode);
+    _isMigratingHost = true;
+
+    // 1. Firebase에서 구 방장의 onDisconnect 방 삭제 훅 해제
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.cancelRoomOnDisconnect === 'function') {
+      try {
+        await window.FirebaseLobby.cancelRoomOnDisconnect(roomCode);
+      } catch (e) {
+        console.warn('[Host] cancelRoomOnDisconnect 경고:', e);
+      }
+    }
+
+    // 2. 인게임 중이었다면 게임 모듈 종료 및 대기실 상태로 초기화
+    if (currentGameModule) {
+      try { currentGameModule.destroy(); } catch (_) {}
+      currentGameModule = null;
+    }
+    if ($('game-content')) $('game-content').innerHTML = '';
+    const overlayCount = $('overlay-countdown');
+    if (overlayCount) overlayCount.classList.add('hidden');
+    const overlayRes = $('overlay-game-result');
+    if (overlayRes) overlayRes.classList.add('hidden');
+    isRoomGameActive = false;
+    activeGamePlayers = [];
+
+    // 3. 모든 참가자들에게 방장 위임 패킷 전송
+    try {
+      P2P.send({
+        type: 'DELEGATE_HOST',
+        targetHostId: targetId,
+        targetHostName: targetName,
+        roomCode: roomCode,
+        oldHostLeft: false,
+        oldHostId: P2P.getMyId(),
+        oldHostName: myNickname
+      });
+    } catch (e) {
+      console.error('[Host] DELEGATE_HOST 전송 실패:', e);
+    }
+
+    // 4. 구 방장: 호스트 연결 종료 후 일반 게스트로 재접속 준비
+    showToast(`${targetName}님에게 방장을 위임했습니다. 게스트로 재접속 중...`, 'info');
+    _appendChatMessage({ isSystem: true, text: `👑 ${myNickname}님이 ${targetName}님에게 방장을 위임했습니다.` });
+
+    P2P.destroy();
+    isHostPlayer = false;
+    isMyReady = false;
+
+    // roomPlayers 내 방장 권한 인계 반영
+    roomPlayers.forEach(p => {
+      if (p.id === targetId || p.name === targetName) {
+        p.isHost = true;
+        p.isReady = true;
+      } else {
+        p.isHost = false;
+        p.isReady = false;
+      }
+    });
+    _reorderRoomPlayersWithHostFirst();
+    _enterRoomScreen(false);
+
+    // 새 방장이 PeerJS 호스트를 선점할 시간 대기 후 게스트로 재접속
+    setTimeout(() => {
+      _reconnectAsGuest(roomCode, targetName);
+    }, 1000);
+  }
+
+  async function _promoteToHost(roomCode, oldHostLeft = false, oldHostInfo = null) {
+    showLoading('방장 권한을 인계받아 방을 설정하는 중입니다...');
+    _isMigratingHost = true;
+    isHostPlayer = true;
+    isMyReady = true;
+
+    try {
+      // 1. 인게임 정리
+      if (currentGameModule) {
+        try { currentGameModule.destroy(); } catch (_) {}
+        currentGameModule = null;
+      }
+      if ($('game-content')) $('game-content').innerHTML = '';
+      const overlayCount = $('overlay-countdown');
+      if (overlayCount) overlayCount.classList.add('hidden');
+      const overlayRes = $('overlay-game-result');
+      if (overlayRes) overlayRes.classList.add('hidden');
+      isRoomGameActive = false;
+      activeGamePlayers = [];
+
+      // 2. roomPlayers 정리 (구 방장 퇴장 시 제거, 잔류 시 게스트로 변경)
+      if (oldHostLeft) {
+        roomPlayers = roomPlayers.filter(p => !p.isHost && (oldHostInfo ? (p.name !== oldHostInfo.name && p.id !== oldHostInfo.id) : true));
+      } else {
+        roomPlayers.forEach(p => {
+          if (p.isHost) {
+            p.isHost = false;
+            p.isReady = false;
+          }
+        });
+      }
+
+      // 3. 기존 방 코드로 호스트 선점 (unavailable-id 재시도 백오프 내장)
+      currentRoomCode = await P2P.host(
+        _onHostGuestJoin,
+        _onHostGuestLeave,
+        roomCode
+      );
+
+      // 4. 내 플레이어 엔트리를 방장으로 설정
+      const myPeerId = P2P.getMyId();
+      let myEntry = roomPlayers.find(p => p.name === myNickname);
+      if (myEntry) {
+        myEntry.id = myPeerId;
+        myEntry.isHost = true;
+        myEntry.isReady = true;
+      } else {
+        myEntry = {
+          id: myPeerId,
+          name: myNickname || '익명',
+          nameColor: myNicknameColor || null,
+          profileCard: myProfileCard || 'default',
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
+          isHost: true,
+          isReady: true,
+          stats: _getMyStats()
+        };
+        roomPlayers.unshift(myEntry);
+      }
+
+      _reorderRoomPlayersWithHostFirst();
+
+      // 5. 호스트 리스너 재등록
+      P2P.onMessage(_onHostReceiveMessage);
+      P2P.onDisconnect(_onHostDisconnect);
+
+      // 6. Firebase 방 소유권 등록
+      if (window.FirebaseLobby && typeof window.FirebaseLobby.claimRoomHost === 'function') {
+        await window.FirebaseLobby.claimRoomHost(currentRoomCode, {
+          name: myNickname,
+          peerId: myPeerId,
+          nameColor: myNicknameColor,
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          profileCard: myProfileCard
+        });
+      }
+
+      hideLoading();
+      _isMigratingHost = false;
+
+      _enterRoomScreen(false);
+      _broadcastRoomState();
+      _updateRoomUI();
+
+      showToast(`👑 방장이 되었습니다! (방 코드: ${currentRoomCode})`, 'success');
+      _appendChatMessage({ isSystem: true, text: `👑 ${myNickname}님이 새로운 방장이 되었습니다!` });
+
+    } catch (err) {
+      hideLoading();
+      _isMigratingHost = false;
+      console.error('[Host] 방장 승격 실패:', err);
+      showToast('방장 권한 인계에 실패하여 방이 종료됩니다: ' + (err.message || '오류'), 'error');
+      _leaveRoom(true);
+    }
+  }
+
+  async function _reconnectAsGuest(roomCode, newHostName) {
+    showLoading(`새 방장(${newHostName || '방장'})에게 연결하는 중...`);
+    _isMigratingHost = true;
+
+    try {
+      P2P.onMessage(_onGuestReceiveMessage);
+      P2P.onDisconnect(_onGuestDisconnect);
+
+      await P2P.join(roomCode);
+
+      hideLoading();
+      _isMigratingHost = false;
+
+      isHostPlayer = false;
+      isMyReady = false;
+
+      P2P.send({
+        type: 'guest_hello',
+        id: P2P.getMyId(),
+        name: myNickname || '익명',
+        nameColor: myNicknameColor || null,
+        profileCard: myProfileCard || 'default',
+        avatarIcon: myAvatarIcon,
+        avatarColor: myAvatarColor,
+        level: myLevel,
+        exp: myExp,
+        password: currentRoomPassword || '',
+        stats: _getMyStats()
+      });
+
+      _enterRoomScreen(false);
+      showToast(`새 방장(${newHostName || '방장'})의 방에 정상 연결되었습니다.`, 'success');
+
+    } catch (err) {
+      hideLoading();
+      _isMigratingHost = false;
+      console.error('[Guest] 새 방장 재연결 실패:', err);
+      showToast('새 방장과의 연결에 실패하여 로비로 이동합니다.', 'error');
+      _leaveRoom(true);
+    }
   }
 
 
@@ -3355,6 +3615,7 @@
       }
 
       currentRoomCode = cleanCode;
+      currentRoomPassword = inputPassword || '';
       isHostPlayer = false;
       isMyReady = false;
 
@@ -3451,13 +3712,15 @@
         }
       }
 
-      // 👥 최대 정원 검증 (호스트가 설정한 2~8인)
-      if (roomPlayers.length >= currentRoomMaxPlayers) {
+      const isJoiningMidGame = isRoomGameActive && activeGamePlayers.length > 0;
+      const existingIdx = roomPlayers.findIndex(p => String(p.id) === String(senderPeerId) || (!p.isHost && p.name === data.name));
+
+      // 👥 최대 정원 검증 (신규 입장 시에만 검사, 재연결 유저는 기존 자리 유지)
+      if (existingIdx === -1 && roomPlayers.length >= currentRoomMaxPlayers) {
         P2P.send({ type: 'room_full', message: `방 인원이 가득 찼습니다 (최대 ${currentRoomMaxPlayers}명).` }, senderPeerId);
         return;
       }
-      const isJoiningMidGame = isRoomGameActive && activeGamePlayers.length > 0;
-      const existingIdx = roomPlayers.findIndex(p => String(p.id) === String(senderPeerId));
+
       const newPlayerObj = {
         id: senderPeerId,
         name: data.name || '익명',
@@ -3478,6 +3741,7 @@
       } else {
         roomPlayers.push(newPlayerObj);
       }
+      _reorderRoomPlayersWithHostFirst();
 
       // 🌟 게임 진행 중 중간 입장한 게스트에게 즉시 관전 시작 패킷 전송
       if (isJoiningMidGame) {
@@ -3767,6 +4031,50 @@
         _leaveRoom();
       }
 
+    } else if (data.type === 'DELEGATE_HOST') {
+      console.log('[Guest] DELEGATE_HOST 패킷 수신:', data);
+      _isMigratingHost = true;
+
+      const myId = P2P.getMyId();
+      const targetHostId = data.targetHostId;
+      const targetHostName = data.targetHostName;
+      const roomCode = data.roomCode || currentRoomCode;
+      const oldHostLeft = !!data.oldHostLeft;
+      const amINewHost = (targetHostId && String(targetHostId) === String(myId)) || 
+                         (targetHostName && targetHostName === myNickname);
+
+      // 인게임 중인 경우 안전하게 대기실로 복귀
+      if (currentGameModule) {
+        try { currentGameModule.destroy(); } catch (_) {}
+        currentGameModule = null;
+      }
+      if ($('game-content')) $('game-content').innerHTML = '';
+      const overlayCount = $('overlay-countdown');
+      if (overlayCount) overlayCount.classList.add('hidden');
+      const overlayRes = $('overlay-game-result');
+      if (overlayRes) overlayRes.classList.add('hidden');
+      isRoomGameActive = false;
+      activeGamePlayers = [];
+
+      if (amINewHost) {
+        // 🌟 내가 새로운 방장으로 승격!
+        showToast('👑 방장으로 위임되었습니다!', 'success');
+        _appendChatMessage({ isSystem: true, text: `👑 ${myNickname}님이 새로운 방장이 되었습니다!` });
+
+        P2P.destroy();
+        _promoteToHost(roomCode, oldHostLeft, { id: data.oldHostId, name: data.oldHostName });
+
+      } else {
+        // 👥 다른 게스트: 새 방장에게 재연결
+        showToast(`👑 ${targetHostName}님이 새 방장이 되었습니다. 재연결 중...`, 'info');
+        _appendChatMessage({ isSystem: true, text: `👑 ${targetHostName}님이 새로운 방장이 되었습니다.` });
+
+        P2P.destroy();
+        setTimeout(() => {
+          _reconnectAsGuest(roomCode, targetHostName);
+        }, 1200);
+      }
+
     } else if (data.type === 'host_left_room') {
       // 🚪 방장이 방을 나감 -> 모든 참가자 로비/홈으로 자동 퇴장
       showToast(data.message || '방장이 퇴장하여 방이 종료되었습니다.', 'error');
@@ -3988,6 +4296,50 @@
   }
 
   function _onGuestDisconnect() {
+    console.log('[Guest] 호스트와의 연결 끊김 감지. _isMigratingHost:', _isMigratingHost);
+    // 방장 위임 마이그레이션 진행 중 발생하는 구 호스트와의 일시적 연결 종료는 무시
+    if (_isMigratingHost) return;
+
+    // 방장의 예기치 않은 연결 종료(브라우저 강제 종료, 네트워크 오류 등) 시:
+    // 참가자 목록 중 최상단(첫 번째 게스트)에게 방장 권한 자동 위임!
+    const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== '방장');
+    if (remainingGuests.length > 0) {
+      const nextHost = remainingGuests[0];
+      const myId = P2P.getMyId();
+      const amINextHost = (nextHost.id && String(nextHost.id) === String(myId)) || (nextHost.name === myNickname);
+
+      // 인게임 정리
+      if (currentGameModule) {
+        try { currentGameModule.destroy(); } catch (_) {}
+        currentGameModule = null;
+      }
+      if ($('game-content')) $('game-content').innerHTML = '';
+      const overlayCount = $('overlay-countdown');
+      if (overlayCount) overlayCount.classList.add('hidden');
+      const overlayRes = $('overlay-game-result');
+      if (overlayRes) overlayRes.classList.add('hidden');
+      isRoomGameActive = false;
+      activeGamePlayers = [];
+
+      _isMigratingHost = true;
+      const roomCode = currentRoomCode;
+
+      if (amINextHost) {
+        showToast('방장의 연결이 끊어졌습니다. 방장 권한을 자동으로 이어받습니다...', 'warn');
+        _appendChatMessage({ isSystem: true, text: `⚠️ 방장의 연결이 끊겨 ${myNickname}님이 새로운 방장이 되었습니다.` });
+        P2P.destroy();
+        _promoteToHost(roomCode, true, { name: '이전 방장' });
+      } else {
+        showToast(`방장의 연결이 끊어졌습니다. ${nextHost.name}님에게 방장이 위임됩니다. 재연결 중...`, 'warn');
+        _appendChatMessage({ isSystem: true, text: `⚠️ 방장의 연결이 끊겨 ${nextHost.name}님이 새로운 방장이 되었습니다.` });
+        P2P.destroy();
+        setTimeout(() => {
+          _reconnectAsGuest(roomCode, nextHost.name);
+        }, 1500);
+      }
+      return;
+    }
+
     showToast('방장이 퇴장하여 방이 해체되었습니다.', 'error');
     _leaveRoom(true);
   }
@@ -4312,16 +4664,22 @@
 
   // 방 나가기
   $('btn-leave-room').addEventListener('click', async () => {
+    const amIHost = P2P.isHost() || isHostPlayer;
+    const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== myNickname && p.id !== P2P.getMyId());
+    const willDelegate = amIHost && remainingGuests.length > 0;
+
     const ok = await showConfirmDialog({
       title: '방 나가기',
-      message: '방을 나가시겠습니까? 로비 화면으로 돌아갑니다.',
+      message: willDelegate
+        ? `방을 나가시겠습니까? ${remainingGuests[0].name}님에게 방장이 자동 위임됩니다.`
+        : '방을 나가시겠습니까? 로비 화면으로 돌아갑니다.',
       confirmText: '나가기',
       cancelText: '취소',
       icon: 'fa-solid fa-door-open',
       isDanger: true
     });
     if (ok) {
-      if (!P2P.isHost()) {
+      if (!amIHost) {
         try {
           P2P.send({ type: 'guest_leave_room', name: myNickname });
         } catch (_) {}
@@ -4342,17 +4700,49 @@
   }
 
   function _leaveRoom(pushState = true) {
-    // 🌐 방장이 방을 나갈 때 모든 참가자에게 퇴장 패킷 브로드캐스트 전송 및 Firebase 삭제
-    if (P2P.isHost()) {
-      try {
-        P2P.send({
-          type: 'host_left_room',
-          message: '방장이 퇴장하여 방이 종료되었습니다.'
-        });
-      } catch (_) {}
+    const amIHost = P2P.isHost() || isHostPlayer;
 
-      if (currentRoomCode && window.FirebaseLobby && typeof window.FirebaseLobby.removeRoom === 'function') {
-        window.FirebaseLobby.removeRoom(currentRoomCode);
+    if (amIHost) {
+      // 🌐 방장이 퇴장할 때: 남아있는 다른 게스트가 있는지 확인
+      const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== myNickname && p.id !== P2P.getMyId());
+
+      if (remainingGuests.length > 0) {
+        // 남은 인원 중 최상단(첫 번째) 게스트에게 방장 자동 위임!
+        const nextHost = remainingGuests[0];
+        console.log('[Host] 방장 퇴장 -> 최상단 게스트에게 자동 위임:', nextHost.name, nextHost.id);
+
+        if (window.FirebaseLobby && typeof window.FirebaseLobby.cancelRoomOnDisconnect === 'function') {
+          try {
+            window.FirebaseLobby.cancelRoomOnDisconnect(currentRoomCode);
+          } catch (_) {}
+        }
+
+        try {
+          P2P.send({
+            type: 'DELEGATE_HOST',
+            targetHostId: nextHost.id,
+            targetHostName: nextHost.name,
+            roomCode: currentRoomCode,
+            oldHostLeft: true,
+            oldHostId: P2P.getMyId(),
+            oldHostName: myNickname
+          });
+        } catch (_) {}
+
+        showToast(`${nextHost.name}님에게 방장을 위임하고 퇴장합니다.`, 'info');
+
+      } else {
+        // 남은 게스트가 없으면 방 정상 종료 및 삭제
+        try {
+          P2P.send({
+            type: 'host_left_room',
+            message: '방장이 퇴장하여 방이 종료되었습니다.'
+          });
+        } catch (_) {}
+
+        if (currentRoomCode && window.FirebaseLobby && typeof window.FirebaseLobby.removeRoom === 'function') {
+          window.FirebaseLobby.removeRoom(currentRoomCode);
+        }
       }
     }
 
@@ -4361,6 +4751,11 @@
       currentGameModule = null;
     }
     if ($('game-content')) $('game-content').innerHTML = '';
+    const overlayCount = $('overlay-countdown');
+    if (overlayCount) overlayCount.classList.add('hidden');
+    const overlayRes = $('overlay-game-result');
+    if (overlayRes) overlayRes.classList.add('hidden');
+
     P2P.destroy();
     roomPlayers = [];
     activeGamePlayers = [];
@@ -4368,6 +4763,7 @@
     isMyReady = false;
     isDevMode = false;
     currentRoomCode = '';
+    _isMigratingHost = false;
     _resetChatLogs();
     showScreen('home');
   }

@@ -116,6 +116,73 @@ const FirebaseLobby = {
   },
 
   /**
+   * 방장 위임 시 구 방장의 onDisconnect 자동 삭제 훅 안전하게 해제
+   */
+  async cancelRoomOnDisconnect(roomCode) {
+    if (!_db) return;
+    const code = roomCode || _myRoomCode;
+    if (_roomHeartbeatInterval) {
+      clearInterval(_roomHeartbeatInterval);
+      _roomHeartbeatInterval = null;
+    }
+    if (!code) return;
+    try {
+      if (_myRoomRef) {
+        await dbOnDisconnect(_myRoomRef).cancel();
+      }
+      _myRoomCode = null;
+      _myRoomRef = null;
+      console.log('[Firebase] 구 방장 onDisconnect 훅 해제 완료:', code);
+    } catch (err) {
+      console.warn('[Firebase] cancelRoomOnDisconnect warn:', err);
+    }
+  },
+
+  /**
+   * 신규 방장이 Firebase 방 소유권 및 하트비트 인수
+   */
+  async claimRoomHost(roomCode, newHostData) {
+    if (!_db || !roomCode) return;
+    _myRoomCode = roomCode;
+    _myRoomRef = ref(_db, `rooms/${roomCode}`);
+
+    try {
+      const roomSnap = await get(_myRoomRef);
+      if (!roomSnap.exists()) return;
+
+      const updatePayload = {
+        hostName:        newHostData.name || '방장',
+        hostPeerId:      newHostData.peerId || null,
+        hostNameColor:   newHostData.nameColor || null,
+        hostAvatarIcon:  newHostData.avatarIcon || 'fa-solid fa-paw',
+        hostAvatarColor: newHostData.avatarColor || '#38a169',
+        hostLevel:       typeof newHostData.level === 'number' ? newHostData.level : 1,
+        hostProfileCard: newHostData.profileCard || 'default',
+        lastSeen:        Date.now()
+      };
+
+      await update(_myRoomRef, updatePayload);
+
+      // 새 방장의 onDisconnect 삭제 훅 등록
+      try {
+        dbOnDisconnect(_myRoomRef).remove();
+      } catch (_) {}
+
+      // 새 방장의 15초 하트비트 가동
+      if (_roomHeartbeatInterval) clearInterval(_roomHeartbeatInterval);
+      _roomHeartbeatInterval = setInterval(() => {
+        if (_myRoomRef && _myRoomCode) {
+          update(_myRoomRef, { lastSeen: Date.now() }).catch(() => {});
+        }
+      }, 15000);
+
+      console.log('[Firebase] 신규 방장 소유권 인수 완료:', roomCode, newHostData.name);
+    } catch (err) {
+      console.error('[Firebase] claimRoomHost 실패:', err);
+    }
+  },
+
+  /**
    * 방장 위임 후 Firebase 방 정보 업데이트
    */
   async updateRoomHost(roomCode, newHostName, newHostPeerId) {

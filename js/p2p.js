@@ -215,7 +215,7 @@ const P2P = (() => {
   }
 
   /* ── 방 만들기 (호스트) ── */
-  function host(onGuestJoin, onGuestLeave) {
+  function host(onGuestJoin, onGuestLeave, customRoomCode) {
     _isHost = true;
     _onGuestJoinCb = onGuestJoin;
     _onGuestLeaveCb = onGuestLeave;
@@ -223,7 +223,7 @@ const P2P = (() => {
 
     return new Promise((resolve, reject) => {
       let attempts = 0;
-      const MAX_ATTEMPTS = 10;
+      const MAX_ATTEMPTS = 12;
 
       function tryCreate() {
         attempts++;
@@ -234,8 +234,8 @@ const P2P = (() => {
 
         if (_peer) { try { _peer.destroy(); } catch (_) {} _peer = null; }
 
-        // 4자리 고유 숫자 코드 생성
-        const code = String(Math.floor(1000 + Math.random() * 9000));
+        // 4자리 고유 숫자 코드 생성 (customRoomCode가 주어지면 해당 코드 그대로 사용)
+        const code = customRoomCode ? String(customRoomCode).trim() : String(Math.floor(1000 + Math.random() * 9000));
         const fullPeerId = _codeToPeerId(code);
 
         _peer = new Peer(fullPeerId, {
@@ -269,6 +269,11 @@ const P2P = (() => {
         _peer.on('error', (err) => {
           clearTimeout(openTimeout);
           if (err.type === 'unavailable-id') {
+            if (customRoomCode && attempts <= MAX_ATTEMPTS) {
+              console.log(`[P2P] 방장 위임 코드 (${customRoomCode}) 해제 대기 중... 재시도 (${attempts}/${MAX_ATTEMPTS})`);
+              setTimeout(tryCreate, 400);
+              return;
+            }
             console.log('[P2P] 방 코드 중복 감지, 다른 코드로 재시도...', code);
             setTimeout(tryCreate, 200);
           } else {
@@ -290,7 +295,7 @@ const P2P = (() => {
       const cleanCode = String(roomCode || '').replace(/\s+/g, '').trim();
       const targetPeerId = _codeToPeerId(cleanCode);
       let attempts = 0;
-      const MAX_JOIN_ATTEMPTS = 3;
+      const MAX_JOIN_ATTEMPTS = 6;
       let isResolved = false;
 
       function tryConnect() {
