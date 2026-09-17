@@ -420,7 +420,41 @@ const AppSupabase = (() => {
 
   let _presenceChannel = null;
   let _currentPresencePayload = null;
+  let _presenceHeartbeatTimer = null;
   const _presenceListeners = [];
+
+  let _lobbyChatChannel = null;
+  const _lobbyChatListeners = [];
+
+  function _extractPresenceUsers(channel) {
+    if (!channel) return [];
+    try {
+      const state = channel.presenceState();
+      const users = [];
+      const seen = new Set();
+      for (const key in state) {
+        const arr = state[key];
+        if (Array.isArray(arr)) {
+          arr.forEach(p => {
+            const uid = p.presenceKey || key;
+            if (!seen.has(uid)) {
+              seen.add(uid);
+              users.push(p);
+            }
+          });
+        }
+      }
+      return users;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function _dispatchPresence(users) {
+    _presenceListeners.forEach(fn => {
+      try { fn(users); } catch (e) { console.error(e); }
+    });
+  }
 
   /**
    * 실시간 접속자 Presence 채널 초기화 및 내 정보 브로드캐스트
@@ -467,27 +501,15 @@ const AppSupabase = (() => {
         }
       });
 
+      const handleStateChange = () => {
+        const users = _extractPresenceUsers(channel);
+        _dispatchPresence(users);
+      };
+
       channel
-        .on('presence', { event: 'sync' }, () => {
-          const state = channel.presenceState();
-          const users = [];
-          const seen = new Set();
-          for (const key in state) {
-            const arr = state[key];
-            if (Array.isArray(arr)) {
-              arr.forEach(p => {
-                const uid = p.presenceKey || key;
-                if (!seen.has(uid)) {
-                  seen.add(uid);
-                  users.push(p);
-                }
-              });
-            }
-          }
-          _presenceListeners.forEach(fn => {
-            try { fn(users); } catch (e) { console.error(e); }
-          });
-        })
+        .on('presence', { event: 'sync' }, handleStateChange)
+        .on('presence', { event: 'join' }, handleStateChange)
+        .on('presence', { event: 'leave' }, handleStateChange)
         .subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
             try {
@@ -499,11 +521,68 @@ const AppSupabase = (() => {
         });
 
       _presenceChannel = channel;
+
+      // 6초 주기 하트비트 트래킹으로 접속자 상태 최신 유지
+      if (!_presenceHeartbeatTimer) {
+        _presenceHeartbeatTimer = setInterval(() => {
+          if (_presenceChannel && _currentPresencePayload) {
+            try {
+              _presenceChannel.track({
+                ..._currentPresencePayload,
+                updatedAt: Date.now()
+              });
+            } catch (_) {}
+          }
+        }, 6000);
+      }
+
+      // 탭 포커스 / 화면 복귀 시 즉각 갱신
+      if (typeof window !== 'undefined' && !window._presenceEventBound) {
+        window._presenceEventBound = true;
+        window.addEventListener('focus', () => {
+          if (_presenceChannel && _currentPresencePayload) {
+            try {
+              _presenceChannel.track({
+                ..._currentPresencePayload,
+                updatedAt: Date.now()
+              });
+            } catch (_) {}
+          }
+        });
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible' && _presenceChannel && _currentPresencePayload) {
+            try {
+              _presenceChannel.track({
+                ..._currentPresencePayload,
+                updatedAt: Date.now()
+              });
+            } catch (_) {}
+          }
+        });
+      }
+
       return channel;
     } catch (err) {
       console.warn('[Supabase] Presence init error:', err);
       if (typeof onSync === 'function') onSync([userPayload]);
       return null;
+    }
+  }
+
+  /**
+   * 실시간 접속자 수동 즉시 새로고침
+   */
+  async function refreshPresence() {
+    if (!_presenceChannel || !_currentPresencePayload) return;
+    try {
+      await _presenceChannel.track({
+        ..._currentPresencePayload,
+        updatedAt: Date.now()
+      });
+      const users = _extractPresenceUsers(_presenceChannel);
+      _dispatchPresence(users);
+    } catch (err) {
+      console.warn('[Supabase] Presence refresh error:', err);
     }
   }
 
@@ -526,6 +605,70 @@ const AppSupabase = (() => {
     }
   }
 
+  /**
+   * 💬 로비 전체 채팅 채널 초기화
+   */
+  function initLobbyChat(onMessage) {
+    if (typeof onMessage === 'function' && !_lobbyChatListeners.includes(onMessage)) {
+      _lobbyChatListeners.push(onMessage);
+    }
+    const client = getClient();
+    if (!client) return null;
+    if (_lobbyChatChannel) return _lobbyChatChannel;
+
+    try {
+      const channel = client.channel('lobby-global-chat', {
+        config: {
+          broadcast: { self: false }
+        }
+      });
+
+      channel
+        .on('broadcast', { event: 'lobby_msg' }, (eventData) => {
+          if (eventData && eventData.payload) {
+            _lobbyChatListeners.forEach(fn => {
+              try { fn(eventData.payload); } catch (e) { console.error(e); }
+            });
+          }
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            // 로비 채팅 채널 준비 완료
+          }
+        });
+
+      _lobbyChatChannel = channel;
+      return channel;
+    } catch (err) {
+      console.warn('[Supabase] Lobby chat init error:', err);
+      return null;
+    }
+  }
+
+  /**
+   * 💬 로비 전체 채팅 메시지 전송 (Supabase Realtime Broadcast)
+   */
+  async function sendLobbyChatMessage(payload) {
+    const client = getClient();
+    if (!client) return false;
+    if (!_lobbyChatChannel) {
+      initLobbyChat();
+    }
+    if (!_lobbyChatChannel) return false;
+
+    try {
+      await _lobbyChatChannel.send({
+        type: 'broadcast',
+        event: 'lobby_msg',
+        payload: payload
+      });
+      return true;
+    } catch (err) {
+      console.warn('[Supabase] Lobby chat send error:', err);
+      return false;
+    }
+  }
+
   return {
     isConfigured,
     getClient,
@@ -542,8 +685,11 @@ const AppSupabase = (() => {
     saveLevelAndExp,
     fetchUserStats,
     initPresence,
+    refreshPresence,
     updatePresence,
-    onPresenceSync
+    onPresenceSync,
+    initLobbyChat,
+    sendLobbyChatMessage
   };
 })();
 

@@ -71,6 +71,14 @@
     </div>
   </header>
 
+  <!-- 로비 모바일 채팅 토글 플로팅 버튼 & 백드롭 (방 화면과 동일한 좌하단 버튼) -->
+  <button type="button" class="btn btn-primary btn-sm btn-mobile-chat-toggle" id="btn-lobby-mobile-chat-toggle" title="채팅창 열기">
+    <i class="fa-regular fa-comments"></i>
+    <span>채팅</span>
+    <span class="chat-badge-dot hidden" id="lobby-mobile-chat-badge"></span>
+  </button>
+  <div class="mobile-chat-backdrop hidden" id="lobby-mobile-chat-backdrop"></div>
+
   <!-- 로비 본체 (사이드바 + 메인 영역) -->
   <div class="home-body-wrap">
     <!-- 왼쪽 사이드바: 게임 목록 -->
@@ -256,7 +264,7 @@
 
       <!-- 2. 우측: 접속자 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
       <div class="lobby-right-col">
-        <!-- 2-1. 상단: 현재 접속 중인 플레이어 카드 (클릭 시 전적 모달) -->
+        <!-- 2-1. 상단: 현재 접속 중인 플레이어 카드 (높이 반으로 축소, 클릭 시 전적 모달) -->
         <div class="online-users-card card" id="online-users-card">
           <div class="online-card-header">
             <div class="online-card-title">
@@ -264,13 +272,50 @@
               <span>접속 중인 플레이어</span>
               <span class="online-count-badge" id="online-users-count">1명</span>
             </div>
+            <button type="button" class="btn-icon sm" id="btn-refresh-online-users" title="접속자 새로고침">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
           </div>
           <div class="online-users-list custom-scroll" id="online-users-list">
             <!-- JS 동적 생성 -->
           </div>
         </div>
 
-        <!-- 2-2. 하단: 방 만들기 / 참가 패널 -->
+        <!-- 2-2. 중간: 💬 로비 전체 채팅방 (프로필 이름: 메시지 형식) -->
+        <div class="lobby-chat-card card" id="lobby-chat-card">
+          <div class="lobby-chat-header">
+            <div class="lobby-chat-title">
+              <i class="fa-solid fa-comments" style="color: var(--green);"></i>
+              <span>전체 채팅</span>
+            </div>
+            <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-lobby-mobile-chat" title="채팅창 닫기">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="lobby-chat-messages custom-scroll" id="lobby-chat-messages">
+            <!-- 채팅 메시지 동적 생성 -->
+            <div class="lobby-chat-welcome">
+              <i class="fa-regular fa-paper-plane"></i>
+              <span>로비 전체 채팅방입니다. 자유롭게 대화해보세요!</span>
+            </div>
+          </div>
+          <form class="lobby-chat-form" id="lobby-chat-form">
+            <input
+              type="text"
+              id="lobby-chat-input"
+              class="lobby-chat-input"
+              placeholder="메시지 입력 (최대 80자)..."
+              maxlength="80"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button type="submit" class="btn btn-primary btn-sm btn-lobby-chat-send" id="btn-lobby-chat-send" title="전송">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- 2-3. 하단: 방 만들기 / 참가 패널 -->
         <div class="connect-card card">
           <div class="connect-tabs">
           <button class="ctab active" data-tab="create" id="tab-create">

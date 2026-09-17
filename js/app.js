@@ -817,6 +817,21 @@
         _renderOnlineUsersList(_lastOnlineUsers);
       });
     }
+
+    // 접속자 수동 새로고침 버튼 바인딩
+    const btnRefresh = $('btn-refresh-online-users');
+    if (btnRefresh && !btnRefresh.dataset.bound) {
+      btnRefresh.dataset.bound = 'true';
+      btnRefresh.addEventListener('click', async () => {
+        btnRefresh.classList.add('rotating');
+        if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.refreshPresence === 'function') {
+          await AppSupabase.refreshPresence();
+        }
+        setTimeout(() => {
+          btnRefresh.classList.remove('rotating');
+        }, 600);
+      });
+    }
   }
 
   function _renderOnlineUsersList(users) {
@@ -824,7 +839,14 @@
     const countEl = $('online-users-count');
     if (!listEl) return;
 
-    const list = Array.isArray(users) && users.length > 0 ? users : [_getMyPresencePayload()];
+    // 접속자 목록 레벨 높은 순(내림차순) 정렬
+    const rawList = Array.isArray(users) && users.length > 0 ? [...users] : [_getMyPresencePayload()];
+    const list = rawList.sort((a, b) => {
+      const lvlA = typeof a.level === 'number' ? a.level : 1;
+      const lvlB = typeof b.level === 'number' ? b.level : 1;
+      return lvlB - lvlA;
+    });
+
     if (countEl) countEl.textContent = `${list.length}명`;
 
     let myPresenceKey = null;
@@ -890,6 +912,150 @@
         }
       });
     });
+  }
+
+  /* ── 💬 로비 전체 실시간 채팅방 ── */
+  function _initLobbyChat() {
+    const form = $('lobby-chat-form');
+    const input = $('lobby-chat-input');
+    const messagesContainer = $('lobby-chat-messages');
+    if (!form || !input || !messagesContainer) return;
+
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.initLobbyChat === 'function') {
+      AppSupabase.initLobbyChat((msg) => {
+        _appendLobbyChatMessage(msg, false);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const rawText = input.value ? input.value.trim() : '';
+      if (!rawText) return;
+
+      const text = rawText.slice(0, 80);
+      input.value = '';
+
+      let myKey = null;
+      try { myKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
+      if (!myKey) myKey = 'usr_' + Math.random().toString(36).substring(2, 8);
+
+      const msgPayload = {
+        id: 'lchat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+        name: myNickname || '플레이어',
+        avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
+        avatarColor: myAvatarColor || '#38a169',
+        level: myLevel || 1,
+        text: text,
+        senderKey: myKey,
+        timestamp: Date.now()
+      };
+
+      // 보낸 즉시 로컬 화면에 표시
+      _appendLobbyChatMessage(msgPayload, true);
+
+      // 모바일 채팅 뱃지 해제
+      const badge = $('lobby-mobile-chat-badge');
+      if (badge) badge.classList.add('hidden');
+
+      // Supabase Broadcast로 접속 중인 모든 사용자에게 전송
+      if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.sendLobbyChatMessage === 'function') {
+        AppSupabase.sendLobbyChatMessage(msgPayload);
+      }
+    });
+
+    // ── 📱 모바일 로비 채팅 팝업 바텀시트 제어 ──
+    function _openLobbyMobileChat() {
+      _pushHistory({ modal: 'lobby_chat' }, '#lobby_chat');
+      const chatCard = $('lobby-chat-card');
+      const backdrop = $('lobby-mobile-chat-backdrop');
+      const badge = $('lobby-mobile-chat-badge');
+      if (chatCard) chatCard.classList.add('mobile-open');
+      if (backdrop) backdrop.classList.remove('hidden');
+      if (badge) badge.classList.add('hidden');
+      const input = $('lobby-chat-input');
+      if (input) setTimeout(() => input.focus(), 150);
+    }
+
+    function _closeLobbyMobileChat() {
+      if (_backHistoryIfModal('lobby_chat')) return;
+      const chatCard = $('lobby-chat-card');
+      const backdrop = $('lobby-mobile-chat-backdrop');
+      if (chatCard) chatCard.classList.remove('mobile-open');
+      if (backdrop) backdrop.classList.add('hidden');
+    }
+
+    if ($('btn-lobby-mobile-chat-toggle')) $('btn-lobby-mobile-chat-toggle').addEventListener('click', _openLobbyMobileChat);
+    if ($('btn-close-lobby-mobile-chat')) $('btn-close-lobby-mobile-chat').addEventListener('click', _closeLobbyMobileChat);
+    if ($('lobby-mobile-chat-backdrop')) $('lobby-mobile-chat-backdrop').addEventListener('click', _closeLobbyMobileChat);
+  }
+
+  function _appendLobbyChatMessage(msg, isLocal) {
+    const box = $('lobby-chat-messages');
+    if (!box || !msg || !msg.text) return;
+
+    // 첫 메시지 전송 시 환영 메시지 안내 제거
+    const welcomeEl = box.querySelector('.lobby-chat-welcome');
+    if (welcomeEl) {
+      welcomeEl.remove();
+    }
+
+    let myKey = null;
+    try { myKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
+    const isMe = isLocal || (myKey && msg.senderKey === myKey) || (msg.name === myNickname);
+
+    // 모바일에서 채팅창이 닫혀 있을 때 새 메시지 뱃지 표시
+    if (window.innerWidth <= 960 && !isMe) {
+      const chatCard = $('lobby-chat-card');
+      if (chatCard && !chatCard.classList.contains('mobile-open')) {
+        const badge = $('lobby-mobile-chat-badge');
+        if (badge) badge.classList.remove('hidden');
+      }
+    }
+
+    const uname = msg.name || '플레이어';
+    const uicon = msg.avatarIcon || 'fa-solid fa-dog';
+    const ucolor = msg.avatarColor || '#38a169';
+    const ulevel = typeof msg.level === 'number' ? msg.level : 1;
+    const tierClass = _getLevelTierClass(ulevel);
+    const textSafe = _escapeHtml(msg.text);
+
+    const msgEl = document.createElement('div');
+    msgEl.className = `lobby-chat-msg ${isMe ? 'is-me' : ''}`;
+    msgEl.innerHTML = `
+      <span class="lobby-chat-prefix">
+        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
+      </span>
+      <span class="lobby-chat-colon">:</span>
+      <span class="lobby-chat-text">${textSafe}</span>
+    `;
+
+    // 닉네임 클릭 시 해당 플레이어 전적 모달 열기
+    const nameEl = msgEl.querySelector('.lobby-chat-name');
+    if (nameEl) {
+      nameEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isMe) {
+          _openPlayerStatsModal();
+        } else {
+          _openPlayerStatsModal({
+            name: uname,
+            avatarIcon: uicon,
+            avatarColor: ucolor,
+            level: ulevel
+          });
+        }
+      });
+    }
+
+    box.appendChild(msgEl);
+
+    // 메시지 최대 150개 유지
+    while (box.children.length > 150) {
+      box.removeChild(box.firstChild);
+    }
+
+    // 새 메시지 시 하단으로 자동 스크롤
+    box.scrollTop = box.scrollHeight;
   }
 
   /* ── 👑 참가자 프로필 & 방장 관리 드롭다운 (전적 보기 / 강퇴) ── */
@@ -4242,7 +4408,8 @@
   _initSupabaseAuthUI();
   _initStatsUI();
   _initOnlineUsersPresence();
-  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템 & 실시간 접속자)');
+  _initLobbyChat();
+  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템 & 실시간 접속자 & 로비 채팅)');
 
 
 
@@ -4265,6 +4432,11 @@
     }
     if ($('overlay-room-password') && !$('overlay-room-password').classList.contains('hidden')) {
       $('overlay-room-password').classList.add('hidden');
+      return;
+    }
+    if ($('lobby-chat-card') && $('lobby-chat-card').classList.contains('mobile-open')) {
+      $('lobby-chat-card').classList.remove('mobile-open');
+      if ($('lobby-mobile-chat-backdrop')) $('lobby-mobile-chat-backdrop').classList.add('hidden');
       return;
     }
     if ($('room-chat-panel') && $('room-chat-panel').classList.contains('mobile-open')) {

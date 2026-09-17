@@ -138,8 +138,8 @@ body {
 .lobby-topbar-left {
   display: flex;
   align-items: center;
-  min-width: 0;
-  flex: 1;
+  width: 40px;
+  flex: 0 0 40px;
 }
 
 .topbar-logo {
@@ -148,6 +148,8 @@ body {
   gap: 12px;
   user-select: none;
   cursor: default;
+  overflow: visible;
+  white-space: nowrap;
 }
 .topbar-logo .logo-icon-wrap {
   width: 38px;
@@ -173,6 +175,8 @@ body {
   letter-spacing: -0.5px;
   font-family: var(--font);
   line-height: 1;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 .lobby-badge {
@@ -182,11 +186,17 @@ body {
 }
 
 .lobby-topbar .room-title {
-  flex: 0 0 auto;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  min-width: 0;
 }
 
 .lobby-topbar .room-header-actions {
-  flex: 1;
+  flex: 0 0 40px;
+  width: 40px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -549,17 +559,17 @@ body {
 /* ── 🌟 현재 사이트 접속자 카드 ── */
 .online-users-card {
   flex: 1;
-  min-height: 130px;
+  min-height: 160px;
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  padding: 14px 18px;
+  padding: 12px 16px;
   box-sizing: border-box;
   overflow: hidden;
-  gap: 10px;
+  gap: 8px;
 }
 
 .online-card-header {
@@ -567,38 +577,38 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border-sub);
 }
 
 .online-card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
+  gap: 7px;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--t1);
 }
 
 .online-live-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #38a169;
-  box-shadow: 0 0 8px rgba(56, 161, 105, 0.7);
+  box-shadow: 0 0 6px rgba(56, 161, 105, 0.7);
   animation: pulseLive 2s infinite;
 }
 
 @keyframes pulseLive {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(56, 161, 105, 0); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(56, 161, 105, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); }
 }
 
 .online-count-badge {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  padding: 2px 8px;
+  padding: 1px 7px;
   border-radius: 10px;
   background: var(--green-tint);
   color: var(--green-deep);
@@ -611,15 +621,15 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   padding-right: 2px;
 }
 
 .online-user-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 10px;
+  gap: 8px;
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   border: 1px solid var(--border-sub);
@@ -639,14 +649,14 @@ body {
 }
 
 .online-user-item .user-avatar.sm {
-  width: 32px;
-  height: 32px;
-  font-size: 0.85rem;
+  width: 26px;
+  height: 26px;
+  font-size: 0.75rem;
   box-shadow: none;
 }
 
 .online-user-item .user-avatar-wrap .user-level-badge {
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   padding: 0 3px;
   bottom: -4px;
 }
@@ -660,7 +670,7 @@ body {
 }
 
 .online-user-name {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 800;
   color: var(--t1);
   white-space: nowrap;
@@ -668,21 +678,21 @@ body {
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .online-me-badge {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   color: var(--green-deep);
   background: var(--green-tint);
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 4px;
   line-height: 1.2;
 }
 
 .online-user-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--t3);
   font-weight: 600;
 }
@@ -695,6 +705,193 @@ body {
 .online-user-item:hover .btn-view-stats {
   opacity: 1;
   color: var(--green);
+}
+
+/* ── 💬 로비 전체 실시간 채팅 카드 ── */
+.lobby-chat-card {
+  flex: 0 0 175px;
+  height: 175px;
+  max-height: 185px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 5px;
+}
+
+.lobby-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-sub);
+}
+
+.lobby-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--t1);
+}
+
+.lobby-chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 4px;
+}
+
+.lobby-chat-welcome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--t3);
+  padding: 5px 8px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  margin-bottom: 2px;
+}
+
+.lobby-chat-msg {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  word-break: break-word;
+  line-height: 1.35;
+  font-size: 0.8rem;
+  padding: 1px 0;
+}
+
+.lobby-chat-prefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.lobby-chat-bracket {
+  color: var(--t3);
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.lobby-chat-avatar {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.52rem;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0 1px;
+}
+
+.lobby-chat-lvl {
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: var(--bg-hover);
+  color: var(--t2);
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.lobby-chat-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--t1);
+  cursor: pointer;
+}
+
+.lobby-chat-name:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.lobby-chat-colon {
+  color: var(--t3);
+  font-weight: 700;
+  margin: 0 2px 0 1px;
+  flex-shrink: 0;
+}
+
+.lobby-chat-text {
+  color: var(--t1);
+  flex: 1;
+  font-weight: 500;
+}
+
+.lobby-chat-msg.is-me .lobby-chat-text {
+  color: var(--green-deep);
+  font-weight: 600;
+}
+
+.lobby-chat-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-sub);
+}
+
+.lobby-chat-input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 9px;
+  font-size: 0.78rem;
+  color: var(--t1);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lobby-chat-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px var(--green-tint);
+}
+
+.btn-lobby-chat-send {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.btn-icon.rotating i {
+  animation: spinRefresh 0.6s linear infinite;
+}
+
+@keyframes spinRefresh {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 960px) {
@@ -774,19 +971,67 @@ body {
     height: 52px !important;
     min-height: 52px !important;
     max-height: 52px !important;
-    padding: 0 10px !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+  .lobby-topbar-left {
+    display: flex !important;
+    align-items: center !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    flex: 0 0 32px !important;
+  }
+  .lobby-topbar .room-title {
+    flex: 1 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+  .lobby-topbar .room-header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    flex: 0 0 32px !important;
   }
   .topbar-logo {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 8px !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
   }
   .topbar-logo .logo-icon-wrap {
     width: 28px !important;
     height: 28px !important;
     font-size: 0.85rem !important;
     border-radius: 7px !important;
+    flex-shrink: 0 !important;
   }
   .topbar-logo .logo-title {
-    font-size: 0.95rem !important;
+    font-size: clamp(1.1rem, 4.2vw, 1.32rem) !important;
+    font-weight: 900 !important;
+    color: var(--t1) !important;
+    letter-spacing: -0.5px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    line-height: 1 !important;
   }
   .topbar-logo .logo-sub {
     display: none !important;
@@ -987,6 +1232,68 @@ body {
   .online-user-item {
     flex-shrink: 0 !important;
     padding: 4px 8px !important;
+  }
+  .online-user-sub {
+    display: none !important;
+  }
+  .online-user-item .btn-view-stats {
+    display: none !important;
+  }
+  .lobby-chat-card {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 72vh !important;
+    height: 72dvh !important;
+    max-height: 520px !important;
+    z-index: 999 !important;
+    border-radius: 20px 20px 0 0 !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35) !important;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
+    border-bottom: none !important;
+    transform: translateY(105%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    padding: 14px 16px 16px !important;
+    gap: 8px !important;
+  }
+  .lobby-chat-card.mobile-open {
+    transform: translateY(0) !important;
+  }
+  .lobby-chat-card .lobby-chat-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid var(--border-sub) !important;
+  }
+  .lobby-chat-card .lobby-chat-messages {
+    flex: 1 !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding-right: 4px !important;
+  }
+  .lobby-chat-card .lobby-chat-form {
+    padding-top: 8px !important;
+    border-top: 1px solid var(--border-sub) !important;
+  }
+  .lobby-chat-card .lobby-chat-input {
+    height: 38px !important;
+    font-size: 0.9rem !important;
+  }
+  .lobby-chat-card .btn-lobby-chat-send {
+    height: 38px !important;
+    padding: 0 16px !important;
+    font-size: 0.9rem !important;
+  }
+  #btn-close-lobby-mobile-chat {
+    display: inline-flex !important;
   }
 
   /* 🌟 방 만들기 / 참가 카드 (콤팩트 축소 + 큼직한 버튼/글씨) 🌟 */
@@ -1737,7 +2044,7 @@ body {
 .room-capacity i { color: var(--green); }
 
 @media (max-width: 640px) {
-  .room-header {
+  .room-header:not(.lobby-topbar) {
     padding: 10px 14px;
     display: grid;
     grid-template-columns: auto auto;
