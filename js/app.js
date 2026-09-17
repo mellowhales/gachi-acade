@@ -1706,7 +1706,7 @@
   }
 
   /* =====================================================================
-     👥 친구 시스템 및 실시간 방 초대 알림 (상호 승인제 & 고유 식별자 지원)
+     친구 시스템 및 실시간 방 초대 알림 (상호 승인제 & 고유 식별자 지원)
      ===================================================================== */
   let _friendsList = [];
   let _sentFriendRequests = [];
@@ -2000,7 +2000,7 @@
   }
 
   /**
-   * 📤 친구 신청 발송 (전적 모달 등에서 호출)
+   * 친구 신청 발송 (전적 모달 등에서 호출)
    */
   async function _sendFriendRequest(targetUser) {
     if (!targetUser || !targetUser.name) return;
@@ -2050,7 +2050,7 @@
         if (!_sentFriendRequests.includes(cleanName)) _sentFriendRequests.push(cleanName);
         _saveSentFriendRequests();
 
-        showToast(`'${cleanName}'님에게 친구 신청을 보냈습니다! 상대방이 수락하면 친구가 됩니다.`, 'success');
+        showToast(`'${cleanName}'님에게 친구 신청을 보냈습니다.`, 'success');
         _updateStatsModalFriendBtn(targetUser);
       } else {
         showToast('친구 신청 전송에 실패했습니다. 네트워크 상태를 확인해주세요.', 'error');
@@ -2061,7 +2061,7 @@
   }
 
   /**
-   * 📥 친구 신청 수락
+   * 친구 신청 수락
    */
   async function _acceptFriendRequest(req) {
     if (!req) return;
@@ -2107,7 +2107,7 @@
     }
     _receivedFriendRequests = _receivedFriendRequests.filter(r => r.fromKey !== req.fromKey);
 
-    showToast(`'${req.fromName}'님의 친구 신청을 수락했습니다! 이제 친구입니다.`, 'success');
+    showToast(`'${req.fromName}'님의 친구 신청을 수락했습니다. 이제 친구입니다.`, 'success');
     _renderFriendsModalContent();
 
     if (_currentInspectedPlayer && _currentInspectedPlayer.name === req.fromName) {
@@ -2116,7 +2116,7 @@
   }
 
   /**
-   * ❌ 친구 신청 거절
+   * 친구 신청 거절
    */
   async function _rejectFriendRequest(req) {
     if (!req) return;
@@ -2168,7 +2168,7 @@
     if (window.FirebaseLobby && typeof window.FirebaseLobby.sendRoomInvite === 'function') {
       window.FirebaseLobby.sendRoomInvite(friendName, payload).then(ok => {
         if (ok) {
-          showToast(`'${friendName}'님에게 방 초대를 보냈습니다!`, 'success');
+          showToast(`'${friendName}'님에게 방 초대를 보냈습니다.`, 'success');
         } else {
           showToast('초대장 전송에 실패했습니다.', 'error');
         }
@@ -2214,7 +2214,7 @@
         if (window.FirebaseLobby && typeof window.FirebaseLobby.removeRoomInvite === 'function') {
           window.FirebaseLobby.removeRoomInvite(myNickname);
         }
-        showToast(`${invite.fromName}님의 방(${invite.roomCode})으로 입장합니다!`, 'info');
+        showToast(`${invite.fromName}님의 방(${invite.roomCode})으로 입장합니다.`, 'info');
         _startJoinRoom(invite.roomCode);
       };
     }
@@ -2329,7 +2329,7 @@
               if (typeof Sound !== 'undefined' && typeof Sound.playWordSubmit === 'function') {
                 try { Sound.playWordSubmit(); } catch (_) {}
               }
-              showToast(`💌 '${latest.fromName}'님으로부터 친구 신청이 도착했습니다!`, 'info');
+              showToast(`'${latest.fromName}'님으로부터 친구 신청이 도착했습니다.`, 'info');
             }
           }
 
@@ -2370,7 +2370,7 @@
             if (typeof Sound !== 'undefined' && typeof Sound.playWinSound === 'function') {
               try { Sound.playWinSound(); } catch (_) {}
             }
-            showToast(`🎉 '${friendName}'님이 친구 신청을 수락했습니다! 이제 친구입니다.`, 'success');
+            showToast(`'${friendName}'님이 친구 신청을 수락했습니다. 이제 친구입니다.`, 'success');
             _renderFriendsModalContent();
 
             if (_currentInspectedPlayer && _currentInspectedPlayer.name === friendName) {
@@ -5197,15 +5197,11 @@
     const emptyCount = Math.max(0, currentRoomMaxPlayers - playerCount);
     for (let i = 0; i < emptyCount; i++) {
       const slot = document.createElement('div');
-      slot.className = 'player-slot-empty can-invite';
-      slot.title = '클릭하여 친구 초대하기';
+      slot.className = 'player-slot-empty';
       slot.innerHTML = `
         <div class="slot-avatar"><i class="fa-solid fa-user-plus"></i></div>
-        <div class="slot-text">참가자 대기 중... <span class="slot-invite-tag"><i class="fa-solid fa-paper-plane"></i> 친구 초대</span></div>
+        <div class="slot-text">참가자 대기 중...</div>
       `;
-      slot.addEventListener('click', () => {
-        _openFriendsModal('list');
-      });
       slotsEl.appendChild(slot);
     }
 

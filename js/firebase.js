@@ -483,7 +483,7 @@ const FirebaseLobby = {
   },
 
   /**
-   * ── 🤝 실시간 친구 신청 및 수락/거절 시스템 ──
+   * ── 실시간 친구 신청 및 수락/거절 시스템 ──
    */
   async sendFriendRequest(targetKey, targetName, requestData) {
     if (!_db || !targetKey || !requestData) return false;
