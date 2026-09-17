@@ -1214,6 +1214,18 @@
       _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
     }
 
+    if (isHostPlayer && currentRoomCode && window.FirebaseLobby && typeof window.FirebaseLobby.updateRoomHostProfile === 'function') {
+      window.FirebaseLobby.updateRoomHostProfile(currentRoomCode, {
+        hostProfileCard: myProfileCard,
+        hostLevel: myLevel,
+        hostNameColor: myNicknameColor || null
+      });
+    }
+
+    if (typeof _renderOnlineUsersList === 'function' && typeof _lastOnlineUsers !== 'undefined' && Array.isArray(_lastOnlineUsers)) {
+      _renderOnlineUsersList(_lastOnlineUsers);
+    }
+
     if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
   }
 
@@ -1326,6 +1338,13 @@
       const isPlaying = room.status === 'playing';
       const isLock = isLockRoom(room);
 
+      const isMyHostedRoom = (room.hostPeerId && room.hostPeerId === P2P.getMyId()) || (room.hostName === myNickname);
+      const hostLevel = isMyHostedRoom ? myLevel : (room.hostLevel || 1);
+      const hostTierClass = _getLevelTierClass(hostLevel);
+      const hostCardTheme = isMyHostedRoom ? myProfileCard : (room.hostProfileCard || 'default');
+      const hostCardThemeClass = (hostCardTheme && hostCardTheme !== 'default') ? `pcard-theme-${hostCardTheme}` : '';
+      const hostNameColor = isMyHostedRoom ? myNicknameColor : (room.hostNameColor || null);
+
       const card = document.createElement('div');
       card.className = `lobby-room-card ${isPlaying ? 'is-playing' : (isFull ? 'is-full' : '')}`;
       card.innerHTML = `
@@ -1340,10 +1359,13 @@
           <span class="lrc-count-badge"><i class="fa-solid fa-users"></i> ${pCount}/${maxP}명</span>
         </div>
         <div class="lrc-row-bottom">
-          <div class="lrc-host-info">
-            <div class="lrc-host-avatar" style="background:${room.hostAvatarColor || '#38a169'};"><i class="${room.hostAvatarIcon || 'fa-solid fa-paw'}"></i></div>
+          <div class="lrc-host-info ${hostCardThemeClass}">
+            <div class="user-avatar-wrap">
+              <div class="lrc-host-avatar" style="background:${room.hostAvatarColor || '#38a169'};"><i class="${room.hostAvatarIcon || 'fa-solid fa-paw'}"></i></div>
+              <span class="user-level-badge sm ${hostTierClass}">${hostLevel}</span>
+            </div>
             <div class="lrc-host-meta">
-              <strong class="lrc-host-name" style="${room.hostNameColor ? `color:${room.hostNameColor}; font-weight:800;` : ''}">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
+              <strong class="lrc-host-name" style="${hostNameColor ? `color:${hostNameColor}; font-weight:800;` : ''}">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
             </div>
           </div>
           <button type="button" class="btn ${isPlaying ? 'btn-danger is-playing-btn' : 'btn-primary'} btn-sm lrc-join-btn ${isFull ? 'disabled' : ''}">
@@ -1548,6 +1570,8 @@
       const ulevel = isMe ? myLevel : (user.level || 1);
       const tierClass = _getLevelTierClass(ulevel);
       const statsObj = isMe ? _getMyStats() : user.stats;
+      const ucard = isMe ? myProfileCard : (user.profileCard || 'default');
+      const cardThemeClass = (ucard && ucard !== 'default') ? `pcard-theme-${ucard}` : '';
 
       let winRateStr = '전적 없음';
       if (statsObj && statsObj.total && typeof statsObj.total.plays === 'number' && statsObj.total.plays > 0) {
@@ -1558,7 +1582,7 @@
       }
 
       return `
-        <div class="online-user-item ${isMe ? 'is-me' : ''}" data-idx="${idx}" title="${_escapeHtml(uname)}님의 전적 보기">
+        <div class="online-user-item ${cardThemeClass} ${isMe ? 'is-me' : ''}" data-idx="${idx}" title="${_escapeHtml(uname)}님의 전적 보기">
           <div class="user-avatar-wrap">
             <div class="user-avatar sm" style="background: ${ucolor};">
               <i class="${uicon}"></i>
@@ -1566,7 +1590,7 @@
             <span class="user-level-badge ${tierClass}">${ulevel}</span>
           </div>
           <div class="online-user-info">
-            <span class="online-user-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}">
+            <span class="online-user-name" style="${unameColor ? `color:${unameColor} !important; font-weight:800;` : ''}">
               ${_escapeHtml(uname)}
               ${isMe ? '<span class="online-me-badge">나</span>' : ''}
             </span>
@@ -2802,8 +2826,13 @@
     if (nameEl) {
       nameEl.textContent = name || '플레이어';
       const actualNameColor = isMe ? myNicknameColor : (nameColor || '');
-      nameEl.style.color = actualNameColor || '';
-      nameEl.style.fontWeight = actualNameColor ? '800' : '';
+      if (actualNameColor) {
+        nameEl.style.setProperty('color', actualNameColor, 'important');
+        nameEl.style.fontWeight = '800';
+      } else {
+        nameEl.style.removeProperty('color');
+        nameEl.style.fontWeight = '';
+      }
     }
     const levelEl = $('stats-user-level');
     if (levelEl) {
@@ -3191,7 +3220,9 @@
           myAvatarColor,
           isPrivate,
           !!currentRoomPassword,
-          myNicknameColor
+          myNicknameColor,
+          myLevel,
+          myProfileCard
         );
       }
 

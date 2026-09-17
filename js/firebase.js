@@ -37,7 +37,7 @@ const FirebaseLobby = {
   /**
    * 방 생성 — Firebase /rooms/{code} 에 방 정보 등록 + onDisconnect 자동 삭제 훅
    */
-  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword, hostNameColor) {
+  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword, hostNameColor, hostLevel, hostProfileCard) {
     if (!_db) return;
     _myRoomCode = roomCode;
     _myRoomRef  = ref(_db, `rooms/${roomCode}`);
@@ -48,6 +48,8 @@ const FirebaseLobby = {
       hostNameColor:   hostNameColor || null,
       hostAvatarIcon:  hostAvatarIcon || 'fa-solid fa-paw',
       hostAvatarColor: hostAvatarColor || '#38a169',
+      hostLevel:       typeof hostLevel === 'number' ? hostLevel : 1,
+      hostProfileCard: hostProfileCard || 'default',
       playerCount:     1,
       maxPlayers:      maxPlayers || 5,
       isPrivate:       !!isPrivate,
@@ -131,6 +133,26 @@ const FirebaseLobby = {
       console.log('[Firebase] 방장 정보 업데이트 완료');
     } catch (err) {
       console.error('[Firebase] 방장 정보 업데이트 실패:', err);
+    }
+  },
+
+  /**
+   * 방장의 프로필 정보 (프로필 카드, 레벨, 닉네임 색상 등) 실시간 업데이트
+   */
+  async updateRoomHostProfile(roomCode, hostData) {
+    if (!_db) return;
+    const code = roomCode || _myRoomCode;
+    if (!code || !hostData || typeof hostData !== 'object') return;
+    try {
+      const roomSnap = await get(ref(_db, `rooms/${code}`));
+      if (!roomSnap.exists()) return;
+      await update(ref(_db, `rooms/${code}`), {
+        ...hostData,
+        lastSeen: Date.now()
+      });
+      console.log('[Firebase] 방장 프로필 업데이트 완료');
+    } catch (err) {
+      console.error('[Firebase] 방장 프로필 업데이트 실패:', err);
     }
   },
 
