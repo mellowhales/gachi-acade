@@ -22,6 +22,7 @@ const firebaseConfig = {
 let _app, _db;
 let _myRoomCode = null;
 let _myRoomRef  = null;
+let _roomHeartbeatInterval = null;
 let _lobbyListenerRef = null;
 
 try {
@@ -51,13 +52,23 @@ const FirebaseLobby = {
       isPrivate:       !!isPrivate,
       hasPassword:     !!hasPassword,
       status:          'waiting',
-      createdAt:       Date.now()
+      createdAt:       Date.now(),
+      lastSeen:        Date.now()
     };
 
     try {
       await set(_myRoomRef, roomData);
       // 방장 브라우저가 꺼지거나 연결이 끊기면 자동으로 방 데이터 삭제
       dbOnDisconnect(_myRoomRef).remove();
+
+      // 방장 생존 하트비트 (15초마다 방 lastSeen 최신화)
+      if (_roomHeartbeatInterval) clearInterval(_roomHeartbeatInterval);
+      _roomHeartbeatInterval = setInterval(() => {
+        if (_myRoomRef && _myRoomCode) {
+          update(_myRoomRef, { lastSeen: Date.now() }).catch(() => {});
+        }
+      }, 15000);
+
       console.log('[Firebase] 방 등록 완료:', roomCode);
     } catch (err) {
       console.error('[Firebase] 방 등록 실패:', err);
@@ -72,7 +83,9 @@ const FirebaseLobby = {
     const code = roomCode || _myRoomCode;
     if (!code) return;
     try {
-      await update(ref(_db, `rooms/${code}`), { playerCount: count });
+      const roomSnap = await get(ref(_db, `rooms/${code}`));
+      if (!roomSnap.exists()) return; // 이미 삭제/종료된 방에 부분 업데이트로 인한 유령 방 재생성 방지
+      await update(ref(_db, `rooms/${code}`), { playerCount: count, lastSeen: Date.now() });
     } catch (err) {
       console.error('[Firebase] 인원 수 업데이트 실패:', err);
     }
@@ -84,6 +97,10 @@ const FirebaseLobby = {
   async removeRoom(roomCode) {
     if (!_db) return;
     const code = roomCode || _myRoomCode;
+    if (_roomHeartbeatInterval) {
+      clearInterval(_roomHeartbeatInterval);
+      _roomHeartbeatInterval = null;
+    }
     if (!code) return;
     try {
       await remove(ref(_db, `rooms/${code}`));
@@ -103,9 +120,12 @@ const FirebaseLobby = {
     const code = roomCode || _myRoomCode;
     if (!code) return;
     try {
+      const roomSnap = await get(ref(_db, `rooms/${code}`));
+      if (!roomSnap.exists()) return;
       await update(ref(_db, `rooms/${code}`), {
         hostName:   newHostName,
-        hostPeerId: newHostPeerId
+        hostPeerId: newHostPeerId,
+        lastSeen:   Date.now()
       });
       console.log('[Firebase] 방장 정보 업데이트 완료');
     } catch (err) {
@@ -121,7 +141,9 @@ const FirebaseLobby = {
     const code = roomCode || _myRoomCode;
     if (!code) return;
     try {
-      await update(ref(_db, `rooms/${code}`), { status });
+      const roomSnap = await get(ref(_db, `rooms/${code}`));
+      if (!roomSnap.exists()) return;
+      await update(ref(_db, `rooms/${code}`), { status, lastSeen: Date.now() });
     } catch (err) {
       console.error('[Firebase] status 업데이트 실패:', err);
     }
@@ -134,7 +156,33 @@ const FirebaseLobby = {
     if (!_db) return;
     _lobbyListenerRef = ref(_db, 'rooms');
     onValue(_lobbyListenerRef, (snapshot) => {
-      callback(snapshot.val());
+      const val = snapshot.val();
+      if (!val || typeof val !== 'object') {
+        callback(null);
+        return;
+      }
+      const now = Date.now();
+      const validRooms = {};
+      Object.keys(val).forEach(code => {
+        const r = val[code];
+        if (!r || typeof r !== 'object') return;
+        // 1. 호스트 정보(Peer ID 또는 호스트 이름)가 누락된 유령 방 자동 정리 및 제거
+        if (!r.hostPeerId && !r.hostName) {
+          remove(ref(_db, `rooms/${code}`)).catch(() => {});
+          return;
+        }
+        // 2. 하트비트가 45초 이상 끊겼거나 6시간 이상 경과한 방 자동 정리 및 제거
+        if (r.lastSeen && (now - r.lastSeen > 45000)) {
+          remove(ref(_db, `rooms/${code}`)).catch(() => {});
+          return;
+        }
+        if (r.createdAt && (now - r.createdAt > 6 * 60 * 60 * 1000)) {
+          remove(ref(_db, `rooms/${code}`)).catch(() => {});
+          return;
+        }
+        validRooms[code] = r;
+      });
+      callback(Object.keys(validRooms).length > 0 ? validRooms : null);
     }, (err) => {
       console.error('[Firebase] 로비 수신 오류:', err);
       callback(null);
@@ -297,6 +345,13 @@ let _presenceHeartbeatInterval = null;
 
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeunload', () => {
+    if (_roomHeartbeatInterval) {
+      clearInterval(_roomHeartbeatInterval);
+      _roomHeartbeatInterval = null;
+    }
+    if (_db && _myRoomRef) {
+      remove(_myRoomRef).catch(() => {});
+    }
     if (_db && _myUserPresenceRef) {
       remove(_myUserPresenceRef).catch(() => {});
     }

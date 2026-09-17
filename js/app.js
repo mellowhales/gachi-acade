@@ -363,6 +363,11 @@
 
   // 설정 열기 버튼들
   if ($('btn-open-settings')) $('btn-open-settings').addEventListener('click', _openSettingsModal);
+  if ($('btn-marketplace')) {
+    $('btn-marketplace').addEventListener('click', () => {
+      showToast('준비 중입니다!', 'info');
+    });
+  }
   if ($('btn-toggle-sound')) $('btn-toggle-sound').addEventListener('click', _openSettingsModal);
   if ($('btn-room-settings')) $('btn-room-settings').addEventListener('click', _openSettingsModal);
   if ($('btn-game-settings')) $('btn-game-settings').addEventListener('click', _openSettingsModal);
@@ -690,7 +695,18 @@
       return;
     }
 
-    const allEntries = Object.entries(roomsData).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+    const now = Date.now();
+    const allEntries = Object.entries(roomsData)
+      .filter(([code, room]) => {
+        if (!room || typeof room !== 'object') return false;
+        // 1. 호스트 정보(Peer ID 또는 호스트 닉네임)가 전혀 없는 유령 방 제외
+        if (!room.hostPeerId && !room.hostName) return false;
+        // 2. 45초 이상 무응답 하트비트 또는 6시간 이상 경과한 방 제외
+        if (room.lastSeen && (now - room.lastSeen > 45000)) return false;
+        if (room.createdAt && (now - room.createdAt > 6 * 60 * 60 * 1000)) return false;
+        return true;
+      })
+      .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
 
     // 🌟 탭에 따라 전체 / 공개방 / 비밀방 필터링
     const roomEntries = allEntries.filter(([code, room]) => {

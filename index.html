@@ -50,8 +50,12 @@
 
   <!-- 🌟 로비 상단 바 🌟 -->
   <header class="room-header lobby-topbar">
-    <!-- 좌측 균형 영역 -->
-    <div class="lobby-topbar-left"></div>
+    <!-- 좌측: 마켓플레이스 버튼 -->
+    <div class="lobby-topbar-left">
+      <button type="button" class="btn-icon" id="btn-marketplace" title="마켓플레이스">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </button>
+    </div>
 
     <!-- 중앙: 가치아케이드 로고 -->
     <div class="room-title">
@@ -931,6 +935,11 @@
 
   <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
   <div class="profile-preview-area">
+    <!-- 통계 아이콘 미니 버튼 (아바타 카드 좌측 상단, 코인 반대편) -->
+    <button type="button" class="profile-preview-stats-btn" id="btn-open-my-stats" title="내 전적 통계 보기">
+      <i class="fa-solid fa-chart-simple"></i>
+    </button>
+
     <!-- 코인 미니 뱃지 (아바타 카드 맨 오른쪽 상단) -->
     <div class="profile-preview-badges">
       <span class="profile-mini-coin"><i class="fa-solid fa-coins"></i> <span id="profile-coin-amount">0</span></span>
@@ -991,14 +1000,6 @@
   <div class="profile-section">
     <label class="profile-section-label">배경 색상</label>
     <div class="avatar-color-grid" id="avatar-color-grid"></div>
-  </div>
-
-  <!-- 내 전적 보기 버튼 -->
-  <div>
-    <button type="button" class="btn btn-secondary btn-sm" id="btn-open-my-stats" style="width:100%; padding:9px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;">
-      <i class="fa-solid fa-chart-simple" style="color:var(--primary);"></i>
-      <span>내 전적 보기</span>
-    </button>
   </div>
 
   <!-- 버튼 -->
