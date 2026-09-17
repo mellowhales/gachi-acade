@@ -52,8 +52,8 @@
   <header class="room-header lobby-topbar">
     <!-- 좌측: 마켓플레이스 버튼 -->
     <div class="lobby-topbar-left">
-      <button type="button" class="btn-icon" id="btn-marketplace" title="마켓플레이스">
-        <i class="fa-solid fa-cart-shopping"></i>
+      <button type="button" class="btn-icon" id="btn-marketplace" title="상점 열기">
+        <i class="fa-solid fa-store"></i>
       </button>
     </div>
 
@@ -537,8 +537,9 @@
       </div>
     </div>
 
-    <!-- 2. 중앙: 게임 선택 + 컨트롤 -->
-    <section class="room-center-panel card">
+    <!-- 2. 중앙: 게임 선택 카드 + 하단 팁 -->
+    <div class="room-center-wrap">
+      <section class="room-center-panel card">
       <!-- 🎮 게임 진행 중 알림 배너 -->
       <div class="room-playing-alert hidden" id="room-playing-alert">
         <i class="fa-solid fa-circle-play"></i>
@@ -721,6 +722,13 @@
         <p class="ready-hint" id="ready-hint">모든 참가자가 준비해야 시작할 수 있습니다.</p>
       </div>
     </section>
+
+    <!-- 🌟 방 화면 하단 도움말/팁 바 (10초 랜덤 순환) 🌟 -->
+    <div class="room-tip-bar" id="room-tip-bar">
+      <i class="fa-solid fa-lightbulb room-tip-icon"></i>
+      <span class="room-tip-text" id="room-tip-text">Tip - 로그인을 하면 전적과 레벨 등의 정보를 저장할 수 있어요.</span>
+    </div>
+  </div>
 
     <!-- 3. 오른쪽: 방 실시간 채팅창 -->
     <section class="room-chat-panel card" id="room-chat-panel">

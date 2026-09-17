@@ -147,9 +147,11 @@ body {
   align-items: center;
   gap: 12px;
   user-select: none;
+  -webkit-user-select: none;
   cursor: default;
   overflow: visible;
   white-space: nowrap;
+  pointer-events: none;
 }
 .topbar-logo .logo-icon-wrap {
   width: 38px;
@@ -163,10 +165,12 @@ body {
   color: #ffffff;
   box-shadow: 0 2px 6px rgba(72, 187, 120, 0.25);
   flex-shrink: 0;
-  transition: transform 0.18s ease;
+  transform: none !important;
+  transition: none !important;
 }
-.topbar-logo:hover .logo-icon-wrap {
-  transform: scale(1.05);
+.topbar-logo:hover .logo-icon-wrap,
+.topbar-logo:active .logo-icon-wrap {
+  transform: none !important;
 }
 .topbar-logo .logo-title {
   font-size: 1.52rem;
@@ -281,6 +285,39 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 140px;
+}
+
+#btn-change-nickname {
+  width: 28px;
+  height: 28px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  color: var(--t2, #475569);
+  font-size: 0.84rem;
+  opacity: 1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+#btn-change-nickname:hover {
+  background: var(--green, #38a169) !important;
+  border-color: var(--green, #38a169) !important;
+  color: #ffffff !important;
+  transform: scale(1.08);
+}
+
+[data-theme="dark"] #btn-change-nickname {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
 }
 .user-avatar {
   width: 40px;
@@ -628,9 +665,9 @@ body {
 .online-user-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  border-radius: var(--radius-sm);
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
   background: var(--bg-subtle);
   border: 1px solid var(--border-sub);
   cursor: pointer;
@@ -654,7 +691,7 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 3.5px;
+  width: 4px;
   background: var(--green, #22c55e);
   pointer-events: none;
   z-index: 2;
@@ -663,14 +700,16 @@ body {
 }
 
 .online-user-item .user-avatar.sm {
-  width: 26px;
-  height: 26px;
-  font-size: 0.75rem;
+  width: 32px;
+  height: 32px;
+  font-size: 0.92rem;
   box-shadow: none;
 }
 
 .online-user-item .user-avatar-wrap .user-level-badge {
-  font-size: 0.52rem;
+  font-size: 0.58rem;
+  min-width: 15px;
+  height: 14px;
   padding: 0 3px;
   bottom: -4px;
 }
@@ -680,11 +719,11 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .online-user-name {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--t1);
   white-space: nowrap;
@@ -692,37 +731,37 @@ body {
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .online-me-badge {
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--green-deep);
   background: var(--green-tint);
-  padding: 1px 4px;
+  padding: 1px 5px;
   border-radius: 4px;
   line-height: 1.2;
 }
 
 .online-user-sub {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: var(--t3);
   font-weight: 600;
 }
 
 .btn-view-stats {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   padding: 0 !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border, #cbd5e1);
   color: var(--t2, #475569);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   opacity: 1 !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   transition: all 0.15s ease;
@@ -743,8 +782,10 @@ body {
   color: #e2e8f0;
 }
 
-/* 프로필 카드 테마가 착용된 아이템 내부 통계 버튼: 항상 100% 불투명하고 선명하게 노출 */
-[class*="pcard-theme-"] .btn-view-stats {
+/* 프로필 카드 테마가 착용된 아이템 내부 통계 및 프로필 설정 버튼: 항상 100% 불투명하고 선명하게 노출 */
+[class*="pcard-theme-"] .btn-view-stats,
+[class*="pcard-theme-"] #btn-change-nickname,
+[class*="pcard-theme-"] .profile-preview-stats-btn {
   background: #0f172a !important;
   border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
   color: #ffffff !important;
@@ -752,14 +793,18 @@ body {
   opacity: 1 !important;
 }
 
-[class*="pcard-theme-"] .btn-view-stats:hover {
+[class*="pcard-theme-"] .btn-view-stats:hover,
+[class*="pcard-theme-"] #btn-change-nickname:hover,
+[class*="pcard-theme-"] .profile-preview-stats-btn:hover {
   background: var(--green, #22c55e) !important;
   border-color: #ffffff !important;
   color: #ffffff !important;
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.5) !important;
 }
 
-.pcard-theme-royal-gold .btn-view-stats {
+.pcard-theme-royal-gold .btn-view-stats,
+.pcard-theme-royal-gold #btn-change-nickname,
+.pcard-theme-royal-gold .profile-preview-stats-btn {
   background: #ffffff !important;
   border: 1.5px solid rgba(184, 134, 11, 0.6) !important;
   color: #5c3d00 !important;
@@ -767,7 +812,9 @@ body {
   opacity: 1 !important;
 }
 
-.pcard-theme-royal-gold .btn-view-stats:hover {
+.pcard-theme-royal-gold .btn-view-stats:hover,
+.pcard-theme-royal-gold #btn-change-nickname:hover,
+.pcard-theme-royal-gold .profile-preview-stats-btn:hover {
   background: #5c3d00 !important;
   border-color: #ffd700 !important;
   color: #ffd700 !important;
@@ -775,9 +822,9 @@ body {
 
 /* ── 💬 로비 전체 실시간 채팅 카드 ── */
 .lobby-chat-card {
-  flex: 0 0 175px;
-  height: 175px;
-  max-height: 185px;
+  flex: 0 0 190px;
+  height: 190px;
+  max-height: 200px;
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -803,7 +850,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--t1);
 }
@@ -822,7 +869,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: var(--t3);
   padding: 5px 8px;
   background: var(--bg-subtle);
@@ -833,10 +880,10 @@ body {
 .lobby-chat-msg {
   display: flex;
   align-items: baseline;
-  gap: 3px;
+  gap: 4px;
   word-break: break-word;
   line-height: 1.35;
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   padding: 1px 0;
 }
 
@@ -852,25 +899,25 @@ body {
 .lobby-chat-bracket {
   color: var(--t3);
   font-weight: 700;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
 }
 
 .lobby-chat-avatar {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 0.52rem;
+  font-size: 0.58rem;
   flex-shrink: 0;
   vertical-align: middle;
   margin: 0 1px;
 }
 
 .lobby-chat-lvl {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 800;
   padding: 0 3px;
   border-radius: 3px;
@@ -881,7 +928,7 @@ body {
 }
 
 .lobby-chat-name {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: var(--t1);
   cursor: pointer;
@@ -902,6 +949,7 @@ body {
 .lobby-chat-text {
   color: var(--t1);
   flex: 1;
+  font-size: 0.86rem;
   font-weight: 500;
 }
 
@@ -922,12 +970,12 @@ body {
 .lobby-chat-input {
   flex: 1;
   min-width: 0;
-  height: 28px;
+  height: 30px;
   background: var(--bg-subtle);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0 9px;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: var(--t1);
   outline: none;
   box-sizing: border-box;
@@ -1115,15 +1163,11 @@ body {
   }
 
   #btn-change-nickname {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
     width: 28px !important;
     height: 28px !important;
     padding: 0 !important;
     margin-left: auto !important;
     flex-shrink: 0 !important;
-    color: var(--t2) !important;
   }
   #btn-open-settings, #btn-marketplace {
     width: 32px !important;
@@ -2454,6 +2498,15 @@ body {
 }
 
 /* ── 2. 중앙: 게임 선택 패널 + 컨트롤 ── */
+.room-center-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  align-self: flex-start;
+}
+
 .room-center-panel {
   padding: 24px;
   display: flex;
@@ -2645,6 +2698,40 @@ body {
   color: var(--t3);
   text-align: center;
   font-weight: 600;
+}
+
+/* ── 💡 방 화면 하단 회색 팁 (10초 랜덤 순환) ── */
+.room-tip-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 0.84rem;
+  color: var(--t3, #94a3b8);
+  user-select: none;
+  text-align: center;
+  line-height: 1.45;
+  min-height: 24px;
+}
+
+.room-tip-icon {
+  color: var(--t3, #94a3b8);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.room-tip-text {
+  font-weight: 500;
+  color: var(--t3, #94a3b8);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  display: inline-block;
+}
+
+.room-tip-text.fade-out {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 /* ── 3. 오른쪽: 실시간 채팅 패널 공통 스타일 (높이 620px 고정 + 내부 스크롤) ── */
@@ -4095,8 +4182,14 @@ html, body {
   }
 
   /* 🌟 방 화면 중앙 게임 선택 카드 (카드는 고정, 내부 게임들은 2열 스크롤) 🌟 */
-  .room-center-panel {
+  .room-center-wrap {
     order: 2 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .room-center-panel {
     width: 100% !important;
     max-width: 100% !important;
     display: flex !important;
@@ -4537,10 +4630,14 @@ html, body {
     border-radius: 12px !important;
     gap: 8px !important;
     overflow: hidden !important;
+    background: var(--bg-subtle, #f7fafc);
+    border: 1px solid var(--border-sub, #edf2f7);
+  }
+  .gsp-item:not([class*="pcard-theme-"]) {
     background: var(--bg-subtle, #f7fafc) !important;
     border: 1px solid var(--border-sub, #edf2f7) !important;
   }
-  .gsp-item.is-turn-active {
+  .gsp-item.is-turn-active:not([class*="pcard-theme-"]) {
     border-color: var(--green) !important;
     background: var(--green-tint, #f0fff4) !important;
   }
@@ -7194,9 +7291,14 @@ html, body {
   border-color: var(--border);
 }
 
-[data-theme="dark"] .gsp-item.is-current-turn {
+[data-theme="dark"] .gsp-item.is-current-turn:not([class*="pcard-theme-"]) {
   background: rgba(34, 197, 94, 0.18) !important;
   border-color: var(--green) !important;
+}
+
+[data-theme="dark"] .gsp-item.is-current-turn[class*="pcard-theme-"] {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.6) !important;
 }
 
 [data-theme="dark"] .chat-messages,
@@ -7719,7 +7821,7 @@ html, body {
 [data-theme="dark"] .gsp-tag {
   color: var(--t3) !important;
 }
-[data-theme="dark"] .gsp-item.gsp-spectator-item {
+[data-theme="dark"] .gsp-item.gsp-spectator-item:not([class*="pcard-theme-"]) {
   background: var(--bg-subtle) !important;
   border-color: var(--border) !important;
 }
@@ -9720,6 +9822,7 @@ html, body {
 }
 
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .gsp-tag,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .gsp-tag span,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .player-role,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .profile-exp-text,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .stats-counts,
@@ -9742,12 +9845,20 @@ html, body {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 .pcard-theme-royal-gold .gsp-tag,
+.pcard-theme-royal-gold .gsp-tag span,
 .pcard-theme-royal-gold .player-role,
 .pcard-theme-royal-gold .profile-exp-text,
 .pcard-theme-royal-gold .stats-counts,
 .pcard-theme-royal-gold .stats-user-tag,
 .pcard-theme-royal-gold .online-user-sub {
   color: #4e342e !important;
+}
+
+/* ── 다크 모드: 방 하단 회색 팁 색상 ── */
+[data-theme="dark"] .room-tip-bar,
+[data-theme="dark"] .room-tip-text,
+[data-theme="dark"] .room-tip-icon {
+  color: #94a3b8 !important;
 }
 
 @keyframes pcardHoloShift {

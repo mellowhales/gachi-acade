@@ -336,11 +336,79 @@
     return false;
   }
 
+  /* ── 💡 방 화면 하단 도움말/팁 10초 랜덤 순환 ── */
+  const ROOM_TIPS = [
+    'Tip - 로그인을 하면 전적과 레벨 등의 정보를 안전하게 저장할 수 있어요.',
+    'Tip - 승리 시 지급되는 코인으로 상점에서 멋진 아이템을 살 수 있어요.',
+    'Tip - 상점에서 프로필 카드와 닉네임 염색약을 구매해 나만의 개성을 뽐내보세요!',
+    'Tip - 채팅창에 다양한 감정표현 이모지를 사용해 플레이어들과 소통해 보세요.',
+    'Tip - 상단 방 코드를 클릭하면 클립보드에 바로 복사되어 친구를 쉽게 초대할 수 있어요.',
+    'Tip - 오목과 체스는 방장이 진영(흑/백/셔플)을 자유롭게 설정할 수 있어요.',
+    'Tip - 끝말잇기와 캐치마인드는 방장이 게임 라운드 수를 1~20라운드까지 조절할 수 있어요.',
+    'Tip - 대기실과 인게임 좌측 패널에서 플레이어를 클릭하면 프로필과 전적 통계를 볼 수 있어요.',
+    'Tip - 프로필 카드를 장착하면 대기실, 인게임, 접속자 목록에 멋진 테마가 표시돼요.',
+    'Tip - 캐치마인드에서 그림을 그릴 때 투명도, 브러시 크기, 무지개 컬러 휠을 활용해 보세요!',
+    'Tip - 러시안 룰렛에서는 돋보기, 맥주, 수갑 등 아이템을 적재적소에 사용하는 것이 승리의 열쇠예요.',
+    'Tip - 야추 다이스는 주사위를 최대 3번까지 굴릴 수 있으며, 높은 족보를 전략적으로 선점하는 게 중요해요.',
+    'Tip - 게임 도중 관전자로 참여해도 실시간으로 채팅과 이모지로 함께 응원할 수 있어요.',
+    'Tip - 사이드바 상단의 프로필 설정 버튼을 눌러 언제든 귀여운 동물 아바타로 변경할 수 있어요.',
+    'Tip - 다크 모드를 켜면 눈의 피로를 덜면서 더욱 몰입감 있게 게임을 즐길 수 있어요.',
+    'Tip - 게임에서 아쉽게 패배하더라도 판수와 경험치가 누적되어 레벨을 올릴 수 있어요.',
+    'Tip - 쓰레기 체스는 폰 대신 다양한 룰과 영토 확장으로 색다른 전략을 즐길 수 있어요.',
+    'Tip - 쿼리도는 말 이동뿐만 아니라 상대의 경로를 벽으로 막아 턴을 낭비시키는 전략이 핵심이에요.',
+    'Tip - 로비 실시간 채팅에서 접속 중인 모든 플레이어들과 자유롭게 대화를 나눠보세요.'
+  ];
+
+  let _roomTipTimer = null;
+  let _lastTipIndex = -1;
+
+  function _getNextRandomTip() {
+    if (ROOM_TIPS.length <= 1) return ROOM_TIPS[0] || '';
+    let nextIdx;
+    do {
+      nextIdx = Math.floor(Math.random() * ROOM_TIPS.length);
+    } while (nextIdx === _lastTipIndex);
+    _lastTipIndex = nextIdx;
+    return ROOM_TIPS[nextIdx];
+  }
+
+  function _updateRoomTip(animate = true) {
+    const tipEl = $('room-tip-text');
+    if (!tipEl) return;
+    const newTip = _getNextRandomTip();
+    if (!animate) {
+      tipEl.textContent = newTip;
+      tipEl.classList.remove('fade-out');
+      return;
+    }
+    tipEl.classList.add('fade-out');
+    setTimeout(() => {
+      tipEl.textContent = newTip;
+      tipEl.classList.remove('fade-out');
+    }, 350);
+  }
+
+  function _startRoomTipRotation() {
+    _stopRoomTipRotation();
+    _updateRoomTip(false);
+    _roomTipTimer = setInterval(() => {
+      _updateRoomTip(true);
+    }, 10000);
+  }
+
+  function _stopRoomTipRotation() {
+    if (_roomTipTimer) {
+      clearInterval(_roomTipTimer);
+      _roomTipTimer = null;
+    }
+  }
+
   function showScreen(name, pushState = true) {
     const t = screens[name];
     if (!t) return;
     if (t.classList.contains('active')) {
       if (name === 'home') _updateHomeUserBar();
+      if (name === 'room') _startRoomTipRotation();
       return;
     }
 
@@ -358,6 +426,11 @@
 
     if (name === 'home') {
       _updateHomeUserBar();
+      _stopRoomTipRotation();
+    } else if (name === 'room') {
+      _startRoomTipRotation();
+    } else {
+      _stopRoomTipRotation();
     }
   }
 
@@ -815,7 +888,7 @@
     _isShopActive = (typeof forceState === 'boolean') ? forceState : !_isShopActive;
     const roomCard = $('lobby-room-card');
     const shopCard = $('lobby-shop-card');
-    const btn = $('btn-toggle-shop');
+    const btn = $('btn-marketplace') || $('btn-toggle-shop');
 
     if (_isShopActive) {
       if (roomCard) roomCard.classList.add('hidden');
