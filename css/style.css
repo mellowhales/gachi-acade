@@ -111,16 +111,125 @@ body {
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
-  flex-direction: row;
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
   background: var(--bg);
+}
+
+/* ── 🌟 로비 상단 바 (방 화면과 100% 일치) ── */
+.lobby-topbar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  box-sizing: border-box;
+  z-index: 50;
+}
+
+.lobby-topbar-left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+  cursor: default;
+}
+.topbar-logo .logo-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(72, 187, 120, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+.topbar-logo:hover .logo-icon-wrap {
+  transform: scale(1.05);
+}
+.topbar-logo .logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+.topbar-logo .logo-title {
+  font-size: 1.12rem;
+  font-weight: 900;
+  color: var(--t1);
+  letter-spacing: -0.3px;
+  font-family: var(--font);
+}
+.topbar-logo .logo-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--t3);
+}
+
+.lobby-badge {
+  padding: 3px 20px !important;
+  font-size: 1.25rem !important;
+  letter-spacing: 3px !important;
+}
+
+.lobby-topbar .room-title {
+  flex: 0 0 auto;
+}
+
+.lobby-topbar .room-header-actions {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#btn-open-settings {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+/* ── 로비 본체 (사이드바 + 메인 영역) ── */
+.home-body-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow: hidden;
+  min-height: 0;
+  width: 100%;
 }
 
 /* ── 사이드바 ── */
 .home-sidebar {
   width: 320px;
-  height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
   flex-shrink: 0;
   background: var(--bg-card);
@@ -131,72 +240,47 @@ body {
   z-index: 10;
 }
 
-.sidebar-header {
-  padding: 18px 20px;
+/* ── 사이드바 상단 프로필 카드 바 (원래 로고 자리) ── */
+.sidebar-header,
+.sidebar-profile-header {
+  padding: 12px 14px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-sub);
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-.logo-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(72, 187, 120, 0.25);
-  flex-shrink: 0;
-  transition: transform 0.18s ease;
-}
-.sidebar-logo:hover .logo-icon-wrap {
-  transform: scale(1.05);
-}
 
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  line-height: 1.2;
-}
-.logo-title {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: var(--t1);
-  letter-spacing: -0.3px;
-  font-family: var(--font);
-}
-.logo-sub {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--t3);
-}
-
-.mobile-logo-wrap {
-  display: none;
-}
-
-/* ── 닉네임 프로필 바 ── */
 .home-user-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  margin: 10px 12px 4px;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: 0;
   background: var(--bg-subtle);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-user-bar .user-avatar {
+  width: 38px;
+  height: 38px;
+  font-size: 1rem;
+}
+
+.home-user-bar .user-name {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--t1);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
 }
 .user-avatar {
   width: 40px;
@@ -440,14 +524,14 @@ body {
 /* ── 메인 로비 영역 (FHD 100% 최적화 & 전체 스크롤 차단) ── */
 .home-main {
   flex: 1;
-  padding: clamp(20px, 2.8vh, 44px) clamp(24px, 3vw, 56px);
-  height: 100vh;
-  max-height: 100vh;
+  padding: 12px clamp(20px, 2.5vw, 44px) 16px;
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .home-lobby-container {
@@ -456,7 +540,8 @@ body {
   gap: clamp(16px, 1.8vw, 28px);
   width: 100%;
   max-width: 1540px;
-  height: clamp(540px, 84vh, 840px);
+  height: calc(100% - 4px);
+  max-height: calc(100vh - 56px - 28px);
   margin: 0 auto;
   align-items: start;
 }
@@ -497,73 +582,76 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* 🌟 모바일에서는 거대한 상단 제목 박스 숨김 🌟 */
-  .sidebar-header {
-    display: none !important;
-  }
-
-  /* 🌟 상단 플레이어 + 제목 카드 (방/게임 헤더와 위치/여백 100% 일치) 🌟 */
-  .mobile-logo-wrap {
+  /* 🌟 모바일 사이드바 상단 프로필 카드 바 🌟 */
+  .sidebar-header,
+  .sidebar-profile-header {
     display: flex !important;
-    align-items: center;
-    gap: 8px;
-    margin-right: 6px;
-    padding-right: 10px;
-    border-right: 1.5px solid var(--border);
-    flex-shrink: 0;
-  }
-  .mobile-logo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #48bb78, #276749);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.88rem;
-    color: #ffffff;
-    box-shadow: 0 2px 6px rgba(72, 187, 120, 0.3);
-    flex-shrink: 0;
-  }
-  .mobile-logo-title {
-    font-size: 0.95rem;
-    font-weight: 900;
-    color: var(--green-deep);
-    letter-spacing: -0.3px;
-    white-space: nowrap;
-    font-family: var(--font);
+    padding: 8px 12px 4px !important;
+    background: transparent !important;
+    border: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .home-user-bar {
-    position: sticky !important;
-    top: 6px !important;
-    z-index: 120 !important;
-    margin: 6px 12px 4px 12px !important;
-    padding: 6px 12px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
     background: var(--bg-card) !important;
-    border: 1.5px solid var(--border) !important;
+    border: 1px solid var(--border) !important;
     border-radius: var(--radius) !important;
     box-shadow: var(--shadow-sm) !important;
-    gap: 8px !important;
     display: flex !important;
     align-items: center !important;
-    flex-shrink: 0 !important;
-    height: 48px !important;
-    min-height: 48px !important;
-    width: calc(100% - 24px) !important;
+    gap: 8px !important;
     box-sizing: border-box !important;
   }
   .home-user-bar .user-avatar {
     width: 32px !important;
     height: 32px !important;
-    font-size: 0.88rem !important;
+    font-size: 0.85rem !important;
   }
   .home-user-bar .user-label {
     display: none !important;
   }
   .home-user-bar .user-name {
-    font-size: 0.92rem !important;
+    font-size: 0.9rem !important;
+    max-width: 110px !important;
   }
+
+  .lobby-topbar {
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    padding: 0 10px !important;
+  }
+  .topbar-logo {
+    gap: 8px !important;
+  }
+  .topbar-logo .logo-icon-wrap {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.85rem !important;
+    border-radius: 7px !important;
+  }
+  .topbar-logo .logo-title {
+    font-size: 0.95rem !important;
+  }
+  .topbar-logo .logo-sub {
+    display: none !important;
+  }
+  .lobby-badge {
+    padding: 2px 14px !important;
+    font-size: 1.05rem !important;
+    letter-spacing: 2px !important;
+  }
+  .home-body-wrap {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    width: 100% !important;
+  }
+
   #btn-change-nickname {
     border: none !important;
     background: transparent !important;
@@ -571,20 +659,13 @@ body {
     width: 28px !important;
     height: 28px !important;
     padding: 0 !important;
-    margin-left: 2px !important;
+    margin-left: auto !important;
     flex-shrink: 0 !important;
     color: var(--t2) !important;
   }
   #btn-open-settings {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
     width: 32px !important;
     height: 32px !important;
-    padding: 0 !important;
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-    color: var(--t2) !important;
   }
 
   .sidebar-games {
@@ -4161,7 +4242,7 @@ html, body {
   gap: 18px;
 }
 
-.lobby-header {
+.lobby-card .lobby-header {
   display: flex;
   align-items: center;
   justify-content: space-between;

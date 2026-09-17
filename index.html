@@ -48,11 +48,14 @@
 ═══════════════════════════════════════════════════════════════ -->
 <div id="screen-home" class="screen active">
 
-  <!-- 왼쪽 사이드바: 게임 목록 -->
-  <aside class="home-sidebar">
-    <!-- 🌟 사이드바 상단 로고 & 타이틀 헤더 🌟 -->
-    <div class="sidebar-header">
-      <div class="sidebar-logo">
+  <!-- 🌟 로비 상단 바 🌟 -->
+  <header class="room-header lobby-topbar">
+    <!-- 좌측 균형 영역 -->
+    <div class="lobby-topbar-left"></div>
+
+    <!-- 중앙: 가치아케이드 로고 -->
+    <div class="room-title">
+      <div class="topbar-logo">
         <div class="logo-icon-wrap">
           <i class="fa-solid fa-shapes"></i>
         </div>
@@ -63,34 +66,38 @@
       </div>
     </div>
 
-    <!-- 닉네임 프로필 바 (모바일에서는 좌측에 컴팩트 로고 포함) -->
-    <div class="home-user-bar">
-      <div class="mobile-logo-wrap">
-        <div class="mobile-logo-icon">
-          <i class="fa-solid fa-gamepad"></i>
-        </div>
-        <span class="mobile-logo-title">가치아케이드</span>
-      </div>
-
-      <div class="user-avatar-wrap">
-        <div class="user-avatar" id="home-user-avatar">?</div>
-        <span class="user-level-badge" id="home-user-level">1</span>
-      </div>
-      <div class="user-info">
-        <div class="user-name-line">
-          <strong class="user-name" id="home-user-name">플레이어</strong>
-        </div>
-        <div class="user-exp-track" id="home-user-exp-track" title="내 레벨 경험치">
-          <div class="user-exp-fill" id="home-user-exp-fill" style="width: 0%;"></div>
-        </div>
-      </div>
-      <button type="button" class="btn-icon sm" id="btn-change-nickname" title="프로필 편집 (닉네임/동물 아바타)">
-        <i class="fa-solid fa-user-pen"></i>
-      </button>
-      <button type="button" class="btn-icon sm" id="btn-open-settings" title="환경 설정 (소리/볼륨)">
+    <!-- 우측: 설정 버튼 -->
+    <div class="room-header-actions">
+      <button type="button" class="btn-icon" id="btn-open-settings" title="환경 설정 (소리/볼륨)">
         <i class="fa-solid fa-gear"></i>
       </button>
     </div>
+  </header>
+
+  <!-- 로비 본체 (사이드바 + 메인 영역) -->
+  <div class="home-body-wrap">
+    <!-- 왼쪽 사이드바: 게임 목록 -->
+    <aside class="home-sidebar">
+      <!-- 🌟 사이드바 상단: 프로필 카드 바 (원래 로고 있던 자리) 🌟 -->
+      <div class="sidebar-header sidebar-profile-header">
+        <div class="home-user-bar">
+          <div class="user-avatar-wrap">
+            <div class="user-avatar" id="home-user-avatar">?</div>
+            <span class="user-level-badge" id="home-user-level">1</span>
+          </div>
+          <div class="user-info">
+            <div class="user-name-line">
+              <strong class="user-name" id="home-user-name">플레이어</strong>
+            </div>
+            <div class="user-exp-track" id="home-user-exp-track" title="내 레벨 경험치">
+              <div class="user-exp-fill" id="home-user-exp-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          <button type="button" class="btn-icon sm" id="btn-change-nickname" title="프로필 편집 (닉네임/동물 아바타)">
+            <i class="fa-solid fa-user-pen"></i>
+          </button>
+        </div>
+      </div>
 
     <nav class="sidebar-games">
       <p class="sidebar-label">게임 목록</p>
@@ -365,6 +372,7 @@
 
     </div>
   </main>
+  </div> <!-- /.home-body-wrap -->
 </div>
 
 
