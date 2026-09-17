@@ -254,9 +254,17 @@ const AlkkagiGame = (() => {
   function _bindEvents() {
     const resignBtn = document.getElementById('btn-ak-resign');
     if (resignBtn) {
-      resignBtn.addEventListener('click', () => {
+      resignBtn.addEventListener('click', async () => {
         if (isGameOver) return;
-        if (confirm('정말로 기권하시겠습니까?')) {
+        const ok = window.showConfirmDialog ? await window.showConfirmDialog({
+          title: '기권 확인',
+          message: '정말로 기권하시겠습니까? 즉시 패배 처리됩니다.',
+          confirmText: '기권',
+          cancelText: '취소',
+          icon: 'fa-solid fa-flag',
+          isDanger: true
+        }) : confirm('정말로 기권하시겠습니까?');
+        if (ok) {
           _resign(true);
         }
       });

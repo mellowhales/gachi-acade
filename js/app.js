@@ -873,12 +873,20 @@
 
   // [강퇴하기] 버튼 클릭
   if ($('btn-host-kick')) {
-    $('btn-host-kick').addEventListener('click', () => {
+    $('btn-host-kick').addEventListener('click', async () => {
       if (!P2P.isHost() || !selectedTargetPlayer) return;
       const target = selectedTargetPlayer;
       _closeHostActionMenu();
 
-      if (confirm(`${target.name}님을 정말 강퇴하시겠습니까?`)) {
+      const ok = await showConfirmDialog({
+        title: '참가자 강퇴',
+        message: `${target.name}님을 정말 강퇴하시겠습니까?`,
+        confirmText: '강퇴',
+        cancelText: '취소',
+        icon: 'fa-solid fa-user-xmark',
+        isDanger: true
+      });
+      if (ok) {
         // 대상 게스트에게 KICK 패킷 전송
         P2P.send({
           type: 'KICK',
@@ -1308,14 +1316,13 @@
       });
     }
 
-    const btnNaver = $('btn-oauth-naver');
-    if (btnNaver) {
-      btnNaver.addEventListener('click', async () => {
-        _showAuthFeedback('네이버 로그인 요청 중...', 'info');
-        const res = await AppSupabase.signInWithOAuth('naver');
+    const btnKakao = $('btn-oauth-kakao');
+    if (btnKakao) {
+      btnKakao.addEventListener('click', async () => {
+        _showAuthFeedback('카카오 로그인 페이지로 이동 중...', 'info');
+        const res = await AppSupabase.signInWithOAuth('kakao');
         if (!res.success) {
-          alert('네이버 간편 로그인은 Supabase에 Custom OIDC 설정이 필요합니다.\nSupabase 대시보드에서 Provider 설정을 확인해주세요.');
-          _showAuthFeedback('네이버 OAuth가 아직 설정되지 않았습니다.', 'error');
+          _showAuthFeedback(res.error || '카카오 로그인에 실패했습니다.', 'error');
         }
       });
     }
@@ -1440,6 +1447,77 @@
       }
     }
   }
+
+  /* =====================================================================
+     🌟 커스텀 확인 / 나가기 다이얼로그 (브라우저 기본 confirm 대체)
+     ===================================================================== */
+  function showConfirmDialog({
+    title = '확인',
+    message = '정말 진행하시겠습니까?',
+    confirmText = '나가기',
+    cancelText = '취소',
+    icon = 'fa-solid fa-door-open',
+    isDanger = true
+  } = {}) {
+    return new Promise((resolve) => {
+      const modal = $('confirm-modal');
+      if (!modal) {
+        resolve(window.confirm(message));
+        return;
+      }
+
+      const titleEl = $('confirm-modal-title');
+      const msgEl = $('confirm-modal-message');
+      const okBtn = $('confirm-modal-ok');
+      const cancelBtn = $('confirm-modal-cancel');
+      const iconEl = $('confirm-modal-icon');
+
+      if (titleEl) titleEl.textContent = title;
+      if (msgEl) msgEl.textContent = message;
+      if (okBtn) {
+        okBtn.textContent = confirmText;
+        okBtn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
+      }
+      if (cancelBtn) cancelBtn.textContent = cancelText;
+      if (iconEl) {
+        iconEl.innerHTML = `<i class="${icon}"></i>`;
+        iconEl.className = `confirm-modal-icon-wrap ${isDanger ? 'danger' : 'primary'}`;
+      }
+
+      function cleanup(result) {
+        modal.classList.add('hidden');
+        modal.removeEventListener('click', onBackdrop);
+        okBtn.removeEventListener('click', onOk);
+        cancelBtn.removeEventListener('click', onCancel);
+        document.removeEventListener('keydown', onKey);
+        resolve(result);
+      }
+
+      function onOk(e) {
+        if (e) e.preventDefault();
+        cleanup(true);
+      }
+      function onCancel(e) {
+        if (e) e.preventDefault();
+        cleanup(false);
+      }
+      function onBackdrop(e) {
+        if (e.target === modal) cleanup(false);
+      }
+      function onKey(e) {
+        if (e.key === 'Escape') cleanup(false);
+        if (e.key === 'Enter') cleanup(true);
+      }
+
+      okBtn.addEventListener('click', onOk);
+      cancelBtn.addEventListener('click', onCancel);
+      modal.addEventListener('click', onBackdrop);
+      document.addEventListener('keydown', onKey);
+
+      modal.classList.remove('hidden');
+    });
+  }
+  window.showConfirmDialog = showConfirmDialog;
 
   /* =====================================================================
      📊 게임 전적 시스템 (게임별/전체 전적 로컬 & Supabase 동기화 & 모달)
@@ -3057,8 +3135,16 @@
   }
 
   // 방 나가기
-  $('btn-leave-room').addEventListener('click', () => {
-    if (confirm('방을 나가시겠습니까?')) {
+  $('btn-leave-room').addEventListener('click', async () => {
+    const ok = await showConfirmDialog({
+      title: '방 나가기',
+      message: '방을 나가시겠습니까? 로비 화면으로 돌아갑니다.',
+      confirmText: '나가기',
+      cancelText: '취소',
+      icon: 'fa-solid fa-door-open',
+      isDanger: true
+    });
+    if (ok) {
       if (!P2P.isHost()) {
         try {
           P2P.send({ type: 'guest_leave_room', name: myNickname });
@@ -3669,8 +3755,16 @@
   });
 
   // 게임 화면 헤더: 방으로 돌아가기 버튼
-  $('btn-back-to-room').addEventListener('click', () => {
-    if (confirm('게임을 종료하고 방으로 돌아가시겠습니까?')) {
+  $('btn-back-to-room').addEventListener('click', async () => {
+    const ok = await showConfirmDialog({
+      title: '게임 나가기',
+      message: '게임을 종료하고 방으로 돌아가시겠습니까?',
+      confirmText: '나가기',
+      cancelText: '취소',
+      icon: 'fa-solid fa-right-from-bracket',
+      isDanger: true
+    });
+    if (ok) {
       _hideResultOverlay();
       _handleBackToRoomClick();
     }

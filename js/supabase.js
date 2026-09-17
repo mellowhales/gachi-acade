@@ -190,11 +190,10 @@ const AppSupabase = (() => {
     try {
       const redirectUrl = window.location.origin + window.location.pathname;
       
-      // 1. 네이버 등 Custom Provider 식별자 매핑 처리
-      const targetProvider = provider.toLowerCase() === 'naver' ? 'custom:naver' : provider;
+      const targetProvider = provider.toLowerCase() === 'naver' ? 'custom:naver' : provider.toLowerCase();
 
       const { data, error } = await client.auth.signInWithOAuth({
-        provider: targetProvider, // 수정된 targetProvider 전달
+        provider: targetProvider,
         options: {
           redirectTo: redirectUrl
         }
