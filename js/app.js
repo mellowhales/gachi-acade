@@ -445,15 +445,16 @@
     return Math.floor(60 + (l - 1) * 20 + Math.pow(l - 1, 1.45) * 6);
   }
 
-  // 🌟 레벨 구간별 티어 CSS 클래스 (브론즈, 실버, 골드, 플래티넘, 다이아몬드, 마스터)
+  // 🌟 레벨 구간별 티어 CSS 클래스 (브론즈, 실버, 골드, 플래티넘, 다이아몬드, 마스터, 300 만렙 무지개)
   function _getLevelTierClass(lvl) {
     const l = Number(lvl) || 1;
+    if (l >= 300) return 'tier-rainbow'; // 🌟 300 만렙: 무지개
     if (l <= 30) return 'tier-bronze';
     if (l <= 70) return 'tier-silver';
     if (l <= 120) return 'tier-gold';
     if (l <= 180) return 'tier-platinum';
     if (l <= 240) return 'tier-diamond';
-    return 'tier-master';
+    return 'tier-master'; // 241 ~ 299: 마스터
   }
 
   // 🌟 로비 및 프로필 팝업 레벨 UI 동기화
