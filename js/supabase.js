@@ -179,7 +179,7 @@ const AppSupabase = (() => {
     }
   }
 
-  /**
+/**
    * OAuth 간편 로그인 (Google, Kakao, Naver 등)
    */
   async function signInWithOAuth(provider) {
@@ -189,8 +189,12 @@ const AppSupabase = (() => {
     }
     try {
       const redirectUrl = window.location.origin + window.location.pathname;
+      
+      // 1. 네이버 등 Custom Provider 식별자 매핑 처리
+      const targetProvider = provider.toLowerCase() === 'naver' ? 'custom:naver' : provider;
+
       const { data, error } = await client.auth.signInWithOAuth({
-        provider: provider,
+        provider: targetProvider, // 수정된 targetProvider 전달
         options: {
           redirectTo: redirectUrl
         }
