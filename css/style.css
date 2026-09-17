@@ -654,10 +654,10 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 20px;
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.45) 0%, transparent 100%);
+  width: 3.5px;
+  background: var(--green, #22c55e);
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   border-top-left-radius: inherit;
   border-bottom-left-radius: inherit;
 }
@@ -712,13 +712,65 @@ body {
 }
 
 .btn-view-stats {
-  opacity: 0.7;
-  transition: opacity 0.15s, color 0.15s;
+  width: 26px;
+  height: 26px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  color: var(--t2, #475569);
+  font-size: 0.78rem;
+  opacity: 1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
-.online-user-item:hover .btn-view-stats {
-  opacity: 1;
-  color: var(--green);
+.btn-view-stats:hover {
+  background: var(--green, #38a169) !important;
+  border-color: var(--green, #38a169) !important;
+  color: #ffffff !important;
+  transform: scale(1.08);
+}
+
+[data-theme="dark"] .btn-view-stats {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
+}
+
+/* 프로필 카드 테마가 착용된 아이템 내부 통계 버튼: 항상 100% 불투명하고 선명하게 노출 */
+[class*="pcard-theme-"] .btn-view-stats {
+  background: #0f172a !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  opacity: 1 !important;
+}
+
+[class*="pcard-theme-"] .btn-view-stats:hover {
+  background: var(--green, #22c55e) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5) !important;
+}
+
+.pcard-theme-royal-gold .btn-view-stats {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(184, 134, 11, 0.6) !important;
+  color: #5c3d00 !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2) !important;
+  opacity: 1 !important;
+}
+
+.pcard-theme-royal-gold .btn-view-stats:hover {
+  background: #5c3d00 !important;
+  border-color: #ffd700 !important;
+  color: #ffd700 !important;
 }
 
 /* ── 💬 로비 전체 실시간 채팅 카드 ── */
@@ -2271,8 +2323,8 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 32px;
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0.15) 55%, transparent 100%);
+  width: 4px;
+  background: var(--green, #22c55e);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -2954,8 +3006,8 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 32px;
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0.15) 55%, transparent 100%);
+  width: 4px;
+  background: var(--green, #22c55e);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -2975,8 +3027,8 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 32px;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.45) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 100%);
+  width: 4px;
+  background: var(--sky, #0ea5e9);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -7044,14 +7096,14 @@ html, body {
   border-top: 1.5px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-[data-theme="dark"] .online-user-item {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+[data-theme="dark"] .online-user-item:not([class*="pcard-theme-"]) {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-[data-theme="dark"] .online-user-item:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: var(--green) !important;
+[data-theme="dark"] .online-user-item:not([class*="pcard-theme-"]):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--green);
 }
 
 [data-theme="dark"] .sidebar-header,
@@ -9672,8 +9724,7 @@ html, body {
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .profile-exp-text,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .stats-counts,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .stats-user-tag,
-[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .online-user-sub,
-[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .btn-view-stats {
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .online-user-sub {
   color: rgba(255, 255, 255, 0.88) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
@@ -9695,8 +9746,7 @@ html, body {
 .pcard-theme-royal-gold .profile-exp-text,
 .pcard-theme-royal-gold .stats-counts,
 .pcard-theme-royal-gold .stats-user-tag,
-.pcard-theme-royal-gold .online-user-sub,
-.pcard-theme-royal-gold .btn-view-stats {
+.pcard-theme-royal-gold .online-user-sub {
   color: #4e342e !important;
 }
 
