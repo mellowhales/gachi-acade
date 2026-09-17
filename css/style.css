@@ -3346,15 +3346,23 @@ html, body {
     border-radius: 50% !important;
     flex-shrink: 0 !important;
   }
+  .player-avatar-wrap .player-level-badge {
+    min-width: 14px !important;
+    height: 13px !important;
+    font-size: 0.55rem !important;
+    bottom: -4px !important;
+    padding: 0 3px !important;
+    border-width: 1px !important;
+  }
   .player-meta {
     flex: 1 !important;
     min-width: 0 !important;
     overflow: hidden !important;
     display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    gap: 2px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
   }
   .player-name {
     font-size: 0.84rem !important;
@@ -3365,12 +3373,7 @@ html, body {
     max-width: 100% !important;
   }
   .player-role {
-    display: block !important;
-  }
-  .player-role .player-level-badge {
-    font-size: 0.64rem !important;
-    padding: 1px 5px !important;
-    margin-right: 0 !important;
+    display: none !important;
   }
 
   /* 🌟 프로필 점 세 개(관리 버튼) 숨김 🌟 */
@@ -8151,23 +8154,43 @@ html, body {
   min-width: 17px;
   height: 16px;
   padding: 0 4px;
-  border-radius: 4px;
-  font-size: 0.65rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
   font-weight: 900;
-  line-height: 16px;
+  line-height: 1;
   letter-spacing: -0.2px;
   color: #ffffff !important;
   user-select: none;
   flex-shrink: 0;
   box-sizing: border-box;
   text-align: center;
-  border: none !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 1.5px 3.5px rgba(0, 0, 0, 0.4);
 }
 
-.player-level-badge {
-  margin-right: 4px;
-  vertical-align: middle;
+/* 🌟 프로필 이미지 중앙 하단 덮어쓰기 오버레이 래퍼 */
+.player-avatar-wrap,
+.user-avatar-wrap,
+.profile-preview-avatar-wrap,
+.stats-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 🌟 아바타 원형 정중앙 하단에 레벨 뱃지 얹기 */
+.player-avatar-wrap .player-level-badge,
+.user-avatar-wrap .user-level-badge,
+.profile-preview-avatar-wrap .profile-mini-level,
+.stats-avatar-wrap .player-level-badge {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-right: 0 !important;
+  z-index: 3;
 }
 
 /* 레벨 등급별 색상 (1~300 티어) - 완전 불투명 솔리드 색상 + 흰색 글씨 */
@@ -8326,7 +8349,7 @@ html, body {
 [data-theme="dark"] .player-level-badge,
 [data-theme="dark"] .profile-mini-level {
   color: #ffffff !important;
-  border: none !important;
+  border: 1.5px solid #1a202c !important;
 }
 [data-theme="dark"] .tier-bronze {
   background: #8c5332 !important;
@@ -8433,22 +8456,23 @@ html, body {
 ══════════════════════════════════════════════════════ */
 @media (max-width: 960px) {
   .home-user-bar .user-name {
-    font-size: 0.88rem !important;
-    max-width: 95px !important;
+    font-size: 0.9rem !important;
+    max-width: 120px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
-  .home-user-bar .user-level-badge {
-    font-size: 0.62rem !important;
-    min-width: 16px !important;
-    height: 15px !important;
-    line-height: 15px !important;
+  .home-user-bar .user-avatar-wrap .user-level-badge {
+    font-size: 0.55rem !important;
+    min-width: 15px !important;
+    height: 13px !important;
+    line-height: 1 !important;
+    bottom: -4px !important;
     padding: 0 3px !important;
-    flex-shrink: 0 !important;
+    border-width: 1px !important;
   }
   .user-name-line {
-    max-width: 130px;
+    max-width: 140px;
     overflow: hidden;
   }
 }

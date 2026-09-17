@@ -72,10 +72,12 @@
         <span class="mobile-logo-title">가치아케이드</span>
       </div>
 
-      <div class="user-avatar" id="home-user-avatar">?</div>
+      <div class="user-avatar-wrap">
+        <div class="user-avatar" id="home-user-avatar">?</div>
+        <span class="user-level-badge" id="home-user-level">1</span>
+      </div>
       <div class="user-info">
         <div class="user-name-line">
-          <span class="user-level-badge" id="home-user-level">1</span>
           <strong class="user-name" id="home-user-name">플레이어</strong>
         </div>
         <div class="user-exp-track" id="home-user-exp-track" title="내 레벨 경험치">
@@ -863,14 +865,16 @@
 
   <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
   <div class="profile-preview-area">
-    <!-- 레벨 + 코인 미니 뱃지 (아바타 카드 맨 오른쪽 상단) -->
+    <!-- 코인 미니 뱃지 (아바타 카드 맨 오른쪽 상단) -->
     <div class="profile-preview-badges">
-      <span class="profile-mini-level" id="profile-level-tag">1</span>
       <span class="profile-mini-coin"><i class="fa-solid fa-coins"></i> <span id="profile-coin-amount">0</span></span>
     </div>
 
-    <div class="profile-preview-avatar" id="profile-preview-avatar">
-      <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+    <div class="profile-preview-avatar-wrap">
+      <div class="profile-preview-avatar" id="profile-preview-avatar">
+        <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+      </div>
+      <span class="profile-mini-level" id="profile-level-tag">1</span>
     </div>
     <div class="profile-preview-name" id="profile-preview-name">익명</div>
     <!-- 경험치 게이지 -->
@@ -1002,8 +1006,11 @@
   <div class="stats-modal-card card">
     <div class="stats-modal-header">
       <div class="stats-user-profile">
-        <div class="stats-user-avatar" id="stats-user-avatar">
-          <i class="fa-solid fa-user" id="stats-user-icon"></i>
+        <div class="stats-avatar-wrap">
+          <div class="stats-user-avatar" id="stats-user-avatar">
+            <i class="fa-solid fa-user" id="stats-user-icon"></i>
+          </div>
+          <span class="player-level-badge" id="stats-user-level" style="display:none;">1</span>
         </div>
         <div class="stats-user-info">
           <div class="stats-user-name" id="stats-user-name">플레이어</div>

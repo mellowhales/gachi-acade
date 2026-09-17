@@ -1611,8 +1611,14 @@
       avEl.innerHTML = `<i class="${avatarIcon || 'fa-solid fa-dog'}"></i>`;
     }
     if (nameEl) {
+      nameEl.textContent = name || '플레이어';
+    }
+    const levelEl = $('stats-user-level');
+    if (levelEl) {
       const lvl = level || 1;
-      nameEl.innerHTML = `<span class="player-level-badge ${_getLevelTierClass(lvl)}">${lvl}</span> ${_escapeHtml(name || '플레이어')}`;
+      levelEl.textContent = lvl;
+      levelEl.className = `player-level-badge ${_getLevelTierClass(lvl)}`;
+      levelEl.style.display = 'inline-flex';
     }
     if (tagEl) tagEl.textContent = isMe ? '내 게임 전적 기록' : '상대방 게임 전적 기록';
 
@@ -2723,10 +2729,12 @@
       }
 
       li.innerHTML = `
-        <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
+        <div class="player-avatar-wrap">
+          <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
+          <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
+        </div>
         <div class="player-meta">
           <div class="player-name">
-            <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
