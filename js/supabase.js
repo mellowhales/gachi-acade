@@ -189,14 +189,21 @@ const AppSupabase = (() => {
     }
     try {
       const redirectUrl = window.location.origin + window.location.pathname;
-      
       const targetProvider = provider.toLowerCase() === 'naver' ? 'custom:naver' : provider.toLowerCase();
+
+      // OAuth 옵션 설정
+      const oauthOptions = {
+        redirectTo: redirectUrl
+      };
+
+      // 카카오 로그인 시 account_email 스코프를 제외하고 닉네임/프로필만 요청
+      if (targetProvider === 'kakao') {
+        oauthOptions.scopes = 'profile_nickname profile_image';
+      }
 
       const { data, error } = await client.auth.signInWithOAuth({
         provider: targetProvider,
-        options: {
-          redirectTo: redirectUrl
-        }
+        options: oauthOptions
       });
       if (error) throw error;
       return { success: true, data };
