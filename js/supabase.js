@@ -418,6 +418,114 @@ const AppSupabase = (() => {
     }
   }
 
+  let _presenceChannel = null;
+  let _currentPresencePayload = null;
+  const _presenceListeners = [];
+
+  /**
+   * 실시간 접속자 Presence 채널 초기화 및 내 정보 브로드캐스트
+   */
+  function initPresence(userPayload, onSync) {
+    const client = getClient();
+    if (!client) {
+      if (typeof onSync === 'function') onSync([userPayload]);
+      return null;
+    }
+
+    if (typeof onSync === 'function' && !_presenceListeners.includes(onSync)) {
+      _presenceListeners.push(onSync);
+    }
+
+    let sessionKey = null;
+    try {
+      sessionKey = sessionStorage.getItem('gachi_presence_key');
+      if (!sessionKey) {
+        sessionKey = 'usr_' + Math.random().toString(36).substring(2, 10);
+        sessionStorage.setItem('gachi_presence_key', sessionKey);
+      }
+    } catch (_) {
+      sessionKey = 'usr_' + Math.random().toString(36).substring(2, 10);
+    }
+
+    _currentPresencePayload = {
+      ...userPayload,
+      presenceKey: sessionKey,
+      updatedAt: Date.now()
+    };
+
+    if (_presenceChannel) {
+      try {
+        _presenceChannel.track(_currentPresencePayload);
+      } catch (_) {}
+      return _presenceChannel;
+    }
+
+    try {
+      const channel = client.channel('lobby-online-users', {
+        config: {
+          presence: { key: sessionKey }
+        }
+      });
+
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          const users = [];
+          const seen = new Set();
+          for (const key in state) {
+            const arr = state[key];
+            if (Array.isArray(arr)) {
+              arr.forEach(p => {
+                const uid = p.presenceKey || key;
+                if (!seen.has(uid)) {
+                  seen.add(uid);
+                  users.push(p);
+                }
+              });
+            }
+          }
+          _presenceListeners.forEach(fn => {
+            try { fn(users); } catch (e) { console.error(e); }
+          });
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            try {
+              await channel.track(_currentPresencePayload);
+            } catch (err) {
+              console.warn('[Supabase] Presence track failed:', err);
+            }
+          }
+        });
+
+      _presenceChannel = channel;
+      return channel;
+    } catch (err) {
+      console.warn('[Supabase] Presence init error:', err);
+      if (typeof onSync === 'function') onSync([userPayload]);
+      return null;
+    }
+  }
+
+  /**
+   * 실시간 접속자 내 상태 업데이트 (닉네임/아바타/레벨 변경 시)
+   */
+  async function updatePresence(newPayload) {
+    if (!_presenceChannel || !_currentPresencePayload) return;
+    _currentPresencePayload = { ..._currentPresencePayload, ...newPayload, updatedAt: Date.now() };
+    try {
+      await _presenceChannel.track(_currentPresencePayload);
+    } catch (err) {
+      console.warn('[Supabase] Presence update error:', err);
+    }
+  }
+
+  function onPresenceSync(callback) {
+    if (typeof callback === 'function' && !_presenceListeners.includes(callback)) {
+      _presenceListeners.push(callback);
+    }
+  }
+
   return {
     isConfigured,
     getClient,
@@ -432,7 +540,10 @@ const AppSupabase = (() => {
     saveProfile,
     addCoins,
     saveLevelAndExp,
-    fetchUserStats
+    fetchUserStats,
+    initPresence,
+    updatePresence,
+    onPresenceSync
   };
 })();
 

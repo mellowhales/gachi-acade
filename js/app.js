@@ -619,6 +619,7 @@
     if ($('home-user-name')) $('home-user-name').textContent = myNickname || '익명';
     _updateCoinsUI();
     _updateLevelUI();
+    if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
   }
 
   /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (전체 / 공개방 / 비밀방 탭 필터링) ── */
@@ -778,6 +779,116 @@
         }, 500);
       }
       showToast('방 목록을 새로고침했습니다.', 'info');
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     🌟 Supabase Realtime 기반 사이트 접속 중인 사용자 (Online Users Presence)
+  ═══════════════════════════════════════════════════════════════ */
+  let _lastOnlineUsers = [];
+
+  function _getMyPresencePayload() {
+    const user = (typeof AppSupabase !== 'undefined') ? AppSupabase.getCurrentUser() : null;
+    return {
+      id: P2P.getMyId() || ('usr_' + Math.random().toString(36).substring(2, 9)),
+      supabaseId: user ? user.id : null,
+      name: myNickname || '플레이어',
+      avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
+      avatarColor: myAvatarColor || '#38a169',
+      level: myLevel || 1,
+      exp: myExp || 0,
+      stats: _getMyStats()
+    };
+  }
+
+  function _syncOnlinePresence() {
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.updatePresence === 'function') {
+      AppSupabase.updatePresence(_getMyPresencePayload());
+    }
+  }
+
+  function _initOnlineUsersPresence() {
+    const initialPayload = _getMyPresencePayload();
+    _renderOnlineUsersList([initialPayload]);
+
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.initPresence === 'function') {
+      AppSupabase.initPresence(initialPayload, (users) => {
+        _lastOnlineUsers = Array.isArray(users) && users.length > 0 ? users : [_getMyPresencePayload()];
+        _renderOnlineUsersList(_lastOnlineUsers);
+      });
+    }
+  }
+
+  function _renderOnlineUsersList(users) {
+    const listEl = $('online-users-list');
+    const countEl = $('online-users-count');
+    if (!listEl) return;
+
+    const list = Array.isArray(users) && users.length > 0 ? users : [_getMyPresencePayload()];
+    if (countEl) countEl.textContent = `${list.length}명`;
+
+    let myPresenceKey = null;
+    try { myPresenceKey = sessionStorage.getItem('gachi_presence_key'); } catch (_) {}
+    const mySupabaseId = (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) ? AppSupabase.getCurrentUser().id : null;
+
+    listEl.innerHTML = list.map((user, idx) => {
+      const isMe = (myPresenceKey && user.presenceKey === myPresenceKey) ||
+                   (mySupabaseId && user.supabaseId === mySupabaseId) ||
+                   (user.name === myNickname && idx === 0);
+
+      const uname = user.name || '플레이어';
+      const uicon = user.avatarIcon || 'fa-solid fa-dog';
+      const ucolor = user.avatarColor || '#38a169';
+      const ulevel = user.level || 1;
+      const tierClass = _getLevelTierClass(ulevel);
+
+      let winRateStr = '전적 없음';
+      if (user.stats && user.stats.total && typeof user.stats.total.plays === 'number' && user.stats.total.plays > 0) {
+        const plays = user.stats.total.plays;
+        const wins = user.stats.total.wins || 0;
+        const rate = Math.round((wins / plays) * 100);
+        winRateStr = `${plays}전 ${wins}승 (${rate}%)`;
+      }
+
+      return `
+        <div class="online-user-item ${isMe ? 'is-me' : ''}" data-idx="${idx}" title="${_escapeHtml(uname)}님의 전적 보기">
+          <div class="user-avatar-wrap">
+            <div class="user-avatar sm" style="background: ${ucolor};">
+              <i class="${uicon}"></i>
+            </div>
+            <span class="user-level-badge ${tierClass}">${ulevel}</span>
+          </div>
+          <div class="online-user-info">
+            <span class="online-user-name">
+              ${_escapeHtml(uname)}
+              ${isMe ? '<span class="online-me-badge">나</span>' : ''}
+            </span>
+            <span class="online-user-sub">${winRateStr}</span>
+          </div>
+          <button type="button" class="btn-icon sm btn-view-stats" title="전적 보기">
+            <i class="fa-solid fa-chart-simple"></i>
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    listEl.querySelectorAll('.online-user-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(item.dataset.idx, 10);
+        const targetUser = list[idx];
+        if (!targetUser) return;
+
+        const isMe = (myPresenceKey && targetUser.presenceKey === myPresenceKey) ||
+                     (mySupabaseId && targetUser.supabaseId === mySupabaseId) ||
+                     (targetUser.name === myNickname && idx === 0);
+
+        if (isMe) {
+          _openPlayerStatsModal();
+        } else {
+          _openPlayerStatsModal(targetUser);
+        }
+      });
     });
   }
 
@@ -4130,7 +4241,8 @@
   _initInGameDragScroll();
   _initSupabaseAuthUI();
   _initStatsUI();
-  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템)');
+  _initOnlineUsersPresence();
+  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템 & 실시간 접속자)');
 
 
 
@@ -4232,6 +4344,7 @@
 
 
   window.App = {
-    updateInGameTurn
+    updateInGameTurn,
+    openPlayerStatsModal: _openPlayerStatsModal
   };
 })();

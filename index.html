@@ -59,10 +59,7 @@
         <div class="logo-icon-wrap">
           <i class="fa-solid fa-shapes"></i>
         </div>
-        <div class="logo-text">
-          <span class="logo-title">가치아케이드</span>
-          <span class="logo-sub">멀티 웹 게임</span>
-        </div>
+        <span class="logo-title">가치아케이드</span>
       </div>
     </div>
 
@@ -257,9 +254,25 @@
         </div>
       </div>
 
-      <!-- 2. 우측: 방 만들기 / 참가 패널 -->
-      <div class="connect-card card">
-        <div class="connect-tabs">
+      <!-- 2. 우측: 접속자 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
+      <div class="lobby-right-col">
+        <!-- 2-1. 상단: 현재 접속 중인 플레이어 카드 (클릭 시 전적 모달) -->
+        <div class="online-users-card card" id="online-users-card">
+          <div class="online-card-header">
+            <div class="online-card-title">
+              <span class="online-live-dot"></span>
+              <span>접속 중인 플레이어</span>
+              <span class="online-count-badge" id="online-users-count">1명</span>
+            </div>
+          </div>
+          <div class="online-users-list custom-scroll" id="online-users-list">
+            <!-- JS 동적 생성 -->
+          </div>
+        </div>
+
+        <!-- 2-2. 하단: 방 만들기 / 참가 패널 -->
+        <div class="connect-card card">
+          <div class="connect-tabs">
           <button class="ctab active" data-tab="create" id="tab-create">
             <i class="fa-solid fa-tower-broadcast"></i>
             <span>방 만들기</span>
@@ -368,7 +381,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> <!-- /.lobby-right-col -->
 
     </div>
   </main>

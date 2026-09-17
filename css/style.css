@@ -150,14 +150,14 @@ body {
   cursor: default;
 }
 .topbar-logo .logo-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.22rem;
   color: #ffffff;
   box-shadow: 0 2px 6px rgba(72, 187, 120, 0.25);
   flex-shrink: 0;
@@ -166,23 +166,13 @@ body {
 .topbar-logo:hover .logo-icon-wrap {
   transform: scale(1.05);
 }
-.topbar-logo .logo-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  line-height: 1.2;
-}
 .topbar-logo .logo-title {
-  font-size: 1.12rem;
+  font-size: 1.52rem;
   font-weight: 900;
   color: var(--t1);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
   font-family: var(--font);
-}
-.topbar-logo .logo-sub {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--t3);
+  line-height: 1;
 }
 
 .lobby-badge {
@@ -543,7 +533,168 @@ body {
   height: calc(100% - 4px);
   max-height: calc(100vh - 56px - 28px);
   margin: 0 auto;
-  align-items: start;
+  align-items: stretch;
+}
+
+/* ── 우측 컬럼: 현재 접속자 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) ── */
+.lobby-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* ── 🌟 현재 사이트 접속자 카드 ── */
+.online-users-card {
+  flex: 1;
+  min-height: 130px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.online-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-sub);
+}
+
+.online-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--t1);
+}
+
+.online-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38a169;
+  box-shadow: 0 0 8px rgba(56, 161, 105, 0.7);
+  animation: pulseLive 2s infinite;
+}
+
+@keyframes pulseLive {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(56, 161, 105, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); }
+}
+
+.online-count-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--green-tint);
+  color: var(--green-deep);
+  border: 1px solid var(--green-border);
+}
+
+.online-users-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.online-user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-sub);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.online-user-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--green-border);
+  transform: translateX(2px);
+}
+
+.online-user-item.is-me {
+  border-left: 3px solid var(--green);
+}
+
+.online-user-item .user-avatar.sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+
+.online-user-item .user-avatar-wrap .user-level-badge {
+  font-size: 0.55rem;
+  padding: 0 3px;
+  bottom: -4px;
+}
+
+.online-user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.online-user-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.online-me-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--green-deep);
+  background: var(--green-tint);
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.online-user-sub {
+  font-size: 0.72rem;
+  color: var(--t3);
+  font-weight: 600;
+}
+
+.btn-view-stats {
+  opacity: 0.7;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.online-user-item:hover .btn-view-stats {
+  opacity: 1;
+  color: var(--green);
 }
 
 @media (max-width: 960px) {
@@ -809,6 +960,35 @@ body {
     line-height: 1.35 !important;
   }
 
+  .lobby-right-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    flex: 0 0 auto !important;
+  }
+  .online-users-card {
+    flex: 0 0 auto !important;
+    padding: 8px 12px !important;
+    border-radius: var(--radius) !important;
+    gap: 6px !important;
+    max-height: 95px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .online-users-list {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 8px !important;
+    padding-bottom: 2px !important;
+  }
+  .online-user-item {
+    flex-shrink: 0 !important;
+    padding: 4px 8px !important;
+  }
+
   /* 🌟 방 만들기 / 참가 카드 (콤팩트 축소 + 큼직한 버튼/글씨) 🌟 */
   .connect-card {
     flex: 0 0 auto !important;
@@ -923,7 +1103,8 @@ body {
   display: flex;
   flex-direction: column;
   height: auto;
-  align-self: start;
+  align-self: stretch;
+  flex-shrink: 0;
   min-width: 0;
   box-sizing: border-box;
 }
