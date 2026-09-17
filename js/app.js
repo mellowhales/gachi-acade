@@ -709,9 +709,10 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     🛒 가치 상점 컨트롤러 (닉네임 색상 염색약 구매/장착 & 카드 전환)
+     🛒 상점 컨트롤러 (닉네임 색상 염색약 / 프로필 카드 탭 & 구매/장착)
   ═══════════════════════════════════════════════════════════════ */
   let _isShopActive = false;
+  let _currentShopTab = 'nickname'; // 'nickname' | 'profile_card'
 
   function _toggleLobbyShop(forceState) {
     _isShopActive = (typeof forceState === 'boolean') ? forceState : !_isShopActive;
@@ -727,6 +728,7 @@
         btn.title = '방 목록으로 돌아가기';
         btn.classList.add('active');
       }
+      _initShopTabs();
       _renderShopUI();
     } else {
       if (roomCard) roomCard.classList.remove('hidden');
@@ -739,12 +741,47 @@
     }
   }
 
+  let _shopTabsInitialized = false;
+  function _initShopTabs() {
+    if (_shopTabsInitialized) return;
+    _shopTabsInitialized = true;
+
+    const tabNick = $('tab-shop-nickname');
+    const tabCard = $('tab-shop-profile-card');
+
+    if (tabNick) {
+      tabNick.addEventListener('click', () => {
+        if (_currentShopTab === 'nickname') return;
+        _currentShopTab = 'nickname';
+        _renderShopUI();
+      });
+    }
+    if (tabCard) {
+      tabCard.addEventListener('click', () => {
+        if (_currentShopTab === 'profile_card') return;
+        _currentShopTab = 'profile_card';
+        _renderShopUI();
+      });
+    }
+  }
+
   function _renderShopUI() {
     const balanceEl = $('shop-coin-balance');
     if (balanceEl) balanceEl.textContent = (myCoins || 0).toLocaleString();
 
+    const tabNick = $('tab-shop-nickname');
+    const tabCard = $('tab-shop-profile-card');
+    if (tabNick) tabNick.classList.toggle('active', _currentShopTab === 'nickname');
+    if (tabCard) tabCard.classList.toggle('active', _currentShopTab === 'profile_card');
+
     const gridEl = $('shop-items-grid');
     if (!gridEl) return;
+
+    // 프로필 카드는 아직 목록에 추가하지 않고 아무것도 안 뜨게 유지
+    if (_currentShopTab === 'profile_card') {
+      gridEl.innerHTML = '';
+      return;
+    }
 
     gridEl.innerHTML = SHOP_NICKNAME_COLORS.map(item => {
       const isEquipped = item.isDefault
@@ -753,26 +790,24 @@
       const isPurchased = item.isDefault || myPurchasedNameColors.includes(item.id);
 
       const previewColor = item.hex || 'inherit';
-      const previewBg = item.hex ? `${item.hex}18` : 'var(--bg-subtle)';
-      const previewBorder = item.hex ? `${item.hex}55` : 'var(--border)';
 
       let actionBtnHtml = '';
       if (isEquipped) {
         actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
       } else if (isPurchased) {
-        actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-color-id="${item.id}"><i class="${item.icon}"></i> ${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-color-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
       } else {
         const canBuy = myCoins >= item.price;
-        actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-color-id="${item.id}"><i class="fa-solid fa-coins"></i> ${item.price} 구매</button>`;
+        actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-color-id="${item.id}">구매</button>`;
       }
 
       return `
         <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-color-id="${item.id}">
           <div class="shop-item-top">
             <span class="shop-item-name"><i class="${item.icon}" style="color:${item.hex || 'var(--t2)'};"></i> ${item.name}</span>
-            <div class="shop-color-preview-chip" style="color:${previewColor}; background:${previewBg}; border-color:${previewBorder};">
+            <span class="shop-color-preview-text" style="color:${previewColor};">
               ${_escapeHtml(myNickname || '플레이어')}
-            </div>
+            </span>
           </div>
           <div class="shop-item-desc">${item.desc}</div>
           <div class="shop-item-bottom">
@@ -1885,7 +1920,7 @@
         btnLogout.addEventListener('click', async () => {
           if (typeof AppSupabase !== 'undefined') {
             await AppSupabase.signOut();
-            await _handleLogoutProfileReset();
+            await _handleLogoutProfileReset(true);
             showToast('로그아웃되었습니다. 기본 프로필로 전환되었습니다.', 'info');
           }
         });
@@ -2018,9 +2053,9 @@
             }).catch(() => {});
           }
           _updateHomeUserBar();
-        } else {
-          // 로그아웃 시 게스트 기본 프로필로 전환
-          await _handleLogoutProfileReset();
+        } else if (event === 'SIGNED_OUT') {
+          // 명시적 로그아웃 이벤트 수신 시에만 게스트 기본 프로필로 전환
+          await _handleLogoutProfileReset(false);
         }
       });
 
@@ -2043,7 +2078,7 @@
   }
 
   // 🌟 로그아웃 시 게스트 기본 프로필(익명, 기본 아바타, 1레벨, 0코인, 0전적)로 리셋
-  async function _handleLogoutProfileReset() {
+  async function _handleLogoutProfileReset(forceReload = false) {
     // 1. Firebase 및 Supabase의 기존 로그인 접속자 정보 즉시 삭제 및 세션 키 초기화
     if (window.FirebaseLobby && typeof window.FirebaseLobby.removeOnlineUser === 'function') {
       try { await window.FirebaseLobby.removeOnlineUser(); } catch (_) {}
@@ -2080,7 +2115,7 @@
     _renderProfileModalGrids();
     _updateProfileAuthUI(null);
 
-    // 3. 새 게스트 접속자로 Firebase 및 Supabase에 즉각 등록 후 페이지 새로고침
+    // 3. 새 게스트 접속자로 Firebase 및 Supabase에 즉각 등록
     try {
       const guestPayload = _getMyPresencePayload();
       if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
@@ -2088,8 +2123,10 @@
       }
     } catch (_) {}
 
-    // 페이지 새로고침으로 완전히 깨끗한 게스트 상태 적용
-    window.location.reload();
+    // 사용자가 명시적으로 로그아웃 버튼을 눌렀을 때만 새로고침 실행
+    if (forceReload) {
+      window.location.reload();
+    }
   }
 
   // 🌟 OAuth 리다이렉트 콜백 후 URL의 에러 및 상태 파싱

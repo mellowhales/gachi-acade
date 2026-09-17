@@ -9304,24 +9304,6 @@ html, body {
   flex-wrap: wrap;
 }
 
-.shop-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 800;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #d97706;
-}
-[data-theme="dark"] .shop-badge {
-  color: #fbbf24;
-  border-color: rgba(245, 158, 11, 0.3);
-  background: rgba(245, 158, 11, 0.15);
-}
-
 .shop-header-right {
   display: flex;
   align-items: center;
@@ -9359,44 +9341,6 @@ html, body {
   padding-right: 4px;
 }
 
-.shop-banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08));
-  border: 1px solid rgba(99, 102, 241, 0.2);
-}
-[data-theme="dark"] .shop-banner {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
-  border-color: rgba(99, 102, 241, 0.3);
-}
-.shop-banner-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  flex-shrink: 0;
-}
-.shop-banner-info h4 {
-  margin: 0 0 2px 0;
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--t1);
-}
-.shop-banner-info p {
-  margin: 0;
-  font-size: 0.78rem;
-  color: var(--t2);
-  line-height: 1.35;
-}
-
 /* ── 상점 아이템 그리드 ── */
 .shop-items-grid {
   display: grid;
@@ -9432,15 +9376,14 @@ html, body {
   gap: 8px;
 }
 
-.shop-color-preview-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.82rem;
+.shop-color-preview-text {
+  font-size: 0.95rem;
   font-weight: 800;
-  border: 1.5px solid;
+  letter-spacing: -0.2px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .shop-item-name {

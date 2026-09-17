@@ -266,12 +266,19 @@
         </div>
       </div>
 
-      <!-- 1-2. 🛒 가치 상점 카드 (방 목록 카드와 전환) -->
+      <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
       <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
         <div class="lobby-header shop-header">
           <div class="lobby-title-area">
-            <span class="lobby-title"><i class="fa-solid fa-store" style="color:var(--yellow);"></i> 가치 상점</span>
-            <span class="shop-badge"><i class="fa-solid fa-palette"></i> 닉네임 염색약</span>
+            <span class="lobby-title"><i class="fa-solid fa-store" style="color:var(--yellow);"></i> 상점</span>
+            <div class="lobby-tab-group" id="shop-filter-tabs">
+              <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
+                <i class="fa-solid fa-palette"></i> 닉네임 염색약
+              </button>
+              <button type="button" class="lobby-tab-btn" data-shop-tab="profile_card" id="tab-shop-profile-card">
+                <i class="fa-solid fa-id-card"></i> 프로필 카드
+              </button>
+            </div>
           </div>
           <div class="shop-header-right">
             <div class="shop-coin-pill">
@@ -284,13 +291,6 @@
           </div>
         </div>
         <div class="shop-content custom-scroll">
-          <div class="shop-banner">
-            <div class="shop-banner-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-            <div class="shop-banner-info">
-              <h4>닉네임 색상 염색 (각 500 코인)</h4>
-              <p>원하는 색상을 구매하여 나만의 닉네임을 꾸며보세요! 로비 접속자, 방 목록, 채팅, 게임 등 모든 곳에 실시간 적용됩니다.</p>
-            </div>
-          </div>
           <div class="shop-items-grid" id="shop-items-grid">
             <!-- JS 동적 생성 -->
           </div>
