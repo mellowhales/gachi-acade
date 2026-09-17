@@ -1439,7 +1439,7 @@
               <span class="user-level-badge sm ${hostTierClass}">${hostLevel}</span>
             </div>
             <div class="lrc-host-meta">
-              <strong class="lrc-host-name" style="${hostNameColor ? `color:${hostNameColor}; font-weight:800;` : ''}">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
+              <strong class="lrc-host-name" style="${hostNameColor ? `color:${hostNameColor} !important; font-weight:800;` : ''}">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
             </div>
           </div>
           <button type="button" class="btn ${isPlaying ? 'btn-danger is-playing-btn' : 'btn-primary'} btn-sm lrc-join-btn ${isFull ? 'disabled' : ''}">
@@ -1695,6 +1695,467 @@
         }
       });
     });
+
+    if (typeof _updateFriendsBadge === 'function') {
+      _updateFriendsBadge();
+    }
+    const paneAdd = $('pane-friends-add');
+    if (paneAdd && paneAdd.classList.contains('active') && typeof _renderFriendsModalContent === 'function') {
+      _renderFriendsModalContent();
+    }
+  }
+
+  /* =====================================================================
+     👥 친구 시스템 및 실시간 방 초대 알림
+     ===================================================================== */
+  let _friendsList = [];
+  let _activeInviteTimeout = null;
+
+  function _loadFriendsFromStorage() {
+    try {
+      const raw = localStorage.getItem('arcade_friends');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) _friendsList = parsed;
+      }
+    } catch (_) {
+      _friendsList = [];
+    }
+  }
+
+  async function _saveFriendsToStorage() {
+    try {
+      localStorage.setItem('arcade_friends', JSON.stringify(_friendsList));
+    } catch (_) {}
+
+    _updateFriendsBadge();
+
+    // Supabase 로그인 상태라면 클라우드 DB에도 동기화
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.getCurrentUser === 'function') {
+      const u = AppSupabase.getCurrentUser();
+      if (u && typeof AppSupabase.addFriend === 'function') {
+        _friendsList.forEach(f => {
+          AppSupabase.addFriend(u.id, f.name, f.friendId || null).catch(() => {});
+        });
+      }
+    }
+  }
+
+  function _updateFriendsBadge() {
+    const badge = $('friends-online-count-badge');
+    if (!badge) return;
+    const onlineCount = _friendsList.filter(f => 
+      _lastOnlineUsers.some(u => u.name === f.name)
+    ).length;
+
+    if (onlineCount > 0) {
+      badge.textContent = onlineCount > 99 ? '99+' : onlineCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  function _openFriendsModal(initialTab = 'list') {
+    const modal = $('modal-friends');
+    if (!modal) return;
+
+    _switchFriendsTab(initialTab);
+    _renderFriendsModalContent();
+    modal.classList.remove('hidden');
+  }
+
+  function _closeFriendsModal() {
+    const modal = $('modal-friends');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function _switchFriendsTab(tabName) {
+    document.querySelectorAll('.friends-tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tabName);
+    });
+    const paneList = $('pane-friends-list');
+    const paneAdd = $('pane-friends-add');
+    if (paneList) paneList.classList.toggle('active', tabName === 'list');
+    if (paneAdd) paneAdd.classList.toggle('active', tabName === 'add');
+    _renderFriendsModalContent();
+  }
+
+  function _renderFriendsModalContent() {
+    const countText = $('friends-count-text');
+    if (countText) countText.textContent = _friendsList.length;
+
+    // 1. 내 친구 목록 렌더링
+    const listWrap = $('friends-items-list');
+    if (listWrap) {
+      if (_friendsList.length === 0) {
+        listWrap.innerHTML = `
+          <div class="friends-empty-state">
+            <i class="fa-solid fa-user-group"></i>
+            <p>아직 등록된 친구가 없습니다.<br>친구 추가 탭에서 친구를 추가해보세요!</p>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-go-add-friend" style="margin-top:6px;">
+              <i class="fa-solid fa-user-plus"></i> 친구 찾기
+            </button>
+          </div>
+        `;
+        const goBtn = $('btn-go-add-friend');
+        if (goBtn) goBtn.addEventListener('click', () => _switchFriendsTab('add'));
+      } else {
+        const isInRoom = !!(currentRoomCode && screens.room && screens.room.classList.contains('active'));
+
+        listWrap.innerHTML = _friendsList.map((friend, idx) => {
+          const onlineUser = _lastOnlineUsers.find(u => u.name === friend.name);
+          const isOnline = !!onlineUser;
+          const statusText = isOnline ? '접속 중 (로비)' : '오프라인';
+          const avatarIcon = (onlineUser && onlineUser.avatarIcon) || friend.avatarIcon || 'fa-solid fa-user';
+          const avatarColor = (onlineUser && onlineUser.avatarColor) || friend.avatarColor || '#38a169';
+          const level = (onlineUser && onlineUser.level) || friend.level || 1;
+          const nameColor = (onlineUser && onlineUser.nameColor) || friend.nameColor || '';
+
+          return `
+            <div class="friends-item" data-idx="${idx}">
+              <div class="friends-avatar-box">
+                <div class="friends-avatar" style="background:${avatarColor};">
+                  <i class="${avatarIcon}"></i>
+                </div>
+                <span class="friends-status-dot ${isOnline ? 'online' : ''}"></span>
+              </div>
+              <div class="friends-info-box">
+                <div class="friends-name-row">
+                  <span class="friends-name" style="${nameColor ? `color:${nameColor} !important;` : ''}">${_escapeHtml(friend.name)}</span>
+                  <span class="friends-level-pill">Lv.${level}</span>
+                </div>
+                <div class="friends-status-text ${isOnline ? 'online' : ''}">
+                  <i class="fa-solid ${isOnline ? 'fa-circle-check' : 'fa-circle'}"></i>
+                  <span>${statusText}</span>
+                </div>
+              </div>
+              <div class="friends-btn-actions">
+                ${isInRoom && isOnline ? `
+                  <button type="button" class="btn btn-primary btn-sm friends-action-btn btn-invite-friend" data-name="${_escapeHtml(friend.name)}">
+                    <i class="fa-solid fa-paper-plane"></i> 초대
+                  </button>
+                ` : ''}
+                <button type="button" class="friends-delete-btn btn-remove-friend" data-name="${_escapeHtml(friend.name)}" title="친구 삭제">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // 초대 버튼 이벤트
+        listWrap.querySelectorAll('.btn-invite-friend').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            _inviteFriendToRoom(btn.dataset.name);
+          });
+        });
+
+        // 삭제 버튼 이벤트
+        listWrap.querySelectorAll('.btn-remove-friend').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const targetName = btn.dataset.name;
+            const ok = await showConfirmDialog({
+              title: '친구 삭제',
+              message: `'${targetName}'님을 친구 목록에서 삭제하시겠습니까?`,
+              confirmText: '삭제',
+              cancelText: '취소',
+              icon: 'fa-solid fa-user-xmark',
+              isDanger: true
+            });
+            if (ok) {
+              _removeFriend(targetName);
+            }
+          });
+        });
+      }
+    }
+
+    // 2. 친구 추가 탭: 현재 접속 중인 플레이어 추천 목록 렌더링
+    const recWrap = $('friends-rec-list');
+    if (recWrap) {
+      // 나 자신과 이미 친구인 사람 제외
+      const nonFriendsOnline = _lastOnlineUsers.filter(u => 
+        u.name && u.name !== myNickname && !_friendsList.some(f => f.name === u.name)
+      );
+
+      if (nonFriendsOnline.length === 0) {
+        recWrap.innerHTML = `
+          <div style="padding:16px;text-align:center;color:var(--t2);font-size:0.82rem;">
+            현재 접속 중인 플레이어가 없거나 모두 이미 친구입니다.
+          </div>
+        `;
+      } else {
+        recWrap.innerHTML = nonFriendsOnline.map(u => `
+          <div class="friends-item" style="padding:8px 12px;">
+            <div class="friends-avatar-box">
+              <div class="friends-avatar" style="width:34px;height:34px;font-size:0.9rem;background:${u.avatarColor || '#38a169'};">
+                <i class="${u.avatarIcon || 'fa-solid fa-user'}"></i>
+              </div>
+              <span class="friends-status-dot online"></span>
+            </div>
+            <div class="friends-info-box">
+              <div class="friends-name-row">
+                <span class="friends-name" style="${u.nameColor ? `color:${u.nameColor} !important;` : ''}">${_escapeHtml(u.name)}</span>
+                <span class="friends-level-pill">Lv.${u.level || 1}</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm btn-quick-add-friend" data-name="${_escapeHtml(u.name)}" style="padding:4px 10px;font-size:0.75rem;">
+              <i class="fa-solid fa-plus"></i> 친구 추가
+            </button>
+          </div>
+        `).join('');
+
+        recWrap.querySelectorAll('.btn-quick-add-friend').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetName = btn.dataset.name;
+            const targetUser = _lastOnlineUsers.find(u => u.name === targetName);
+            _addFriend(targetName, targetUser);
+          });
+        });
+      }
+    }
+  }
+
+  function _addFriend(name, userData = null) {
+    if (!name || typeof name !== 'string') return;
+    const cleanName = name.trim();
+    if (!cleanName) {
+      showToast('추가할 친구의 닉네임을 입력해주세요.', 'warn');
+      return;
+    }
+    if (cleanName === myNickname) {
+      showToast('자기 자신은 친구로 추가할 수 없습니다.', 'warn');
+      return;
+    }
+    if (_friendsList.some(f => f.name === cleanName)) {
+      showToast(`'${cleanName}'님은 이미 친구 목록에 있습니다.`, 'info');
+      return;
+    }
+
+    const newFriend = {
+      name: cleanName,
+      avatarIcon: userData ? userData.avatarIcon : 'fa-solid fa-user',
+      avatarColor: userData ? userData.avatarColor : '#38a169',
+      level: userData && typeof userData.level === 'number' ? userData.level : 1,
+      profileCard: userData ? userData.profileCard : 'default',
+      nameColor: userData ? userData.nameColor : '',
+      friendId: userData ? (userData.supabaseId || userData.id || null) : null,
+      addedAt: Date.now()
+    };
+
+    _friendsList.unshift(newFriend);
+    _saveFriendsToStorage();
+    showToast(`'${cleanName}'님을 친구로 추가했습니다!`, 'success');
+    _renderFriendsModalContent();
+
+    const input = $('input-friend-nickname');
+    if (input) input.value = '';
+  }
+
+  function _removeFriend(name) {
+    _friendsList = _friendsList.filter(f => f.name !== name);
+    _saveFriendsToStorage();
+
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.getCurrentUser === 'function') {
+      const u = AppSupabase.getCurrentUser();
+      if (u && typeof AppSupabase.removeFriend === 'function') {
+        AppSupabase.removeFriend(u.id, name).catch(() => {});
+      }
+    }
+
+    showToast(`'${name}'님을 친구 목록에서 삭제했습니다.`, 'info');
+    _renderFriendsModalContent();
+  }
+
+  function _inviteFriendToRoom(friendName) {
+    if (!currentRoomCode || !screens.room || !screens.room.classList.contains('active')) {
+      showToast('대기실에 입장한 상태에서만 친구를 초대할 수 있습니다.', 'warn');
+      return;
+    }
+
+    const payload = {
+      fromName: myNickname || '플레이어',
+      fromAvatarIcon: myAvatarIcon || 'fa-solid fa-user',
+      fromAvatarColor: myAvatarColor || '#38a169',
+      fromLevel: myLevel || 1,
+      fromProfileCard: myProfileCard || 'default',
+      roomCode: currentRoomCode,
+      gameName: (GAMES[selectedGameKey] ? GAMES[selectedGameKey].title : '게임')
+    };
+
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.sendRoomInvite === 'function') {
+      window.FirebaseLobby.sendRoomInvite(friendName, payload).then(ok => {
+        if (ok) {
+          showToast(`'${friendName}'님에게 방 초대를 보냈습니다!`, 'success');
+        } else {
+          showToast('초대장 전송에 실패했습니다.', 'error');
+        }
+      });
+    } else {
+      showToast('Firebase 연결 상태를 확인해주세요.', 'warn');
+    }
+  }
+
+  function _handleReceivedRoomInvite(invite) {
+    if (!invite || !invite.roomCode) return;
+    if (invite.fromName === myNickname) return;
+    if (currentRoomCode && currentRoomCode === invite.roomCode) return;
+
+    const popup = $('room-invite-popup');
+    if (!popup) return;
+
+    // 팝업 내용 채우기
+    const avEl = $('rip-avatar');
+    if (avEl) {
+      avEl.style.background = invite.fromAvatarColor || '#38a169';
+      avEl.innerHTML = `<i class="${invite.fromAvatarIcon || 'fa-solid fa-user'}"></i>`;
+    }
+    const lvlEl = $('rip-level');
+    if (lvlEl) lvlEl.textContent = invite.fromLevel || 1;
+    const nameEl = $('rip-sender-name');
+    if (nameEl) nameEl.textContent = invite.fromName || '친구';
+    const gameEl = $('rip-game-name');
+    if (gameEl) gameEl.textContent = invite.gameName || '게임';
+    const codeEl = $('rip-room-code');
+    if (codeEl) codeEl.textContent = invite.roomCode;
+
+    // 효과음 재생
+    if (typeof Sound !== 'undefined' && typeof Sound.playWordSubmit === 'function') {
+      try { Sound.playWordSubmit(); } catch (_) {}
+    }
+
+    // 버튼 바인딩
+    const acceptBtn = $('rip-btn-accept');
+    if (acceptBtn) {
+      acceptBtn.onclick = () => {
+        _hideRoomInvitePopup();
+        if (window.FirebaseLobby && typeof window.FirebaseLobby.removeRoomInvite === 'function') {
+          window.FirebaseLobby.removeRoomInvite(myNickname);
+        }
+        showToast(`${invite.fromName}님의 방(${invite.roomCode})으로 입장합니다!`, 'info');
+        _startJoinRoom(invite.roomCode);
+      };
+    }
+
+    const declineBtn = $('rip-btn-decline');
+    if (declineBtn) {
+      declineBtn.onclick = () => {
+        _hideRoomInvitePopup();
+        if (window.FirebaseLobby && typeof window.FirebaseLobby.removeRoomInvite === 'function') {
+          window.FirebaseLobby.removeRoomInvite(myNickname);
+        }
+        showToast('초대를 거절했습니다.', 'info');
+      };
+    }
+
+    popup.classList.remove('hidden');
+
+    if (_activeInviteTimeout) clearTimeout(_activeInviteTimeout);
+    _activeInviteTimeout = setTimeout(() => {
+      _hideRoomInvitePopup();
+    }, 15000);
+  }
+
+  function _hideRoomInvitePopup() {
+    const popup = $('room-invite-popup');
+    if (popup) popup.classList.add('hidden');
+    if (_activeInviteTimeout) {
+      clearTimeout(_activeInviteTimeout);
+      _activeInviteTimeout = null;
+    }
+  }
+
+  function _initFriendsSystem() {
+    _loadFriendsFromStorage();
+
+    // Supabase 사용자라면 DB 친구 목록도 비동기 로드하여 병합
+    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.onAuthStateChange === 'function') {
+      AppSupabase.onAuthStateChange(async (event, session, user) => {
+        if (user && typeof AppSupabase.getFriends === 'function') {
+          try {
+            const dbFriends = await AppSupabase.getFriends(user.id);
+            if (Array.isArray(dbFriends)) {
+              dbFriends.forEach(df => {
+                if (!_friendsList.some(f => f.name === df.friend_name)) {
+                  _friendsList.push({
+                    name: df.friend_name,
+                    avatarIcon: 'fa-solid fa-user',
+                    avatarColor: '#38a169',
+                    level: 1,
+                    friendId: df.friend_id || null,
+                    addedAt: Date.now()
+                  });
+                }
+              });
+              _saveFriendsToStorage();
+            }
+          } catch (_) {}
+        }
+      });
+    }
+
+    // 로비 상단 친구 버튼 클릭
+    const btnOpen = $('btn-open-friends');
+    if (btnOpen) {
+      btnOpen.addEventListener('click', () => _openFriendsModal('list'));
+    }
+
+    // 모달 닫기 버튼
+    const btnClose = $('btn-close-friends');
+    if (btnClose) {
+      btnClose.addEventListener('click', _closeFriendsModal);
+    }
+    const modalFriends = $('modal-friends');
+    if (modalFriends) {
+      modalFriends.addEventListener('click', (e) => {
+        if (e.target === modalFriends) _closeFriendsModal();
+      });
+    }
+
+    // 탭 전환
+    const tabList = $('tab-friends-list');
+    if (tabList) tabList.addEventListener('click', () => _switchFriendsTab('list'));
+    const tabAdd = $('tab-friends-add');
+    if (tabAdd) tabAdd.addEventListener('click', () => _switchFriendsTab('add'));
+
+    // 친구 닉네임 직접 검색 추가
+    const btnAdd = $('btn-add-friend-submit');
+    const inputAdd = $('input-friend-nickname');
+    if (btnAdd && inputAdd) {
+      btnAdd.addEventListener('click', () => {
+        _addFriend(inputAdd.value);
+      });
+      inputAdd.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          _addFriend(inputAdd.value);
+        }
+      });
+    }
+
+    // Firebase 방 초대 실시간 리스너 등록
+    const _setupInviteListener = () => {
+      if (window.FirebaseLobby && typeof window.FirebaseLobby.onRoomInvite === 'function') {
+        window.FirebaseLobby.onRoomInvite(myNickname, (inviteData) => {
+          if (inviteData) {
+            _handleReceivedRoomInvite(inviteData);
+          }
+        });
+      }
+    };
+
+    if (window.FirebaseLobby && typeof window.FirebaseLobby.onRoomInvite === 'function') {
+      _setupInviteListener();
+    } else {
+      window.addEventListener('firebase-ready', () => {
+        _setupInviteListener();
+      }, { once: true });
+    }
+
+    _updateFriendsBadge();
   }
 
   /* ── 💬 로비 전체 실시간 채팅방 ── */
@@ -4035,13 +4496,16 @@
       console.log('[Guest] DELEGATE_HOST 패킷 수신:', data);
       _isMigratingHost = true;
 
-      const myId = P2P.getMyId();
-      const targetHostId = data.targetHostId;
+      const myId = String(P2P.getMyId() || '');
+      const targetHostId = data.targetHostId ? String(data.targetHostId) : '';
       const targetHostName = data.targetHostName;
       const roomCode = data.roomCode || currentRoomCode;
       const oldHostLeft = !!data.oldHostLeft;
-      const amINewHost = (targetHostId && String(targetHostId) === String(myId)) || 
-                         (targetHostName && targetHostName === myNickname);
+      const guests = roomPlayers.filter(p => !p.isHost && (oldHostLeft ? (p.name !== data.oldHostName && p.id !== data.oldHostId) : true));
+      const myIdxInGuests = guests.findIndex(p => (p.id && String(p.id) === myId) || p.name === myNickname);
+      const amINewHost = (targetHostId && targetHostId === myId) || 
+                         (targetHostName && targetHostName === myNickname) ||
+                         (myIdxInGuests === 0);
 
       // 인게임 중인 경우 안전하게 대기실로 복귀
       if (currentGameModule) {
@@ -4302,11 +4766,14 @@
 
     // 방장의 예기치 않은 연결 종료(브라우저 강제 종료, 네트워크 오류 등) 시:
     // 참가자 목록 중 최상단(첫 번째 게스트)에게 방장 권한 자동 위임!
-    const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== '방장');
+    const myId = String(P2P.getMyId() || '');
+    const remainingGuests = roomPlayers.filter(p => !p.isHost);
     if (remainingGuests.length > 0) {
       const nextHost = remainingGuests[0];
-      const myId = P2P.getMyId();
-      const amINextHost = (nextHost.id && String(nextHost.id) === String(myId)) || (nextHost.name === myNickname);
+      const myIdxInGuests = remainingGuests.findIndex(p => (p.id && String(p.id) === myId) || p.name === myNickname);
+      const amINextHost = (nextHost.id && String(nextHost.id) === myId) || 
+                         (nextHost.name === myNickname) || 
+                         (myIdxInGuests === 0);
 
       // 인게임 정리
       if (currentGameModule) {
@@ -4441,11 +4908,15 @@
     const emptyCount = Math.max(0, currentRoomMaxPlayers - playerCount);
     for (let i = 0; i < emptyCount; i++) {
       const slot = document.createElement('div');
-      slot.className = 'player-slot-empty';
+      slot.className = 'player-slot-empty can-invite';
+      slot.title = '클릭하여 친구 초대하기';
       slot.innerHTML = `
-        <div class="slot-avatar"><i class="fa-regular fa-user"></i></div>
-        <div class="slot-text">참가자 대기 중...</div>
+        <div class="slot-avatar"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="slot-text">참가자 대기 중... <span class="slot-invite-tag"><i class="fa-solid fa-paper-plane"></i> 친구 초대</span></div>
       `;
+      slot.addEventListener('click', () => {
+        _openFriendsModal('list');
+      });
       slotsEl.appendChild(slot);
     }
 
@@ -4665,7 +5136,8 @@
   // 방 나가기
   $('btn-leave-room').addEventListener('click', async () => {
     const amIHost = P2P.isHost() || isHostPlayer;
-    const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== myNickname && p.id !== P2P.getMyId());
+    const myPeerId = String(P2P.getMyId() || '');
+    const remainingGuests = roomPlayers.filter(p => !p.isHost && (!p.id || String(p.id) !== myPeerId));
     const willDelegate = amIHost && remainingGuests.length > 0;
 
     const ok = await showConfirmDialog({
@@ -4684,7 +5156,7 @@
           P2P.send({ type: 'guest_leave_room', name: myNickname });
         } catch (_) {}
       }
-      _leaveRoom();
+      await _leaveRoom();
     }
   });
 
@@ -4699,12 +5171,13 @@
     }
   }
 
-  function _leaveRoom(pushState = true) {
+  async function _leaveRoom(pushState = true) {
     const amIHost = P2P.isHost() || isHostPlayer;
+    const myPeerId = String(P2P.getMyId() || '');
 
     if (amIHost) {
-      // 🌐 방장이 퇴장할 때: 남아있는 다른 게스트가 있는지 확인
-      const remainingGuests = roomPlayers.filter(p => !p.isHost && p.name !== myNickname && p.id !== P2P.getMyId());
+      // 🌐 방장이 퇴장할 때: 남아있는 다른 게스트가 있는지 확인 (ID 기반 검증으로 동명/테스트 계정 지원)
+      const remainingGuests = roomPlayers.filter(p => !p.isHost && (!p.id || String(p.id) !== myPeerId));
 
       if (remainingGuests.length > 0) {
         // 남은 인원 중 최상단(첫 번째) 게스트에게 방장 자동 위임!
@@ -4713,7 +5186,7 @@
 
         if (window.FirebaseLobby && typeof window.FirebaseLobby.cancelRoomOnDisconnect === 'function') {
           try {
-            window.FirebaseLobby.cancelRoomOnDisconnect(currentRoomCode);
+            await window.FirebaseLobby.cancelRoomOnDisconnect(currentRoomCode);
           } catch (_) {}
         }
 
@@ -4730,6 +5203,9 @@
         } catch (_) {}
 
         showToast(`${nextHost.name}님에게 방장을 위임하고 퇴장합니다.`, 'info');
+
+        // 🌟 WebRTC 패킷이 네트워크 데이터 채널을 통해 게스트에게 완전히 도달할 수 있도록 300ms 대기
+        await new Promise(r => setTimeout(r, 300));
 
       } else {
         // 남은 게스트가 없으면 방 정상 종료 및 삭제
@@ -5703,7 +6179,8 @@
   _initStatsUI();
   _initOnlineUsersPresence();
   _initLobbyChat();
-  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템 & 실시간 접속자 & 로비 채팅)');
+  _initFriendsSystem();
+  console.log('[App] P2P 아케이드 플랫폼 시작 완료 (PC 인게임 드래그 스크롤 & Firebase 로비 연동 & Supabase 인증 & 전적 시스템 & 실시간 접속자 & 로비 채팅 & 친구 시스템)');
 
 
 
@@ -5712,6 +6189,10 @@
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
     // 1. Close modals if they are open
+    if ($('modal-friends') && !$('modal-friends').classList.contains('hidden')) {
+      $('modal-friends').classList.add('hidden');
+      return;
+    }
     if ($('stats-modal') && !$('stats-modal').classList.contains('hidden')) {
       $('stats-modal').classList.add('hidden');
       return;

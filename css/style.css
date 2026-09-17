@@ -7266,7 +7266,7 @@ html, body {
   border-color: var(--border) !important;
 }
 
-[data-theme="dark"] .lrc-host-name {
+[data-theme="dark"] .lrc-host-name:not([style*="color"]) {
   color: var(--t1) !important;
 }
 [data-theme="dark"] .room-card:hover {
@@ -9831,7 +9831,7 @@ html, body {
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .rr-player-name,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .shop-card-preview-name,
 [class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .online-user-name,
-[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .lrc-host-name {
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .lrc-host-name:not([style*="color"]) {
   color: #ffffff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
@@ -9855,7 +9855,7 @@ html, body {
 .pcard-theme-royal-gold .rr-player-name,
 .pcard-theme-royal-gold .shop-card-preview-name,
 .pcard-theme-royal-gold .online-user-name,
-.pcard-theme-royal-gold .lrc-host-name {
+.pcard-theme-royal-gold .lrc-host-name:not([style*="color"]) {
   color: #3e2723;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
 }
@@ -9881,5 +9881,461 @@ html, body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FRIENDS SYSTEM & ROOM INVITE POPUP STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 로비 친구 버튼 온라인 배지 ── */
+.friends-online-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  background: var(--green, #10b981);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--bg-card, #ffffff);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  line-height: 1;
+  pointer-events: none;
+}
+.friends-online-badge.hidden {
+  display: none;
+}
+
+/* ── 상단 친구 방 초대 팝업 알림 ── */
+.room-invite-popup {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-card, #ffffff);
+  border: 1.5px solid var(--primary, #3b82f6);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.2);
+  min-width: 310px;
+  max-width: 90vw;
+  backdrop-filter: blur(12px);
+  animation: invitePopupSlideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.room-invite-popup.hidden {
+  display: none !important;
+}
+
+@keyframes invitePopupSlideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -24px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.rip-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.rip-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.rip-level {
+  position: absolute;
+  bottom: -2px;
+  right: -4px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  background: var(--bg-surface, #1e293b);
+  color: var(--yellow, #f59e0b);
+  border: 1.5px solid var(--bg-card, #ffffff);
+  border-radius: 8px;
+  padding: 0 4px;
+  line-height: 1.3;
+}
+.rip-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rip-sender {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--t1, #1e293b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rip-sender strong {
+  color: var(--primary, #3b82f6);
+}
+.rip-msg {
+  font-size: 0.78rem;
+  color: var(--t2, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.rip-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.rip-btn-accept {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: var(--radius-sm, 8px);
+}
+.rip-btn-decline {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--t2, #64748b);
+}
+.rip-btn-decline:hover {
+  background: var(--bg-hover, #f1f5f9);
+  color: var(--red, #ef4444);
+}
+
+[data-theme="dark"] .room-invite-popup {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: #3b82f6;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.25);
+}
+[data-theme="dark"] .rip-level {
+  border-color: #1e293b;
+}
+
+/* ── 친구 목록 모달 ── */
+.friends-modal-card {
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 14px;
+  border-radius: var(--radius-lg, 20px);
+}
+
+.friends-tab-bar {
+  display: flex;
+  background: var(--bg-hover, #f1f5f9);
+  border-radius: var(--radius-md, 12px);
+  padding: 4px;
+  gap: 4px;
+}
+.friends-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--t2, #64748b);
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.friends-tab-btn:hover {
+  color: var(--t1, #1e293b);
+}
+.friends-tab-btn.active {
+  background: var(--bg-card, #ffffff);
+  color: var(--primary, #3b82f6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .friends-tab-bar {
+  background: rgba(15, 23, 42, 0.6);
+}
+[data-theme="dark"] .friends-tab-btn.active {
+  background: #334155;
+  color: #60a5fa;
+}
+
+.friends-tab-pane {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.friends-tab-pane.active {
+  display: flex;
+}
+
+.friends-list {
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.friends-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-hover, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md, 12px);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.friends-item:hover {
+  border-color: var(--primary, #3b82f6);
+}
+[data-theme="dark"] .friends-item {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .friends-item:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: #3b82f6;
+}
+
+.friends-avatar-box {
+  position: relative;
+  flex-shrink: 0;
+}
+.friends-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+}
+.friends-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-card, #ffffff);
+  background: #94a3b8;
+}
+.friends-status-dot.online {
+  background: var(--green, #10b981);
+  box-shadow: 0 0 6px var(--green, #10b981);
+}
+
+.friends-info-box {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.friends-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.friends-name {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--t1, #1e293b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.friends-level-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--yellow, #d97706);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+.friends-status-text {
+  font-size: 0.75rem;
+  color: var(--t2, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.friends-status-text.online {
+  color: var(--green, #10b981);
+  font-weight: 600;
+}
+
+.friends-btn-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.friends-action-btn {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.friends-delete-btn {
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--t2, #94a3b8);
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.friends-delete-btn:hover {
+  color: var(--red, #ef4444);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ── 친구 검색 & 추천 목록 ── */
+.friends-search-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.friends-search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-hover, #f8fafc);
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  color: var(--t1, #1e293b);
+  transition: border-color 0.15s ease;
+}
+.friends-search-input-wrap:focus-within {
+  border-color: var(--primary, #3b82f6);
+}
+.friends-search-input-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: inherit;
+}
+[data-theme="dark"] .friends-search-input-wrap {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.friends-online-rec-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 8px;
+}
+.friends-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--t2, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.friends-rec-list {
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.friends-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  gap: 10px;
+  color: var(--t2, #94a3b8);
+  text-align: center;
+}
+.friends-empty-state i {
+  font-size: 2.2rem;
+  opacity: 0.6;
+}
+.friends-empty-state p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ── 방 대기 슬롯 클릭 초대 스타일 ── */
+.player-slot-empty.can-invite {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px dashed rgba(59, 130, 246, 0.4);
+}
+.player-slot-empty.can-invite:hover {
+  border-color: var(--primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+.player-slot-empty.can-invite .slot-avatar i {
+  transition: transform 0.2s ease;
+}
+.player-slot-empty.can-invite:hover .slot-avatar i {
+  transform: scale(1.2);
+  color: var(--primary, #3b82f6);
+}
+.slot-invite-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary, #3b82f6);
+  margin-left: 6px;
+  background: rgba(59, 130, 246, 0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
 
 

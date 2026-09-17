@@ -50,10 +50,14 @@
 
   <!-- 🌟 로비 상단 바 🌟 -->
   <header class="room-header lobby-topbar">
-    <!-- 좌측: 마켓플레이스 버튼 -->
+    <!-- 좌측: 마켓플레이스 & 친구 목록 버튼 -->
     <div class="lobby-topbar-left">
       <button type="button" class="btn-icon" id="btn-marketplace" title="상점 열기">
         <i class="fa-solid fa-store"></i>
+      </button>
+      <button type="button" class="btn-icon" id="btn-open-friends" title="친구 목록" style="position:relative;">
+        <i class="fa-solid fa-user-group"></i>
+        <span class="friends-online-badge hidden" id="friends-online-count-badge">0</span>
       </button>
     </div>
 
@@ -1270,6 +1274,85 @@
     <i class="fa-solid fa-user-xmark"></i>
     <span>강퇴하기</span>
   </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     INVITE POPUP: 상단 친구 방 초대 팝업 알림
+═══════════════════════════════════════════════════════════════ -->
+<div id="room-invite-popup" class="room-invite-popup hidden">
+  <div class="rip-avatar-wrap">
+    <div class="rip-avatar" id="rip-avatar" style="background:#38a169;"><i class="fa-solid fa-user"></i></div>
+    <span class="rip-level sm" id="rip-level">1</span>
+  </div>
+  <div class="rip-body">
+    <div class="rip-sender"><strong id="rip-sender-name">플레이어</strong>님의 초대!</div>
+    <div class="rip-msg"><span id="rip-game-name">오목</span> (방 <span id="rip-room-code">0000</span>)</div>
+  </div>
+  <div class="rip-actions">
+    <button type="button" class="btn btn-sm btn-primary rip-btn-accept" id="rip-btn-accept">
+      <i class="fa-solid fa-check"></i> 수락
+    </button>
+    <button type="button" class="btn btn-sm btn-ghost rip-btn-decline" id="rip-btn-decline" title="거절">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: 친구 목록 & 친구 추가 모달
+═══════════════════════════════════════════════════════════════ -->
+<div id="modal-friends" class="overlay friends-modal-overlay hidden">
+  <div class="friends-modal-card card">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fa-solid fa-user-group" style="color:var(--primary);"></i>
+        <span>친구 관리</span>
+      </div>
+      <button type="button" class="btn-icon sm" id="btn-close-friends" title="닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="friends-tab-bar">
+      <button type="button" class="friends-tab-btn active" data-tab="list" id="tab-friends-list">
+        <i class="fa-solid fa-users"></i> 내 친구 (<span id="friends-count-text">0</span>)
+      </button>
+      <button type="button" class="friends-tab-btn" data-tab="add" id="tab-friends-add">
+        <i class="fa-solid fa-user-plus"></i> 친구 추가
+      </button>
+    </div>
+
+    <!-- 탭 1: 내 친구 목록 -->
+    <div class="friends-tab-pane active" id="pane-friends-list">
+      <div class="friends-list custom-scroll" id="friends-items-list">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </div>
+
+    <!-- 탭 2: 친구 추가 (검색 & 현재 접속자 빠른 추가) -->
+    <div class="friends-tab-pane" id="pane-friends-add">
+      <div class="friends-search-box">
+        <div class="friends-search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="input-friend-nickname" placeholder="친구 닉네임 입력 (최대 12자)" maxlength="12" autocomplete="off" />
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-add-friend-submit">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>추가</span>
+        </button>
+      </div>
+
+      <div class="friends-online-rec-section">
+        <div class="friends-section-title">
+          <i class="fa-solid fa-signal" style="color:var(--green);"></i>
+          <span>현재 접속 중인 플레이어</span>
+        </div>
+        <div class="friends-rec-list custom-scroll" id="friends-rec-list">
+          <!-- JS 동적 렌더링 -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════

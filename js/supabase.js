@@ -720,6 +720,62 @@ const AppSupabase = (() => {
     }
   }
 
+  /**
+   * 친구 목록 조회 (DB friends 테이블 연동)
+   */
+  async function getFriends(userId) {
+    const client = getClient();
+    if (!client || !userId) return null;
+    try {
+      const { data, error } = await client
+        .from('friends')
+        .select('*')
+        .eq('user_id', userId);
+      if (error) return null;
+      return data || [];
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * 친구 추가 (DB friends 테이블)
+   */
+  async function addFriend(userId, friendName, friendId = null) {
+    const client = getClient();
+    if (!client || !userId || !friendName) return false;
+    try {
+      const { error } = await client
+        .from('friends')
+        .upsert({
+          user_id: userId,
+          friend_name: friendName,
+          friend_id: friendId
+        }, { onConflict: 'user_id, friend_name' });
+      return !error;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /**
+   * 친구 삭제 (DB friends 테이블)
+   */
+  async function removeFriend(userId, friendName) {
+    const client = getClient();
+    if (!client || !userId || !friendName) return false;
+    try {
+      const { error } = await client
+        .from('friends')
+        .delete()
+        .eq('user_id', userId)
+        .eq('friend_name', friendName);
+      return !error;
+    } catch (_) {
+      return false;
+    }
+  }
+
   return {
     isConfigured,
     getClient,
@@ -740,7 +796,10 @@ const AppSupabase = (() => {
     updatePresence,
     onPresenceSync,
     initLobbyChat,
-    sendLobbyChatMessage
+    sendLobbyChatMessage,
+    getFriends,
+    addFriend,
+    removeFriend
   };
 })();
 

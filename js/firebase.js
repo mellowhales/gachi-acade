@@ -423,6 +423,65 @@ const FirebaseLobby = {
     }
   },
 
+  /**
+   * 친구 방 초대 전송 (/room_invites/{targetNickname})
+   */
+  async sendRoomInvite(targetNickname, inviteData) {
+    if (!_db || !targetNickname) return false;
+    try {
+      const cleanKey = encodeURIComponent(String(targetNickname).trim()).replace(/\./g, '%2E');
+      const targetRef = ref(_db, `room_invites/${cleanKey}`);
+      await set(targetRef, {
+        ...inviteData,
+        timestamp: Date.now()
+      });
+      setTimeout(() => {
+        try { remove(targetRef).catch(() => {}); } catch (_) {}
+      }, 45000);
+      return true;
+    } catch (err) {
+      console.warn('[Firebase] 방 초대 발송 실패:', err);
+      return false;
+    }
+  },
+
+  /**
+   * 내 닉네임으로 오는 방 초대 수신 리스너
+   */
+  onRoomInvite(myNickname, callback) {
+    if (!_db || !myNickname) return null;
+    try {
+      const cleanKey = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+      const myInviteRef = ref(_db, `room_invites/${cleanKey}`);
+      onValue(myInviteRef, (snapshot) => {
+        const val = snapshot.val();
+        if (val && typeof val === 'object' && val.roomCode) {
+          const age = Date.now() - (val.timestamp || 0);
+          if (age < 45000) {
+            callback(val);
+            return;
+          }
+        }
+        callback(null);
+      });
+      return myInviteRef;
+    } catch (err) {
+      console.warn('[Firebase] 방 초대 리스너 등록 실패:', err);
+      return null;
+    }
+  },
+
+  /**
+   * 수락/거절된 초대장 정리
+   */
+  async removeRoomInvite(myNickname) {
+    if (!_db || !myNickname) return;
+    try {
+      const cleanKey = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+      await remove(ref(_db, `room_invites/${cleanKey}`));
+    } catch (_) {}
+  },
+
   isReady() {
     return !!_db;
   }
