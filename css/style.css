@@ -8692,14 +8692,40 @@ html, body {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 .btn-oauth-kakao {
-  background: #FEE500;
-  color: #191919;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: #e9e9e9;
+  color: #aaaaaa;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.btn-oauth-kakao:hover {
+  transform: none;
+  filter: none;
+  background: #e9e9e9;
+}
+.btn-oauth-kakao:disabled {
+  pointer-events: none;
 }
 .btn-oauth-naver {
   background: #03C75A;
   color: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* 구글 로그인만 지원 안내 메시지 */
+.auth-google-only-notice {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-align: center;
+}
+.auth-google-only-notice i {
+  color: var(--green);
+  font-size: 0.7rem;
 }
 
 /* ── 다크 테마 코인 & 소셜 로그인 대응 ── */
@@ -9073,16 +9099,15 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 7px;
-  border-radius: 4px;
+  padding: 2px 4px;
   font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.1;
   white-space: nowrap;
-  background: rgba(245, 158, 11, 0.14);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: transparent;
+  border: none;
   color: #d97706;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: none;
 }
 .profile-mini-coin i {
   font-size: 0.65rem;
@@ -9098,8 +9123,8 @@ html, body {
 
 /* ── 다크 테마 대응 ── */
 [data-theme="dark"] .profile-mini-coin {
-  background: rgba(245,158,11,0.15);
-  border-color: rgba(245,158,11,0.3);
+  background: transparent;
+  border: none;
   color: #fbbf24;
 }
 [data-theme="dark"] .profile-preview-stats-btn {

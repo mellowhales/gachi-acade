@@ -970,8 +970,8 @@
     </div>
     <div class="profile-auth-action" id="profile-auth-action">
       <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
-        <i class="fa-solid fa-right-to-bracket"></i>
-        <span>간편 로그인</span>
+        <i class="fa-solid fa-cloud"></i>
+        <span>클라우드 로그인</span>
       </button>
     </div>
   </div>
@@ -1056,12 +1056,13 @@
         </svg>
         <span>Google 계정으로 계속</span>
       </button>
-      <button type="button" class="btn-oauth btn-oauth-kakao" id="btn-oauth-kakao" title="카카오로 간편 로그인">
-        <svg class="oauth-icon" viewBox="0 0 24 24" width="19" height="19" fill="#191919">
+      <button type="button" class="btn-oauth btn-oauth-kakao btn-oauth-kakao-disabled" id="btn-oauth-kakao" disabled>
+        <svg class="oauth-icon" viewBox="0 0 24 24" width="19" height="19" fill="#aaaaaa">
           <path d="M12 3c-5.523 0-10 3.582-10 8 0 2.868 1.895 5.385 4.743 6.74-.208.775-.75 2.808-.86 3.242-.136.539.197.532.415.387.172-.114 2.73-1.854 3.83-2.602.613.088 1.238.133 1.872.133 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/>
         </svg>
         <span>카카오 계정으로 계속</span>
       </button>
+      <p class="auth-google-only-notice"><i class="fa-solid fa-circle-info"></i> 현재 구글 로그인만 지원합니다.</p>
     </div>
   </div>
 </div>

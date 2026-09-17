@@ -1583,8 +1583,8 @@
 
     if (user && user.email) {
       if (iconEl) iconEl.className = 'fa-solid fa-cloud-check profile-auth-icon logged-in';
-      statusEl.textContent = user.email;
-      statusEl.title = user.email;
+      statusEl.textContent = '구글 로그인 중';
+      statusEl.removeAttribute('title');
       subEl.textContent = '클라우드 프로필 동기화 중';
       actionWrap.innerHTML = `
         <button type="button" class="btn btn-outline btn-sm profile-auth-btn" id="btn-supabase-logout">
@@ -1609,8 +1609,8 @@
       subEl.textContent = '로그인하면 프로필이 클라우드에 보관됩니다.';
       actionWrap.innerHTML = `
         <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
-          <i class="fa-solid fa-right-to-bracket"></i>
-          <span>간편 로그인</span>
+          <i class="fa-solid fa-cloud"></i>
+          <span>클라우드 로그인</span>
         </button>
       `;
       const btnOpen = $('btn-open-auth-modal');
