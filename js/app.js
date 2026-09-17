@@ -434,7 +434,7 @@
     const isLoggedIn = typeof AppSupabase !== 'undefined' && !!AppSupabase.getCurrentUser();
     const profileAmountEl = $('profile-coin-amount');
     if (profileAmountEl) {
-      profileAmountEl.textContent = isLoggedIn ? `${myCoins.toLocaleString()} 코인` : '0 코인 (로그인 필요)';
+      profileAmountEl.textContent = isLoggedIn ? myCoins.toLocaleString() : '0';
     }
   }
 
@@ -480,17 +480,17 @@
         : `Lv.${myLevel} 경험치: ${myExp.toLocaleString()} / ${reqExp.toLocaleString()} EXP (${pct}%)`;
     }
 
-    // 2. 프로필 편집 말풍선 팝업 레벨 카드
+    // 2. 프로필 편집 말풍선 팝업 레벨 뱃지
     const profileTag = $('profile-level-tag');
     if (profileTag) {
       profileTag.textContent = `Lv.${myLevel}`;
-      profileTag.className = `profile-level-tag ${tierClass}`;
+      profileTag.className = `profile-mini-level ${tierClass}`;
     }
     const profileExpText = $('profile-exp-text');
     if (profileExpText) {
       profileExpText.textContent = isMax
-        ? `MAX LEVEL (${MAX_LEVEL})`
-        : `${myExp.toLocaleString()} / ${reqExp.toLocaleString()} EXP (${pct}%)`;
+        ? `MAX (${MAX_LEVEL})`
+        : `${myExp.toLocaleString()} / ${reqExp.toLocaleString()} EXP`;
     }
     const profileExpFill = $('profile-exp-fill');
     if (profileExpFill) {
@@ -1105,7 +1105,7 @@
   function _handleSaveProfile() {
     let val = $('profile-input-nick') ? $('profile-input-nick').value.trim() : '';
     if (!val) val = '익명';
-    myNickname = val.slice(0, 8);
+    myNickname = val.slice(0, 6);
     myAvatarIcon = _tempSelectedIcon || 'fa-solid fa-dog';
     myAvatarColor = _tempSelectedColor || '#38a169';
 
@@ -2726,12 +2726,11 @@
         <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="player-meta">
           <div class="player-name">
-            <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">Lv.${p.level || 1}</span>
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
           </div>
-          <div class="player-role">${isThisHost ? '' : '참가자'}</div>
+          <div class="player-role"><span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">Lv.${p.level || 1}</span></div>
         </div>
         ${readyBadgeHtml}
       `;

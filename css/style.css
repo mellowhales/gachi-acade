@@ -2798,17 +2798,7 @@ body {
   color: var(--green);
 }
 
-.profile-preview-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 8px;
-  background: var(--bg-hover);
-  border-radius: var(--radius);
-  border: 1.5px dashed var(--border);
-  gap: 4px;
-}
+
 
 .profile-preview-avatar {
   width: 60px;
@@ -3361,20 +3351,26 @@ html, body {
     min-width: 0 !important;
     overflow: hidden !important;
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 4px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 2px !important;
   }
   .player-name {
-    font-size: 0.86rem !important;
+    font-size: 0.84rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    max-width: 100% !important;
   }
   .player-role {
-    display: none !important;
+    display: block !important;
+  }
+  .player-role .player-level-badge {
+    font-size: 0.64rem !important;
+    padding: 1px 5px !important;
+    margin-right: 0 !important;
   }
 
   /* 🌟 프로필 점 세 개(관리 버튼) 숨김 🌟 */
@@ -8391,5 +8387,110 @@ html, body {
   color: #9ae6b4;
 }
 
+/* ══════════════════════════════════════════════════════
+   🌟 프로필 팝업 - 새 미리보기 영역 (아바타 + 뱃지)
+══════════════════════════════════════════════════════ */
 
+.profile-preview-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 10px 8px;
+  background: var(--bg-hover);
+  border-radius: var(--radius);
+  border: 1.5px dashed var(--border);
+  gap: 3px;
+}
+
+.profile-preview-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-preview-badges {
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+
+.profile-mini-level {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--t1);
+  user-select: none;
+}
+
+.profile-mini-coin {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #d97706;
+}
+.profile-mini-coin i {
+  font-size: 0.62rem;
+  color: #f59e0b;
+}
+
+.profile-exp-text {
+  font-size: 0.7rem;
+  color: var(--t3);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ── 다크 테마 대응 ── */
+[data-theme="dark"] .profile-mini-level {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.15);
+  color: #e2e8f0;
+}
+[data-theme="dark"] .profile-mini-coin {
+  background: rgba(245,158,11,0.15);
+  border-color: rgba(245,158,11,0.3);
+  color: #fbbf24;
+}
+
+/* ══════════════════════════════════════════════════════
+   🌟 로비 사용자 이름 모바일 최적화 (6글자까지 안 짤리게)
+══════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .home-user-bar .user-name {
+    font-size: 0.88rem !important;
+    max-width: 80px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .home-user-bar .user-level-badge {
+    font-size: 0.68rem !important;
+    padding: 1px 5px !important;
+    flex-shrink: 0 !important;
+  }
+  .user-name-line {
+    max-width: 120px;
+    overflow: hidden;
+  }
+}
 

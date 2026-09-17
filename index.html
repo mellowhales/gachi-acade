@@ -861,15 +861,24 @@
     </button>
   </div>
 
+  <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
   <div class="profile-preview-area">
-    <div class="profile-preview-avatar" id="profile-preview-avatar">
-      <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+    <div class="profile-preview-avatar-wrap">
+      <div class="profile-preview-avatar" id="profile-preview-avatar">
+        <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+      </div>
+      <!-- 레벨 + 코인 미니 뱃지 (우상단) -->
+      <div class="profile-preview-badges">
+        <span class="profile-mini-level" id="profile-level-tag">Lv.1</span>
+        <span class="profile-mini-coin"><i class="fa-solid fa-coins"></i> <span id="profile-coin-amount">0</span></span>
+      </div>
     </div>
     <div class="profile-preview-name" id="profile-preview-name">익명</div>
-    <button type="button" class="btn btn-secondary btn-sm" id="btn-random-profile" style="margin-top:4px;gap:6px;padding:4px 10px;font-size:0.78rem;">
-      <i class="fa-solid fa-dice"></i>
-      <span>랜덤 아바타</span>
-    </button>
+    <!-- 경험치 게이지 -->
+    <div class="profile-exp-track" style="width:100%;margin-top:4px;">
+      <div class="profile-exp-fill" id="profile-exp-fill" style="width: 0%;"></div>
+    </div>
+    <span class="profile-exp-text" id="profile-exp-text">0 / 60 EXP</span>
   </div>
 
   <!-- 🌟 계정 연동 / 로그인 영역 -->
@@ -889,40 +898,15 @@
     </div>
   </div>
 
-  <!-- 🌟 레벨 및 경험치 카드 -->
-  <div class="profile-level-card" id="profile-level-card">
-    <div class="profile-level-header">
-      <span class="profile-level-tag" id="profile-level-tag">Lv.1</span>
-      <span class="profile-exp-text" id="profile-exp-text">0 / 60 EXP (0%)</span>
-    </div>
-    <div class="profile-exp-track">
-      <div class="profile-exp-fill" id="profile-exp-fill" style="width: 0%;"></div>
-    </div>
-  </div>
-
-  <!-- 🌟 보유 코인 표시 카드 -->
-  <div class="profile-coin-card" id="profile-coin-card">
-    <div class="profile-coin-left">
-      <div class="profile-coin-icon-wrap">
-        <i class="fa-solid fa-coins"></i>
-      </div>
-      <div class="profile-coin-info">
-        <span class="profile-coin-label">내 보유 코인</span>
-        <strong class="profile-coin-amount" id="profile-coin-amount">0 코인</strong>
-      </div>
-    </div>
-    <div class="profile-coin-badge">승리 시 +50🪙</div>
-  </div>
-
   <!-- 닉네임 입력 -->
   <div class="profile-section">
-    <label class="profile-section-label">닉네임</label>
+    <label class="profile-section-label">닉네임 (최대 6글자)</label>
     <input
       type="text"
       id="profile-input-nick"
       class="profile-input-nick"
       placeholder="익명"
-      maxlength="8"
+      maxlength="6"
       autocomplete="off"
       spellcheck="false"
     />
@@ -936,12 +920,12 @@
 
   <!-- 배경 색상 선택 -->
   <div class="profile-section">
-    <label class="profile-section-label">프로필 배경 색상</label>
+    <label class="profile-section-label">배경 색상</label>
     <div class="avatar-color-grid" id="avatar-color-grid"></div>
   </div>
 
   <!-- 내 전적 보기 버튼 -->
-  <div style="margin-bottom: 12px;">
+  <div>
     <button type="button" class="btn btn-secondary btn-sm" id="btn-open-my-stats" style="width:100%; padding:9px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;">
       <i class="fa-solid fa-chart-simple" style="color:var(--primary);"></i>
       <span>내 전적 보기</span>
@@ -958,6 +942,7 @@
       <span>저장</span>
     </button>
   </div>
+
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
