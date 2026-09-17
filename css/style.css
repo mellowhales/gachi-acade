@@ -10039,15 +10039,20 @@ html, body {
 }
 
 /* ── 친구 목록 모달 ── */
+.friends-modal-overlay {
+  z-index: 10005;
+}
 .friends-modal-card {
   width: 100%;
   max-width: 440px;
+  height: 520px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
   padding: 20px;
   gap: 14px;
   border-radius: var(--radius-lg, 20px);
+  box-sizing: border-box;
 }
 
 .friends-modal-header {
@@ -10072,6 +10077,7 @@ html, body {
   border-radius: var(--radius-md, 12px);
   padding: 4px;
   gap: 4px;
+  flex-shrink: 0;
 }
 .friends-tab-btn {
   flex: 1;
@@ -10110,13 +10116,15 @@ html, body {
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 .friends-tab-pane.active {
   display: flex;
 }
 
 .friends-list {
-  max-height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -10305,6 +10313,8 @@ html, body {
 
 .friends-empty-state {
   display: flex;
+  flex: 1;
+  min-height: 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;

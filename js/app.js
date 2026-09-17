@@ -1830,8 +1830,11 @@
     const modal = $('modal-friends');
     if (!modal) return;
 
-    _switchFriendsTab(initialTab);
-    _renderFriendsModalContent();
+    try {
+      _switchFriendsTab(initialTab);
+    } catch (err) {
+      console.warn('[Friends] 친구 모달 렌더링 오류:', err);
+    }
     modal.classList.remove('hidden');
   }
 
@@ -1860,7 +1863,8 @@
     // 1. 내 친구 목록 렌더링
     const listWrap = $('friends-items-list');
     if (listWrap) {
-      if (_friendsList.length === 0) {
+      const validFriends = (_friendsList || []).filter(f => f && f.name);
+      if (validFriends.length === 0) {
         listWrap.innerHTML = `
           <div class="friends-empty-state">
             <i class="fa-solid fa-user-group"></i>
@@ -1870,8 +1874,8 @@
       } else {
         const isInRoom = !!(currentRoomCode && screens.room && screens.room.classList.contains('active'));
 
-        listWrap.innerHTML = _friendsList.map((friend, idx) => {
-          const onlineUser = _lastOnlineUsers.find(u => u.name === friend.name);
+        listWrap.innerHTML = validFriends.map((friend, idx) => {
+          const onlineUser = (_lastOnlineUsers || []).find(u => u && u.name === friend.name);
           const isOnline = !!onlineUser;
           const statusText = isOnline ? '접속 중 (로비)' : '오프라인';
           const avatarIcon = (onlineUser && onlineUser.avatarIcon) || friend.avatarIcon || 'fa-solid fa-user';
@@ -1943,7 +1947,8 @@
     // 2. 받은 신청 목록 렌더링
     const reqWrap = $('friends-requests-list');
     if (reqWrap) {
-      if (_receivedFriendRequests.length === 0) {
+      const validReqs = (_receivedFriendRequests || []).filter(r => r && r.fromName);
+      if (validReqs.length === 0) {
         reqWrap.innerHTML = `
           <div class="friends-empty-state">
             <i class="fa-solid fa-envelope-open"></i>
@@ -1951,7 +1956,7 @@
           </div>
         `;
       } else {
-        reqWrap.innerHTML = _receivedFriendRequests.map(req => `
+        reqWrap.innerHTML = validReqs.map(req => `
           <div class="friends-request-item" data-from-key="${req.fromKey}">
             <div class="friends-avatar-box">
               <div class="friends-avatar" style="background:${req.fromAvatarColor || '#38a169'};">
@@ -5197,11 +5202,15 @@
     const emptyCount = Math.max(0, currentRoomMaxPlayers - playerCount);
     for (let i = 0; i < emptyCount; i++) {
       const slot = document.createElement('div');
-      slot.className = 'player-slot-empty';
+      slot.className = 'player-slot-empty can-invite';
+      slot.title = '클릭하여 친구 초대하기';
       slot.innerHTML = `
         <div class="slot-avatar"><i class="fa-solid fa-user-plus"></i></div>
         <div class="slot-text">참가자 대기 중...</div>
       `;
+      slot.addEventListener('click', () => {
+        _openFriendsModal('list');
+      });
       slotsEl.appendChild(slot);
     }
 
