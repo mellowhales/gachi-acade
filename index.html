@@ -238,7 +238,7 @@
     <div class="home-lobby-container">
       
       <!-- 1. 좌측~중앙: 🌐 실시간 방 목록 (공개방 / 비밀방 필터 지원) -->
-      <div class="lobby-card card">
+      <div class="lobby-card card" id="lobby-room-card">
         <div class="lobby-header">
           <div class="lobby-title-area">
             <span class="lobby-title"><i class="fa-solid fa-layer-group"></i> 방 목록</span>
@@ -262,6 +262,37 @@
           <div class="lobby-empty">
             <i class="fa-regular fa-compass"></i>
             <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-2. 🛒 가치 상점 카드 (방 목록 카드와 전환) -->
+      <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
+        <div class="lobby-header shop-header">
+          <div class="lobby-title-area">
+            <span class="lobby-title"><i class="fa-solid fa-store" style="color:var(--yellow);"></i> 가치 상점</span>
+            <span class="shop-badge"><i class="fa-solid fa-palette"></i> 닉네임 염색약</span>
+          </div>
+          <div class="shop-header-right">
+            <div class="shop-coin-pill">
+              <i class="fa-solid fa-coins"></i>
+              <span>보유: <strong id="shop-coin-balance">0</strong> 코인</span>
+            </div>
+            <button type="button" class="btn-icon sm" id="btn-close-shop" title="방 목록으로 돌아가기">
+              <i class="fa-solid fa-layer-group"></i>
+            </button>
+          </div>
+        </div>
+        <div class="shop-content custom-scroll">
+          <div class="shop-banner">
+            <div class="shop-banner-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div class="shop-banner-info">
+              <h4>닉네임 색상 염색 (각 500 코인)</h4>
+              <p>원하는 색상을 구매하여 나만의 닉네임을 꾸며보세요! 로비 접속자, 방 목록, 채팅, 게임 등 모든 곳에 실시간 적용됩니다.</p>
+            </div>
+          </div>
+          <div class="shop-items-grid" id="shop-items-grid">
+            <!-- JS 동적 생성 -->
           </div>
         </div>
       </div>

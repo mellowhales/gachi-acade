@@ -37,7 +37,7 @@ const FirebaseLobby = {
   /**
    * 방 생성 — Firebase /rooms/{code} 에 방 정보 등록 + onDisconnect 자동 삭제 훅
    */
-  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword) {
+  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword, hostNameColor) {
     if (!_db) return;
     _myRoomCode = roomCode;
     _myRoomRef  = ref(_db, `rooms/${roomCode}`);
@@ -45,6 +45,7 @@ const FirebaseLobby = {
     const roomData = {
       hostPeerId:      peerId,
       hostName:        hostName,
+      hostNameColor:   hostNameColor || null,
       hostAvatarIcon:  hostAvatarIcon || 'fa-solid fa-paw',
       hostAvatarColor: hostAvatarColor || '#38a169',
       playerCount:     1,

@@ -276,6 +276,12 @@ const AppSupabase = (() => {
       const nickname = (tableData && tableData.nickname) || (meta && meta.nickname) || (oAuthName ? oAuthName.slice(0, 8) : null);
       const avatarIcon = (tableData && tableData.avatar_icon) || (meta && meta.avatar_icon) || null;
       const avatarColor = (tableData && tableData.avatar_color) || (meta && meta.avatar_color) || null;
+      const nameColor = (tableData && tableData.name_color) || (meta && meta.name_color) || null;
+      let purchasedNameColors = (tableData && tableData.purchased_name_colors) || (meta && meta.purchased_name_colors) || [];
+      if (typeof purchasedNameColors === 'string') {
+        try { purchasedNameColors = JSON.parse(purchasedNameColors); } catch (_) { purchasedNameColors = []; }
+      }
+      if (!Array.isArray(purchasedNameColors)) purchasedNameColors = [];
 
       const coins = (tableData && typeof tableData.coins === 'number')
         ? tableData.coins
@@ -300,6 +306,8 @@ const AppSupabase = (() => {
           nickname,
           avatarIcon,
           avatarColor,
+          nameColor,
+          purchasedNameColors,
           stats: rawStats,
           coins,
           level,
@@ -332,6 +340,12 @@ const AppSupabase = (() => {
     if (profileData.avatarColor || profileData.avatar_color) {
       payload.avatar_color = profileData.avatarColor || profileData.avatar_color;
     }
+    if (profileData.nameColor !== undefined || profileData.name_color !== undefined) {
+      payload.name_color = profileData.nameColor !== undefined ? profileData.nameColor : profileData.name_color;
+    }
+    if (profileData.purchasedNameColors !== undefined || profileData.purchased_name_colors !== undefined) {
+      payload.purchased_name_colors = profileData.purchasedNameColors !== undefined ? profileData.purchasedNameColors : profileData.purchased_name_colors;
+    }
     if (profileData.email) payload.email = profileData.email;
     if (profileData.stats !== undefined) payload.stats = profileData.stats;
     if (profileData.coins !== undefined) payload.coins = profileData.coins;
@@ -344,6 +358,8 @@ const AppSupabase = (() => {
       if (payload.nickname) metaData.nickname = payload.nickname;
       if (payload.avatar_icon) metaData.avatar_icon = payload.avatar_icon;
       if (payload.avatar_color) metaData.avatar_color = payload.avatar_color;
+      if (payload.name_color !== undefined) metaData.name_color = payload.name_color;
+      if (payload.purchased_name_colors !== undefined) metaData.purchased_name_colors = payload.purchased_name_colors;
       if (payload.stats !== undefined) metaData.stats = payload.stats;
       if (payload.coins !== undefined) metaData.coins = payload.coins;
       if (payload.level !== undefined) metaData.level = payload.level;

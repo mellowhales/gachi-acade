@@ -86,6 +86,77 @@
     localStorage.setItem('arcade_nick', myNickname);
   }
 
+  // 🎨 닉네임 색상 염색약 (상점 아이템)
+  let myNicknameColor = localStorage.getItem('arcade_name_color') || '';
+  let myPurchasedNameColors = [];
+  try {
+    const rawPurchased = localStorage.getItem('arcade_purchased_name_colors');
+    myPurchasedNameColors = rawPurchased ? JSON.parse(rawPurchased) : [];
+    if (!Array.isArray(myPurchasedNameColors)) myPurchasedNameColors = [];
+  } catch (_) {
+    myPurchasedNameColors = [];
+  }
+
+  const SHOP_NICKNAME_COLORS = [
+    {
+      id: 'color_gold',
+      name: '로얄 골드',
+      hex: '#f59e0b',
+      price: 500,
+      desc: '품격 있고 찬란하게 빛나는 황금빛 닉네임',
+      icon: 'fa-solid fa-crown'
+    },
+    {
+      id: 'color_pink',
+      name: '네온 핑크',
+      hex: '#ec4899',
+      price: 500,
+      desc: '화사하고 톡톡 튀는 사랑스러운 핫핑크 닉네임',
+      icon: 'fa-solid fa-heart'
+    },
+    {
+      id: 'color_blue',
+      name: '스카이 블루',
+      hex: '#0284c7',
+      price: 500,
+      desc: '청량하고 시원하게 돋보이는 바다 하늘빛 닉네임',
+      icon: 'fa-solid fa-droplet'
+    },
+    {
+      id: 'color_green',
+      name: '에메랄드 그린',
+      hex: '#10b981',
+      price: 500,
+      desc: '생동감 넘치고 산뜻한 에메랄드 보석빛 닉네임',
+      icon: 'fa-solid fa-gem'
+    },
+    {
+      id: 'color_purple',
+      name: '네온 퍼플',
+      hex: '#8b5cf6',
+      price: 500,
+      desc: '신비롭고 몽환적인 매혹의 바이올렛 닉네임',
+      icon: 'fa-solid fa-wand-magic-sparkles'
+    },
+    {
+      id: 'color_red',
+      name: '크림슨 레드',
+      hex: '#ef4444',
+      price: 500,
+      desc: '강렬하고 정열적인 타오르는 불꽃 레드 닉네임',
+      icon: 'fa-solid fa-fire'
+    },
+    {
+      id: 'color_default',
+      name: '기본 색상',
+      hex: '',
+      price: 0,
+      desc: '원래의 기본 텍스트 색상으로 되돌립니다.',
+      icon: 'fa-solid fa-rotate-left',
+      isDefault: true
+    }
+  ];
+
   // 🪙 코인 상태 변수 (로그인 계정 전용, 기본 승리 보상: 50코인)
   let myCoins = parseInt(localStorage.getItem('arcade_user_coins') || '0', 10);
   const WIN_REWARD_COINS = 50;
@@ -365,7 +436,12 @@
   if ($('btn-open-settings')) $('btn-open-settings').addEventListener('click', _openSettingsModal);
   if ($('btn-marketplace')) {
     $('btn-marketplace').addEventListener('click', () => {
-      showToast('준비 중입니다!', 'info');
+      _toggleLobbyShop();
+    });
+  }
+  if ($('btn-close-shop')) {
+    $('btn-close-shop').addEventListener('click', () => {
+      _toggleLobbyShop(false);
     });
   }
   if ($('btn-toggle-sound')) $('btn-toggle-sound').addEventListener('click', _openSettingsModal);
@@ -621,9 +697,209 @@
       avatarEl.innerHTML = `<i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>`;
       avatarEl.style.background = myAvatarColor || '#38a169';
     }
-    if ($('home-user-name')) $('home-user-name').textContent = myNickname || '익명';
+    const nameEl = $('home-user-name');
+    if (nameEl) {
+      nameEl.textContent = myNickname || '익명';
+      nameEl.style.color = myNicknameColor || '';
+      nameEl.style.fontWeight = myNicknameColor ? '800' : '';
+    }
     _updateCoinsUI();
     _updateLevelUI();
+    if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     🛒 가치 상점 컨트롤러 (닉네임 색상 염색약 구매/장착 & 카드 전환)
+  ═══════════════════════════════════════════════════════════════ */
+  let _isShopActive = false;
+
+  function _toggleLobbyShop(forceState) {
+    _isShopActive = (typeof forceState === 'boolean') ? forceState : !_isShopActive;
+    const roomCard = $('lobby-room-card');
+    const shopCard = $('lobby-shop-card');
+    const btn = $('btn-marketplace');
+
+    if (_isShopActive) {
+      if (roomCard) roomCard.classList.add('hidden');
+      if (shopCard) shopCard.classList.remove('hidden');
+      if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-layer-group"></i>';
+        btn.title = '방 목록으로 돌아가기';
+        btn.classList.add('active');
+      }
+      _renderShopUI();
+    } else {
+      if (roomCard) roomCard.classList.remove('hidden');
+      if (shopCard) shopCard.classList.add('hidden');
+      if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i>';
+        btn.title = '상점 열기';
+        btn.classList.remove('active');
+      }
+    }
+  }
+
+  function _renderShopUI() {
+    const balanceEl = $('shop-coin-balance');
+    if (balanceEl) balanceEl.textContent = (myCoins || 0).toLocaleString();
+
+    const gridEl = $('shop-items-grid');
+    if (!gridEl) return;
+
+    gridEl.innerHTML = SHOP_NICKNAME_COLORS.map(item => {
+      const isEquipped = item.isDefault
+        ? (!myNicknameColor || myNicknameColor === '')
+        : (myNicknameColor === item.hex);
+      const isPurchased = item.isDefault || myPurchasedNameColors.includes(item.id);
+
+      const previewColor = item.hex || 'inherit';
+      const previewBg = item.hex ? `${item.hex}18` : 'var(--bg-subtle)';
+      const previewBorder = item.hex ? `${item.hex}55` : 'var(--border)';
+
+      let actionBtnHtml = '';
+      if (isEquipped) {
+        actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
+      } else if (isPurchased) {
+        actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-color-id="${item.id}"><i class="${item.icon}"></i> ${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+      } else {
+        const canBuy = myCoins >= item.price;
+        actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-color-id="${item.id}"><i class="fa-solid fa-coins"></i> ${item.price} 구매</button>`;
+      }
+
+      return `
+        <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-color-id="${item.id}">
+          <div class="shop-item-top">
+            <span class="shop-item-name"><i class="${item.icon}" style="color:${item.hex || 'var(--t2)'};"></i> ${item.name}</span>
+            <div class="shop-color-preview-chip" style="color:${previewColor}; background:${previewBg}; border-color:${previewBorder};">
+              ${_escapeHtml(myNickname || '플레이어')}
+            </div>
+          </div>
+          <div class="shop-item-desc">${item.desc}</div>
+          <div class="shop-item-bottom">
+            <span class="shop-price-tag">
+              ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">무료</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
+            </span>
+            ${actionBtnHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // 구매/착용 버튼 이벤트 연결
+    gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const colorId = btn.dataset.colorId;
+        const item = SHOP_NICKNAME_COLORS.find(c => c.id === colorId);
+        if (!item) return;
+
+        if (item.isDefault) {
+          _handleResetNicknameColor();
+        } else if (myPurchasedNameColors.includes(item.id)) {
+          _handleEquipNicknameColor(item);
+        } else {
+          _handleBuyNicknameColor(item);
+        }
+      });
+    });
+  }
+
+  function _handleBuyNicknameColor(item) {
+    if (myCoins < item.price) {
+      showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
+      return;
+    }
+
+    myCoins -= item.price;
+    localStorage.setItem('arcade_user_coins', String(myCoins));
+
+    if (!myPurchasedNameColors.includes(item.id)) {
+      myPurchasedNameColors.push(item.id);
+    }
+    localStorage.setItem('arcade_purchased_name_colors', JSON.stringify(myPurchasedNameColors));
+
+    myNicknameColor = item.hex;
+    localStorage.setItem('arcade_name_color', myNicknameColor);
+
+    _applyColorToAllUI();
+
+    // Supabase 저장
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        coins: myCoins,
+        nameColor: myNicknameColor,
+        purchasedNameColors: myPurchasedNameColors
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast(`🎉 [${item.name}] 닉네임 색상을 구매하여 착용했습니다!`, 'success');
+  }
+
+  function _handleEquipNicknameColor(item) {
+    myNicknameColor = item.hex;
+    localStorage.setItem('arcade_name_color', myNicknameColor);
+
+    _applyColorToAllUI();
+
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        nameColor: myNicknameColor
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast(`[${item.name}] 닉네임 색상으로 변경되었습니다.`, 'info');
+  }
+
+  function _handleResetNicknameColor() {
+    myNicknameColor = '';
+    localStorage.removeItem('arcade_name_color');
+
+    _applyColorToAllUI();
+
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        nameColor: ''
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast('기본 닉네임 색상으로 복원되었습니다.', 'info');
+  }
+
+  function _applyColorToAllUI() {
+    _updateCoinsUI();
+    _updateHomeUserBar();
+    _updateProfileModalPreview();
+
+    // 방 내부 참가자 정보 갱신
+    if (currentRoomCode && roomPlayers.length > 0) {
+      const myId = P2P.getMyId();
+      const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
+      if (me) {
+        me.nameColor = myNicknameColor || null;
+      }
+      _updateRoomUI();
+      if (isHostPlayer) {
+        _broadcastRoomState();
+      } else {
+        P2P.send({
+          type: 'guest_update_profile',
+          name: myNickname,
+          nameColor: myNicknameColor || null,
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
+          stats: _getMyStats()
+        });
+      }
+    }
+
     if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
   }
 
@@ -753,7 +1029,7 @@
           <div class="lrc-host-info">
             <div class="lrc-host-avatar" style="background:${room.hostAvatarColor || '#38a169'};"><i class="${room.hostAvatarIcon || 'fa-solid fa-paw'}"></i></div>
             <div class="lrc-host-meta">
-              <strong class="lrc-host-name">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
+              <strong class="lrc-host-name" style="${room.hostNameColor ? `color:${room.hostNameColor}; font-weight:800;` : ''}">${_escapeHtml(room.hostName || '익명')} <i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i></strong>
             </div>
           </div>
           <button type="button" class="btn ${isPlaying ? 'btn-danger is-playing-btn' : 'btn-primary'} btn-sm lrc-join-btn ${isFull ? 'disabled' : ''}">
@@ -809,6 +1085,7 @@
       id: P2P.getMyId() || ('usr_' + Math.random().toString(36).substring(2, 9)),
       supabaseId: user ? user.id : null,
       name: myNickname || '플레이어',
+      nameColor: myNicknameColor || null,
       avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
       avatarColor: myAvatarColor || '#38a169',
       level: myLevel || 1,
@@ -950,6 +1227,7 @@
 
       // 내 자신은 항상 실시간 로컬 최신 프로필로 렌더링 (새로고침 시 과거 잔여 데이터 노출 방지)
       const uname = isMe ? myNickname : (user.name || '플레이어');
+      const unameColor = isMe ? myNicknameColor : (user.nameColor || '');
       const uicon = isMe ? myAvatarIcon : (user.avatarIcon || 'fa-solid fa-dog');
       const ucolor = isMe ? myAvatarColor : (user.avatarColor || '#38a169');
       const ulevel = isMe ? myLevel : (user.level || 1);
@@ -973,7 +1251,7 @@
             <span class="user-level-badge ${tierClass}">${ulevel}</span>
           </div>
           <div class="online-user-info">
-            <span class="online-user-name">
+            <span class="online-user-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}">
               ${_escapeHtml(uname)}
               ${isMe ? '<span class="online-me-badge">나</span>' : ''}
             </span>
@@ -1034,6 +1312,7 @@
       const msgPayload = {
         id: 'lchat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
         name: myNickname || '플레이어',
+        nameColor: myNicknameColor || null,
         avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
         avatarColor: myAvatarColor || '#38a169',
         level: myLevel || 1,
@@ -1105,6 +1384,7 @@
     }
 
     const uname = msg.name || '플레이어';
+    const unameColor = isMe ? myNicknameColor : (msg.nameColor || '');
     const uicon = msg.avatarIcon || 'fa-solid fa-dog';
     const ucolor = msg.avatarColor || '#38a169';
     const ulevel = typeof msg.level === 'number' ? msg.level : 1;
@@ -1115,7 +1395,7 @@
     msgEl.className = `lobby-chat-msg ${isMe ? 'is-me' : ''}`;
     msgEl.innerHTML = `
       <span class="lobby-chat-prefix">
-        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
+        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
       </span>
       <span class="lobby-chat-colon">:</span>
       <span class="lobby-chat-text">${textSafe}</span>
@@ -1372,14 +1652,16 @@
   let _tempSelectedColor = myAvatarColor;
 
   function _openProfileModal() {
-    _pushHistory({ modal: 'profile' }, '#profile');
     const popup = $('profile-bubble-popup');
     if (!popup) return;
 
+    // 이미 열려있으면 히스토리 push 없이 바로 닫기 (두 번 클릭 문제 방지)
     if (popup.classList.contains('active')) {
-      _closeProfileModal();
+      _closeProfileModal(true);
       return;
     }
+
+    _pushHistory({ modal: 'profile' }, '#profile');
 
     _tempSelectedIcon = myAvatarIcon;
     _tempSelectedColor = myAvatarColor;
@@ -1437,7 +1719,11 @@
 
     if (previewAvatar) previewAvatar.style.background = _tempSelectedColor;
     if (previewIcon) previewIcon.className = _tempSelectedIcon;
-    if (previewName) previewName.textContent = nickVal;
+    if (previewName) {
+      previewName.textContent = nickVal;
+      previewName.style.color = myNicknameColor || '';
+      previewName.style.fontWeight = myNicknameColor ? '800' : '';
+    }
   }
 
   function _renderProfileModalGrids() {
@@ -1509,6 +1795,7 @@
       const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
       if (me) {
         me.name = myNickname;
+        me.nameColor = myNicknameColor || null;
         me.avatarIcon = myAvatarIcon;
         me.avatarColor = myAvatarColor;
         me.level = myLevel;
@@ -1522,6 +1809,7 @@
         P2P.send({
           type: 'guest_update_profile',
           name: myNickname,
+          nameColor: myNicknameColor || null,
           avatarIcon: myAvatarIcon,
           avatarColor: myAvatarColor,
           level: myLevel,
@@ -1779,6 +2067,10 @@
     localStorage.setItem('arcade_user_level', '1');
     localStorage.setItem('arcade_user_exp', '0');
     localStorage.removeItem(GAME_STATS_KEY);
+    myNicknameColor = '';
+    myPurchasedNameColors = [];
+    localStorage.removeItem('arcade_name_color');
+    localStorage.removeItem('arcade_purchased_name_colors');
 
     if ($('profile-input-nick')) $('profile-input-nick').value = myNickname;
     _updateHomeUserBar();
@@ -1788,15 +2080,16 @@
     _renderProfileModalGrids();
     _updateProfileAuthUI(null);
 
-    // 3. 새 게스트 접속자로 Firebase 및 Supabase에 즉각 등록
-    const guestPayload = _getMyPresencePayload();
-    if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
-      window.FirebaseLobby.registerOnlineUser(guestPayload);
-    }
-    if (typeof AppSupabase !== 'undefined' && typeof AppSupabase.updatePresence === 'function') {
-      AppSupabase.updatePresence(guestPayload);
-    }
-    _renderOnlineUsersList([guestPayload]);
+    // 3. 새 게스트 접속자로 Firebase 및 Supabase에 즉각 등록 후 페이지 새로고침
+    try {
+      const guestPayload = _getMyPresencePayload();
+      if (window.FirebaseLobby && typeof window.FirebaseLobby.registerOnlineUser === 'function') {
+        await window.FirebaseLobby.registerOnlineUser(guestPayload);
+      }
+    } catch (_) {}
+
+    // 페이지 새로고침으로 완전히 깨끗한 게스트 상태 적용
+    window.location.reload();
   }
 
   // 🌟 OAuth 리다이렉트 콜백 후 URL의 에러 및 상태 파싱
@@ -2037,10 +2330,26 @@
     const mergedStats = _mergeStats(profile.stats, localStats);
     localStorage.setItem(GAME_STATS_KEY, JSON.stringify(mergedStats));
 
+    // 7. 닉네임 색상 & 구매한 색상 목록 복원
+    if (profile.nameColor !== undefined) {
+      myNicknameColor = profile.nameColor || '';
+      if (myNicknameColor) {
+        localStorage.setItem('arcade_name_color', myNicknameColor);
+      } else {
+        localStorage.removeItem('arcade_name_color');
+      }
+    }
+    if (Array.isArray(profile.purchasedNameColors)) {
+      myPurchasedNameColors = [...profile.purchasedNameColors];
+      localStorage.setItem('arcade_purchased_name_colors', JSON.stringify(myPurchasedNameColors));
+    }
+
     // 클라우드와 로컬에 차이가 있다면 클라우드에도 즉시 동기화
     if (userId && typeof AppSupabase !== 'undefined') {
       AppSupabase.saveProfile(userId, {
         nickname: myNickname,
+        nameColor: myNicknameColor,
+        purchasedNameColors: myPurchasedNameColors,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         coins: myCoins,
@@ -2053,6 +2362,7 @@
     _updateHomeUserBar();
     _updateCoinsUI();
     _updateLevelUI();
+    if (_isShopActive) _renderShopUI();
   }
 
   function _saveMyStats(stats) {
@@ -2504,6 +2814,7 @@
       roomPlayers = [{
         id: P2P.getMyId(),
         name: myNickname || '익명',
+        nameColor: myNicknameColor || null,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         level: myLevel,
@@ -2527,7 +2838,8 @@
           myAvatarIcon,
           myAvatarColor,
           isPrivate,
-          !!currentRoomPassword
+          !!currentRoomPassword,
+          myNicknameColor
         );
       }
 
@@ -2599,6 +2911,7 @@
         type: 'guest_hello',
         id: P2P.getMyId(),
         name: myNickname || '익명',
+        nameColor: myNicknameColor || null,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         level: myLevel,
@@ -2691,6 +3004,7 @@
       const newPlayerObj = {
         id: senderPeerId,
         name: data.name || '익명',
+        nameColor: data.nameColor || null,
         avatarIcon: data.avatarIcon || _getRandomAvatarIcon(),
         avatarColor: data.avatarColor || _getRandomAvatarColor(),
         level: typeof data.level === 'number' ? data.level : 1,
@@ -2748,6 +3062,7 @@
       const player = roomPlayers.find(p => p.id === senderPeerId);
       if (player) {
         if (data.name) player.name = data.name;
+        if (data.nameColor !== undefined) player.nameColor = data.nameColor;
         if (data.avatarIcon) player.avatarIcon = data.avatarIcon;
         if (data.avatarColor) player.avatarColor = data.avatarColor;
         if (typeof data.level === 'number') player.level = data.level;
@@ -3044,6 +3359,7 @@
       type: 'chat_msg',
       senderId: P2P.getMyId(),
       senderName: myNickname,
+      senderNameColor: myNicknameColor || null,
       isHost: P2P.isHost(),
       text: cleanText, // 검열된 텍스트 적용
       time: timeStr
@@ -3082,6 +3398,7 @@
 
     const isHost = data.isHost;
     const senderName = data.senderName || '플레이어';
+    const senderColor = isMe ? myNicknameColor : data.senderNameColor;
     const initial = senderName.charAt(0);
     const time = data.time || '';
 
@@ -3099,7 +3416,7 @@
       } else {
         msgEl.innerHTML = `
           <div class="chat-sender-info">
-            <span>${_escapeHtml(senderName)}</span>
+            <span style="${senderColor ? `color:${senderColor}; font-weight:800;` : ''}">${_escapeHtml(senderName)}</span>
             ${isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.65rem;"></i>' : ''}
           </div>
           <div class="chat-bubble">${_escapeHtml(data.text)}</div>
@@ -3267,7 +3584,7 @@
           <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
         </div>
         <div class="player-meta">
-          <div class="player-name">
+          <div class="player-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
@@ -3767,7 +4084,7 @@
       li.innerHTML = `
         <div class="gsp-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="gsp-meta">
-          <div class="gsp-name">
+          <div class="gsp-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${p.isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
@@ -3815,7 +4132,7 @@
         li.innerHTML = `
           <div class="gsp-avatar" style="background:${sp.avatarColor || '#718096'}; opacity:0.85;"><i class="${sp.avatarIcon || 'fa-solid fa-user'}"></i></div>
           <div class="gsp-meta">
-            <div class="gsp-name">
+            <div class="gsp-name" style="${sp.nameColor ? `color:${sp.nameColor}; font-weight:800;` : ''}">
               ${_escapeHtml(sp.name)}
               ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
             </div>
