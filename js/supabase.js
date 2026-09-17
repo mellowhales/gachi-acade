@@ -283,6 +283,13 @@ const AppSupabase = (() => {
       }
       if (!Array.isArray(purchasedNameColors)) purchasedNameColors = [];
 
+      const profileCard = (tableData && tableData.profile_card) || (meta && meta.profile_card) || 'default';
+      let purchasedProfileCards = (tableData && tableData.purchased_profile_cards) || (meta && meta.purchased_profile_cards) || ['default'];
+      if (typeof purchasedProfileCards === 'string') {
+        try { purchasedProfileCards = JSON.parse(purchasedProfileCards); } catch (_) { purchasedProfileCards = ['default']; }
+      }
+      if (!Array.isArray(purchasedProfileCards)) purchasedProfileCards = ['default'];
+
       const coins = (tableData && typeof tableData.coins === 'number')
         ? tableData.coins
         : (meta && typeof meta.coins === 'number')
@@ -308,6 +315,8 @@ const AppSupabase = (() => {
           avatarColor,
           nameColor,
           purchasedNameColors,
+          profileCard,
+          purchasedProfileCards,
           stats: rawStats,
           coins,
           level,
@@ -346,6 +355,12 @@ const AppSupabase = (() => {
     if (profileData.purchasedNameColors !== undefined || profileData.purchased_name_colors !== undefined) {
       payload.purchased_name_colors = profileData.purchasedNameColors !== undefined ? profileData.purchasedNameColors : profileData.purchased_name_colors;
     }
+    if (profileData.profileCard !== undefined || profileData.profile_card !== undefined) {
+      payload.profile_card = profileData.profileCard !== undefined ? profileData.profileCard : profileData.profile_card;
+    }
+    if (profileData.purchasedProfileCards !== undefined || profileData.purchased_profile_cards !== undefined) {
+      payload.purchased_profile_cards = profileData.purchasedProfileCards !== undefined ? profileData.purchasedProfileCards : profileData.purchased_profile_cards;
+    }
     if (profileData.email) payload.email = profileData.email;
     if (profileData.stats !== undefined) payload.stats = profileData.stats;
     if (profileData.coins !== undefined) payload.coins = profileData.coins;
@@ -360,6 +375,8 @@ const AppSupabase = (() => {
       if (payload.avatar_color) metaData.avatar_color = payload.avatar_color;
       if (payload.name_color !== undefined) metaData.name_color = payload.name_color;
       if (payload.purchased_name_colors !== undefined) metaData.purchased_name_colors = payload.purchased_name_colors;
+      if (payload.profile_card !== undefined) metaData.profile_card = payload.profile_card;
+      if (payload.purchased_profile_cards !== undefined) metaData.purchased_profile_cards = payload.purchased_profile_cards;
       if (payload.stats !== undefined) metaData.stats = payload.stats;
       if (payload.coins !== undefined) metaData.coins = payload.coins;
       if (payload.level !== undefined) metaData.level = payload.level;
@@ -427,7 +444,7 @@ const AppSupabase = (() => {
     try {
       const { data, error } = await client
         .from('profiles')
-        .select('id, nickname, avatar_icon, avatar_color, stats, coins, level, exp')
+        .select('id, nickname, avatar_icon, avatar_color, name_color, profile_card, stats, coins, level, exp')
         .eq('id', userId)
         .maybeSingle();
 
@@ -437,6 +454,8 @@ const AppSupabase = (() => {
           nickname: data.nickname || '플레이어',
           avatarIcon: data.avatar_icon || 'fa-solid fa-dog',
           avatarColor: data.avatar_color || '#38a169',
+          nameColor: data.name_color || null,
+          profileCard: data.profile_card || 'default',
           stats: data.stats || null,
           coins: typeof data.coins === 'number' ? data.coins : 0,
           level: typeof data.level === 'number' ? data.level : 1,

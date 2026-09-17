@@ -157,6 +157,101 @@
     }
   ];
 
+  // 🎴 프로필 카드 테마 (상점 아이템 - 로비, 대기방, 인게임 전역 적용)
+  let myProfileCard = localStorage.getItem('arcade_profile_card') || 'default';
+  let myPurchasedProfileCards = ['default'];
+  try {
+    const rawCardPurchased = localStorage.getItem('arcade_purchased_profile_cards');
+    myPurchasedProfileCards = rawCardPurchased ? JSON.parse(rawCardPurchased) : ['default'];
+    if (!Array.isArray(myPurchasedProfileCards)) myPurchasedProfileCards = ['default'];
+    if (!myPurchasedProfileCards.includes('default')) myPurchasedProfileCards.push('default');
+  } catch (_) {
+    myPurchasedProfileCards = ['default'];
+  }
+
+  const SHOP_PROFILE_CARDS = [
+    {
+      id: 'default',
+      name: '기본 카드',
+      themeClass: 'default',
+      price: 0,
+      icon: 'fa-solid fa-id-badge',
+      isDefault: true
+    },
+    // 색상 그라디언트 테마 (5종)
+    {
+      id: 'sunset',
+      name: '선셋 코랄',
+      themeClass: 'pcard-theme-sunset',
+      price: 500,
+      icon: 'fa-solid fa-sun'
+    },
+    {
+      id: 'ocean',
+      name: '오션 사파이어',
+      themeClass: 'pcard-theme-ocean',
+      price: 500,
+      icon: 'fa-solid fa-water'
+    },
+    {
+      id: 'emerald',
+      name: '포레스트 민트',
+      themeClass: 'pcard-theme-emerald',
+      price: 500,
+      icon: 'fa-solid fa-leaf'
+    },
+    {
+      id: 'midnight',
+      name: '미드나잇 퍼플',
+      themeClass: 'pcard-theme-midnight',
+      price: 500,
+      icon: 'fa-solid fa-moon'
+    },
+    {
+      id: 'sakura',
+      name: '사쿠라 핑크',
+      themeClass: 'pcard-theme-sakura',
+      price: 500,
+      icon: 'fa-solid fa-fan'
+    },
+    // 무늬 및 패턴 테마 (5종)
+    {
+      id: 'carbon',
+      name: '카본 파이버',
+      themeClass: 'pcard-theme-carbon',
+      price: 700,
+      icon: 'fa-solid fa-chess-board'
+    },
+    {
+      id: 'retro-pixel',
+      name: '레트로 도트',
+      themeClass: 'pcard-theme-retro-pixel',
+      price: 700,
+      icon: 'fa-solid fa-gamepad'
+    },
+    {
+      id: 'galaxy',
+      name: '스타라잇 은하수',
+      themeClass: 'pcard-theme-galaxy',
+      price: 700,
+      icon: 'fa-solid fa-meteor'
+    },
+    {
+      id: 'hologram',
+      name: '홀로그램 프리즘',
+      themeClass: 'pcard-theme-hologram',
+      price: 1000,
+      icon: 'fa-solid fa-wand-magic-sparkles'
+    },
+    {
+      id: 'royal-gold',
+      name: '로열 골드',
+      themeClass: 'pcard-theme-royal-gold',
+      price: 1000,
+      icon: 'fa-solid fa-crown'
+    }
+  ];
+
   // 🪙 코인 상태 변수 (로그인 계정 전용, 기본 승리 보상: 50코인)
   let myCoins = parseInt(localStorage.getItem('arcade_user_coins') || '0', 10);
   const WIN_REWARD_COINS = 50;
@@ -687,11 +782,13 @@
     } else if (gameKey === 'minesweeper' || gameKey === 'apple') {
       progressBonus = 20;
     }
-
     return baseExp + outcomeExp + progressBonus;
   }
 
   function _updateHomeUserBar() {
+    const userBar = document.querySelector('.home-user-bar');
+    if (userBar) _applyProfileCardTheme(userBar, myProfileCard);
+
     const avatarEl = $('home-user-avatar');
     if (avatarEl) {
       avatarEl.innerHTML = `<i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>`;
@@ -718,7 +815,7 @@
     _isShopActive = (typeof forceState === 'boolean') ? forceState : !_isShopActive;
     const roomCard = $('lobby-room-card');
     const shopCard = $('lobby-shop-card');
-    const btn = $('btn-marketplace');
+    const btn = $('btn-toggle-shop');
 
     if (_isShopActive) {
       if (roomCard) roomCard.classList.add('hidden');
@@ -734,7 +831,7 @@
       if (roomCard) roomCard.classList.remove('hidden');
       if (shopCard) shopCard.classList.add('hidden');
       if (btn) {
-        btn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i>';
+        btn.innerHTML = '<i class="fa-solid fa-store"></i>';
         btn.title = '상점 열기';
         btn.classList.remove('active');
       }
@@ -777,12 +874,71 @@
     const gridEl = $('shop-items-grid');
     if (!gridEl) return;
 
-    // 프로필 카드는 아직 목록에 추가하지 않고 아무것도 안 뜨게 유지
+    // ── 🎴 프로필 카드 탭 렌더링 ──
     if (_currentShopTab === 'profile_card') {
-      gridEl.innerHTML = '';
+      gridEl.innerHTML = SHOP_PROFILE_CARDS.map(item => {
+        const isEquipped = item.isDefault
+          ? (!myProfileCard || myProfileCard === 'default')
+          : (myProfileCard === item.id);
+        const isPurchased = item.isDefault || myPurchasedProfileCards.includes(item.id);
+
+        let actionBtnHtml = '';
+        if (isEquipped) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
+        } else if (isPurchased) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-card-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        } else {
+          const canBuy = myCoins >= item.price;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-card-id="${item.id}">구매</button>`;
+        }
+
+        const themeClass = (item.themeClass && item.themeClass !== 'default') ? item.themeClass : '';
+
+        return `
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-card-id="${item.id}">
+            <div class="shop-item-top">
+              <span class="shop-item-name"><i class="${item.icon}"></i> ${item.name}</span>
+            </div>
+            <!-- 실시간 미니 프리뷰 -->
+            <div class="shop-card-preview ${themeClass}">
+              <div class="shop-card-preview-avatar" style="background:${myAvatarColor || '#38a169'};">
+                <i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>
+              </div>
+              <span class="shop-card-preview-name" style="${myNicknameColor ? `color:${myNicknameColor};` : ''}">
+                ${_escapeHtml(myNickname || '플레이어')}
+              </span>
+            </div>
+            <div class="shop-item-bottom">
+              <span class="shop-price-tag">
+                ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">기본 제공</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
+              </span>
+              ${actionBtnHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 프로필 카드 버튼 이벤트 연결
+      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cardId = btn.dataset.cardId;
+          const item = SHOP_PROFILE_CARDS.find(c => c.id === cardId);
+          if (!item) return;
+
+          if (item.isDefault) {
+            _handleResetProfileCard();
+          } else if (myPurchasedProfileCards.includes(item.id)) {
+            _handleEquipProfileCard(item);
+          } else {
+            _handleBuyProfileCard(item);
+          }
+        });
+      });
       return;
     }
 
+    // ── 🎨 닉네임 염색약 탭 렌더링 (설명 제거) ──
     gridEl.innerHTML = SHOP_NICKNAME_COLORS.map(item => {
       const isEquipped = item.isDefault
         ? (!myNicknameColor || myNicknameColor === '')
@@ -809,7 +965,6 @@
               ${_escapeHtml(myNickname || '플레이어')}
             </span>
           </div>
-          <div class="shop-item-desc">${item.desc}</div>
           <div class="shop-item-bottom">
             <span class="shop-price-tag">
               ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">무료</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
@@ -926,6 +1081,7 @@
           type: 'guest_update_profile',
           name: myNickname,
           nameColor: myNicknameColor || null,
+          profileCard: myProfileCard || 'default',
           avatarIcon: myAvatarIcon,
           avatarColor: myAvatarColor,
           level: myLevel,
@@ -933,6 +1089,129 @@
           stats: _getMyStats()
         });
       }
+    }
+
+    if (typeof isRoomGameActive !== 'undefined' && isRoomGameActive) {
+      _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
+    }
+
+    if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
+  }
+
+  /* ── 🎴 프로필 카드 구매, 장착 및 테마 적용 ── */
+  function _applyProfileCardTheme(element, cardThemeId) {
+    if (!element) return;
+    element.classList.forEach(cls => {
+      if (cls.startsWith('pcard-theme-')) {
+        element.classList.remove(cls);
+      }
+    });
+    const themeId = cardThemeId || 'default';
+    if (themeId && themeId !== 'default') {
+      element.classList.add(`pcard-theme-${themeId}`);
+    }
+  }
+
+  function _handleBuyProfileCard(item) {
+    if (myCoins < item.price) {
+      showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
+      return;
+    }
+
+    myCoins -= item.price;
+    localStorage.setItem('arcade_user_coins', String(myCoins));
+
+    if (!myPurchasedProfileCards.includes(item.id)) {
+      myPurchasedProfileCards.push(item.id);
+    }
+    localStorage.setItem('arcade_purchased_profile_cards', JSON.stringify(myPurchasedProfileCards));
+
+    myProfileCard = item.id;
+    localStorage.setItem('arcade_profile_card', myProfileCard);
+
+    _applyProfileCardToAllUI();
+
+    // Supabase 저장
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        coins: myCoins,
+        profileCard: myProfileCard,
+        purchasedProfileCards: myPurchasedProfileCards
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast(`🎉 [${item.name}] 프로필 카드를 구매하여 착용했습니다!`, 'success');
+  }
+
+  function _handleEquipProfileCard(item) {
+    myProfileCard = item.id;
+    localStorage.setItem('arcade_profile_card', myProfileCard);
+
+    _applyProfileCardToAllUI();
+
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        profileCard: myProfileCard
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast(`[${item.name}] 프로필 카드로 변경되었습니다.`, 'info');
+  }
+
+  function _handleResetProfileCard() {
+    myProfileCard = 'default';
+    localStorage.removeItem('arcade_profile_card');
+
+    _applyProfileCardToAllUI();
+
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      const user = AppSupabase.getCurrentUser();
+      AppSupabase.saveProfile(user.id, {
+        profileCard: 'default'
+      }).catch(() => {});
+    }
+
+    _renderShopUI();
+    showToast('기본 프로필 카드로 복원되었습니다.', 'info');
+  }
+
+  function _applyProfileCardToAllUI() {
+    _updateCoinsUI();
+    _updateHomeUserBar();
+    _updateProfileModalPreview();
+
+    // 대기방 참가자 정보 갱신
+    if (currentRoomCode && roomPlayers.length > 0) {
+      const myId = P2P.getMyId();
+      const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
+      if (me) {
+        me.profileCard = myProfileCard || 'default';
+      }
+      _updateRoomUI();
+      if (isHostPlayer) {
+        _broadcastRoomState();
+      } else {
+        P2P.send({
+          type: 'guest_update_profile',
+          name: myNickname,
+          nameColor: myNicknameColor || null,
+          profileCard: myProfileCard || 'default',
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
+          stats: _getMyStats()
+        });
+      }
+    }
+
+    // 인게임 사이드바 갱신
+    if (typeof isRoomGameActive !== 'undefined' && isRoomGameActive) {
+      _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
     }
 
     if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
@@ -1121,6 +1400,7 @@
       supabaseId: user ? user.id : null,
       name: myNickname || '플레이어',
       nameColor: myNicknameColor || null,
+      profileCard: myProfileCard || 'default',
       avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
       avatarColor: myAvatarColor || '#38a169',
       level: myLevel || 1,
@@ -1747,6 +2027,9 @@
   }
 
   function _updateProfileModalPreview() {
+    const previewArea = document.querySelector('.profile-preview-area');
+    if (previewArea) _applyProfileCardTheme(previewArea, myProfileCard);
+
     const previewAvatar = $('profile-preview-avatar');
     const previewIcon = $('profile-preview-icon');
     const previewName = $('profile-preview-name');
@@ -1831,6 +2114,7 @@
       if (me) {
         me.name = myNickname;
         me.nameColor = myNicknameColor || null;
+        me.profileCard = myProfileCard || 'default';
         me.avatarIcon = myAvatarIcon;
         me.avatarColor = myAvatarColor;
         me.level = myLevel;
@@ -1845,6 +2129,7 @@
           type: 'guest_update_profile',
           name: myNickname,
           nameColor: myNicknameColor || null,
+          profileCard: myProfileCard || 'default',
           avatarIcon: myAvatarIcon,
           avatarColor: myAvatarColor,
           level: myLevel,
@@ -2106,6 +2391,10 @@
     myPurchasedNameColors = [];
     localStorage.removeItem('arcade_name_color');
     localStorage.removeItem('arcade_purchased_name_colors');
+    myProfileCard = 'default';
+    myPurchasedProfileCards = ['default'];
+    localStorage.removeItem('arcade_profile_card');
+    localStorage.removeItem('arcade_purchased_profile_cards');
 
     if ($('profile-input-nick')) $('profile-input-nick').value = myNickname;
     _updateHomeUserBar();
@@ -2381,12 +2670,29 @@
       localStorage.setItem('arcade_purchased_name_colors', JSON.stringify(myPurchasedNameColors));
     }
 
+    // 8. 🎴 프로필 카드 & 구매한 카드 목록 복원
+    if (profile.profileCard !== undefined) {
+      myProfileCard = profile.profileCard || 'default';
+      if (myProfileCard && myProfileCard !== 'default') {
+        localStorage.setItem('arcade_profile_card', myProfileCard);
+      } else {
+        localStorage.removeItem('arcade_profile_card');
+      }
+    }
+    if (Array.isArray(profile.purchasedProfileCards)) {
+      myPurchasedProfileCards = [...profile.purchasedProfileCards];
+      if (!myPurchasedProfileCards.includes('default')) myPurchasedProfileCards.push('default');
+      localStorage.setItem('arcade_purchased_profile_cards', JSON.stringify(myPurchasedProfileCards));
+    }
+
     // 클라우드와 로컬에 차이가 있다면 클라우드에도 즉시 동기화
     if (userId && typeof AppSupabase !== 'undefined') {
       AppSupabase.saveProfile(userId, {
         nickname: myNickname,
         nameColor: myNicknameColor,
         purchasedNameColors: myPurchasedNameColors,
+        profileCard: myProfileCard,
+        purchasedProfileCards: myPurchasedProfileCards,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         coins: myCoins,
@@ -2474,7 +2780,10 @@
     _saveMyStats(stats);
   }
 
-  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false, level = 1) {
+  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false, level = 1, profileCard = 'default', nameColor = null) {
+    const profileCardEl = document.querySelector('.stats-user-profile');
+    if (profileCardEl) _applyProfileCardTheme(profileCardEl, profileCard);
+
     const s = stats || _createEmptyStats();
     const tot = s.total || { plays: 0, wins: 0, losses: 0, draws: 0 };
     const plays = tot.plays || 0;
@@ -2492,6 +2801,9 @@
     }
     if (nameEl) {
       nameEl.textContent = name || '플레이어';
+      const actualNameColor = isMe ? myNicknameColor : (nameColor || '');
+      nameEl.style.color = actualNameColor || '';
+      nameEl.style.fontWeight = actualNameColor ? '800' : '';
     }
     const levelEl = $('stats-user-level');
     if (levelEl) {
@@ -2564,7 +2876,7 @@
         } catch (_) {}
       }
       const myStats = _getMyStats();
-      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel);
+      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel, myProfileCard, myNicknameColor);
       modal.classList.remove('hidden');
     } else {
       // 상대방
@@ -2572,18 +2884,20 @@
       const targetIcon = playerData.avatarIcon || 'fa-solid fa-paw';
       const targetColor = playerData.avatarColor || '#718096';
       const targetLevel = playerData.level || 1;
+      const targetCard = playerData.profileCard || 'default';
+      const targetNameColor = playerData.nameColor || null;
 
       // 1) playerData에 stats가 이미 있는 경우
       if (playerData.stats) {
-        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false, targetLevel);
+        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false, targetLevel, targetCard, targetNameColor);
       } else {
         // 2) 임시 렌더링 후 Supabase 조회 시도
-        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false, targetLevel);
+        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false, targetLevel, targetCard, targetNameColor);
         if (typeof AppSupabase !== 'undefined' && playerData.supabaseId) {
           const userRecord = await AppSupabase.fetchUserStats(playerData.supabaseId);
           if (userRecord && userRecord.stats) {
             playerData.stats = userRecord.stats;
-            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false, userRecord.level || targetLevel);
+            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false, userRecord.level || targetLevel, userRecord.profileCard || targetCard, userRecord.nameColor || targetNameColor);
           }
         }
       }
@@ -2852,6 +3166,7 @@
         id: P2P.getMyId(),
         name: myNickname || '익명',
         nameColor: myNicknameColor || null,
+        profileCard: myProfileCard || 'default',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         level: myLevel,
@@ -2949,6 +3264,7 @@
         id: P2P.getMyId(),
         name: myNickname || '익명',
         nameColor: myNicknameColor || null,
+        profileCard: myProfileCard || 'default',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         level: myLevel,
@@ -3042,6 +3358,7 @@
         id: senderPeerId,
         name: data.name || '익명',
         nameColor: data.nameColor || null,
+        profileCard: data.profileCard || 'default',
         avatarIcon: data.avatarIcon || _getRandomAvatarIcon(),
         avatarColor: data.avatarColor || _getRandomAvatarColor(),
         level: typeof data.level === 'number' ? data.level : 1,
@@ -3100,11 +3417,23 @@
       if (player) {
         if (data.name) player.name = data.name;
         if (data.nameColor !== undefined) player.nameColor = data.nameColor;
+        if (data.profileCard !== undefined) player.profileCard = data.profileCard;
         if (data.avatarIcon) player.avatarIcon = data.avatarIcon;
         if (data.avatarColor) player.avatarColor = data.avatarColor;
         if (typeof data.level === 'number') player.level = data.level;
         if (typeof data.exp === 'number') player.exp = data.exp;
         if (data.stats) player.stats = data.stats;
+
+        // 인게임 진행 중이면 활성 플레이어 정보도 갱신
+        const ap = activeGamePlayers.find(p => p.id === senderPeerId);
+        if (ap) {
+          if (data.name) ap.name = data.name;
+          if (data.nameColor !== undefined) ap.nameColor = data.nameColor;
+          if (data.profileCard !== undefined) ap.profileCard = data.profileCard;
+          if (data.avatarIcon) ap.avatarIcon = data.avatarIcon;
+          if (data.avatarColor) ap.avatarColor = data.avatarColor;
+        }
+
         _broadcastRoomState();
         _updateRoomUI();
       }
@@ -3603,10 +3932,12 @@
 
       li.setAttribute('data-player-id', p.id);
       li.setAttribute('data-id', p.id);
+      const cardTheme = p.profileCard || (isMe ? myProfileCard : 'default');
       li.className = 'player-item' + 
         (isMe ? ' is-me' : '') +
         (isInActiveGame ? ' is-in-game' : (isReadyGuest ? ' ready' : (isThisHost ? ' host-item' : ''))) + 
         (canManage ? ' can-manage' : '');
+      _applyProfileCardTheme(li, cardTheme);
 
       let readyBadgeHtml = '';
       if (isInActiveGame) {
@@ -4114,9 +4445,9 @@
 
       // 🌟 [추가 1] 인게임 플레이어 ID 속성 부여
       li.setAttribute('data-player-id', p.id);
-      li.setAttribute('data-id', p.id);
-
+      const cardTheme = p.profileCard || (isMe ? myProfileCard : 'default');
       li.className = 'gsp-item' + (isMe ? ' is-me' : '') + (isTurn ? ' is-current-turn' : '') + (canManage ? ' can-manage' : '');
+      _applyProfileCardTheme(li, cardTheme);
 
       li.innerHTML = `
         <div class="gsp-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
@@ -4162,9 +4493,9 @@
 
         // 🌟 [추가 2] 관전자 ID 속성 부여
         li.setAttribute('data-player-id', sp.id);
-        li.setAttribute('data-id', sp.id);
-
+        const cardTheme = sp.profileCard || (isMe ? myProfileCard : 'default');
         li.className = 'gsp-item gsp-spectator-item' + (isMe ? ' is-me' : '') + (canManage ? ' can-manage' : '');
+        _applyProfileCardTheme(li, cardTheme);
 
         li.innerHTML = `
           <div class="gsp-avatar" style="background:${sp.avatarColor || '#718096'}; opacity:0.85;"><i class="${sp.avatarIcon || 'fa-solid fa-user'}"></i></div>

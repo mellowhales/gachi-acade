@@ -9314,21 +9314,21 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
-  border-radius: var(--radius);
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 0 4px;
+  background: transparent !important;
+  border: none !important;
   color: #b45309;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 800;
 }
 .shop-coin-pill i {
   color: #f59e0b;
+  font-size: 1rem;
 }
 [data-theme="dark"] .shop-coin-pill {
   color: #fbbf24;
-  background: rgba(245, 158, 11, 0.18);
-  border-color: rgba(245, 158, 11, 0.4);
+  background: transparent !important;
+  border: none !important;
 }
 
 .shop-content {
@@ -9467,4 +9467,166 @@ html, body {
   cursor: default;
   opacity: 0.9;
 }
+
+.shop-item-desc {
+  display: none !important;
+}
+
+/* ── 상점 내 프로필 카드 미니 프리뷰 ── */
+.shop-card-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-hover);
+  margin-top: 2px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.shop-card-preview .shop-card-preview-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.shop-card-preview .shop-card-preview-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ══════════════════════════════════════════════════════
+   🎴 프로필 카드 테마 (로비, 대기방, 인게임, 전적 모달 등 전역)
+══════════════════════════════════════════════════════ */
+
+/* 1. 선셋 코랄 */
+.pcard-theme-sunset {
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.25) !important;
+}
+
+/* 2. 오션 사파이어 */
+.pcard-theme-ocean {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
+}
+
+/* 3. 포레스트 민트 */
+.pcard-theme-emerald {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* 4. 미드나잇 퍼플 */
+.pcard-theme-midnight {
+  background: linear-gradient(135deg, #312e81 0%, #7c3aed 100%) !important;
+  border-color: rgba(167, 139, 250, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* 5. 사쿠라 핑크 */
+.pcard-theme-sakura {
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.25) !important;
+}
+
+/* 6. 카본 파이버 (무늬) */
+.pcard-theme-carbon {
+  background-color: #18181b !important;
+  background-image: repeating-linear-gradient(45deg, #18181b 0, #18181b 8px, #27272a 8px, #27272a 16px) !important;
+  border: 1.5px solid #52525b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 7. 레트로 도트 (무늬) */
+.pcard-theme-retro-pixel {
+  background-color: #1e293b !important;
+  background-image: radial-gradient(rgba(147, 197, 253, 0.28) 1.5px, transparent 1.5px) !important;
+  background-size: 10px 10px !important;
+  border: 1.5px solid #60a5fa !important;
+  box-shadow: 0 4px 14px rgba(96, 165, 250, 0.25) !important;
+}
+
+/* 8. 스타라잇 은하수 (무늬) */
+.pcard-theme-galaxy {
+  background-color: #0f172a !important;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(192, 132, 252, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(96, 165, 250, 0.35) 0%, transparent 50%) !important;
+  border: 1.5px solid rgba(192, 132, 252, 0.5) !important;
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3) !important;
+}
+
+/* 9. 홀로그램 프리즘 (무늬 / 애니메이션) */
+.pcard-theme-hologram {
+  background: linear-gradient(125deg, #ec4899, #8b5cf6, #3b82f6, #10b981, #ec4899) !important;
+  background-size: 300% 300% !important;
+  animation: pcardHoloShift 5s ease infinite !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* 10. 로열 골드 (무늬 / 쉬머) */
+.pcard-theme-royal-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #fff8dc 80%, #daa520 100%) !important;
+  border: 1.5px solid #ffd700 !important;
+  box-shadow: 0 0 16px rgba(218, 165, 32, 0.45) !important;
+}
+
+/* ── 테마 카드 내부 텍스트 대비 및 가독성 ── */
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .player-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .gsp-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .user-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .profile-preview-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .stats-user-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .rr-player-name,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .shop-card-preview-name {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .gsp-tag,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .player-role,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .profile-exp-text,
+[class*="pcard-theme-"]:not(.pcard-theme-royal-gold) .stats-counts {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.pcard-theme-royal-gold .player-name,
+.pcard-theme-royal-gold .gsp-name,
+.pcard-theme-royal-gold .user-name,
+.pcard-theme-royal-gold .profile-preview-name,
+.pcard-theme-royal-gold .stats-user-name,
+.pcard-theme-royal-gold .rr-player-name,
+.pcard-theme-royal-gold .shop-card-preview-name {
+  color: #3e2723;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.pcard-theme-royal-gold .gsp-tag,
+.pcard-theme-royal-gold .player-role,
+.pcard-theme-royal-gold .profile-exp-text,
+.pcard-theme-royal-gold .stats-counts {
+  color: #4e342e !important;
+}
+
+@keyframes pcardHoloShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 

@@ -333,6 +333,8 @@ const RussianRouletteGame = (() => {
     playersList = rawPlayers.map(p => ({
       id: String(p.id),
       name: p.name || '플레이어',
+      nameColor: p.nameColor || null,
+      profileCard: p.profileCard || 'default',
       avatarIcon: p.avatarIcon || 'fa-solid fa-user',
       avatarColor: p.avatarColor || '#e53e3e',
       isHost: !!p.isHost,
@@ -1046,13 +1048,15 @@ const RussianRouletteGame = (() => {
           badgesHtml += `<span class="rr-status-pill dead"><i class="fa-solid fa-skull"></i> 탈락</span>`;
         }
 
+        const themeClass = (p.profileCard && p.profileCard !== 'default') ? `pcard-theme-${p.profileCard}` : '';
+
         return `
-          <div class="rr-player-card ${isActive ? 'is-active-turn' : ''} ${isMe ? 'is-me' : ''} ${isDead ? 'is-dead' : ''}" id="pcard-${idx}">
+          <div class="rr-player-card ${themeClass} ${isActive ? 'is-active-turn' : ''} ${isMe ? 'is-me' : ''} ${isDead ? 'is-dead' : ''}" id="pcard-${idx}">
             <div class="rr-avatar-box" style="background-color: ${p.avatarColor};">
               <i class="${p.avatarIcon}"></i>
               ${isActive ? '<i class="fa-solid fa-crown rr-active-crown"></i>' : ''}
             </div>
-            <div class="rr-player-name" title="${p.name}">${p.name} ${isMe ? '(나)' : ''}</div>
+            <div class="rr-player-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}" title="${p.name}">${p.name} ${isMe ? '(나)' : ''}</div>
             <div class="rr-player-hp">${heartsHtml}</div>
             <div class="rr-status-icons">${badgesHtml}</div>
           </div>
