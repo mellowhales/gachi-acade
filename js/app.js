@@ -100,87 +100,87 @@
   const SHOP_NICKNAME_COLORS = [
     {
       id: 'color_gold',
-      name: '로얄 골드',
+      name: '골드',
       hex: '#f59e0b',
       price: 500,
-      desc: '품격 있고 찬란하게 빛나는 황금빛 닉네임',
+      desc: '품격 있는 황금빛 닉네임',
       icon: 'fa-solid fa-crown'
     },
     {
       id: 'color_pink',
-      name: '네온 핑크',
+      name: '핑크',
       hex: '#ec4899',
       price: 500,
-      desc: '화사하고 톡톡 튀는 사랑스러운 핫핑크 닉네임',
+      desc: '화사하고 예쁜 핑크 닉네임',
       icon: 'fa-solid fa-heart'
     },
     {
       id: 'color_blue',
-      name: '스카이 블루',
+      name: '하늘색',
       hex: '#0284c7',
       price: 500,
-      desc: '청량하고 시원하게 돋보이는 바다 하늘빛 닉네임',
+      desc: '청량하고 시원한 하늘색 닉네임',
       icon: 'fa-solid fa-droplet'
     },
     {
       id: 'color_green',
-      name: '에메랄드 그린',
+      name: '초록',
       hex: '#10b981',
       price: 500,
-      desc: '생동감 넘치고 산뜻한 에메랄드 보석빛 닉네임',
+      desc: '산뜻한 에메랄드 닉네임',
       icon: 'fa-solid fa-gem'
     },
     {
       id: 'color_purple',
-      name: '네온 퍼플',
+      name: '보라',
       hex: '#8b5cf6',
       price: 500,
-      desc: '신비롭고 몽환적인 매혹의 바이올렛 닉네임',
+      desc: '신비로운 바이올렛 닉네임',
       icon: 'fa-solid fa-wand-magic-sparkles'
     },
     {
       id: 'color_red',
-      name: '크림슨 레드',
+      name: '빨강',
       hex: '#ef4444',
       price: 500,
-      desc: '강렬하고 정열적인 타오르는 불꽃 레드 닉네임',
+      desc: '강렬한 레드 닉네임',
       icon: 'fa-solid fa-fire'
     },
     {
-      id: 'color_golden',
-      name: '로열 골드',
-      hex: '#eab308',
-      price: 800,
-      desc: '기품 있고 찬란한 황금빛 닉네임',
-      icon: 'fa-solid fa-crown'
-    },
-    {
       id: 'color_cyan',
-      name: '네온 시안',
+      name: '청록',
       hex: '#06b6d4',
       price: 600,
-      desc: '청량하고 사이버틱한 네온 스카이블루',
+      desc: '청명한 시안 블루 닉네임',
       icon: 'fa-solid fa-bolt'
     },
     {
       id: 'color_rose',
-      name: '로즈 핑크',
+      name: '로즈',
       hex: '#f43f5e',
       price: 600,
-      desc: '우아하고 세련된 장밋빛 닉네임',
+      desc: '우아한 장밋빛 닉네임',
       icon: 'fa-solid fa-heart'
     },
     {
       id: 'color_silver',
-      name: '플래티넘 실버',
+      name: '실버',
       hex: '#94a3b8',
       price: 700,
-      desc: '차분하고 고급스러운 백금빛 닉네임',
+      desc: '차분한 플래티넘 닉네임',
       icon: 'fa-solid fa-shield'
     },
     {
+      id: 'color_rainbow',
+      name: '무지개',
+      hex: 'rainbow',
+      price: 1200,
+      desc: '알록달록 다채로운 무지개 닉네임',
+      icon: 'fa-solid fa-rainbow'
+    },
+    {
       id: 'color_default',
-      name: '기본 색상',
+      name: '기본',
       hex: '',
       price: 0,
       desc: '원래의 기본 텍스트 색상으로 되돌립니다.',
@@ -204,111 +204,116 @@
   const SHOP_PROFILE_CARDS = [
     {
       id: 'default',
-      name: '기본 카드',
+      name: '기본',
       themeClass: 'default',
       price: 0,
       icon: 'fa-solid fa-id-badge',
       isDefault: true
     },
-    // 색상 그라디언트 테마
     {
       id: 'sunset',
-      name: '선셋 코랄',
+      name: '선셋',
       themeClass: 'pcard-theme-sunset',
       price: 500,
       icon: 'fa-solid fa-sun'
     },
     {
       id: 'ocean',
-      name: '오션 사파이어',
+      name: '오션',
       themeClass: 'pcard-theme-ocean',
       price: 500,
       icon: 'fa-solid fa-water'
     },
     {
       id: 'emerald',
-      name: '포레스트 민트',
+      name: '민트',
       themeClass: 'pcard-theme-emerald',
       price: 500,
       icon: 'fa-solid fa-leaf'
     },
     {
       id: 'midnight',
-      name: '미드나잇 퍼플',
+      name: '퍼플',
       themeClass: 'pcard-theme-midnight',
       price: 500,
       icon: 'fa-solid fa-moon'
     },
     {
       id: 'sakura',
-      name: '사쿠라 핑크',
+      name: '핑크',
       themeClass: 'pcard-theme-sakura',
       price: 500,
       icon: 'fa-solid fa-fan'
     },
-    // 무늬 및 패턴 테마
     {
       id: 'carbon',
-      name: '카본 파이버',
+      name: '카본',
       themeClass: 'pcard-theme-carbon',
       price: 700,
       icon: 'fa-solid fa-chess-board'
     },
     {
       id: 'retro-pixel',
-      name: '레트로 도트',
+      name: '픽셀 도트',
       themeClass: 'pcard-theme-retro-pixel',
       price: 700,
       icon: 'fa-solid fa-gamepad'
     },
     {
       id: 'galaxy',
-      name: '스타라잇 은하수',
+      name: '은하수',
       themeClass: 'pcard-theme-galaxy',
       price: 700,
       icon: 'fa-solid fa-meteor'
     },
     {
       id: 'hologram',
-      name: '홀로그램 프리즘',
+      name: '프리즘',
       themeClass: 'pcard-theme-hologram',
       price: 1000,
       icon: 'fa-solid fa-wand-magic-sparkles'
     },
     {
       id: 'royal-gold',
-      name: '로열 골드',
+      name: '골드',
       themeClass: 'pcard-theme-royal-gold',
       price: 1000,
       icon: 'fa-solid fa-crown'
     },
     {
       id: 'matrix',
-      name: '사이버 매트릭스',
+      name: '매트릭스',
       themeClass: 'pcard-theme-matrix',
       price: 1000,
       icon: 'fa-solid fa-terminal'
     },
     {
       id: 'aurora',
-      name: '노르딕 오로라',
+      name: '오로라',
       themeClass: 'pcard-theme-aurora',
       price: 1200,
       icon: 'fa-solid fa-wind'
     },
     {
       id: 'space',
-      name: '딥 스페이스',
+      name: '스페이스',
       themeClass: 'pcard-theme-space',
       price: 1200,
       icon: 'fa-solid fa-globe'
     },
     {
       id: 'arcade-neon',
-      name: '아케이드 레트로팝',
+      name: '아케이드',
       themeClass: 'pcard-theme-arcade-neon',
       price: 1500,
       icon: 'fa-solid fa-gamepad'
+    },
+    {
+      id: 'rainbow',
+      name: '무지개',
+      themeClass: 'pcard-theme-rainbow',
+      price: 1500,
+      icon: 'fa-solid fa-rainbow'
     }
   ];
 
@@ -327,60 +332,68 @@
   const SHOP_CHAT_BUBBLES = [
     {
       id: 'default',
-      name: '기본 말풍선',
+      name: '기본',
       bubbleClass: 'bubble-default',
       price: 0,
       icon: 'fa-solid fa-comment',
-      desc: '가장 편안하고 깔끔한 기본 말풍선 테마',
+      desc: '가장 편안하고 깔끔한 기본 말풍선',
       isDefault: true
     },
     {
       id: 'bubble_retro_dot',
-      name: '레트로 도트',
+      name: '도트',
       bubbleClass: 'bubble-retro-dot',
       price: 600,
       icon: 'fa-solid fa-gamepad',
-      desc: '8비트 아케이드 오락실 감성의 픽셀 테두리 말풍선'
+      desc: '8비트 오락실 감성의 픽셀 테두리 말풍선'
     },
     {
       id: 'bubble_cyber_neon',
-      name: '사이버 네온',
+      name: '다크',
       bubbleClass: 'bubble-cyber-neon',
       price: 800,
-      icon: 'fa-solid fa-lightbulb',
-      desc: '어두운 바탕에 빛나는 형광 시안 & 퍼플 네온 글로우'
+      icon: 'fa-solid fa-moon',
+      desc: '차분하고 선명한 다크 블루 말풍선'
     },
     {
       id: 'bubble_mint_soda',
-      name: '민트 소다',
+      name: '민트',
       bubbleClass: 'bubble-mint-soda',
       price: 500,
       icon: 'fa-solid fa-glass-water',
-      desc: '상쾌하고 톡 쏘는 청량한 민트 탄산 스타일'
+      desc: '상쾌하고 청량한 민트 말풍선'
     },
     {
       id: 'bubble_cozy_peach',
-      name: '코지 피치',
+      name: '피치',
       bubbleClass: 'bubble-cozy-peach',
       price: 500,
       icon: 'fa-solid fa-heart',
-      desc: '따스하고 부드러운 복숭아빛 파스텔 감성'
+      desc: '따스하고 부드러운 복숭아빛 파스텔 말풍선'
     },
     {
       id: 'bubble_pop_comic',
-      name: '팝아트 코믹',
+      name: '코믹',
       bubbleClass: 'bubble-pop-comic',
       price: 700,
       icon: 'fa-solid fa-comment-dots',
-      desc: '만화책의 강렬한 스피치 버블과 볼드한 외곽선'
+      desc: '만화책 스타일의 볼드한 외곽선 말풍선'
     },
     {
       id: 'bubble_royal_velvet',
-      name: '로열 벨벳',
+      name: '와인',
       bubbleClass: 'bubble-royal-velvet',
       price: 1000,
       icon: 'fa-solid fa-crown',
-      desc: '고풍스러운 다크 와인 & 골드 라이닝 럭셔리 스킨'
+      desc: '고풍스러운 다크 와인 & 골드 테두리 말풍선'
+    },
+    {
+      id: 'bubble_rainbow',
+      name: '무지개',
+      bubbleClass: 'bubble-rainbow',
+      price: 1200,
+      icon: 'fa-solid fa-rainbow',
+      desc: '은은한 레인보우 그라데이션 테두리 말풍선'
     }
   ];
 
@@ -399,60 +412,118 @@
   const SHOP_AVATAR_FRAMES = [
     {
       id: 'default',
-      name: '기본 테두리',
+      name: '기본',
       frameClass: 'frame-default',
       price: 0,
       icon: 'fa-regular fa-circle',
       desc: '원래의 깔끔한 기본 아바타 외곽선',
       isDefault: true
     },
-    {
-      id: 'frame_gold_wreath',
-      name: '황금 월계관',
-      frameClass: 'frame-gold-wreath',
-      price: 800,
-      icon: 'fa-solid fa-award',
-      desc: '승리자에게 수여되는 영광스러운 골든 리스 테두리'
-    },
-    {
-      id: 'frame_cyber_pulse',
-      name: '사이버 펄스',
-      frameClass: 'frame-cyber-pulse',
-      price: 700,
-      icon: 'fa-solid fa-wave-square',
-      desc: '전기 신호가 은은하게 맥동하는 테크 테두리'
-    },
+    // 🔲 네모난 레트로 픽셀 테두리 라인업
     {
       id: 'frame_retro_pixel',
-      name: '레트로 픽셀',
+      name: '픽셀 보라',
       frameClass: 'frame-retro-pixel',
       price: 600,
       icon: 'fa-solid fa-square',
-      desc: '도트 게임 캐릭터를 연상시키는 네모난 픽셀 프레임'
+      desc: '도트 게임 감성의 보랏빛 네모 픽셀 테두리'
+    },
+    {
+      id: 'frame_pixel_black',
+      name: '픽셀 블랙',
+      frameClass: 'frame-pixel-black',
+      price: 500,
+      icon: 'fa-solid fa-square',
+      desc: '클래식하고 깔끔한 블랙 픽셀 네모 테두리'
+    },
+    {
+      id: 'frame_pixel_gold',
+      name: '픽셀 골드',
+      frameClass: 'frame-pixel-gold',
+      price: 800,
+      icon: 'fa-solid fa-square',
+      desc: '빛나는 황금 도트 픽셀 네모 테두리'
+    },
+    {
+      id: 'frame_pixel_mint',
+      name: '픽셀 민트',
+      frameClass: 'frame-pixel-mint',
+      price: 600,
+      icon: 'fa-solid fa-square',
+      desc: '산뜻하고 상쾌한 민트 픽셀 네모 테두리'
+    },
+    {
+      id: 'frame_pixel_red',
+      name: '픽셀 레드',
+      frameClass: 'frame-pixel-red',
+      price: 600,
+      icon: 'fa-solid fa-square',
+      desc: '강렬한 아케이드 레드 픽셀 네모 테두리'
+    },
+    {
+      id: 'frame_pixel_blue',
+      name: '픽셀 블루',
+      frameClass: 'frame-pixel-blue',
+      price: 600,
+      icon: 'fa-solid fa-square',
+      desc: '청량한 코발트 블루 픽셀 네모 테두리'
+    },
+    {
+      id: 'frame_pixel_gameboy',
+      name: '게임보이',
+      frameClass: 'frame-pixel-gameboy',
+      price: 700,
+      icon: 'fa-solid fa-gamepad',
+      desc: '8비트 레트로 휴대용 게임기 감성의 올리브 픽셀 테두리'
+    },
+    {
+      id: 'frame_pixel_rainbow',
+      name: '픽셀 무지개',
+      frameClass: 'frame-pixel-rainbow',
+      price: 1000,
+      icon: 'fa-solid fa-rainbow',
+      desc: '알록달록 다채로운 무지개 픽셀 네모 테두리'
+    },
+    // 🌟 프리미엄 원형 테두리 (이름 심플화)
+    {
+      id: 'frame_gold_wreath',
+      name: '월계관',
+      frameClass: 'frame-gold-wreath',
+      price: 800,
+      icon: 'fa-solid fa-award',
+      desc: '승리자를 위한 영광의 황금 월계관 테두리'
+    },
+    {
+      id: 'frame_cyber_pulse',
+      name: '블루 사각',
+      frameClass: 'frame-cyber-pulse',
+      price: 700,
+      icon: 'fa-solid fa-vector-square',
+      desc: '깔끔한 사이버 블루 사각 프레임'
     },
     {
       id: 'frame_ice_crystal',
-      name: '빙하 크리스탈',
+      name: '크리스탈',
       frameClass: 'frame-ice-crystal',
       price: 900,
       icon: 'fa-solid fa-snowflake',
-      desc: '차가운 냉기와 서리가 깃든 얼음 보석 테두리'
+      desc: '시원한 서리가 깃든 푸른 얼음 테두리'
     },
     {
       id: 'frame_fire_flame',
-      name: '타오르는 불꽃',
+      name: '불꽃',
       frameClass: 'frame-fire-flame',
       price: 1000,
       icon: 'fa-solid fa-fire',
-      desc: '열정적인 불꽃 이펙트가 타오르는 역동적인 프레임'
+      desc: '열정적인 레드 & 오렌지 불꽃 프레임'
     },
     {
       id: 'frame_royal_crown',
-      name: '로열 크라운',
+      name: '왕관',
       frameClass: 'frame-royal-crown',
       price: 1500,
       icon: 'fa-solid fa-crown',
-      desc: '왕관 장식과 반짝이는 보석이 박힌 황실 테두리'
+      desc: '황금빛 왕관 장식이 돋보이는 럭셔리 테두리'
     }
   ];
 
@@ -471,7 +542,7 @@
   const SHOP_VICTORY_EFFECTS = [
     {
       id: 'default',
-      name: '기본 승리 (심플 폭죽)',
+      name: '기본 폭죽',
       effectKey: 'default',
       price: 0,
       icon: 'fa-solid fa-wand-magic-sparkles',
@@ -480,43 +551,51 @@
     },
     {
       id: 'fx_coin_shower',
-      name: '황금 코인 샤워',
+      name: '코인 샤워',
       effectKey: 'coin_shower',
       price: 1000,
       icon: 'fa-solid fa-coins',
-      desc: '화면 상단에서 쏟아져 내리는 번쩍이는 황금 코인 비'
+      desc: '화면 상단에서 쏟아져 내리는 황금 코인 비'
     },
     {
       id: 'fx_pixel_fireworks',
-      name: '8-Bit 도트 폭죽',
+      name: '도트 폭죽',
       effectKey: 'pixel_fireworks',
       price: 800,
       icon: 'fa-solid fa-bomb',
-      desc: '오락실 감성의 사각 도트 파티클이 팡팡 터지는 레트로 폭죽'
+      desc: '오락실 감성의 사각 도트 파티클 폭죽'
     },
     {
       id: 'fx_neon_sparks',
-      name: '네온 스파크',
+      name: '스타 스파크',
       effectKey: 'neon_sparks',
       price: 1000,
       icon: 'fa-solid fa-bolt',
-      desc: '사이버 네온 컬러의 일렉트릭 스파크와 링 파동 연출'
+      desc: '빛나는 별빛 일렉트릭 스파크 연출'
     },
     {
       id: 'fx_heart_star',
-      name: '하트 & 별빛 블룸',
+      name: '하트 & 별',
       effectKey: 'heart_star',
       price: 700,
       icon: 'fa-solid fa-star',
-      desc: '사랑스러운 하트와 반짝이는 별무리들이 피어오르는 연출'
+      desc: '사랑스러운 하트와 반짝이는 별무리 연출'
     },
     {
       id: 'fx_grand_festival',
-      name: '그랜드 불꽃축제',
+      name: '불꽃축제',
       effectKey: 'grand_festival',
       price: 1800,
       icon: 'fa-solid fa-champagne-glasses',
-      desc: '밤하늘을 수놓는 초대형 다채색 불꽃들의 웅장한 피날레'
+      desc: '밤하늘을 수놓는 초대형 다채색 불꽃 연출'
+    },
+    {
+      id: 'fx_rainbow_blast',
+      name: '무지개 폭죽',
+      effectKey: 'rainbow_blast',
+      price: 1500,
+      icon: 'fa-solid fa-rainbow',
+      desc: '일곱 빛깔 무지개 파티클이 사방으로 터지는 화려한 축제'
     }
   ];
 
@@ -1431,8 +1510,15 @@
     const nameEl = $('home-user-name');
     if (nameEl) {
       nameEl.textContent = myNickname || '익명';
-      nameEl.style.color = myNicknameColor || '';
-      nameEl.style.fontWeight = myNicknameColor ? '800' : '';
+      if (myNicknameColor === 'rainbow') {
+        nameEl.classList.add('nickname-rainbow');
+        nameEl.style.color = '';
+        nameEl.style.fontWeight = '900';
+      } else {
+        nameEl.classList.remove('nickname-rainbow');
+        nameEl.style.color = myNicknameColor || '';
+        nameEl.style.fontWeight = myNicknameColor ? '800' : '';
+      }
     }
     _updateCoinsUI();
     _updateLevelUI();
@@ -1754,7 +1840,7 @@
               <div class="shop-card-preview-avatar" style="background:${myAvatarColor || '#38a169'};">
                 <i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>
               </div>
-              <span class="shop-card-preview-name" style="${myNicknameColor ? `color:${myNicknameColor};` : ''}">
+              <span class="shop-card-preview-name ${myNicknameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${myNicknameColor && myNicknameColor !== 'rainbow' ? `color:${myNicknameColor}; font-weight:800;` : ''}">
                 ${_escapeHtml(myNickname || '플레이어')}
               </span>
             </div>
@@ -1777,7 +1863,11 @@
         : (myNicknameColor === item.hex);
       const isPurchased = item.isDefault || myPurchasedNameColors.includes(item.id);
 
-      const previewColor = item.hex || 'inherit';
+      const isRainbow = item.hex === 'rainbow';
+      const previewStyle = isRainbow
+        ? 'background: linear-gradient(90deg, #ff0055, #ff7700, #ffdd00, #00cc66, #0099ff, #aa00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900;'
+        : (item.hex ? `color:${item.hex}; font-weight:800;` : 'color:inherit;');
+      const iconColor = isRainbow ? '#ec4899' : (item.hex || 'var(--t2)');
 
       let actionBtnHtml = '';
       if (isEquipped) {
@@ -1792,8 +1882,8 @@
       return `
         <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
           <div class="shop-item-top">
-            <span class="shop-item-name"><i class="${item.icon}" style="color:${item.hex || 'var(--t2)'};"></i> ${item.name}</span>
-            <span class="shop-color-preview-text" style="color:${previewColor};">
+            <span class="shop-item-name"><i class="${item.icon}" style="color:${iconColor};"></i> ${item.name}</span>
+            <span class="shop-color-preview-text" style="${previewStyle}">
               ${_escapeHtml(myNickname || '플레이어')}
             </span>
           </div>
@@ -2020,6 +2110,7 @@
     const canvas = $('victory-effects-canvas');
     if (!canvas) return;
 
+    canvas.style.display = 'block';
     canvas.classList.remove('hidden');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -2400,6 +2491,71 @@
       });
       _victoryAnimId = requestAnimationFrame(stepConfetti);
     }
+    // ── 7. 무지개 폭죽 ──
+    if (fxType === 'rainbow_blast') {
+      const rainbowColors = ['#ff0055', '#ff7700', '#ffdd00', '#00cc66', '#0099ff', '#aa00ff', '#ff3399'];
+      const bursts = [
+        { cx: width * 0.5,  cy: height * 0.35, delay: 0 },
+        { cx: width * 0.25, cy: height * 0.45, delay: 20 },
+        { cx: width * 0.75, cy: height * 0.4,  delay: 35 },
+        { cx: width * 0.35, cy: height * 0.25, delay: 60 },
+        { cx: width * 0.65, cy: height * 0.5,  delay: 80 }
+      ];
+
+      bursts.forEach(b => {
+        const count = 48;
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
+          const speed = 3.0 + Math.random() * 6.5;
+          particles.push({
+            cx: b.cx,
+            cy: b.cy,
+            x: b.cx,
+            y: b.cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: 6 + Math.floor(Math.random() * 5),
+            color: rainbowColors[i % rainbowColors.length],
+            alpha: 1,
+            delay: b.delay,
+            born: 0
+          });
+        }
+      });
+
+      let frameCount = 0;
+      function stepRainbow() {
+        ctx.clearRect(0, 0, width, height);
+        frameCount++;
+        let activeCount = 0;
+
+        particles.forEach(p => {
+          if (frameCount < p.delay) return;
+          p.born++;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.09;
+          p.vx *= 0.98;
+          p.alpha -= 0.013;
+
+          if (p.alpha > 0.05) {
+            activeCount++;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        if (activeCount > 0) {
+          _victoryAnimId = requestAnimationFrame(stepRainbow);
+        }
+      }
+      _victoryAnimId = requestAnimationFrame(stepRainbow);
+      return;
+    }
+
     _victoryAnimId = requestAnimationFrame(stepConfetti);
   }
 
@@ -2417,6 +2573,7 @@
       const ctx = canvas.getContext('2d');
       if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       canvas.classList.add('hidden');
+      canvas.style.display = 'none';
       if (canvas._onResize) {
         window.removeEventListener('resize', canvas._onResize);
         canvas._onResize = null;
@@ -2429,7 +2586,7 @@
     if (_victoryPreviewTimer) clearTimeout(_victoryPreviewTimer);
     _victoryPreviewTimer = setTimeout(() => {
       _stopVictoryEffect();
-    }, 3200);
+    }, 3500);
   };
 
   function _handleBuyProfileCard(item) {
@@ -3049,7 +3206,7 @@
             <span class="user-level-badge ${tierClass}">${ulevel}</span>
           </div>
           <div class="online-user-info">
-            <span class="online-user-name" style="${unameColor ? `color:${unameColor} !important; font-weight:800;` : ''}">
+            <span class="online-user-name ${unameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${unameColor && unameColor !== 'rainbow' ? `color:${unameColor} !important; font-weight:800;` : ''}">
               ${_escapeHtml(uname)}
               ${isMe ? '<span class="online-me-badge">나</span>' : ''}
             </span>
@@ -3305,7 +3462,7 @@
               </div>
               <div class="friends-info-box">
                 <div class="friends-name-row">
-                  <span class="friends-name" style="${nameColor ? `color:${nameColor} !important;` : ''}">${_escapeHtml(friend.name)}</span>
+                  <span class="friends-name ${nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${nameColor && nameColor !== 'rainbow' ? `color:${nameColor} !important;` : ''}">${_escapeHtml(friend.name)}</span>
                   <span class="friends-level-pill">Lv.${level}</span>
                 </div>
                 <div class="friends-status-text ${isOnline ? 'online' : ''}">
@@ -4026,7 +4183,7 @@
     msgEl.className = `lobby-chat-msg ${isMe ? 'is-me' : ''}`;
     msgEl.innerHTML = `
       <span class="lobby-chat-prefix">
-        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar ${frameClass}" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
+        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar ${frameClass}" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name ${unameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${unameColor && unameColor !== 'rainbow' ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
       </span>
       <span class="lobby-chat-colon">:</span>
       <span class="lobby-chat-text ${bubbleClass}">${textSafe}</span>
@@ -4620,8 +4777,15 @@
     if (previewIcon) previewIcon.className = _tempSelectedIcon;
     if (previewName) {
       previewName.textContent = nickVal;
-      previewName.style.color = myNicknameColor || '';
-      previewName.style.fontWeight = myNicknameColor ? '800' : '';
+      if (myNicknameColor === 'rainbow') {
+        previewName.classList.add('nickname-rainbow');
+        previewName.style.color = '';
+        previewName.style.fontWeight = '900';
+      } else {
+        previewName.classList.remove('nickname-rainbow');
+        previewName.style.color = myNicknameColor || '';
+        previewName.style.fontWeight = myNicknameColor ? '800' : '';
+      }
     }
   }
 
@@ -5449,10 +5613,16 @@
     if (nameEl) {
       nameEl.textContent = name || '플레이어';
       const actualNameColor = isMe ? myNicknameColor : (nameColor || '');
-      if (actualNameColor) {
+      if (actualNameColor === 'rainbow') {
+        nameEl.classList.add('nickname-rainbow');
+        nameEl.style.removeProperty('color');
+        nameEl.style.fontWeight = '900';
+      } else if (actualNameColor) {
+        nameEl.classList.remove('nickname-rainbow');
         nameEl.style.setProperty('color', actualNameColor, 'important');
         nameEl.style.fontWeight = '800';
       } else {
+        nameEl.classList.remove('nickname-rainbow');
         nameEl.style.removeProperty('color');
         nameEl.style.fontWeight = '';
       }
@@ -6577,7 +6747,7 @@
       } else {
         msgEl.innerHTML = `
           <div class="chat-sender-info">
-            <span style="${senderColor ? `color:${senderColor}; font-weight:800;` : ''}">${_escapeHtml(senderName)}</span>
+            <span class="${senderColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${senderColor && senderColor !== 'rainbow' ? `color:${senderColor}; font-weight:800;` : ''}">${_escapeHtml(senderName)}</span>
             ${isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.65rem;"></i>' : ''}
           </div>
           <div class="chat-bubble ${senderBubbleClass}">${_escapeHtml(data.text)}</div>
@@ -6816,7 +6986,7 @@
           <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
         </div>
         <div class="player-meta">
-          <div class="player-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}">
+          <div class="player-name ${p.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${p.nameColor && p.nameColor !== 'rainbow' ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
@@ -7435,7 +7605,7 @@
       li.innerHTML = `
         <div class="gsp-avatar ${frameClass}" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="gsp-meta">
-          <div class="gsp-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}">
+          <div class="gsp-name ${p.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${p.nameColor && p.nameColor !== 'rainbow' ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${p.isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i>' : ''}
             ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
@@ -7485,7 +7655,7 @@
         li.innerHTML = `
           <div class="gsp-avatar ${spFrameClass}" style="background:${sp.avatarColor || '#718096'}; opacity:0.85;"><i class="${sp.avatarIcon || 'fa-solid fa-user'}"></i></div>
           <div class="gsp-meta">
-            <div class="gsp-name" style="${sp.nameColor ? `color:${sp.nameColor}; font-weight:800;` : ''}">
+            <div class="gsp-name ${sp.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${sp.nameColor && sp.nameColor !== 'rainbow' ? `color:${sp.nameColor}; font-weight:800;` : ''}">
               ${_escapeHtml(sp.name)}
               ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
             </div>

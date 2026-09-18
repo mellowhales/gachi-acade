@@ -1,7 +1,7 @@
 # 🎮 같이아케이드 (Gachi Arcade)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-v1.0.2-brightgreen?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-v1.1.0-brightgreen?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/Status-Live%20Service-blue?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Made%20With-Vibe%20Coding-ff69b4?style=for-the-badge" alt="Vibe Coding" />
   <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge" alt="License" />
@@ -146,6 +146,11 @@
 
 ## 📜 버전 관리 (Changelog)
 
+- **v1.1.0** (2026-09)
+  - 환경설정 초기화 버튼 제거 및 업데이트 내역 스크롤 UI 개선
+  - 승리 세레머니 미리보기 버그 수정 (캔버스 최상위 레이어 이동 및 재생 제어)
+  - 네모난 레트로 픽셀 아바타 테두리 8종 추가
+  - 무지개색 아이템(닉네임, 프로필 카드, 말풍선, 테두리, 승리 세레머니) 도입 및 상점 아이템 명칭 단순화
 - **v1.0.2** (2026-09)
   - 설정 정보 탭 내 사이트 설명 제거 및 스크롤 가능한 버전 변경 이력 박스(Changelog) UI 개편
   - `AGRULES.md` 내 매 패치 시 한 줄 요약 자동 기록 규칙 반영

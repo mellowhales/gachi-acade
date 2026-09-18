@@ -4003,34 +4003,56 @@ body {
   height: 140px;
   max-height: 140px;
   overflow-y: auto;
+  scroll-behavior: smooth;
   background: var(--bg-hover);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
   scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 .settings-changelog-box::-webkit-scrollbar {
   width: 5px;
 }
+.settings-changelog-box::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 3px 0;
+}
 .settings-changelog-box::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+.settings-changelog-box::-webkit-scrollbar-thumb:hover {
+  background: var(--t3);
 }
 .changelog-entry {
   display: flex;
   align-items: flex-start;
   gap: 8px;
   font-size: 0.74rem;
-  line-height: 1.4;
-  padding-bottom: 6px;
+  line-height: 1.45;
+  padding: 5px 6px;
+  border-radius: 6px;
   border-bottom: 1px dashed var(--border-sub);
+  transition: background 0.15s ease;
 }
 .changelog-entry:last-child {
   border-bottom: none;
-  padding-bottom: 0;
+}
+.changelog-entry:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+[data-theme="dark"] .changelog-entry:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.changelog-entry.current {
+  background: var(--green-tint);
+  border: 1px solid var(--green-border);
 }
 .changelog-ver {
   font-size: 0.68rem;
@@ -4038,8 +4060,8 @@ body {
   color: var(--green);
   background: var(--green-tint);
   border: 1px solid var(--green-border);
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -4058,6 +4080,16 @@ body {
   font-size: 0.72rem;
   color: var(--t4);
   padding: 4px 0;
+}
+
+/* ── 무지개 닉네임 스타일 ── */
+.nickname-rainbow,
+[data-name-color="rainbow"] {
+  background: linear-gradient(90deg, #ff0055, #ff7700, #ffdd00, #00cc66, #0099ff, #aa00ff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 900 !important;
+  display: inline-block;
 }
 
 /* ── 모달 푸터 ── */
@@ -11642,17 +11674,33 @@ html, body {
 [class*="pcard-theme-arcade-neon"] {
   background: linear-gradient(135deg, #2b0938 0%, #4a044e 45%, #1e1035 80%, #0f071a 100%) !important;
   border: 1px solid #f43f5e !important;
-  box-shadow: inset 0 0 16px rgba(244, 63, 94, 0.3), 0 4px 16px rgba(244, 63, 94, 0.22) !important;
+  box-shadow: 0 3px 12px rgba(244, 63, 94, 0.2) !important;
 }
 .pcard-theme-arcade-neon .online-user-name,
 .pcard-theme-arcade-neon .player-name,
 .pcard-theme-arcade-neon .home-user-name {
   color: #fda4af !important;
-  text-shadow: 0 0 8px rgba(253, 164, 175, 0.65);
+  font-weight: 800 !important;
+}
+
+/* 5. 무지개 */
+.pcard-theme-rainbow,
+[class*="pcard-theme-rainbow"] {
+  background: linear-gradient(135deg, rgba(255, 99, 132, 0.15) 0%, rgba(255, 159, 64, 0.15) 25%, rgba(255, 205, 86, 0.15) 50%, rgba(75, 192, 192, 0.15) 75%, rgba(153, 102, 255, 0.15) 100%) !important;
+  border: 1.5px solid rgba(255, 99, 132, 0.45) !important;
+  box-shadow: 0 2px 10px rgba(255, 99, 132, 0.12) !important;
+}
+.pcard-theme-rainbow .online-user-name,
+.pcard-theme-rainbow .player-name,
+.pcard-theme-rainbow .home-user-name {
+  background: linear-gradient(90deg, #ff0055, #ff7700, #ffdd00, #00cc66, #0099ff, #aa00ff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 900 !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   💬 말풍선 스킨 6종 + 기본 말풍선 스타일
+   💬 말풍선 스킨 7종 + 기본 말풍선 스타일
    ═══════════════════════════════════════════════════════════════ */
 
 /* 0. 기본 말풍선 프리뷰 지원 */
@@ -11681,18 +11729,18 @@ html, body {
   box-shadow: 2px 2px 0px #15803d !important;
 }
 
-/* 2. 사이버 네온 */
+/* 2. 다크 */
 .chat-bubble.bubble-cyber-neon,
 .chat-msg.me .chat-bubble.bubble-cyber-neon,
 .chat-msg.other .chat-bubble.bubble-cyber-neon,
 .shop-bubble-preview .chat-bubble.bubble-cyber-neon,
 .lobby-chat-text.bubble-cyber-neon,
 .lobby-chat-bubble.bubble-cyber-neon {
-  background: #090d16 !important;
-  color: #e2e8f0 !important;
-  border: 1.5px solid #06b6d4 !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1.5px solid #3b82f6 !important;
   border-radius: 12px !important;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), inset 0 0 6px rgba(6, 182, 212, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* 3. 청량 민트 소다 */
@@ -11744,16 +11792,39 @@ html, body {
 .chat-msg.other .chat-bubble.bubble-royal-velvet,
 .shop-bubble-preview .chat-bubble.bubble-royal-velvet,
 .lobby-chat-text.bubble-royal-velvet,
+/* 6. 로열 벨벳 */
+.chat-bubble.bubble-royal-velvet,
+.chat-msg.me .chat-bubble.bubble-royal-velvet,
+.chat-msg.other .chat-bubble.bubble-royal-velvet,
+.shop-bubble-preview .chat-bubble.bubble-royal-velvet,
+.lobby-chat-text.bubble-royal-velvet,
 .lobby-chat-bubble.bubble-royal-velvet {
   background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%) !important;
   color: #fef08a !important;
   border: 2px solid #ca8a04 !important;
   border-radius: 14px !important;
-  box-shadow: 0 3px 14px rgba(88, 28, 135, 0.5) !important;
+  box-shadow: 0 2px 8px rgba(88, 28, 135, 0.3) !important;
+}
+
+/* 7. 무지개 */
+.chat-bubble.bubble-rainbow,
+.chat-msg.me .chat-bubble.bubble-rainbow,
+.chat-msg.other .chat-bubble.bubble-rainbow,
+.shop-bubble-preview .chat-bubble.bubble-rainbow,
+.lobby-chat-text.bubble-rainbow,
+.lobby-chat-bubble.bubble-rainbow {
+  background: var(--bg-card) !important;
+  color: var(--t1) !important;
+  border-radius: 14px !important;
+  border: 2px solid transparent !important;
+  background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(90deg, #ff0055, #ff7700, #ffdd00, #00cc66, #0099ff, #aa00ff) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   🖼️ 아바타 테두리 (Avatar Frames) 6종
+   🖼️ 아바타 테두리 (Avatar Frames)
    ═══════════════════════════════════════════════════════════════ */
 
 /* 테두리 부모 래퍼 잘림 방지 (원형 overflow 유지) */
@@ -11767,135 +11838,95 @@ html, body {
   overflow: visible !important;
 }
 
-/* 1. 황금 월계관 */
-.user-avatar.frame-gold-wreath,
-.player-avatar.frame-gold-wreath,
-.profile-preview-avatar.frame-gold-wreath,
-.stats-avatar.frame-gold-wreath,
-.stats-user-avatar.frame-gold-wreath,
-.gsp-avatar.frame-gold-wreath,
-.lobby-chat-avatar.frame-gold-wreath,
-.user-avatar.frame-gold_wreath,
-.player-avatar.frame-gold_wreath,
-.profile-preview-avatar.frame-gold_wreath,
-.stats-avatar.frame-gold_wreath,
-.stats-user-avatar.frame-gold_wreath,
-.gsp-avatar.frame-gold_wreath,
-.lobby-chat-avatar.frame-gold_wreath,
-[class*="frame-gold-wreath"],
-[class*="frame-gold_wreath"] {
-  box-shadow: 0 0 0 2.5px #facc15, 0 0 0 4.5px rgba(234, 179, 8, 0.45), 0 0 14px rgba(250, 204, 21, 0.9), inset 0 0 5px rgba(254, 240, 138, 0.7) !important;
-}
+/* ── 🔲 네모난 레트로 픽셀 테두리 라인업 (border-radius: 2px) ── */
 
-/* 2. 사이버 펄스 */
-.user-avatar.frame-cyber-pulse,
-.player-avatar.frame-cyber-pulse,
-.profile-preview-avatar.frame-cyber-pulse,
-.stats-avatar.frame-cyber-pulse,
-.stats-user-avatar.frame-cyber-pulse,
-.gsp-avatar.frame-cyber-pulse,
-.lobby-chat-avatar.frame-cyber-pulse,
-.user-avatar.frame-cyber_pulse,
-.player-avatar.frame-cyber_pulse,
-.profile-preview-avatar.frame-cyber_pulse,
-.stats-avatar.frame-cyber_pulse,
-.stats-user-avatar.frame-cyber_pulse,
-.gsp-avatar.frame-cyber_pulse,
-.lobby-chat-avatar.frame-cyber_pulse,
-[class*="frame-cyber-pulse"],
-[class*="frame-cyber_pulse"] {
-  box-shadow: 0 0 0 2.5px #06b6d4, 0 0 0 4.5px rgba(236, 72, 153, 0.45), 0 0 14px #06b6d4, inset 0 0 5px #ec4899 !important;
-  animation: cyberFramePulse 2s infinite alternate !important;
-}
-@keyframes cyberFramePulse {
-  0%   { box-shadow: 0 0 0 2.5px #06b6d4, 0 0 0 4px rgba(6, 182, 212, 0.4), 0 0 10px #06b6d4, inset 0 0 4px #06b6d4 !important; }
-  100% { box-shadow: 0 0 0 2.5px #ec4899, 0 0 0 4.5px rgba(236, 72, 153, 0.5), 0 0 16px #ec4899, inset 0 0 6px #ec4899 !important; }
-}
-
-/* 3. 레트로 8-Bit 픽셀 */
-.user-avatar.frame-retro-pixel,
-.player-avatar.frame-retro-pixel,
-.profile-preview-avatar.frame-retro-pixel,
-.stats-avatar.frame-retro-pixel,
-.stats-user-avatar.frame-retro-pixel,
-.gsp-avatar.frame-retro-pixel,
-.lobby-chat-avatar.frame-retro-pixel,
-.user-avatar.frame-retro_pixel,
-.player-avatar.frame-retro_pixel,
-.profile-preview-avatar.frame-retro_pixel,
-.stats-avatar.frame-retro_pixel,
-.stats-user-avatar.frame-retro_pixel,
-.gsp-avatar.frame-retro_pixel,
-.lobby-chat-avatar.frame-retro_pixel,
+/* 1. 픽셀 보라 (기본 픽셀) */
 [class*="frame-retro-pixel"],
 [class*="frame-retro_pixel"] {
-  border-radius: 6px !important;
-  box-shadow: 0 0 0 2.5px #a855f7, 3px 3px 0px #581c87, -2px -2px 0px #c084fc !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #a855f7, 3px 3px 0px #581c87, -2px -2px 0px #c084fc !important;
 }
 
-/* 4. 빙하 크리스탈 */
-.user-avatar.frame-ice-crystal,
-.player-avatar.frame-ice-crystal,
-.profile-preview-avatar.frame-ice-crystal,
-.stats-avatar.frame-ice-crystal,
-.stats-user-avatar.frame-ice-crystal,
-.gsp-avatar.frame-ice-crystal,
-.lobby-chat-avatar.frame-ice-crystal,
-.user-avatar.frame-ice_crystal,
-.player-avatar.frame-ice_crystal,
-.profile-preview-avatar.frame-ice_crystal,
-.stats-avatar.frame-ice_crystal,
-.stats-user-avatar.frame-ice_crystal,
-.gsp-avatar.frame-ice_crystal,
-.lobby-chat-avatar.frame-ice_crystal,
+/* 2. 픽셀 블랙 (클래식 도트) */
+[class*="frame-pixel-black"],
+[class*="frame-pixel_black"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #0f172a, 3px 3px 0px #334155, -2px -2px 0px #64748b !important;
+}
+
+/* 3. 픽셀 골드 (황금 도트) */
+[class*="frame-pixel-gold"],
+[class*="frame-pixel_gold"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #ca8a04, 3px 3px 0px #78350f, -2px -2px 0px #fde047 !important;
+}
+
+/* 4. 픽셀 민트 */
+[class*="frame-pixel-mint"],
+[class*="frame-pixel_mint"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #059669, 3px 3px 0px #064e3b, -2px -2px 0px #6ee7b7 !important;
+}
+
+/* 5. 픽셀 레드 (아케이드 레드) */
+[class*="frame-pixel-red"],
+[class*="frame-pixel_red"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #dc2626, 3px 3px 0px #7f1d1d, -2px -2px 0px #fca5a5 !important;
+}
+
+/* 6. 픽셀 블루 (코발트 블루) */
+[class*="frame-pixel-blue"],
+[class*="frame-pixel_blue"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #2563eb, 3px 3px 0px #1e3a8a, -2px -2px 0px #93c5fd !important;
+}
+
+/* 7. 픽셀 게임보이 (8비트 휴대용 게임기 녹색) */
+[class*="frame-pixel-gameboy"],
+[class*="frame-pixel_gameboy"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #4d6023, 3px 3px 0px #1f2709, -2px -2px 0px #8bac0f !important;
+}
+
+/* 8. 픽셀 무지개 (다채로운 무지개 도트) */
+[class*="frame-pixel-rainbow"],
+[class*="frame-pixel_rainbow"] {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 2px #ef4444, 2px 2px 0px #f59e0b, 4px 4px 0px #10b981, -2px -2px 0px #3b82f6 !important;
+}
+
+/* ── 🌟 프리미엄 원형 테두리 (네온 블러 완화) ── */
+
+/* 월계관 */
+[class*="frame-gold-wreath"],
+[class*="frame-gold_wreath"] {
+  box-shadow: 0 0 0 2.5px #facc15, 0 0 0 4.5px rgba(234, 179, 8, 0.4), inset 0 0 4px rgba(254, 240, 138, 0.6) !important;
+}
+
+/* 블루 사각 (사이버 펄스) */
+[class*="frame-cyber-pulse"],
+[class*="frame-cyber_pulse"] {
+  border-radius: 4px !important;
+  box-shadow: 0 0 0 2.5px #0284c7, 0 0 0 4.5px rgba(2, 132, 199, 0.3) !important;
+}
+
+/* 크리스탈 */
 [class*="frame-ice-crystal"],
 [class*="frame-ice_crystal"] {
-  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 0 4.5px rgba(186, 230, 253, 0.45), 0 0 15px rgba(56, 189, 248, 0.9), inset 0 0 6px #bae6fd !important;
+  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 0 4.5px rgba(186, 230, 253, 0.4), inset 0 0 5px #bae6fd !important;
 }
 
-/* 5. 타오르는 불꽃 */
-.user-avatar.frame-fire-flame,
-.player-avatar.frame-fire-flame,
-.profile-preview-avatar.frame-fire-flame,
-.stats-avatar.frame-fire-flame,
-.stats-user-avatar.frame-fire-flame,
-.gsp-avatar.frame-fire-flame,
-.lobby-chat-avatar.frame-fire-flame,
-.user-avatar.frame-fire_flame,
-.player-avatar.frame-fire_flame,
-.profile-preview-avatar.frame-fire_flame,
-.stats-avatar.frame-fire_flame,
-.stats-user-avatar.frame-fire_flame,
-.gsp-avatar.frame-fire_flame,
-.lobby-chat-avatar.frame-fire_flame,
+/* 불꽃 */
 [class*="frame-fire-flame"],
 [class*="frame-fire_flame"] {
-  box-shadow: 0 0 0 2.5px #f97316, 0 0 0 4.5px rgba(239, 68, 68, 0.45), 0 0 16px rgba(239, 68, 68, 0.95), 0 0 6px #fbbf24, inset 0 0 5px #fef08a !important;
-  animation: fireFrameFlicker 1.4s infinite alternate !important;
-}
-@keyframes fireFrameFlicker {
-  0%   { box-shadow: 0 0 0 2px #f97316, 0 0 8px #f97316, inset 0 0 4px #fef08a !important; }
-  100% { box-shadow: 0 0 0 3px #ef4444, 0 0 0 5px rgba(249, 115, 22, 0.5), 0 0 18px #ef4444, 0 0 8px #fbbf24, inset 0 0 7px #fef08a !important; }
+  box-shadow: 0 0 0 2.5px #f97316, 0 0 0 4.5px rgba(239, 68, 68, 0.4), inset 0 0 4px #fef08a !important;
 }
 
-/* 6. 로열 크라운 */
-.user-avatar.frame-royal-crown,
-.player-avatar.frame-royal-crown,
-.profile-preview-avatar.frame-royal-crown,
-.stats-avatar.frame-royal-crown,
-.stats-user-avatar.frame-royal-crown,
-.gsp-avatar.frame-royal-crown,
-.lobby-chat-avatar.frame-royal-crown,
-.user-avatar.frame-royal_crown,
-.player-avatar.frame-royal_crown,
-.profile-preview-avatar.frame-royal_crown,
-.stats-avatar.frame-royal_crown,
-.stats-user-avatar.frame-royal_crown,
-.gsp-avatar.frame-royal_crown,
-.lobby-chat-avatar.frame-royal_crown,
+/* 왕관 */
 [class*="frame-royal-crown"],
 [class*="frame-royal_crown"] {
-  box-shadow: 0 0 0 2.5px #eab308, 0 0 0 4.5px rgba(168, 85, 247, 0.45), 0 0 15px rgba(168, 85, 247, 0.85), 0 0 6px #ca8a04, inset 0 0 5px #fef08a !important;
+  box-shadow: 0 0 0 2.5px #eab308, 0 0 0 4.5px rgba(168, 85, 247, 0.35), inset 0 0 4px #fef08a !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
