@@ -1120,7 +1120,9 @@ body {
   [data-theme="dark"] .sidebar-header,
   [data-theme="dark"] .sidebar-profile-header {
     background: transparent !important;
+    background-color: transparent !important;
     border: none !important;
+    border-bottom: none !important;
     box-shadow: none !important;
   }
 
@@ -1139,6 +1141,7 @@ body {
   .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
     border: 1px solid var(--border) !important;
+    box-shadow: none !important;
   }
   .home-user-bar .user-avatar {
     width: 32px !important;
@@ -1162,6 +1165,8 @@ body {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--border) !important;
     flex-wrap: nowrap !important;
     margin: 0 !important;
     width: 100% !important;
@@ -1368,20 +1373,27 @@ body {
     order: 3 !important;
     width: 100% !important;
     display: flex !important;
-    justify-content: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
     align-items: center !important;
-    margin: 4px auto 0 !important;
+    margin: 6px 0 2px 0 !important;
     overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
     scrollbar-width: none !important;
-    gap: 4px !important;
+    gap: 6px !important;
+    padding: 2px 2px 4px 2px !important;
   }
   #shop-filter-tabs::-webkit-scrollbar {
     display: none !important;
   }
   #shop-filter-tabs .lobby-tab-btn {
     flex-shrink: 0 !important;
-    padding: 3px 8px !important;
-    font-size: 0.72rem !important;
+    padding: 4px 10px !important;
+    font-size: 0.74rem !important;
+    white-space: nowrap !important;
   }
   .lobby-list {
     display: flex !important;
@@ -12025,4 +12037,51 @@ html, body {
   height: 100vh !important;
   pointer-events: none !important;
   z-index: 99999 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   📱 모바일 로비 프로필 카드 & 상단바 최종 최적화
+   (라이트/다크 모드 그림자 완전 제거 및 로비 배경색 일치)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  /* 1. 상단바 그림자 제거 (프로필 상단 영역으로 그림자 낙하 방지) */
+  .lobby-topbar,
+  [data-theme="dark"] .lobby-topbar {
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  /* 2. 사이드바 및 프로필 래퍼: 배경색/테두리/그림자 투명화 (로비 배경과 색상 차이 원천 차단) */
+  .home-sidebar,
+  .sidebar-header,
+  .sidebar-profile-header,
+  [data-theme="dark"] .home-sidebar,
+  [data-theme="dark"] .sidebar-header,
+  [data-theme="dark"] .sidebar-profile-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 3. 프로필 카드 자체: 그림자 완전 제거 */
+  .home-user-bar,
+  .home-user-bar:not([class*="pcard-theme-"]),
+  .home-user-bar[class*="pcard-theme-"],
+  [data-theme="dark"] .home-user-bar,
+  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]),
+  [data-theme="dark"] .home-user-bar[class*="pcard-theme-"] {
+    box-shadow: none !important;
+  }
+
+  /* 4. 기본 프로필 카드: 다른 카드들과 100% 동일한 배경/테두리 지정 */
+  .home-user-bar:not([class*="pcard-theme-"]) {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
+  }
+  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]) {
+    background: var(--bg-card) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+  }
 }
