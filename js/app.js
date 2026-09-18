@@ -5630,7 +5630,10 @@
       levelEl.className = `player-level-badge ${_getLevelTierClass(lvl)}`;
       levelEl.style.display = 'inline-flex';
     }
-    if (tagEl) tagEl.textContent = isMe ? '내 게임 전적 기록' : '상대방 게임 전적 기록';
+    if (tagEl) {
+      tagEl.textContent = '';
+      tagEl.style.display = 'none';
+    }
 
     if ($('stats-total-plays')) $('stats-total-plays').textContent = plays;
     if ($('stats-total-wins')) $('stats-total-wins').textContent = wins;
