@@ -908,7 +908,7 @@
      OVERLAY: 환경 설정 (BGM 및 효과음 볼륨 스와이프 조절)
 ═══════════════════════════════════════════════════════════════ -->
 <!-- ═══════════════════════════════════════════════════════════════
-     OVERLAY: 환경 설정 (v1.0.0 대개편 — 5개 탭 분리 & 버그 문의 DB)
+     OVERLAY: 환경 설정 (v1.0.1 대개편 — 5개 탭 분리 & 버그 문의 DB)
 ═══════════════════════════════════════════════════════════════ -->
 <div id="overlay-settings" class="overlay hidden">
   <div class="settings-modal card" id="settings-modal-card">
@@ -1189,7 +1189,7 @@
         </div>
       </div>
 
-      <!-- [탭 5] ℹ️ 정보 & 버전 패널 (v1.0.0) -->
+      <!-- [탭 5] ℹ️ 정보 & 버전 패널 (v1.0.2) -->
       <div class="settings-tab-pane" id="pane-settings-about">
         <!-- 브랜드 & 버전 카드 -->
         <div class="about-brand-card">
@@ -1199,19 +1199,31 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.0.0</span>
+              <span class="about-version-tag">v1.0.2</span>
             </div>
           </div>
         </div>
 
-        <!-- 기능 요약 -->
-        <div class="setting-item">
-          <ul class="about-release-list">
-            <li><strong>12종 게임</strong>: 체스, 장기, 알까기, 쿼리도, 베스킨, 룰렛, 끝말잇기, 사과, 타자, 캐치마인드, 윷놀이, 야추</li>
-            <li><strong>실시간 P2P</strong>: WebRTC 기반 직접 통신망</li>
-            <li><strong>친구 시스템</strong>: 실시간 접속 확인 및 대전 초대</li>
-            <li><strong>테마 지원</strong>: 라이트 / 다크 모드</li>
-          </ul>
+        <!-- 📜 버전 변경 이력 (Changelog) -->
+        <div class="setting-item setting-changelog-wrap">
+          <div class="setting-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--green);"></i>
+            <span>업데이트 내역</span>
+          </div>
+          <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
+            <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.0.2]</span>
+              <span class="changelog-text">설정 정보 탭 내 사이트 설명을 스크롤 가능한 버전 기록 박스로 개편 및 자동 기록 체계 구축</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.0.1]</span>
+              <span class="changelog-text">방 입장/복귀 시 채팅 최하단 자동 스크롤, 버그 문의 무한로딩 수정 및 README.md 작성</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.0.0]</span>
+              <span class="changelog-text">13종 아케이드 게임 정식 출시, Supabase 계정/상점 및 Firebase P2P 실시간 로비 구축</span>
+            </div>
+          </div>
         </div>
 
         <!-- 설정 초기화 -->
@@ -1238,7 +1250,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.0.0</span>
+        <span class="settings-version-badge">v1.0.2</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span>닫기</span>

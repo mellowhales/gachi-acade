@@ -48,6 +48,7 @@ const AlkkagiGame = (() => {
   let players = [];
   let isGameOver = false;
   let isSimulating = false;
+  let _isCurrentShotLocal = false; // 🌟 턴 종료 패킷 권한: 내가 직접 쏜 샷일 때만 ALKKAGI_TURN_END 전송
   let simSafetyTimer = null;
 
   // 기물 목록: [{ id, side, type, x, y, vx, vy, radius, mass, isDead, isFalling, fallProgress, rotation }]
@@ -98,6 +99,7 @@ const AlkkagiGame = (() => {
     isGameOver = false;
     currentTurn = 'cho';
     isSimulating = false;
+    _isCurrentShotLocal = false;
     if (simSafetyTimer) {
       clearTimeout(simSafetyTimer);
       simSafetyTimer = null;
@@ -374,9 +376,9 @@ const AlkkagiGame = (() => {
     e.stopPropagation();
     currentDragPos = _getLogicalCoords(e);
 
-    // 🌟 상대방에게 내 실시간 드래그 좌표 전송 (40ms 쓰로틀링)
+    // 🌟 상대방에게 내 실시간 드래그 좌표 전송 (60ms 쓰로틀링으로 패킷 지연 및 버퍼 밀림 방지)
     const now = performance.now();
-    if (now - lastAimSendTime > 40) {
+    if (now - lastAimSendTime > 60) {
       lastAimSendTime = now;
       P2P.send({
         type: 'ALKKAGI_AIM_MOVE',
@@ -451,13 +453,26 @@ const AlkkagiGame = (() => {
     piece.vx = vx;
     piece.vy = vy;
     isSimulating = true;
+    _isCurrentShotLocal = isLocal;
 
     if (simSafetyTimer) clearTimeout(simSafetyTimer);
-    simSafetyTimer = setTimeout(() => {
-      if (isSimulating) {
-        _forceStopAndEndTurn();
-      }
-    }, 3800);
+    if (isLocal) {
+      simSafetyTimer = setTimeout(() => {
+        if (isSimulating) {
+          _forceStopAndEndTurn();
+        }
+      }, 3000);
+    } else {
+      // 상대방 샷 수신 시 패킷 유실 대비 4.2초 백업 안전 타이머
+      simSafetyTimer = setTimeout(() => {
+        if (isSimulating) {
+          isSimulating = false;
+          _isCurrentShotLocal = false;
+          pieces.forEach(p => { p.vx = 0; p.vy = 0; });
+          _updateTurnUI();
+        }
+      }, 4200);
+    }
 
     if (typeof Sound !== 'undefined' && Sound.playAlkkagiFlick) {
       Sound.playAlkkagiFlick(powerRatio);
@@ -531,7 +546,7 @@ const AlkkagiGame = (() => {
           p.vy -= (p.vy / curSpd) * drop;
         }
 
-        if (Math.hypot(p.vx, p.vy) < 0.12) {
+        if (Math.hypot(p.vx, p.vy) < 0.22) {
           p.vx = 0;
           p.vy = 0;
         } else {
@@ -660,10 +675,14 @@ const AlkkagiGame = (() => {
       });
     }
 
-    const hasFalling = pieces.some(p => p.isFalling);
-
     if (!stillMoving && !hasFalling && isSimulating) {
-      _finishSimulationAndSwitchTurn();
+      if (_isCurrentShotLocal) {
+        _finishSimulationAndSwitchTurn();
+      } else {
+        // 상대방이 쏜 샷인 경우: 내 로컬 시뮬레이션만 깔끔하게 정지하고 상대방 ALKKAGI_TURN_END 수신 대기
+        isSimulating = false;
+        pieces.forEach(p => { p.vx = 0; p.vy = 0; });
+      }
     }
   }
 
@@ -688,6 +707,7 @@ const AlkkagiGame = (() => {
     simSafetyTimer = null;
 
     isSimulating = false;
+    _isCurrentShotLocal = false;
     lockedPiece = null;
     currentDragPos = null;
     oppAimPieceId = null;
@@ -1165,6 +1185,7 @@ const AlkkagiGame = (() => {
         if (simSafetyTimer) clearTimeout(simSafetyTimer);
         simSafetyTimer = null;
         isSimulating = false;
+        _isCurrentShotLocal = false;
         lockedPiece = null;
         oppAimPieceId = null;
         oppDragPos = null;
@@ -1182,6 +1203,22 @@ const AlkkagiGame = (() => {
             }
           });
         }
+
+        // 승패 판정
+        const choRemains = pieces.filter(p => p.side === 'cho' && !p.isDead).length;
+        const hanRemains = pieces.filter(p => p.side === 'han' && !p.isDead).length;
+
+        if (hanRemains === 0 && choRemains > 0) {
+          _finishGame(mySide === 'cho', '한(漢)의 모든 기물을 떨어뜨려 초(楚) 승리!');
+          return;
+        } else if (choRemains === 0 && hanRemains > 0) {
+          _finishGame(mySide === 'han', '초(楚)의 모든 기물을 떨어뜨려 한(漢) 승리!');
+          return;
+        } else if (choRemains === 0 && hanRemains === 0) {
+          _finishGame(false, '모든 기물이 떨어져 무승부입니다!');
+          return;
+        }
+
         if (data.nextTurn) currentTurn = data.nextTurn;
         _updateTurnUI();
         break;

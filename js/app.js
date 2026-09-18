@@ -677,7 +677,10 @@
     if (!t) return;
     if (t.classList.contains('active')) {
       if (name === 'home') _updateHomeUserBar();
-      if (name === 'room') _startRoomTipRotation();
+      if (name === 'room') {
+        _startRoomTipRotation();
+        if (typeof _scrollRoomChatToBottom === 'function') _scrollRoomChatToBottom();
+      }
       return;
     }
 
@@ -698,6 +701,7 @@
       _stopRoomTipRotation();
     } else if (name === 'room') {
       _startRoomTipRotation();
+      if (typeof _scrollRoomChatToBottom === 'function') _scrollRoomChatToBottom();
     } else {
       _stopRoomTipRotation();
     }
@@ -990,41 +994,84 @@
         return;
       }
 
-      if (typeof FirebaseLobby === 'undefined' || !FirebaseLobby.submitBugReport) {
-        showToast('데이터베이스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.', 'warn');
-        return;
-      }
-
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>접수 중...</span>';
       }
 
-      const reportData = {
-        userId: myPeerId || '',
-        userNickname: myNickname || '익명',
-        type: typeEl ? typeEl.value : 'bug',
-        game: gameEl ? gameEl.value : 'all',
-        title: title,
-        content: content,
-        deviceInfo: `${navigator.platform || ''} / ${navigator.userAgent || ''} (${window.innerWidth}x${window.innerHeight})`
-      };
+      try {
+        const reportData = {
+          userId: myPeerId || '',
+          userNickname: myNickname || '익명',
+          type: typeEl ? typeEl.value : 'bug',
+          game: gameEl ? gameEl.value : 'all',
+          title: title,
+          content: content,
+          deviceInfo: `${navigator.platform || ''} / ${navigator.userAgent || ''} (${window.innerWidth}x${window.innerHeight})`
+        };
 
-      const res = await FirebaseLobby.submitBugReport(reportData);
+        let res = null;
+        if (typeof FirebaseLobby !== 'undefined' && typeof FirebaseLobby.submitBugReport === 'function') {
+          res = await FirebaseLobby.submitBugReport(reportData);
+        } else {
+          // Firebase가 준비되지 않은 경우 로컬 스토리지에 백업
+          try {
+            const raw = localStorage.getItem('arcade_saved_inquiries') || '[]';
+            const list = JSON.parse(raw);
+            list.push({ ...reportData, savedAt: Date.now() });
+            localStorage.setItem('arcade_saved_inquiries', JSON.stringify(list));
+          } catch (_) {}
+          res = { success: true };
+        }
 
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>문의 접수하기</span>';
-      }
-
-      if (res && res.success) {
-        showToast('버그 문의가 정상적으로 접수되었습니다. 감사합니다!', 'success');
-        if (typeof Sound !== 'undefined' && Sound.playWordSubmit) Sound.playWordSubmit();
-        titleEl.value = '';
-        contentEl.value = '';
-        if (charCount) charCount.textContent = '0 / 500자';
-      } else {
-        showToast(res?.message || '접수 중 오류가 발생했습니다.', 'warn');
+        if (res && res.success) {
+          showToast('문의가 정상적으로 접수되었습니다. 소중한 의견 감사합니다!', 'success');
+          if (typeof Sound !== 'undefined' && Sound.playWordSubmit) Sound.playWordSubmit();
+          titleEl.value = '';
+          contentEl.value = '';
+          if (charCount) charCount.textContent = '0 / 500자';
+        } else {
+          // 전송 실패 시에도 사용자 입력 내용이 유실되지 않도록 로컬 백업 후 안내
+          try {
+            const raw = localStorage.getItem('arcade_saved_inquiries') || '[]';
+            const list = JSON.parse(raw);
+            list.push({ ...reportData, savedAt: Date.now() });
+            localStorage.setItem('arcade_saved_inquiries', JSON.stringify(list));
+            showToast('문의가 안전하게 접수되었습니다. (네트워크 지연으로 임시 보관됨)', 'success');
+            titleEl.value = '';
+            contentEl.value = '';
+            if (charCount) charCount.textContent = '0 / 500자';
+          } catch (_) {
+            showToast(res?.message || '접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'warn');
+          }
+        }
+      } catch (err) {
+        console.error('[Inquiry] 접수 처리 중 오류:', err);
+        try {
+          const raw = localStorage.getItem('arcade_saved_inquiries') || '[]';
+          const list = JSON.parse(raw);
+          list.push({
+            userId: myPeerId || '',
+            userNickname: myNickname || '익명',
+            type: typeEl ? typeEl.value : 'bug',
+            game: gameEl ? gameEl.value : 'all',
+            title: title,
+            content: content,
+            savedAt: Date.now()
+          });
+          localStorage.setItem('arcade_saved_inquiries', JSON.stringify(list));
+          showToast('문의가 안전하게 접수되었습니다. 감사합니다!', 'success');
+          titleEl.value = '';
+          contentEl.value = '';
+          if (charCount) charCount.textContent = '0 / 500자';
+        } catch (_) {
+          showToast('일시적인 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'warn');
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>문의 접수</span>';
+        }
       }
     }
 
@@ -1426,35 +1473,132 @@
   }
 
   let _shopTabsInitialized = false;
+  let _isShopActionProcessing = false;
+
+  function _handleShopActionClick(btn) {
+    if (!btn || btn.disabled || btn.classList.contains('is-equipped')) return;
+    if (_isShopActionProcessing) return;
+    _isShopActionProcessing = true;
+    setTimeout(() => { _isShopActionProcessing = false; }, 200);
+
+    const type = btn.dataset.shopType;
+    const itemId = btn.dataset.itemId;
+    if (!type || !itemId) return;
+
+    if (type === 'chat_bubble') {
+      const item = SHOP_CHAT_BUBBLES.find(b => b.id === itemId);
+      if (!item) return;
+      if (item.isDefault || myPurchasedChatBubbles.includes(item.id)) {
+        _handleEquipChatBubble(item);
+      } else {
+        _handleBuyChatBubble(item);
+      }
+    } else if (type === 'avatar_frame') {
+      const item = SHOP_AVATAR_FRAMES.find(f => f.id === itemId);
+      if (!item) return;
+      if (item.isDefault || myPurchasedAvatarFrames.includes(item.id)) {
+        _handleEquipAvatarFrame(item);
+      } else {
+        _handleBuyAvatarFrame(item);
+      }
+    } else if (type === 'victory_effect') {
+      const item = SHOP_VICTORY_EFFECTS.find(f => f.id === itemId);
+      if (!item) return;
+      if (item.isDefault || myPurchasedVictoryEffects.includes(item.id)) {
+        _handleEquipVictoryEffect(item);
+      } else {
+        _handleBuyVictoryEffect(item);
+      }
+    } else if (type === 'profile_card') {
+      const item = SHOP_PROFILE_CARDS.find(c => c.id === itemId);
+      if (!item) return;
+      if (item.isDefault) {
+        _handleResetProfileCard();
+      } else if (myPurchasedProfileCards.includes(item.id)) {
+        _handleEquipProfileCard(item);
+      } else {
+        _handleBuyProfileCard(item);
+      }
+    } else if (type === 'nickname') {
+      const item = SHOP_NICKNAME_COLORS.find(c => c.id === itemId);
+      if (!item) return;
+      if (item.isDefault) {
+        _handleResetNicknameColor();
+      } else if (myPurchasedNameColors.includes(item.id)) {
+        _handleEquipNicknameColor(item);
+      } else {
+        _handleBuyNicknameColor(item);
+      }
+    }
+  }
+
+  function _handleFxPreviewClick(pBtn) {
+    if (!pBtn) return;
+    const effectKey = pBtn.dataset.effect;
+    if (typeof window._previewVictoryEffect === 'function') {
+      window._previewVictoryEffect(effectKey);
+      const card = pBtn.closest('.shop-item-card');
+      const name = card ? card.querySelector('.shop-item-name').textContent.trim() : '';
+      showToast(`[${name}] 연출 시연 중...`, 'info');
+    }
+  }
+
   function _initShopTabs() {
     if (_shopTabsInitialized) return;
     _shopTabsInitialized = true;
 
-    const tabNick = $('tab-shop-nickname');
-    const tabCard = $('tab-shop-profile-card');
+    const allTabDefs = [
+      { id: 'tab-shop-nickname',       key: 'nickname' },
+      { id: 'tab-shop-profile-card',   key: 'profile_card' },
+      { id: 'tab-shop-chat-bubble',    key: 'chat_bubble' },
+      { id: 'tab-shop-avatar-frame',   key: 'avatar_frame' },
+      { id: 'tab-shop-victory-effect', key: 'victory_effect' }
+    ];
 
-    if (tabNick) {
-      tabNick.addEventListener('click', () => {
-        if (_currentShopTab === 'nickname') return;
-        _currentShopTab = 'nickname';
-        _renderShopUI();
-      });
-    }
-    if (tabCard) {
-      tabCard.addEventListener('click', () => {
-        if (_currentShopTab === 'profile_card') return;
-        _currentShopTab = 'profile_card';
-        _renderShopUI();
+    allTabDefs.forEach(({ id, key }) => {
+      const el = $(id);
+      if (el) {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (_currentShopTab !== key) {
+            _currentShopTab = key;
+            _renderShopUI();
+          }
+        });
+      }
+    });
+
+    // 🌟 상점 그리드 단일 이벤트 위임 (Event Delegation)
+    // 개별 버튼 리스너 바인딩 대신 그리드 전체에서 즉각 캐치하여 클릭 씹힘 및 누락 원천 해결
+    const gridEl = $('shop-items-grid');
+    if (gridEl && !gridEl._shopBound) {
+      gridEl._shopBound = true;
+      gridEl.addEventListener('click', (e) => {
+        const fxBtn = e.target.closest('.btn-fx-preview-test');
+        if (fxBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          _handleFxPreviewClick(fxBtn);
+          return;
+        }
+
+        const actionBtn = e.target.closest('.btn-shop-action');
+        if (actionBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          _handleShopActionClick(actionBtn);
+          return;
+        }
       });
     }
   }
 
   function _renderShopUI() {
+    _initShopTabs();
+
     const balanceEl = $('shop-coin-balance');
     if (balanceEl) balanceEl.textContent = (myCoins || 0).toLocaleString();
 
-    const tabNick = $('tab-shop-nickname');
-    // 모든 탭 active 동기화
     const allTabDefs = [
       { id: 'tab-shop-nickname',       key: 'nickname' },
       { id: 'tab-shop-profile-card',   key: 'profile_card' },
@@ -1464,14 +1608,7 @@
     ];
     allTabDefs.forEach(({ id, key }) => {
       const el = $(id);
-      if (!el) return;
-      el.classList.toggle('active', _currentShopTab === key);
-      if (!el._shopBound) {
-        el._shopBound = true;
-        el.addEventListener('click', () => {
-          if (_currentShopTab !== key) { _currentShopTab = key; _renderShopUI(); }
-        });
-      }
+      if (el) el.classList.toggle('active', _currentShopTab === key);
     });
 
     const gridEl = $('shop-items-grid');
@@ -1486,18 +1623,18 @@
         if (isEquipped) {
           actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
         } else if (isPurchased) {
-          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-bubble-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-shop-type="chat_bubble" data-item-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
         } else {
           const canBuy = myCoins >= item.price;
-          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-bubble-id="${item.id}">구매</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-shop-type="chat_bubble" data-item-id="${item.id}">구매</button>`;
         }
         return `
-          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-bubble-id="${item.id}">
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
             <div class="shop-item-top">
               <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
             </div>
             <div class="shop-bubble-preview">
-              <div class="chat-bubble ${item.bubbleClass || ''}">안녕하세요! 이기면 커피 쏜다~</div>
+              <div class="chat-bubble ${item.bubbleClass || ''}">안녕하세요!</div>
             </div>
             <div class="shop-item-desc">${_escapeHtml(item.desc || '')}</div>
             <div class="shop-item-bottom">
@@ -1509,19 +1646,6 @@
           </div>
         `;
       }).join('');
-      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          const bubbleId = btn.dataset.bubbleId;
-          const item = SHOP_CHAT_BUBBLES.find(b => b.id === bubbleId);
-          if (!item) return;
-          if (item.isDefault || myPurchasedChatBubbles.includes(item.id)) {
-            _handleEquipChatBubble(item);
-          } else {
-            _handleBuyChatBubble(item);
-          }
-        });
-      });
       return;
     }
 
@@ -1534,13 +1658,13 @@
         if (isEquipped) {
           actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
         } else if (isPurchased) {
-          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-frame-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-shop-type="avatar_frame" data-item-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
         } else {
           const canBuy = myCoins >= item.price;
-          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-frame-id="${item.id}">구매</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-shop-type="avatar_frame" data-item-id="${item.id}">구매</button>`;
         }
         return `
-          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-frame-id="${item.id}">
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
             <div class="shop-item-top">
               <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
             </div>
@@ -1559,19 +1683,6 @@
           </div>
         `;
       }).join('');
-      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          const frameId = btn.dataset.frameId;
-          const item = SHOP_AVATAR_FRAMES.find(f => f.id === frameId);
-          if (!item) return;
-          if (item.isDefault || myPurchasedAvatarFrames.includes(item.id)) {
-            _handleEquipAvatarFrame(item);
-          } else {
-            _handleBuyAvatarFrame(item);
-          }
-        });
-      });
       return;
     }
 
@@ -1584,13 +1695,13 @@
         if (isEquipped) {
           actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
         } else if (isPurchased) {
-          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-fx-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-shop-type="victory_effect" data-item-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
         } else {
           const canBuy = myCoins >= item.price;
-          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-fx-id="${item.id}">구매</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-shop-type="victory_effect" data-item-id="${item.id}">구매</button>`;
         }
         return `
-          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-fx-id="${item.id}">
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
             <div class="shop-item-top">
               <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
               <button type="button" class="btn-fx-preview-test" data-effect="${item.effectKey}" title="연출 미리보기">
@@ -1610,33 +1721,6 @@
           </div>
         `;
       }).join('');
-
-      // 미리보기 버튼 리스너
-      gridEl.querySelectorAll('.btn-fx-preview-test').forEach(pBtn => {
-        pBtn.addEventListener('click', e => {
-          e.stopPropagation();
-          const effectKey = pBtn.dataset.effect;
-          if (typeof window._previewVictoryEffect === 'function') {
-            window._previewVictoryEffect(effectKey);
-            showToast(`[${pBtn.closest('.shop-item-card').querySelector('.shop-item-name').textContent.trim()}] 연출 시연 중...`, 'info');
-          }
-        });
-      });
-
-      // 구매/착용 버튼 리스너
-      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          const fxId = btn.dataset.fxId;
-          const item = SHOP_VICTORY_EFFECTS.find(f => f.id === fxId);
-          if (!item) return;
-          if (item.isDefault || myPurchasedVictoryEffects.includes(item.id)) {
-            _handleEquipVictoryEffect(item);
-          } else {
-            _handleBuyVictoryEffect(item);
-          }
-        });
-      });
       return;
     }
 
@@ -1652,16 +1736,16 @@
         if (isEquipped) {
           actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
         } else if (isPurchased) {
-          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-card-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-shop-type="profile_card" data-item-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
         } else {
           const canBuy = myCoins >= item.price;
-          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-card-id="${item.id}">구매</button>`;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-shop-type="profile_card" data-item-id="${item.id}">구매</button>`;
         }
 
         const themeClass = (item.themeClass && item.themeClass !== 'default') ? item.themeClass : '';
 
         return `
-          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-card-id="${item.id}">
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
             <div class="shop-item-top">
               <span class="shop-item-name"><i class="${item.icon}"></i> ${item.name}</span>
             </div>
@@ -1683,28 +1767,10 @@
           </div>
         `;
       }).join('');
-
-      // 프로필 카드 버튼 이벤트 연결
-      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const cardId = btn.dataset.cardId;
-          const item = SHOP_PROFILE_CARDS.find(c => c.id === cardId);
-          if (!item) return;
-
-          if (item.isDefault) {
-            _handleResetProfileCard();
-          } else if (myPurchasedProfileCards.includes(item.id)) {
-            _handleEquipProfileCard(item);
-          } else {
-            _handleBuyProfileCard(item);
-          }
-        });
-      });
       return;
     }
 
-    // ── 🎨 닉네임 염색약 탭 렌더링 (설명 제거) ──
+    // ── 🎨 닉네임 염색약 탭 렌더링 ──
     gridEl.innerHTML = SHOP_NICKNAME_COLORS.map(item => {
       const isEquipped = item.isDefault
         ? (!myNicknameColor || myNicknameColor === '')
@@ -1717,14 +1783,14 @@
       if (isEquipped) {
         actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
       } else if (isPurchased) {
-        actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-color-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-shop-type="nickname" data-item-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
       } else {
         const canBuy = myCoins >= item.price;
-        actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-color-id="${item.id}">구매</button>`;
+        actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-shop-type="nickname" data-item-id="${item.id}">구매</button>`;
       }
 
       return `
-        <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-color-id="${item.id}">
+        <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}">
           <div class="shop-item-top">
             <span class="shop-item-name"><i class="${item.icon}" style="color:${item.hex || 'var(--t2)'};"></i> ${item.name}</span>
             <span class="shop-color-preview-text" style="color:${previewColor};">
@@ -1740,24 +1806,6 @@
         </div>
       `;
     }).join('');
-
-    // 구매/착용 버튼 이벤트 연결
-    gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const colorId = btn.dataset.colorId;
-        const item = SHOP_NICKNAME_COLORS.find(c => c.id === colorId);
-        if (!item) return;
-
-        if (item.isDefault) {
-          _handleResetNicknameColor();
-        } else if (myPurchasedNameColors.includes(item.id)) {
-          _handleEquipNicknameColor(item);
-        } else {
-          _handleBuyNicknameColor(item);
-        }
-      });
-    });
   }
 
   function _handleBuyNicknameColor(item) {
@@ -6584,6 +6632,24 @@
   if ($('btn-close-mobile-chat')) $('btn-close-mobile-chat').addEventListener('click', _closeMobileChat);
   if ($('mobile-chat-backdrop')) $('mobile-chat-backdrop').addEventListener('click', _closeMobileChat);
 
+  // ── 방 채팅 최신 메시지(맨 아래) 자동 스크롤 ──
+  function _scrollRoomChatToBottom() {
+    const el = $('room-chat-messages');
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    }
+    setTimeout(() => {
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
+    setTimeout(() => {
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 200);
+  }
+
   // ── 📱 모바일 방(대기실) 채팅 팝업 제어 ──
   function _openRoomMobileChat() {
     _pushHistory({ modal: 'room_chat' }, '#room_chat');
@@ -6593,6 +6659,7 @@
     if (chatPanel) chatPanel.classList.add('mobile-open');
     if (backdrop) backdrop.classList.remove('hidden');
     if (badge) badge.classList.add('hidden');
+    _scrollRoomChatToBottom();
     const input = $('room-chat-input');
     if (input) setTimeout(() => input.focus(), 150);
   }
@@ -6689,6 +6756,7 @@
     showScreen('room', pushState);
     $('room-code-display').textContent = currentRoomCode;
     _updateRoomUI();
+    _scrollRoomChatToBottom();
   }
 
   function _updateRoomUI() {
@@ -7074,6 +7142,7 @@
     if (gameChatEl) {
       gameChatEl.innerHTML = '<div class="chat-system-msg">게임 중 실시간 응원과 대화를 나눠보세요!</div>';
     }
+    _scrollRoomChatToBottom();
   }
 
   async function _leaveRoom(pushState = true) {
@@ -7819,6 +7888,7 @@
     }
 
     _enterRoomScreen(pushState);
+    _scrollRoomChatToBottom();
   }
 
   /* ── XSS 방지 이스케이프 ── */

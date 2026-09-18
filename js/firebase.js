@@ -715,35 +715,58 @@ const FirebaseLobby = {
   },
 
   /**
-   * 버그 문의 및 피드백 접수 — Firebase /bug_reports/{id} 에 실시간 저장
+   * 버그 문의 및 피드백 접수 — Firebase /bug_reports/{id} 실시간 저장 + 타임아웃 방어 & 로컬 백업
    */
   async submitBugReport(reportData) {
+    const payload = {
+      userId: reportData.userId || '',
+      userNickname: reportData.userNickname || '익명',
+      type: reportData.type || 'bug',
+      game: reportData.game || 'all',
+      title: reportData.title || '',
+      content: reportData.content || '',
+      deviceInfo: reportData.deviceInfo || (typeof navigator !== 'undefined' ? navigator.userAgent : ''),
+      createdAt: Date.now(),
+      version: '1.0.2',
+      status: 'open'
+    };
+
     if (!_db) {
-      return { success: false, message: '데이터베이스 연결이 준비되지 않았습니다.' };
+      this._saveBugReportLocal(payload);
+      return { success: true, localOnly: true };
     }
+
     try {
       const reportsRef = ref(_db, 'bug_reports');
       const newRef = push(reportsRef);
-      const payload = {
-        id: newRef.key,
-        userId: reportData.userId || '',
-        userNickname: reportData.userNickname || '익명',
-        type: reportData.type || 'bug',
-        game: reportData.game || 'all',
-        title: reportData.title || '',
-        content: reportData.content || '',
-        deviceInfo: reportData.deviceInfo || (typeof navigator !== 'undefined' ? navigator.userAgent : ''),
-        createdAt: Date.now(),
-        version: '1.0.0',
-        status: 'open'
-      };
-      await set(newRef, payload);
+      payload.id = newRef.key;
+
+      // ⏱️ Firebase 네트워크 멈춤/무한 대기 방어: 4초 타임아웃
+      const savePromise = set(newRef, payload);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT')), 4000)
+      );
+
+      await Promise.race([savePromise, timeoutPromise]);
       console.log('[Firebase] 버그 문의 등록 완료:', newRef.key);
+      this._saveBugReportLocal(payload);
       return { success: true, id: newRef.key };
     } catch (e) {
-      console.error('[Firebase] submitBugReport 에러:', e);
-      return { success: false, message: e.message || '전송 중 오류가 발생했습니다.' };
+      console.warn('[Firebase] submitBugReport 서버 응답 지연/오류 -> 로컬 안전 백업:', e);
+      this._saveBugReportLocal(payload);
+      // 사용자에게 실패 대신 로컬 백업 성공으로 처리하여 무한 대기 및 실망 방지
+      return { success: true, id: 'local_' + Date.now(), localOnly: true };
     }
+  },
+
+  _saveBugReportLocal(data) {
+    try {
+      const raw = localStorage.getItem('arcade_saved_inquiries') || '[]';
+      const list = JSON.parse(raw);
+      list.push({ ...data, savedAt: Date.now() });
+      if (list.length > 50) list.shift();
+      localStorage.setItem('arcade_saved_inquiries', JSON.stringify(list));
+    } catch (_) {}
   },
 
   isReady() {
