@@ -765,7 +765,6 @@ body {
   width: 32px;
   height: 32px;
   font-size: 0.92rem;
-  box-shadow: none;
 }
 
 .online-user-item .user-avatar-wrap .user-level-badge {
@@ -11524,7 +11523,7 @@ html, body {
   min-height: 56px;
 }
 .shop-frame-preview {
-  height: 64px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11532,6 +11531,13 @@ html, body {
   border: 1px dashed var(--border, rgba(0, 0, 0, 0.1));
   border-radius: 8px;
   margin: 8px 0;
+  overflow: visible !important;
+}
+.shop-frame-preview .user-avatar {
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 1.15rem !important;
+  position: relative !important;
 }
 .avatar-frame-demo {
   display: inline-flex;
@@ -11604,11 +11610,27 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   💬 말풍선 스킨 6종
+   💬 말풍선 스킨 6종 + 기본 말풍선 스타일
    ═══════════════════════════════════════════════════════════════ */
 
+/* 0. 기본 말풍선 프리뷰 지원 */
+.chat-bubble.bubble-default,
+.shop-bubble-preview .chat-bubble.bubble-default {
+  background: var(--green, #22c55e) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  border-bottom-right-radius: 2px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
 /* 1. 레트로 8-Bit 도트 */
-.chat-bubble.bubble-retro-dot {
+.chat-bubble.bubble-retro-dot,
+.chat-msg.me .chat-bubble.bubble-retro-dot,
+.chat-msg.other .chat-bubble.bubble-retro-dot,
+.shop-bubble-preview .chat-bubble.bubble-retro-dot,
+.lobby-chat-text.bubble-retro-dot,
+.lobby-chat-bubble.bubble-retro-dot {
   background: #18181b !important;
   color: #4ade80 !important;
   border: 2px solid #22c55e !important;
@@ -11618,34 +11640,54 @@ html, body {
 }
 
 /* 2. 사이버 네온 */
-.chat-bubble.bubble-cyber-neon {
+.chat-bubble.bubble-cyber-neon,
+.chat-msg.me .chat-bubble.bubble-cyber-neon,
+.chat-msg.other .chat-bubble.bubble-cyber-neon,
+.shop-bubble-preview .chat-bubble.bubble-cyber-neon,
+.lobby-chat-text.bubble-cyber-neon,
+.lobby-chat-bubble.bubble-cyber-neon {
   background: #090d16 !important;
   color: #e2e8f0 !important;
   border: 1.5px solid #06b6d4 !important;
   border-radius: 12px !important;
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.38), inset 0 0 6px rgba(6, 182, 212, 0.15) !important;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), inset 0 0 6px rgba(6, 182, 212, 0.25) !important;
 }
 
 /* 3. 청량 민트 소다 */
-.chat-bubble.bubble-mint-soda {
+.chat-bubble.bubble-mint-soda,
+.chat-msg.me .chat-bubble.bubble-mint-soda,
+.chat-msg.other .chat-bubble.bubble-mint-soda,
+.shop-bubble-preview .chat-bubble.bubble-mint-soda,
+.lobby-chat-text.bubble-mint-soda,
+.lobby-chat-bubble.bubble-mint-soda {
   background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
   color: #ffffff !important;
   border-radius: 14px !important;
-  border: 1px solid #14b8a6 !important;
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35) !important;
+  border: 1.5px solid #14b8a6 !important;
+  box-shadow: 0 2px 10px rgba(13, 148, 136, 0.4) !important;
 }
 
 /* 4. 코지 피치 */
-.chat-bubble.bubble-cozy-peach {
+.chat-bubble.bubble-cozy-peach,
+.chat-msg.me .chat-bubble.bubble-cozy-peach,
+.chat-msg.other .chat-bubble.bubble-cozy-peach,
+.shop-bubble-preview .chat-bubble.bubble-cozy-peach,
+.lobby-chat-text.bubble-cozy-peach,
+.lobby-chat-bubble.bubble-cozy-peach {
   background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%) !important;
   color: #ffffff !important;
   border-radius: 14px !important;
-  border: 1px solid #fdba74 !important;
-  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.35) !important;
+  border: 1.5px solid #fdba74 !important;
+  box-shadow: 0 2px 10px rgba(251, 146, 60, 0.4) !important;
 }
 
 /* 5. 팝아트 코믹 */
-.chat-bubble.bubble-pop-comic {
+.chat-bubble.bubble-pop-comic,
+.chat-msg.me .chat-bubble.bubble-pop-comic,
+.chat-msg.other .chat-bubble.bubble-pop-comic,
+.shop-bubble-preview .chat-bubble.bubble-pop-comic,
+.lobby-chat-text.bubble-pop-comic,
+.lobby-chat-bubble.bubble-pop-comic {
   background: #fef08a !important;
   color: #0f172a !important;
   border: 2.5px solid #0f172a !important;
@@ -11655,81 +11697,163 @@ html, body {
 }
 
 /* 6. 로열 벨벳 */
-.chat-bubble.bubble-royal-velvet {
+.chat-bubble.bubble-royal-velvet,
+.chat-msg.me .chat-bubble.bubble-royal-velvet,
+.chat-msg.other .chat-bubble.bubble-royal-velvet,
+.shop-bubble-preview .chat-bubble.bubble-royal-velvet,
+.lobby-chat-text.bubble-royal-velvet,
+.lobby-chat-bubble.bubble-royal-velvet {
   background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%) !important;
   color: #fef08a !important;
-  border: 1.5px solid #ca8a04 !important;
+  border: 2px solid #ca8a04 !important;
   border-radius: 14px !important;
-  box-shadow: 0 3px 12px rgba(88, 28, 135, 0.45) !important;
+  box-shadow: 0 3px 14px rgba(88, 28, 135, 0.5) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
    🖼️ 아바타 테두리 (Avatar Frames) 6종
    ═══════════════════════════════════════════════════════════════ */
 
+/* 테두리 부모 래퍼 잘림 방지 (원형 overflow 유지) */
+.user-avatar-wrap,
+.player-avatar-wrap,
+.profile-preview-avatar-wrap,
+.stats-avatar-wrap,
+.home-user-bar,
+.shop-frame-preview,
+.lobby-chat-prefix {
+  overflow: visible !important;
+}
+
 /* 1. 황금 월계관 */
 .user-avatar.frame-gold-wreath,
 .player-avatar.frame-gold-wreath,
-.avatar-frame-demo.frame-gold-wreath {
-  outline: 3px solid #eab308 !important;
-  outline-offset: 1px !important;
-  box-shadow: 0 0 10px rgba(234, 179, 8, 0.7), inset 0 0 4px rgba(254, 240, 138, 0.6) !important;
+.profile-preview-avatar.frame-gold-wreath,
+.stats-avatar.frame-gold-wreath,
+.stats-user-avatar.frame-gold-wreath,
+.gsp-avatar.frame-gold-wreath,
+.lobby-chat-avatar.frame-gold-wreath,
+.user-avatar.frame-gold_wreath,
+.player-avatar.frame-gold_wreath,
+.profile-preview-avatar.frame-gold_wreath,
+.stats-avatar.frame-gold_wreath,
+.stats-user-avatar.frame-gold_wreath,
+.gsp-avatar.frame-gold_wreath,
+.lobby-chat-avatar.frame-gold_wreath,
+[class*="frame-gold-wreath"],
+[class*="frame-gold_wreath"] {
+  box-shadow: 0 0 0 2.5px #facc15, 0 0 0 4.5px rgba(234, 179, 8, 0.45), 0 0 14px rgba(250, 204, 21, 0.9), inset 0 0 5px rgba(254, 240, 138, 0.7) !important;
 }
 
 /* 2. 사이버 펄스 */
 .user-avatar.frame-cyber-pulse,
 .player-avatar.frame-cyber-pulse,
-.avatar-frame-demo.frame-cyber-pulse {
-  outline: 2.5px solid #06b6d4 !important;
-  outline-offset: 1.5px !important;
-  box-shadow: 0 0 12px #06b6d4, inset 0 0 4px #ec4899 !important;
-  animation: cyberFramePulse 2.2s infinite alternate !important;
+.profile-preview-avatar.frame-cyber-pulse,
+.stats-avatar.frame-cyber-pulse,
+.stats-user-avatar.frame-cyber-pulse,
+.gsp-avatar.frame-cyber-pulse,
+.lobby-chat-avatar.frame-cyber-pulse,
+.user-avatar.frame-cyber_pulse,
+.player-avatar.frame-cyber_pulse,
+.profile-preview-avatar.frame-cyber_pulse,
+.stats-avatar.frame-cyber_pulse,
+.stats-user-avatar.frame-cyber_pulse,
+.gsp-avatar.frame-cyber_pulse,
+.lobby-chat-avatar.frame-cyber_pulse,
+[class*="frame-cyber-pulse"],
+[class*="frame-cyber_pulse"] {
+  box-shadow: 0 0 0 2.5px #06b6d4, 0 0 0 4.5px rgba(236, 72, 153, 0.45), 0 0 14px #06b6d4, inset 0 0 5px #ec4899 !important;
+  animation: cyberFramePulse 2s infinite alternate !important;
 }
 @keyframes cyberFramePulse {
-  0%   { box-shadow: 0 0 6px #06b6d4, inset 0 0 3px #06b6d4; }
-  100% { box-shadow: 0 0 14px #ec4899, inset 0 0 5px #ec4899; }
+  0%   { box-shadow: 0 0 0 2.5px #06b6d4, 0 0 0 4px rgba(6, 182, 212, 0.4), 0 0 10px #06b6d4, inset 0 0 4px #06b6d4 !important; }
+  100% { box-shadow: 0 0 0 2.5px #ec4899, 0 0 0 4.5px rgba(236, 72, 153, 0.5), 0 0 16px #ec4899, inset 0 0 6px #ec4899 !important; }
 }
 
 /* 3. 레트로 8-Bit 픽셀 */
 .user-avatar.frame-retro-pixel,
 .player-avatar.frame-retro-pixel,
-.avatar-frame-demo.frame-retro-pixel {
-  border-radius: 4px !important;
-  outline: 3px solid #a855f7 !important;
-  outline-offset: 1px !important;
-  box-shadow: 2px 2px 0px #581c87 !important;
+.profile-preview-avatar.frame-retro-pixel,
+.stats-avatar.frame-retro-pixel,
+.stats-user-avatar.frame-retro-pixel,
+.gsp-avatar.frame-retro-pixel,
+.lobby-chat-avatar.frame-retro-pixel,
+.user-avatar.frame-retro_pixel,
+.player-avatar.frame-retro_pixel,
+.profile-preview-avatar.frame-retro_pixel,
+.stats-avatar.frame-retro_pixel,
+.stats-user-avatar.frame-retro_pixel,
+.gsp-avatar.frame-retro_pixel,
+.lobby-chat-avatar.frame-retro_pixel,
+[class*="frame-retro-pixel"],
+[class*="frame-retro_pixel"] {
+  border-radius: 6px !important;
+  box-shadow: 0 0 0 2.5px #a855f7, 3px 3px 0px #581c87, -2px -2px 0px #c084fc !important;
 }
 
 /* 4. 빙하 크리스탈 */
 .user-avatar.frame-ice-crystal,
 .player-avatar.frame-ice-crystal,
-.avatar-frame-demo.frame-ice-crystal {
-  outline: 2.5px solid #38bdf8 !important;
-  outline-offset: 1px !important;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), inset 0 0 5px #e0f2fe !important;
+.profile-preview-avatar.frame-ice-crystal,
+.stats-avatar.frame-ice-crystal,
+.stats-user-avatar.frame-ice-crystal,
+.gsp-avatar.frame-ice-crystal,
+.lobby-chat-avatar.frame-ice-crystal,
+.user-avatar.frame-ice_crystal,
+.player-avatar.frame-ice_crystal,
+.profile-preview-avatar.frame-ice_crystal,
+.stats-avatar.frame-ice_crystal,
+.stats-user-avatar.frame-ice_crystal,
+.gsp-avatar.frame-ice_crystal,
+.lobby-chat-avatar.frame-ice_crystal,
+[class*="frame-ice-crystal"],
+[class*="frame-ice_crystal"] {
+  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 0 4.5px rgba(186, 230, 253, 0.45), 0 0 15px rgba(56, 189, 248, 0.9), inset 0 0 6px #bae6fd !important;
 }
 
 /* 5. 타오르는 불꽃 */
 .user-avatar.frame-fire-flame,
 .player-avatar.frame-fire-flame,
-.avatar-frame-demo.frame-fire-flame {
-  outline: 3px solid #f97316 !important;
-  outline-offset: 1px !important;
-  box-shadow: 0 0 14px rgba(239, 68, 68, 0.85), inset 0 0 4px #fef08a !important;
-  animation: fireFrameFlicker 1.6s infinite alternate !important;
+.profile-preview-avatar.frame-fire-flame,
+.stats-avatar.frame-fire-flame,
+.stats-user-avatar.frame-fire-flame,
+.gsp-avatar.frame-fire-flame,
+.lobby-chat-avatar.frame-fire-flame,
+.user-avatar.frame-fire_flame,
+.player-avatar.frame-fire_flame,
+.profile-preview-avatar.frame-fire_flame,
+.stats-avatar.frame-fire_flame,
+.stats-user-avatar.frame-fire_flame,
+.gsp-avatar.frame-fire_flame,
+.lobby-chat-avatar.frame-fire_flame,
+[class*="frame-fire-flame"],
+[class*="frame-fire_flame"] {
+  box-shadow: 0 0 0 2.5px #f97316, 0 0 0 4.5px rgba(239, 68, 68, 0.45), 0 0 16px rgba(239, 68, 68, 0.95), 0 0 6px #fbbf24, inset 0 0 5px #fef08a !important;
+  animation: fireFrameFlicker 1.4s infinite alternate !important;
 }
 @keyframes fireFrameFlicker {
-  0%   { box-shadow: 0 0 8px #f97316; }
-  100% { box-shadow: 0 0 16px #ef4444; }
+  0%   { box-shadow: 0 0 0 2px #f97316, 0 0 8px #f97316, inset 0 0 4px #fef08a !important; }
+  100% { box-shadow: 0 0 0 3px #ef4444, 0 0 0 5px rgba(249, 115, 22, 0.5), 0 0 18px #ef4444, 0 0 8px #fbbf24, inset 0 0 7px #fef08a !important; }
 }
 
 /* 6. 로열 크라운 */
 .user-avatar.frame-royal-crown,
 .player-avatar.frame-royal-crown,
-.avatar-frame-demo.frame-royal-crown {
-  outline: 3px solid #d97706 !important;
-  outline-offset: 1.5px !important;
-  box-shadow: 0 0 12px rgba(124, 58, 237, 0.65), inset 0 0 4px #fef08a !important;
+.profile-preview-avatar.frame-royal-crown,
+.stats-avatar.frame-royal-crown,
+.stats-user-avatar.frame-royal-crown,
+.gsp-avatar.frame-royal-crown,
+.lobby-chat-avatar.frame-royal-crown,
+.user-avatar.frame-royal_crown,
+.player-avatar.frame-royal_crown,
+.profile-preview-avatar.frame-royal_crown,
+.stats-avatar.frame-royal_crown,
+.stats-user-avatar.frame-royal_crown,
+.gsp-avatar.frame-royal_crown,
+.lobby-chat-avatar.frame-royal_crown,
+[class*="frame-royal-crown"],
+[class*="frame-royal_crown"] {
+  box-shadow: 0 0 0 2.5px #eab308, 0 0 0 4.5px rgba(168, 85, 247, 0.45), 0 0 15px rgba(168, 85, 247, 0.85), 0 0 6px #ca8a04, inset 0 0 5px #fef08a !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

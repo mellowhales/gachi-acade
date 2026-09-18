@@ -1545,8 +1545,8 @@
               <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
             </div>
             <div class="shop-frame-preview">
-              <div class="avatar-frame-demo ${item.frameClass || ''}">
-                <div class="user-avatar sm" style="background:${myAvatarColor || '#38a169'};"><i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i></div>
+              <div class="user-avatar ${item.frameClass || ''}" style="background:${myAvatarColor || '#38a169'};">
+                <i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>
               </div>
             </div>
             <div class="shop-item-desc">${_escapeHtml(item.desc || '')}</div>
@@ -1878,17 +1878,28 @@
     }
   }
 
-  /* ── 🖼️ 아바타 테두리 테마 적용 ── */
+  /* ── 🖼️ 아바타 테두리 클래스 변환 및 테마 적용 ── */
+  function _getAvatarFrameClass(frameId) {
+    if (!frameId || frameId === 'default' || frameId === 'frame_default') return '';
+    const item = SHOP_AVATAR_FRAMES.find(f => f.id === frameId);
+    if (item && item.frameClass && item.frameClass !== 'frame-default') {
+      return item.frameClass;
+    }
+    // fallback: 언더스코어(_)를 하이픈(-)으로 변환
+    const normalized = String(frameId).replace(/^frame[_-]/, '').replace(/_/g, '-');
+    return `frame-${normalized}`;
+  }
+
   function _applyAvatarFrame(element, frameId) {
     if (!element) return;
-    element.classList.forEach(cls => {
-      if (cls.startsWith('frame-')) {
+    Array.from(element.classList).forEach(cls => {
+      if (cls.startsWith('frame-') || cls.startsWith('frame_')) {
         element.classList.remove(cls);
       }
     });
-    const fId = frameId || 'default';
-    if (fId && fId !== 'default') {
-      element.classList.add(`frame-${fId.replace(/^frame_/, '')}`);
+    const cls = _getAvatarFrameClass(frameId);
+    if (cls) {
+      element.classList.add(cls);
     }
   }
 
@@ -1896,6 +1907,7 @@
     _updateCoinsUI();
     _updateHomeUserBar();
     _updateProfileModalPreview();
+    if (typeof _renderOnlineUsersList === 'function') _renderOnlineUsersList();
 
     // 방 내부 참가자 정보 갱신
     if (currentRoomCode && roomPlayers.length > 0) {
@@ -2970,7 +2982,7 @@
       const ucard = isMe ? myProfileCard : (user.profileCard || 'default');
       const cardThemeClass = (ucard && ucard !== 'default') ? `pcard-theme-${ucard}` : '';
       const uframe = isMe ? myAvatarFrame : (user.avatarFrame || 'default');
-      const frameClass = (uframe && uframe !== 'default') ? `frame-${uframe.replace(/^frame_/, '')}` : '';
+      const frameClass = _getAvatarFrameClass(uframe);
 
       let winRateStr = '전적 없음';
       if (statsObj && statsObj.total && typeof statsObj.total.plays === 'number' && statsObj.total.plays > 0) {
@@ -3877,6 +3889,8 @@
         nameColor: myNicknameColor || null,
         avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
         avatarColor: myAvatarColor || '#38a169',
+        avatarFrame: myAvatarFrame || 'default',
+        chatBubble: myChatBubble || 'default',
         level: myLevel || 1,
         text: text,
         senderKey: myKey,
@@ -3947,20 +3961,27 @@
 
     const uname = msg.name || '플레이어';
     const unameColor = isMe ? myNicknameColor : (msg.nameColor || '');
-    const uicon = msg.avatarIcon || 'fa-solid fa-dog';
-    const ucolor = msg.avatarColor || '#38a169';
-    const ulevel = typeof msg.level === 'number' ? msg.level : 1;
+    const uicon = isMe ? myAvatarIcon : (msg.avatarIcon || 'fa-solid fa-dog');
+    const ucolor = isMe ? myAvatarColor : (msg.avatarColor || '#38a169');
+    const ulevel = isMe ? myLevel : (typeof msg.level === 'number' ? msg.level : 1);
     const tierClass = _getLevelTierClass(ulevel);
     const textSafe = _escapeHtml(msg.text);
+
+    const uframe = isMe ? myAvatarFrame : (msg.avatarFrame || 'default');
+    const frameClass = _getAvatarFrameClass(uframe);
+
+    const ububble = isMe ? myChatBubble : (msg.chatBubble || 'default');
+    const bubbleItem = SHOP_CHAT_BUBBLES.find(b => b.id === ububble);
+    const bubbleClass = (bubbleItem && bubbleItem.bubbleClass && bubbleItem.bubbleClass !== 'bubble-default') ? bubbleItem.bubbleClass : '';
 
     const msgEl = document.createElement('div');
     msgEl.className = `lobby-chat-msg ${isMe ? 'is-me' : ''}`;
     msgEl.innerHTML = `
       <span class="lobby-chat-prefix">
-        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
+        <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar ${frameClass}" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name" style="${unameColor ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
       </span>
       <span class="lobby-chat-colon">:</span>
-      <span class="lobby-chat-text">${textSafe}</span>
+      <span class="lobby-chat-text ${bubbleClass}">${textSafe}</span>
     `;
 
     // 닉네임 클릭 시 해당 플레이어 전적 모달 열기
@@ -4544,7 +4565,10 @@
     const previewName = $('profile-preview-name');
     const nickVal = ($('profile-input-nick') ? $('profile-input-nick').value.trim() : '') || myNickname || '익명';
 
-    if (previewAvatar) previewAvatar.style.background = _tempSelectedColor;
+    if (previewAvatar) {
+      previewAvatar.style.background = _tempSelectedColor;
+      if (typeof _applyAvatarFrame === 'function') _applyAvatarFrame(previewAvatar, myAvatarFrame);
+    }
     if (previewIcon) previewIcon.className = _tempSelectedIcon;
     if (previewName) {
       previewName.textContent = nickVal;
@@ -5352,7 +5376,7 @@
     _saveMyStats(stats);
   }
 
-  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false, level = 1, profileCard = 'default', nameColor = null) {
+  function _renderStatsModal(name, avatarIcon, avatarColor, stats, isMe = false, level = 1, profileCard = 'default', nameColor = null, avatarFrame = 'default') {
     const profileCardEl = document.querySelector('.stats-user-profile');
     if (profileCardEl) _applyProfileCardTheme(profileCardEl, profileCard);
 
@@ -5370,6 +5394,9 @@
     if (avEl) {
       avEl.style.background = avatarColor || '#38a169';
       avEl.innerHTML = `<i class="${avatarIcon || 'fa-solid fa-dog'}"></i>`;
+      if (typeof _applyAvatarFrame === 'function') {
+        _applyAvatarFrame(avEl, avatarFrame || (isMe ? myAvatarFrame : 'default'));
+      }
     }
     if (nameEl) {
       nameEl.textContent = name || '플레이어';
@@ -5510,7 +5537,7 @@
         } catch (_) {}
       }
       const myStats = _getMyStats();
-      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel, myProfileCard, myNicknameColor);
+      _renderStatsModal(myNickname, myAvatarIcon, myAvatarColor, myStats, true, myLevel, myProfileCard, myNicknameColor, myAvatarFrame);
       modal.classList.remove('hidden');
     } else {
       // 상대방
@@ -5522,18 +5549,19 @@
       const targetLevel = playerData.level || 1;
       const targetCard = playerData.profileCard || 'default';
       const targetNameColor = playerData.nameColor || null;
+      const targetFrame = playerData.avatarFrame || 'default';
 
       // 1) playerData에 stats가 이미 있는 경우
       if (playerData.stats) {
-        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false, targetLevel, targetCard, targetNameColor);
+        _renderStatsModal(targetName, targetIcon, targetColor, playerData.stats, false, targetLevel, targetCard, targetNameColor, targetFrame);
       } else {
         // 2) 임시 렌더링 후 Supabase 조회 시도
-        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false, targetLevel, targetCard, targetNameColor);
+        _renderStatsModal(targetName, targetIcon, targetColor, _createEmptyStats(), false, targetLevel, targetCard, targetNameColor, targetFrame);
         if (typeof AppSupabase !== 'undefined' && playerData.supabaseId) {
           const userRecord = await AppSupabase.fetchUserStats(playerData.supabaseId);
           if (userRecord && userRecord.stats) {
             playerData.stats = userRecord.stats;
-            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false, userRecord.level || targetLevel, userRecord.profileCard || targetCard, userRecord.nameColor || targetNameColor);
+            _renderStatsModal(targetName, targetIcon, targetColor, userRecord.stats, false, userRecord.level || targetLevel, userRecord.profileCard || targetCard, userRecord.nameColor || targetNameColor, userRecord.avatarFrame || targetFrame);
           }
         }
       }
@@ -6700,7 +6728,7 @@
       li.setAttribute('data-id', p.id);
       const cardTheme = p.profileCard || (isMe ? myProfileCard : 'default');
       const pFrame = p.avatarFrame || (isMe ? myAvatarFrame : 'default');
-      const frameClass = (pFrame && pFrame !== 'default') ? `frame-${pFrame.replace(/^frame_/, '')}` : '';
+      const frameClass = _getAvatarFrameClass(pFrame);
       li.className = 'player-item' + 
         (isMe ? ' is-me' : '') +
         (isInActiveGame ? ' is-in-game' : (isReadyGuest ? ' ready' : (isThisHost ? ' host-item' : ''))) + 
@@ -7330,11 +7358,13 @@
       // 🌟 [추가 1] 인게임 플레이어 ID 속성 부여
       li.setAttribute('data-player-id', p.id);
       const cardTheme = p.profileCard || (isMe ? myProfileCard : 'default');
+      const pFrame = p.avatarFrame || (isMe ? myAvatarFrame : 'default');
+      const frameClass = _getAvatarFrameClass(pFrame);
       li.className = 'gsp-item' + (isMe ? ' is-me' : '') + (isTurn ? ' is-current-turn' : '') + (canManage ? ' can-manage' : '');
       _applyProfileCardTheme(li, cardTheme);
 
       li.innerHTML = `
-        <div class="gsp-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
+        <div class="gsp-avatar ${frameClass}" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
         <div class="gsp-meta">
           <div class="gsp-name" style="${p.nameColor ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
@@ -7378,11 +7408,13 @@
         // 🌟 [추가 2] 관전자 ID 속성 부여
         li.setAttribute('data-player-id', sp.id);
         const cardTheme = sp.profileCard || (isMe ? myProfileCard : 'default');
+        const spFrame = sp.avatarFrame || (isMe ? myAvatarFrame : 'default');
+        const spFrameClass = _getAvatarFrameClass(spFrame);
         li.className = 'gsp-item gsp-spectator-item' + (isMe ? ' is-me' : '') + (canManage ? ' can-manage' : '');
         _applyProfileCardTheme(li, cardTheme);
 
         li.innerHTML = `
-          <div class="gsp-avatar" style="background:${sp.avatarColor || '#718096'}; opacity:0.85;"><i class="${sp.avatarIcon || 'fa-solid fa-user'}"></i></div>
+          <div class="gsp-avatar ${spFrameClass}" style="background:${sp.avatarColor || '#718096'}; opacity:0.85;"><i class="${sp.avatarIcon || 'fa-solid fa-user'}"></i></div>
           <div class="gsp-meta">
             <div class="gsp-name" style="${sp.nameColor ? `color:${sp.nameColor}; font-weight:800;` : ''}">
               ${_escapeHtml(sp.name)}
@@ -8089,6 +8121,7 @@
   _initTheme();
   showScreen('home');
   _updateHomeUserBar();
+  _applyCosmeticsToAllUI();
   _initCreateRoomOptions();
   _initGameExtraSettings();
   _initFirebaseLobby();
