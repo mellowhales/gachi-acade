@@ -103,7 +103,7 @@
       name: '골드',
       hex: '#f59e0b',
       price: 500,
-      desc: '품격 있는 황금빛 닉네임',
+      desc: '골드 색상',
       icon: 'fa-solid fa-crown'
     },
     {
@@ -111,7 +111,7 @@
       name: '핑크',
       hex: '#ec4899',
       price: 500,
-      desc: '화사하고 예쁜 핑크 닉네임',
+      desc: '핑크 색상',
       icon: 'fa-solid fa-heart'
     },
     {
@@ -119,7 +119,7 @@
       name: '하늘색',
       hex: '#0284c7',
       price: 500,
-      desc: '청량하고 시원한 하늘색 닉네임',
+      desc: '하늘색',
       icon: 'fa-solid fa-droplet'
     },
     {
@@ -127,7 +127,7 @@
       name: '초록',
       hex: '#10b981',
       price: 500,
-      desc: '산뜻한 에메랄드 닉네임',
+      desc: '초록 색상',
       icon: 'fa-solid fa-gem'
     },
     {
@@ -135,7 +135,7 @@
       name: '보라',
       hex: '#8b5cf6',
       price: 500,
-      desc: '신비로운 바이올렛 닉네임',
+      desc: '보라 색상',
       icon: 'fa-solid fa-wand-magic-sparkles'
     },
     {
@@ -143,7 +143,7 @@
       name: '빨강',
       hex: '#ef4444',
       price: 500,
-      desc: '강렬한 레드 닉네임',
+      desc: '빨강 색상',
       icon: 'fa-solid fa-fire'
     },
     {
@@ -151,7 +151,7 @@
       name: '청록',
       hex: '#06b6d4',
       price: 600,
-      desc: '청명한 시안 블루 닉네임',
+      desc: '청록 색상',
       icon: 'fa-solid fa-bolt'
     },
     {
@@ -159,7 +159,7 @@
       name: '로즈',
       hex: '#f43f5e',
       price: 600,
-      desc: '우아한 장밋빛 닉네임',
+      desc: '로즈 색상',
       icon: 'fa-solid fa-heart'
     },
     {
@@ -167,7 +167,7 @@
       name: '실버',
       hex: '#94a3b8',
       price: 700,
-      desc: '차분한 플래티넘 닉네임',
+      desc: '실버 색상',
       icon: 'fa-solid fa-shield'
     },
     {
@@ -175,7 +175,7 @@
       name: '무지개',
       hex: 'rainbow',
       price: 1200,
-      desc: '알록달록 다채로운 무지개 닉네임',
+      desc: '무지개 그라데이션',
       icon: 'fa-solid fa-rainbow'
     },
     {
@@ -183,7 +183,7 @@
       name: '기본',
       hex: '',
       price: 0,
-      desc: '원래의 기본 텍스트 색상으로 되돌립니다.',
+      desc: '기본 색상',
       icon: 'fa-solid fa-rotate-left',
       isDefault: true
     }
@@ -336,7 +336,7 @@
       bubbleClass: 'bubble-default',
       price: 0,
       icon: 'fa-solid fa-comment',
-      desc: '가장 편안하고 깔끔한 기본 말풍선',
+      desc: '기본 말풍선',
       isDefault: true
     },
     {
@@ -345,7 +345,7 @@
       bubbleClass: 'bubble-retro-dot',
       price: 600,
       icon: 'fa-solid fa-gamepad',
-      desc: '8비트 오락실 감성의 픽셀 테두리 말풍선'
+      desc: '도트 테두리 말풍선'
     },
     {
       id: 'bubble_cyber_neon',
@@ -353,7 +353,7 @@
       bubbleClass: 'bubble-cyber-neon',
       price: 800,
       icon: 'fa-solid fa-moon',
-      desc: '차분하고 선명한 다크 블루 말풍선'
+      desc: '다크 테마 말풍선'
     },
     {
       id: 'bubble_mint_soda',
@@ -361,7 +361,7 @@
       bubbleClass: 'bubble-mint-soda',
       price: 500,
       icon: 'fa-solid fa-glass-water',
-      desc: '상쾌하고 청량한 민트 말풍선'
+      desc: '민트색 말풍선'
     },
     {
       id: 'bubble_cozy_peach',
@@ -369,7 +369,7 @@
       bubbleClass: 'bubble-cozy-peach',
       price: 500,
       icon: 'fa-solid fa-heart',
-      desc: '따스하고 부드러운 복숭아빛 파스텔 말풍선'
+      desc: '피치색 말풍선'
     },
     {
       id: 'bubble_pop_comic',
@@ -377,7 +377,7 @@
       bubbleClass: 'bubble-pop-comic',
       price: 700,
       icon: 'fa-solid fa-comment-dots',
-      desc: '만화책 스타일의 볼드한 외곽선 말풍선'
+      desc: '만화 스타일 말풍선'
     },
     {
       id: 'bubble_royal_velvet',
@@ -385,7 +385,7 @@
       bubbleClass: 'bubble-royal-velvet',
       price: 1000,
       icon: 'fa-solid fa-crown',
-      desc: '고풍스러운 다크 와인 & 골드 테두리 말풍선'
+      desc: '와인색 말풍선'
     },
     {
       id: 'bubble_rainbow',
@@ -393,7 +393,7 @@
       bubbleClass: 'bubble-rainbow',
       price: 1200,
       icon: 'fa-solid fa-rainbow',
-      desc: '은은한 레인보우 그라데이션 테두리 말풍선'
+      desc: '무지개 말풍선'
     }
   ];
 
@@ -416,7 +416,7 @@
       frameClass: 'frame-default',
       price: 0,
       icon: 'fa-regular fa-circle',
-      desc: '원래의 깔끔한 기본 아바타 외곽선',
+      desc: '기본 테두리',
       isDefault: true
     },
     // 🔲 네모난 레트로 픽셀 테두리 라인업
@@ -426,7 +426,7 @@
       frameClass: 'frame-retro-pixel',
       price: 600,
       icon: 'fa-solid fa-square',
-      desc: '도트 게임 감성의 보랏빛 네모 픽셀 테두리'
+      desc: '보라색 네모 픽셀'
     },
     {
       id: 'frame_pixel_black',
@@ -434,7 +434,7 @@
       frameClass: 'frame-pixel-black',
       price: 500,
       icon: 'fa-solid fa-square',
-      desc: '클래식하고 깔끔한 블랙 픽셀 네모 테두리'
+      desc: '검은색 네모 픽셀'
     },
     {
       id: 'frame_pixel_gold',
@@ -442,7 +442,7 @@
       frameClass: 'frame-pixel-gold',
       price: 800,
       icon: 'fa-solid fa-square',
-      desc: '빛나는 황금 도트 픽셀 네모 테두리'
+      desc: '황금색 네모 픽셀'
     },
     {
       id: 'frame_pixel_mint',
@@ -450,7 +450,7 @@
       frameClass: 'frame-pixel-mint',
       price: 600,
       icon: 'fa-solid fa-square',
-      desc: '산뜻하고 상쾌한 민트 픽셀 네모 테두리'
+      desc: '민트색 네모 픽셀'
     },
     {
       id: 'frame_pixel_red',
@@ -458,7 +458,7 @@
       frameClass: 'frame-pixel-red',
       price: 600,
       icon: 'fa-solid fa-square',
-      desc: '강렬한 아케이드 레드 픽셀 네모 테두리'
+      desc: '빨간색 네모 픽셀'
     },
     {
       id: 'frame_pixel_blue',
@@ -466,7 +466,7 @@
       frameClass: 'frame-pixel-blue',
       price: 600,
       icon: 'fa-solid fa-square',
-      desc: '청량한 코발트 블루 픽셀 네모 테두리'
+      desc: '파란색 네모 픽셀'
     },
     {
       id: 'frame_pixel_gameboy',
@@ -474,7 +474,7 @@
       frameClass: 'frame-pixel-gameboy',
       price: 700,
       icon: 'fa-solid fa-gamepad',
-      desc: '8비트 레트로 휴대용 게임기 감성의 올리브 픽셀 테두리'
+      desc: '게임보이 네모 픽셀'
     },
     {
       id: 'frame_pixel_rainbow',
@@ -482,7 +482,7 @@
       frameClass: 'frame-pixel-rainbow',
       price: 1000,
       icon: 'fa-solid fa-rainbow',
-      desc: '알록달록 다채로운 무지개 픽셀 네모 테두리'
+      desc: '무지개 네모 픽셀'
     },
     // 🌟 프리미엄 원형 테두리 (이름 심플화)
     {
@@ -491,15 +491,15 @@
       frameClass: 'frame-gold-wreath',
       price: 800,
       icon: 'fa-solid fa-award',
-      desc: '승리자를 위한 영광의 황금 월계관 테두리'
+      desc: '황금 월계관'
     },
     {
       id: 'frame_cyber_pulse',
-      name: '블루 사각',
+      name: '블루',
       frameClass: 'frame-cyber-pulse',
       price: 700,
       icon: 'fa-solid fa-vector-square',
-      desc: '깔끔한 사이버 블루 사각 프레임'
+      desc: '블루 사각 테두리'
     },
     {
       id: 'frame_ice_crystal',
@@ -507,7 +507,7 @@
       frameClass: 'frame-ice-crystal',
       price: 900,
       icon: 'fa-solid fa-snowflake',
-      desc: '시원한 서리가 깃든 푸른 얼음 테두리'
+      desc: '얼음 크리스탈'
     },
     {
       id: 'frame_fire_flame',
@@ -515,7 +515,7 @@
       frameClass: 'frame-fire-flame',
       price: 1000,
       icon: 'fa-solid fa-fire',
-      desc: '열정적인 레드 & 오렌지 불꽃 프레임'
+      desc: '불꽃 테두리'
     },
     {
       id: 'frame_royal_crown',
@@ -523,7 +523,7 @@
       frameClass: 'frame-royal-crown',
       price: 1500,
       icon: 'fa-solid fa-crown',
-      desc: '황금빛 왕관 장식이 돋보이는 럭셔리 테두리'
+      desc: '황금 왕관'
     }
   ];
 
@@ -542,20 +542,20 @@
   const SHOP_VICTORY_EFFECTS = [
     {
       id: 'default',
-      name: '기본 폭죽',
+      name: '기본',
       effectKey: 'default',
       price: 0,
       icon: 'fa-solid fa-wand-magic-sparkles',
-      desc: '클래식한 색종이 꽃가루 축하 연출',
+      desc: '기본 폭죽',
       isDefault: true
     },
     {
       id: 'fx_coin_shower',
-      name: '코인 샤워',
+      name: '코인',
       effectKey: 'coin_shower',
       price: 1000,
       icon: 'fa-solid fa-coins',
-      desc: '화면 상단에서 쏟아져 내리는 황금 코인 비'
+      desc: '코인 폭죽'
     },
     {
       id: 'fx_pixel_fireworks',
@@ -563,23 +563,23 @@
       effectKey: 'pixel_fireworks',
       price: 800,
       icon: 'fa-solid fa-bomb',
-      desc: '오락실 감성의 사각 도트 파티클 폭죽'
+      desc: '도트 사각 폭죽'
     },
     {
       id: 'fx_neon_sparks',
-      name: '스타 스파크',
+      name: '스파크',
       effectKey: 'neon_sparks',
       price: 1000,
       icon: 'fa-solid fa-bolt',
-      desc: '빛나는 별빛 일렉트릭 스파크 연출'
+      desc: '빛나는 스파크'
     },
     {
       id: 'fx_heart_star',
-      name: '하트 & 별',
+      name: '하트',
       effectKey: 'heart_star',
       price: 700,
-      icon: 'fa-solid fa-star',
-      desc: '사랑스러운 하트와 반짝이는 별무리 연출'
+      icon: 'fa-solid fa-heart',
+      desc: '하트와 별'
     },
     {
       id: 'fx_grand_festival',
@@ -587,15 +587,15 @@
       effectKey: 'grand_festival',
       price: 1800,
       icon: 'fa-solid fa-champagne-glasses',
-      desc: '밤하늘을 수놓는 초대형 다채색 불꽃 연출'
+      desc: '대형 불꽃'
     },
     {
       id: 'fx_rainbow_blast',
-      name: '무지개 폭죽',
+      name: '무지개',
       effectKey: 'rainbow_blast',
       price: 1500,
       icon: 'fa-solid fa-rainbow',
-      desc: '일곱 빛깔 무지개 파티클이 사방으로 터지는 화려한 축제'
+      desc: '무지개 폭죽'
     }
   ];
 
@@ -4175,10 +4175,6 @@
     const uframe = isMe ? myAvatarFrame : (msg.avatarFrame || 'default');
     const frameClass = _getAvatarFrameClass(uframe);
 
-    const ububble = isMe ? myChatBubble : (msg.chatBubble || 'default');
-    const bubbleItem = SHOP_CHAT_BUBBLES.find(b => b.id === ububble);
-    const bubbleClass = (bubbleItem && bubbleItem.bubbleClass && bubbleItem.bubbleClass !== 'bubble-default') ? bubbleItem.bubbleClass : '';
-
     const msgEl = document.createElement('div');
     msgEl.className = `lobby-chat-msg ${isMe ? 'is-me' : ''}`;
     msgEl.innerHTML = `
@@ -4186,7 +4182,7 @@
         <span class="lobby-chat-bracket">[</span><span class="lobby-chat-avatar ${frameClass}" style="background: ${ucolor};"><i class="${uicon}"></i></span><span class="lobby-chat-lvl ${tierClass}">${ulevel}</span><span class="lobby-chat-name ${unameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${unameColor && unameColor !== 'rainbow' ? `color:${unameColor}; font-weight:800;` : ''}" title="${_escapeHtml(uname)}님의 전적 보기">${_escapeHtml(uname)}</span><span class="lobby-chat-bracket">]</span>
       </span>
       <span class="lobby-chat-colon">:</span>
-      <span class="lobby-chat-text ${bubbleClass}">${textSafe}</span>
+      <span class="lobby-chat-text">${textSafe}</span>
     `;
 
     // 닉네임 클릭 시 해당 플레이어 전적 모달 열기

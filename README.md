@@ -1,7 +1,7 @@
 # 🎮 같이아케이드 (Gachi Arcade)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-v1.1.0-brightgreen?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-v1.1.1-brightgreen?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/Status-Live%20Service-blue?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Made%20With-Vibe%20Coding-ff69b4?style=for-the-badge" alt="Vibe Coding" />
   <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge" alt="License" />
@@ -146,6 +146,13 @@
 
 ## 📜 버전 관리 (Changelog)
 
+- **v1.1.1** (2026-09)
+  - 로비 전체 채팅 상점 말풍선 미적용 (기본 텍스트 유지)
+  - 로비 프로필 카드 상점 테두리 색상 미적용 버그 수정
+  - 상점 아이템 명칭 및 설명 단순화 (오글거리는 수식어 제거, "기본 폭죽" -> "기본")
+  - 모바일 로비 라이트 모드 프로필 그림자 제거 및 다크모드 배경 색상 불일치 수정
+  - 모바일 방 목록/상점 카드 높이 축소 및 접속 중인 플레이어 목록 높이/스크롤 최적화
+  - 상점 코인 표시 우측 반대편 배치 및 방 목록 돌아가기 버튼 제거 (상단바 유지)
 - **v1.1.0** (2026-09)
   - 환경설정 초기화 버튼 제거 및 업데이트 내역 스크롤 UI 개선
   - 승리 세레머니 미리보기 버그 수정 (캔버스 최상위 레이어 이동 및 재생 제어)

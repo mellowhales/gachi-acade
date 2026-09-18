@@ -1112,22 +1112,33 @@ body {
     padding: 8px 12px 4px !important;
     background: transparent !important;
     border: none !important;
+    box-shadow: none !important;
     width: 100% !important;
     box-sizing: border-box !important;
+  }
+
+  [data-theme="dark"] .sidebar-header,
+  [data-theme="dark"] .sidebar-profile-header {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .home-user-bar {
     width: 100% !important;
     margin: 0 !important;
     padding: 8px 12px !important;
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border) !important;
     border-radius: var(--radius) !important;
-    box-shadow: var(--shadow-sm) !important;
+    box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
     box-sizing: border-box !important;
+  }
+
+  .home-user-bar:not([class*="pcard-theme-"]) {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
   }
   .home-user-bar .user-avatar {
     width: 32px !important;
@@ -1270,13 +1281,13 @@ body {
     justify-content: flex-start !important;
   }
 
-  /* 🌟 방 목록 카드 (가로 꽉 차는 레이아웃 + 높이 대폭 확장) 🌟 */
+  /* 🌟 방 목록/상점 카드 (세로 크기 최적화) 🌟 */
   .lobby-card {
     flex: 0 0 auto !important;
     width: 100% !important;
-    height: clamp(220px, 42vh, 320px) !important;
-    max-height: clamp(220px, 42vh, 320px) !important;
-    min-height: 200px !important;
+    height: clamp(170px, 30vh, 225px) !important;
+    max-height: clamp(170px, 30vh, 225px) !important;
+    min-height: 155px !important;
     padding: 8px 12px !important;
     border-radius: var(--radius) !important;
     display: flex !important;
@@ -1381,34 +1392,43 @@ body {
     flex-direction: column !important;
     gap: 8px !important;
     width: 100% !important;
-    flex: 0 0 auto !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
   }
   .online-users-card {
-    flex: 0 0 auto !important;
+    flex: 1 1 auto !important;
     padding: 8px 12px !important;
     border-radius: var(--radius) !important;
     gap: 6px !important;
-    max-height: 95px !important;
-    min-height: 0 !important;
+    height: clamp(140px, 24vh, 195px) !important;
+    max-height: 220px !important;
+    min-height: 120px !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .online-users-list {
     display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    gap: 8px !important;
-    padding-bottom: 2px !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    gap: 6px !important;
+    padding: 2px !important;
+    flex: 1 !important;
+    height: 100% !important;
   }
   .online-user-item {
     flex-shrink: 0 !important;
-    padding: 4px 8px !important;
+    padding: 6px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .online-user-sub {
-    display: none !important;
+    display: block !important;
+    font-size: 0.7rem !important;
   }
   .online-user-item .btn-view-stats {
-    display: none !important;
+    display: flex !important;
   }
   .lobby-chat-card {
     position: fixed !important;
@@ -7814,7 +7834,7 @@ html, body {
 [data-theme="dark"] .online-users-card,
 [data-theme="dark"] .lobby-chat-card,
 [data-theme="dark"] .connect-card,
-[data-theme="dark"] .home-user-bar {
+[data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]) {
   border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 }
@@ -10245,16 +10265,16 @@ html, body {
 
 .shop-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 }
 
-.shop-header-right {
+.shop-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .shop-coin-pill {
@@ -10464,35 +10484,35 @@ html, body {
 /* 1. 선셋 코랄 */
 .pcard-theme-sunset {
   background: linear-gradient(135deg, #f97316 0%, #ec4899 100%) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
   box-shadow: 0 4px 14px rgba(249, 115, 22, 0.25) !important;
 }
 
 /* 2. 오션 사파이어 */
 .pcard-theme-ocean {
   background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
 }
 
 /* 3. 포레스트 민트 */
 .pcard-theme-emerald {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
   box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
 }
 
 /* 4. 미드나잇 퍼플 */
 .pcard-theme-midnight {
   background: linear-gradient(135deg, #312e81 0%, #7c3aed 100%) !important;
-  border-color: rgba(167, 139, 250, 0.45) !important;
+  border: 1.5px solid rgba(167, 139, 250, 0.5) !important;
   box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3) !important;
 }
 
 /* 5. 사쿠라 핑크 */
 .pcard-theme-sakura {
   background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.25) !important;
 }
 
