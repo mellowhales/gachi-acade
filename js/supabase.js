@@ -290,6 +290,30 @@ const AppSupabase = (() => {
       }
       if (!Array.isArray(purchasedProfileCards)) purchasedProfileCards = ['default'];
 
+      // 💬 말풍선 스킨
+      const chatBubble = (tableData && tableData.chat_bubble) || (meta && meta.chat_bubble) || 'default';
+      let purchasedChatBubbles = (tableData && tableData.purchased_chat_bubbles) || (meta && meta.purchased_chat_bubbles) || ['default'];
+      if (typeof purchasedChatBubbles === 'string') {
+        try { purchasedChatBubbles = JSON.parse(purchasedChatBubbles); } catch (_) { purchasedChatBubbles = ['default']; }
+      }
+      if (!Array.isArray(purchasedChatBubbles)) purchasedChatBubbles = ['default'];
+
+      // 🖼️ 아바타 테두리
+      const avatarFrame = (tableData && tableData.avatar_frame) || (meta && meta.avatar_frame) || 'default';
+      let purchasedAvatarFrames = (tableData && tableData.purchased_avatar_frames) || (meta && meta.purchased_avatar_frames) || ['default'];
+      if (typeof purchasedAvatarFrames === 'string') {
+        try { purchasedAvatarFrames = JSON.parse(purchasedAvatarFrames); } catch (_) { purchasedAvatarFrames = ['default']; }
+      }
+      if (!Array.isArray(purchasedAvatarFrames)) purchasedAvatarFrames = ['default'];
+
+      // 🎉 승리 세레머니 연출
+      const victoryEffect = (tableData && tableData.victory_effect) || (meta && meta.victory_effect) || 'default';
+      let purchasedVictoryEffects = (tableData && tableData.purchased_victory_effects) || (meta && meta.purchased_victory_effects) || ['default'];
+      if (typeof purchasedVictoryEffects === 'string') {
+        try { purchasedVictoryEffects = JSON.parse(purchasedVictoryEffects); } catch (_) { purchasedVictoryEffects = ['default']; }
+      }
+      if (!Array.isArray(purchasedVictoryEffects)) purchasedVictoryEffects = ['default'];
+
       const coins = (tableData && typeof tableData.coins === 'number')
         ? tableData.coins
         : (meta && typeof meta.coins === 'number')
@@ -317,6 +341,12 @@ const AppSupabase = (() => {
           purchasedNameColors,
           profileCard,
           purchasedProfileCards,
+          chatBubble,
+          purchasedChatBubbles,
+          avatarFrame,
+          purchasedAvatarFrames,
+          victoryEffect,
+          purchasedVictoryEffects,
           stats: rawStats,
           coins,
           level,
@@ -361,6 +391,24 @@ const AppSupabase = (() => {
     if (profileData.purchasedProfileCards !== undefined || profileData.purchased_profile_cards !== undefined) {
       payload.purchased_profile_cards = profileData.purchasedProfileCards !== undefined ? profileData.purchasedProfileCards : profileData.purchased_profile_cards;
     }
+    if (profileData.chatBubble !== undefined || profileData.chat_bubble !== undefined) {
+      payload.chat_bubble = profileData.chatBubble !== undefined ? profileData.chatBubble : profileData.chat_bubble;
+    }
+    if (profileData.purchasedChatBubbles !== undefined || profileData.purchased_chat_bubbles !== undefined) {
+      payload.purchased_chat_bubbles = profileData.purchasedChatBubbles !== undefined ? profileData.purchasedChatBubbles : profileData.purchased_chat_bubbles;
+    }
+    if (profileData.avatarFrame !== undefined || profileData.avatar_frame !== undefined) {
+      payload.avatar_frame = profileData.avatarFrame !== undefined ? profileData.avatarFrame : profileData.avatar_frame;
+    }
+    if (profileData.purchasedAvatarFrames !== undefined || profileData.purchased_avatar_frames !== undefined) {
+      payload.purchased_avatar_frames = profileData.purchasedAvatarFrames !== undefined ? profileData.purchasedAvatarFrames : profileData.purchased_avatar_frames;
+    }
+    if (profileData.victoryEffect !== undefined || profileData.victory_effect !== undefined) {
+      payload.victory_effect = profileData.victoryEffect !== undefined ? profileData.victoryEffect : profileData.victory_effect;
+    }
+    if (profileData.purchasedVictoryEffects !== undefined || profileData.purchased_victory_effects !== undefined) {
+      payload.purchased_victory_effects = profileData.purchasedVictoryEffects !== undefined ? profileData.purchasedVictoryEffects : profileData.purchased_victory_effects;
+    }
     if (profileData.email) payload.email = profileData.email;
     if (profileData.stats !== undefined) payload.stats = profileData.stats;
     if (profileData.coins !== undefined) payload.coins = profileData.coins;
@@ -377,6 +425,12 @@ const AppSupabase = (() => {
       if (payload.purchased_name_colors !== undefined) metaData.purchased_name_colors = payload.purchased_name_colors;
       if (payload.profile_card !== undefined) metaData.profile_card = payload.profile_card;
       if (payload.purchased_profile_cards !== undefined) metaData.purchased_profile_cards = payload.purchased_profile_cards;
+      if (payload.chat_bubble !== undefined) metaData.chat_bubble = payload.chat_bubble;
+      if (payload.purchased_chat_bubbles !== undefined) metaData.purchased_chat_bubbles = payload.purchased_chat_bubbles;
+      if (payload.avatar_frame !== undefined) metaData.avatar_frame = payload.avatar_frame;
+      if (payload.purchased_avatar_frames !== undefined) metaData.purchased_avatar_frames = payload.purchased_avatar_frames;
+      if (payload.victory_effect !== undefined) metaData.victory_effect = payload.victory_effect;
+      if (payload.purchased_victory_effects !== undefined) metaData.purchased_victory_effects = payload.purchased_victory_effects;
       if (payload.stats !== undefined) metaData.stats = payload.stats;
       if (payload.coins !== undefined) metaData.coins = payload.coins;
       if (payload.level !== undefined) metaData.level = payload.level;

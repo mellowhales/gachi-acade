@@ -147,6 +147,38 @@
       icon: 'fa-solid fa-fire'
     },
     {
+      id: 'color_golden',
+      name: '로열 골드',
+      hex: '#eab308',
+      price: 800,
+      desc: '기품 있고 찬란한 황금빛 닉네임',
+      icon: 'fa-solid fa-crown'
+    },
+    {
+      id: 'color_cyan',
+      name: '네온 시안',
+      hex: '#06b6d4',
+      price: 600,
+      desc: '청량하고 사이버틱한 네온 스카이블루',
+      icon: 'fa-solid fa-bolt'
+    },
+    {
+      id: 'color_rose',
+      name: '로즈 핑크',
+      hex: '#f43f5e',
+      price: 600,
+      desc: '우아하고 세련된 장밋빛 닉네임',
+      icon: 'fa-solid fa-heart'
+    },
+    {
+      id: 'color_silver',
+      name: '플래티넘 실버',
+      hex: '#94a3b8',
+      price: 700,
+      desc: '차분하고 고급스러운 백금빛 닉네임',
+      icon: 'fa-solid fa-shield'
+    },
+    {
       id: 'color_default',
       name: '기본 색상',
       hex: '',
@@ -178,7 +210,7 @@
       icon: 'fa-solid fa-id-badge',
       isDefault: true
     },
-    // 색상 그라디언트 테마 (5종)
+    // 색상 그라디언트 테마
     {
       id: 'sunset',
       name: '선셋 코랄',
@@ -214,7 +246,7 @@
       price: 500,
       icon: 'fa-solid fa-fan'
     },
-    // 무늬 및 패턴 테마 (5종)
+    // 무늬 및 패턴 테마
     {
       id: 'carbon',
       name: '카본 파이버',
@@ -249,6 +281,242 @@
       themeClass: 'pcard-theme-royal-gold',
       price: 1000,
       icon: 'fa-solid fa-crown'
+    },
+    {
+      id: 'matrix',
+      name: '사이버 매트릭스',
+      themeClass: 'pcard-theme-matrix',
+      price: 1000,
+      icon: 'fa-solid fa-terminal'
+    },
+    {
+      id: 'aurora',
+      name: '노르딕 오로라',
+      themeClass: 'pcard-theme-aurora',
+      price: 1200,
+      icon: 'fa-solid fa-wind'
+    },
+    {
+      id: 'space',
+      name: '딥 스페이스',
+      themeClass: 'pcard-theme-space',
+      price: 1200,
+      icon: 'fa-solid fa-globe'
+    },
+    {
+      id: 'arcade-neon',
+      name: '아케이드 레트로팝',
+      themeClass: 'pcard-theme-arcade-neon',
+      price: 1500,
+      icon: 'fa-solid fa-gamepad'
+    }
+  ];
+
+  // 💬 말풍선 스킨 (상점 아이템)
+  let myChatBubble = localStorage.getItem('arcade_user_chat_bubble') || 'default';
+  let myPurchasedChatBubbles = ['default'];
+  try {
+    const rawBubbles = localStorage.getItem('arcade_purchased_chat_bubbles');
+    myPurchasedChatBubbles = rawBubbles ? JSON.parse(rawBubbles) : ['default'];
+    if (!Array.isArray(myPurchasedChatBubbles)) myPurchasedChatBubbles = ['default'];
+    if (!myPurchasedChatBubbles.includes('default')) myPurchasedChatBubbles.push('default');
+  } catch (_) {
+    myPurchasedChatBubbles = ['default'];
+  }
+
+  const SHOP_CHAT_BUBBLES = [
+    {
+      id: 'default',
+      name: '기본 말풍선',
+      bubbleClass: 'bubble-default',
+      price: 0,
+      icon: 'fa-solid fa-comment',
+      desc: '가장 편안하고 깔끔한 기본 말풍선 테마',
+      isDefault: true
+    },
+    {
+      id: 'bubble_retro_dot',
+      name: '레트로 도트',
+      bubbleClass: 'bubble-retro-dot',
+      price: 600,
+      icon: 'fa-solid fa-gamepad',
+      desc: '8비트 아케이드 오락실 감성의 픽셀 테두리 말풍선'
+    },
+    {
+      id: 'bubble_cyber_neon',
+      name: '사이버 네온',
+      bubbleClass: 'bubble-cyber-neon',
+      price: 800,
+      icon: 'fa-solid fa-lightbulb',
+      desc: '어두운 바탕에 빛나는 형광 시안 & 퍼플 네온 글로우'
+    },
+    {
+      id: 'bubble_mint_soda',
+      name: '민트 소다',
+      bubbleClass: 'bubble-mint-soda',
+      price: 500,
+      icon: 'fa-solid fa-glass-water',
+      desc: '상쾌하고 톡 쏘는 청량한 민트 탄산 스타일'
+    },
+    {
+      id: 'bubble_cozy_peach',
+      name: '코지 피치',
+      bubbleClass: 'bubble-cozy-peach',
+      price: 500,
+      icon: 'fa-solid fa-heart',
+      desc: '따스하고 부드러운 복숭아빛 파스텔 감성'
+    },
+    {
+      id: 'bubble_pop_comic',
+      name: '팝아트 코믹',
+      bubbleClass: 'bubble-pop-comic',
+      price: 700,
+      icon: 'fa-solid fa-comment-dots',
+      desc: '만화책의 강렬한 스피치 버블과 볼드한 외곽선'
+    },
+    {
+      id: 'bubble_royal_velvet',
+      name: '로열 벨벳',
+      bubbleClass: 'bubble-royal-velvet',
+      price: 1000,
+      icon: 'fa-solid fa-crown',
+      desc: '고풍스러운 다크 와인 & 골드 라이닝 럭셔리 스킨'
+    }
+  ];
+
+  // 🖼️ 아바타 테두리 (상점 아이템)
+  let myAvatarFrame = localStorage.getItem('arcade_user_avatar_frame') || 'default';
+  let myPurchasedAvatarFrames = ['default'];
+  try {
+    const rawFrames = localStorage.getItem('arcade_purchased_avatar_frames');
+    myPurchasedAvatarFrames = rawFrames ? JSON.parse(rawFrames) : ['default'];
+    if (!Array.isArray(myPurchasedAvatarFrames)) myPurchasedAvatarFrames = ['default'];
+    if (!myPurchasedAvatarFrames.includes('default')) myPurchasedAvatarFrames.push('default');
+  } catch (_) {
+    myPurchasedAvatarFrames = ['default'];
+  }
+
+  const SHOP_AVATAR_FRAMES = [
+    {
+      id: 'default',
+      name: '기본 테두리',
+      frameClass: 'frame-default',
+      price: 0,
+      icon: 'fa-regular fa-circle',
+      desc: '원래의 깔끔한 기본 아바타 외곽선',
+      isDefault: true
+    },
+    {
+      id: 'frame_gold_wreath',
+      name: '황금 월계관',
+      frameClass: 'frame-gold-wreath',
+      price: 800,
+      icon: 'fa-solid fa-award',
+      desc: '승리자에게 수여되는 영광스러운 골든 리스 테두리'
+    },
+    {
+      id: 'frame_cyber_pulse',
+      name: '사이버 펄스',
+      frameClass: 'frame-cyber-pulse',
+      price: 700,
+      icon: 'fa-solid fa-wave-square',
+      desc: '전기 신호가 은은하게 맥동하는 테크 테두리'
+    },
+    {
+      id: 'frame_retro_pixel',
+      name: '레트로 픽셀',
+      frameClass: 'frame-retro-pixel',
+      price: 600,
+      icon: 'fa-solid fa-square',
+      desc: '도트 게임 캐릭터를 연상시키는 네모난 픽셀 프레임'
+    },
+    {
+      id: 'frame_ice_crystal',
+      name: '빙하 크리스탈',
+      frameClass: 'frame-ice-crystal',
+      price: 900,
+      icon: 'fa-solid fa-snowflake',
+      desc: '차가운 냉기와 서리가 깃든 얼음 보석 테두리'
+    },
+    {
+      id: 'frame_fire_flame',
+      name: '타오르는 불꽃',
+      frameClass: 'frame-fire-flame',
+      price: 1000,
+      icon: 'fa-solid fa-fire',
+      desc: '열정적인 불꽃 이펙트가 타오르는 역동적인 프레임'
+    },
+    {
+      id: 'frame_royal_crown',
+      name: '로열 크라운',
+      frameClass: 'frame-royal-crown',
+      price: 1500,
+      icon: 'fa-solid fa-crown',
+      desc: '왕관 장식과 반짝이는 보석이 박힌 황실 테두리'
+    }
+  ];
+
+  // 🎆 승리 세레머니 연출 (상점 아이템)
+  let myVictoryEffect = localStorage.getItem('arcade_user_victory_effect') || 'default';
+  let myPurchasedVictoryEffects = ['default'];
+  try {
+    const rawEffects = localStorage.getItem('arcade_purchased_victory_effects');
+    myPurchasedVictoryEffects = rawEffects ? JSON.parse(rawEffects) : ['default'];
+    if (!Array.isArray(myPurchasedVictoryEffects)) myPurchasedVictoryEffects = ['default'];
+    if (!myPurchasedVictoryEffects.includes('default')) myPurchasedVictoryEffects.push('default');
+  } catch (_) {
+    myPurchasedVictoryEffects = ['default'];
+  }
+
+  const SHOP_VICTORY_EFFECTS = [
+    {
+      id: 'default',
+      name: '기본 승리 (심플 폭죽)',
+      effectKey: 'default',
+      price: 0,
+      icon: 'fa-solid fa-wand-magic-sparkles',
+      desc: '클래식한 색종이 꽃가루 축하 연출',
+      isDefault: true
+    },
+    {
+      id: 'fx_coin_shower',
+      name: '황금 코인 샤워',
+      effectKey: 'coin_shower',
+      price: 1000,
+      icon: 'fa-solid fa-coins',
+      desc: '화면 상단에서 쏟아져 내리는 번쩍이는 황금 코인 비'
+    },
+    {
+      id: 'fx_pixel_fireworks',
+      name: '8-Bit 도트 폭죽',
+      effectKey: 'pixel_fireworks',
+      price: 800,
+      icon: 'fa-solid fa-bomb',
+      desc: '오락실 감성의 사각 도트 파티클이 팡팡 터지는 레트로 폭죽'
+    },
+    {
+      id: 'fx_neon_sparks',
+      name: '네온 스파크',
+      effectKey: 'neon_sparks',
+      price: 1000,
+      icon: 'fa-solid fa-bolt',
+      desc: '사이버 네온 컬러의 일렉트릭 스파크와 링 파동 연출'
+    },
+    {
+      id: 'fx_heart_star',
+      name: '하트 & 별빛 블룸',
+      effectKey: 'heart_star',
+      price: 700,
+      icon: 'fa-solid fa-star',
+      desc: '사랑스러운 하트와 반짝이는 별무리들이 피어오르는 연출'
+    },
+    {
+      id: 'fx_grand_festival',
+      name: '그랜드 불꽃축제',
+      effectKey: 'grand_festival',
+      price: 1800,
+      icon: 'fa-solid fa-champagne-glasses',
+      desc: '밤하늘을 수놓는 초대형 다채색 불꽃들의 웅장한 피날레'
     }
   ];
 
@@ -1111,6 +1379,7 @@
     if (avatarEl) {
       avatarEl.innerHTML = `<i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i>`;
       avatarEl.style.background = myAvatarColor || '#38a169';
+      if (typeof _applyAvatarFrame === 'function') _applyAvatarFrame(avatarEl, myAvatarFrame);
     }
     const nameEl = $('home-user-name');
     if (nameEl) {
@@ -1185,12 +1454,191 @@
     if (balanceEl) balanceEl.textContent = (myCoins || 0).toLocaleString();
 
     const tabNick = $('tab-shop-nickname');
-    const tabCard = $('tab-shop-profile-card');
-    if (tabNick) tabNick.classList.toggle('active', _currentShopTab === 'nickname');
-    if (tabCard) tabCard.classList.toggle('active', _currentShopTab === 'profile_card');
+    // 모든 탭 active 동기화
+    const allTabDefs = [
+      { id: 'tab-shop-nickname',       key: 'nickname' },
+      { id: 'tab-shop-profile-card',   key: 'profile_card' },
+      { id: 'tab-shop-chat-bubble',    key: 'chat_bubble' },
+      { id: 'tab-shop-avatar-frame',   key: 'avatar_frame' },
+      { id: 'tab-shop-victory-effect', key: 'victory_effect' }
+    ];
+    allTabDefs.forEach(({ id, key }) => {
+      const el = $(id);
+      if (!el) return;
+      el.classList.toggle('active', _currentShopTab === key);
+      if (!el._shopBound) {
+        el._shopBound = true;
+        el.addEventListener('click', () => {
+          if (_currentShopTab !== key) { _currentShopTab = key; _renderShopUI(); }
+        });
+      }
+    });
 
     const gridEl = $('shop-items-grid');
     if (!gridEl) return;
+
+    // ── 💬 말풍선 스킨 탭 ──
+    if (_currentShopTab === 'chat_bubble') {
+      gridEl.innerHTML = SHOP_CHAT_BUBBLES.map(item => {
+        const isEquipped = item.isDefault ? (!myChatBubble || myChatBubble === 'default') : (myChatBubble === item.id);
+        const isPurchased = item.isDefault || myPurchasedChatBubbles.includes(item.id);
+        let actionBtnHtml = '';
+        if (isEquipped) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
+        } else if (isPurchased) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-bubble-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        } else {
+          const canBuy = myCoins >= item.price;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-bubble-id="${item.id}">구매</button>`;
+        }
+        return `
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-bubble-id="${item.id}">
+            <div class="shop-item-top">
+              <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
+            </div>
+            <div class="shop-bubble-preview">
+              <div class="chat-bubble ${item.bubbleClass || ''}">안녕하세요! 이기면 커피 쏜다~</div>
+            </div>
+            <div class="shop-item-desc">${_escapeHtml(item.desc || '')}</div>
+            <div class="shop-item-bottom">
+              <span class="shop-price-tag">
+                ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">기본 제공</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
+              </span>
+              ${actionBtnHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const bubbleId = btn.dataset.bubbleId;
+          const item = SHOP_CHAT_BUBBLES.find(b => b.id === bubbleId);
+          if (!item) return;
+          if (item.isDefault || myPurchasedChatBubbles.includes(item.id)) {
+            _handleEquipChatBubble(item);
+          } else {
+            _handleBuyChatBubble(item);
+          }
+        });
+      });
+      return;
+    }
+
+    // ── 🖼️ 아바타 테두리 탭 ──
+    if (_currentShopTab === 'avatar_frame') {
+      gridEl.innerHTML = SHOP_AVATAR_FRAMES.map(item => {
+        const isEquipped = item.isDefault ? (!myAvatarFrame || myAvatarFrame === 'default') : (myAvatarFrame === item.id);
+        const isPurchased = item.isDefault || myPurchasedAvatarFrames.includes(item.id);
+        let actionBtnHtml = '';
+        if (isEquipped) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
+        } else if (isPurchased) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-frame-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        } else {
+          const canBuy = myCoins >= item.price;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-frame-id="${item.id}">구매</button>`;
+        }
+        return `
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-frame-id="${item.id}">
+            <div class="shop-item-top">
+              <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
+            </div>
+            <div class="shop-frame-preview">
+              <div class="avatar-frame-demo ${item.frameClass || ''}">
+                <div class="user-avatar sm" style="background:${myAvatarColor || '#38a169'};"><i class="${myAvatarIcon || 'fa-solid fa-paw'}"></i></div>
+              </div>
+            </div>
+            <div class="shop-item-desc">${_escapeHtml(item.desc || '')}</div>
+            <div class="shop-item-bottom">
+              <span class="shop-price-tag">
+                ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">기본 제공</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
+              </span>
+              ${actionBtnHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const frameId = btn.dataset.frameId;
+          const item = SHOP_AVATAR_FRAMES.find(f => f.id === frameId);
+          if (!item) return;
+          if (item.isDefault || myPurchasedAvatarFrames.includes(item.id)) {
+            _handleEquipAvatarFrame(item);
+          } else {
+            _handleBuyAvatarFrame(item);
+          }
+        });
+      });
+      return;
+    }
+
+    // ── 🎆 승리 세레머니 탭 ──
+    if (_currentShopTab === 'victory_effect') {
+      gridEl.innerHTML = SHOP_VICTORY_EFFECTS.map(item => {
+        const isEquipped = item.isDefault ? (!myVictoryEffect || myVictoryEffect === 'default') : (myVictoryEffect === item.id);
+        const isPurchased = item.isDefault || myPurchasedVictoryEffects.includes(item.id);
+        let actionBtnHtml = '';
+        if (isEquipped) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action is-equipped" disabled><i class="fa-solid fa-check"></i> 착용 중</button>`;
+        } else if (isPurchased) {
+          actionBtnHtml = `<button type="button" class="btn-shop-action ${item.isDefault ? 'btn-default-reset' : 'btn-equip'}" data-fx-id="${item.id}">${item.isDefault ? '기본 복원' : '착용하기'}</button>`;
+        } else {
+          const canBuy = myCoins >= item.price;
+          actionBtnHtml = `<button type="button" class="btn-shop-action btn-buy ${canBuy ? '' : 'insufficient'}" data-fx-id="${item.id}">구매</button>`;
+        }
+        return `
+          <div class="shop-item-card ${isEquipped ? 'is-equipped' : ''}" data-fx-id="${item.id}">
+            <div class="shop-item-top">
+              <span class="shop-item-name"><i class="${item.icon}"></i> ${_escapeHtml(item.name)}</span>
+              <button type="button" class="btn-fx-preview-test" data-effect="${item.effectKey}" title="연출 미리보기">
+                <i class="fa-solid fa-play"></i> 미리보기
+              </button>
+            </div>
+            <div class="shop-fx-preview">
+              <i class="${item.icon}" style="font-size:2.2rem;opacity:0.85;"></i>
+            </div>
+            <div class="shop-item-desc">${_escapeHtml(item.desc || '')}</div>
+            <div class="shop-item-bottom">
+              <span class="shop-price-tag">
+                ${item.isDefault ? '<span style="color:var(--t3);font-size:0.75rem;">기본 제공</span>' : `<i class="fa-solid fa-coins"></i> ${item.price} 코인`}
+              </span>
+              ${actionBtnHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 미리보기 버튼 리스너
+      gridEl.querySelectorAll('.btn-fx-preview-test').forEach(pBtn => {
+        pBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const effectKey = pBtn.dataset.effect;
+          if (typeof window._previewVictoryEffect === 'function') {
+            window._previewVictoryEffect(effectKey);
+            showToast(`[${pBtn.closest('.shop-item-card').querySelector('.shop-item-name').textContent.trim()}] 연출 시연 중...`, 'info');
+          }
+        });
+      });
+
+      // 구매/착용 버튼 리스너
+      gridEl.querySelectorAll('.btn-shop-action').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const fxId = btn.dataset.fxId;
+          const item = SHOP_VICTORY_EFFECTS.find(f => f.id === fxId);
+          if (!item) return;
+          if (item.isDefault || myPurchasedVictoryEffects.includes(item.id)) {
+            _handleEquipVictoryEffect(item);
+          } else {
+            _handleBuyVictoryEffect(item);
+          }
+        });
+      });
+      return;
+    }
 
     // ── 🎴 프로필 카드 탭 렌더링 ──
     if (_currentShopTab === 'profile_card') {
@@ -1430,6 +1878,500 @@
     }
   }
 
+  /* ── 🖼️ 아바타 테두리 테마 적용 ── */
+  function _applyAvatarFrame(element, frameId) {
+    if (!element) return;
+    element.classList.forEach(cls => {
+      if (cls.startsWith('frame-')) {
+        element.classList.remove(cls);
+      }
+    });
+    const fId = frameId || 'default';
+    if (fId && fId !== 'default') {
+      element.classList.add(`frame-${fId.replace(/^frame_/, '')}`);
+    }
+  }
+
+  function _applyCosmeticsToAllUI() {
+    _updateCoinsUI();
+    _updateHomeUserBar();
+    _updateProfileModalPreview();
+
+    // 방 내부 참가자 정보 갱신
+    if (currentRoomCode && roomPlayers.length > 0) {
+      const myId = P2P.getMyId();
+      const me = roomPlayers.find(p => p.id === myId || (p.isHost && isHostPlayer));
+      if (me) {
+        me.nameColor = myNicknameColor || null;
+        me.profileCard = myProfileCard || 'default';
+        me.chatBubble = myChatBubble || 'default';
+        me.avatarFrame = myAvatarFrame || 'default';
+        me.victoryEffect = myVictoryEffect || 'default';
+      }
+      _updateRoomUI();
+      if (isHostPlayer) {
+        _broadcastRoomState();
+      } else {
+        P2P.send({
+          type: 'guest_update_profile',
+          name: myNickname,
+          nameColor: myNicknameColor || null,
+          profileCard: myProfileCard || 'default',
+          chatBubble: myChatBubble || 'default',
+          avatarFrame: myAvatarFrame || 'default',
+          victoryEffect: myVictoryEffect || 'default',
+          avatarIcon: myAvatarIcon,
+          avatarColor: myAvatarColor,
+          level: myLevel,
+          exp: myExp,
+          stats: _getMyStats()
+        });
+      }
+    }
+
+    if (typeof isRoomGameActive !== 'undefined' && isRoomGameActive) {
+      _renderInGamePlayerSidebar(activeGamePlayers, selectedGameKey);
+    }
+
+    if (isHostPlayer && currentRoomCode && window.FirebaseLobby && typeof window.FirebaseLobby.updateRoomHostProfile === 'function') {
+      window.FirebaseLobby.updateRoomHostProfile(currentRoomCode, {
+        hostProfileCard: myProfileCard,
+        hostLevel: myLevel,
+        hostNameColor: myNicknameColor || null
+      });
+    }
+
+    if (typeof _renderOnlineUsersList === 'function' && typeof _lastOnlineUsers !== 'undefined' && Array.isArray(_lastOnlineUsers)) {
+      _renderOnlineUsersList(_lastOnlineUsers);
+    }
+
+    if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     🎆 승리 세레머니 파티클 캔버스 엔진 (6종 이펙트)
+  ═══════════════════════════════════════════════════════════════ */
+  let _victoryAnimId = null;
+  let _victoryPreviewTimer = null;
+
+  function _triggerVictoryEffect(effectKey = 'default') {
+    _stopVictoryEffect();
+
+    const canvas = $('victory-effects-canvas');
+    if (!canvas) return;
+
+    canvas.classList.remove('hidden');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const onResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', onResize);
+    canvas._onResize = onResize;
+
+    const particles = [];
+    const fxType = (effectKey || 'default').replace(/^fx_/, '');
+
+    // ── 1. 황금 코인 샤워 ──
+    if (fxType === 'coin_shower') {
+      const COIN_COUNT = 55;
+      for (let i = 0; i < COIN_COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: -20 - Math.random() * 400,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: 3 + Math.random() * 4.5,
+          radius: 12 + Math.random() * 8,
+          rot: Math.random() * Math.PI * 2,
+          vrot: (Math.random() - 0.5) * 0.15,
+          bounceCount: 0,
+          maxBounces: 2 + Math.floor(Math.random() * 2)
+        });
+      }
+
+      function drawCoin(p) {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        const scaleX = Math.cos(p.rot);
+        ctx.scale(scaleX, 1);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+        const grad = ctx.createLinearGradient(-p.radius, -p.radius, p.radius, p.radius);
+        grad.addColorStop(0, '#fef08a');
+        grad.addColorStop(0.5, '#eab308');
+        grad.addColorStop(1, '#ca8a04');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#a16207';
+        ctx.stroke();
+
+        if (Math.abs(scaleX) > 0.3) {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.radius * 0.75, 0, Math.PI * 2);
+          ctx.strokeStyle = '#fef9c3';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.fillStyle = '#78350f';
+          ctx.font = `bold ${Math.floor(p.radius * 0.85)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('★', 0, 1);
+        }
+        ctx.restore();
+      }
+
+      function stepCoin() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          p.vy += 0.15;
+
+          if (p.y > height - p.radius - 10) {
+            if (p.bounceCount < p.maxBounces) {
+              p.y = height - p.radius - 10;
+              p.vy = -p.vy * 0.45;
+              p.vx *= 0.8;
+              p.bounceCount++;
+            }
+          }
+          drawCoin(p);
+        });
+        _victoryAnimId = requestAnimationFrame(stepCoin);
+      }
+      _victoryAnimId = requestAnimationFrame(stepCoin);
+      return;
+    }
+
+    // ── 2. 8-Bit 도트 폭죽 ──
+    if (fxType === 'pixel_fireworks') {
+      const colors = ['#ff0055', '#00ffff', '#ffff00', '#00ff66', '#ff7700', '#b5179e', '#4cc9f0'];
+      const bursts = [
+        { cx: width * 0.3, cy: height * 0.35, delay: 0 },
+        { cx: width * 0.7, cy: height * 0.3, delay: 25 },
+        { cx: width * 0.5, cy: height * 0.45, delay: 50 },
+        { cx: width * 0.25, cy: height * 0.5, delay: 80 },
+        { cx: width * 0.75, cy: height * 0.48, delay: 100 }
+      ];
+
+      bursts.forEach(b => {
+        const count = 45;
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+          const speed = 2.5 + Math.random() * 5.5;
+          particles.push({
+            cx: b.cx,
+            cy: b.cy,
+            x: b.cx,
+            y: b.cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: 6 + Math.floor(Math.random() * 5),
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 1,
+            delay: b.delay,
+            born: 0
+          });
+        }
+      });
+
+      let frameCount = 0;
+      function stepPixel() {
+        ctx.clearRect(0, 0, width, height);
+        frameCount++;
+        particles.forEach(p => {
+          if (frameCount < p.delay) return;
+          p.born++;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.08;
+          p.vx *= 0.98;
+          p.alpha = Math.max(0, 1 - p.born / 90);
+
+          if (p.alpha > 0) {
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+          }
+        });
+        ctx.globalAlpha = 1;
+        _victoryAnimId = requestAnimationFrame(stepPixel);
+      }
+      _victoryAnimId = requestAnimationFrame(stepPixel);
+      return;
+    }
+
+    // ── 3. 네온 스파크 ──
+    if (fxType === 'neon_sparks') {
+      const neonColors = ['#00f5d4', '#7b2cbf', '#f72585', '#4361ee', '#fee440'];
+      const cx = width / 2;
+      const cy = height / 2;
+
+      const rings = [
+        { r: 10, vr: 4, alpha: 1, color: '#00f5d4' },
+        { r: 5, vr: 3.2, alpha: 1, color: '#f72585' }
+      ];
+
+      const SPARK_COUNT = 70;
+      for (let i = 0; i < SPARK_COUNT; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 8;
+        particles.push({
+          x: cx,
+          y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color: neonColors[Math.floor(Math.random() * neonColors.length)],
+          alpha: 1,
+          decay: 0.012 + Math.random() * 0.015
+        });
+      }
+
+      function stepNeon() {
+        ctx.clearRect(0, 0, width, height);
+
+        rings.forEach(ring => {
+          ring.r += ring.vr;
+          ring.alpha = Math.max(0, 1 - ring.r / (Math.min(width, height) * 0.6));
+          if (ring.alpha > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
+            ctx.strokeStyle = ring.color;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = ring.color;
+            ctx.globalAlpha = ring.alpha;
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.97;
+          p.vy *= 0.97;
+          p.alpha = Math.max(0, p.alpha - p.decay);
+
+          if (p.alpha > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x - p.vx * 2, p.y - p.vy * 2);
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = 2.5;
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        _victoryAnimId = requestAnimationFrame(stepNeon);
+      }
+      _victoryAnimId = requestAnimationFrame(stepNeon);
+      return;
+    }
+
+    // ── 4. 하트 & 별빛 블룸 ──
+    if (fxType === 'heart_star') {
+      const items = ['💖', '⭐', '✨', '🌸', '💫'];
+      const COUNT = 45;
+      for (let i = 0; i < COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: height + Math.random() * 200,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: -(2.5 + Math.random() * 3.5),
+          char: items[Math.floor(Math.random() * items.length)],
+          size: 20 + Math.random() * 18,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: 0.04 + Math.random() * 0.04,
+          alpha: 1
+        });
+      }
+
+      function stepHeartStar() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.wobble += p.wobbleSpeed;
+          p.x += Math.sin(p.wobble) * 1.8;
+          p.y += p.vy;
+          if (p.y < height * 0.4) {
+            p.alpha = Math.max(0, p.alpha - 0.015);
+          }
+
+          if (p.alpha > 0) {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.font = `${Math.floor(p.size)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(p.char, p.x, p.y);
+            ctx.restore();
+          }
+        });
+        _victoryAnimId = requestAnimationFrame(stepHeartStar);
+      }
+      _victoryAnimId = requestAnimationFrame(stepHeartStar);
+      return;
+    }
+
+    // ── 5. 그랜드 불꽃축제 ──
+    if (fxType === 'grand_festival') {
+      const colors = ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#facc15'];
+      const rockets = [
+        { x: width * 0.25, y: height, targetY: height * 0.25, vy: -9, color: '#f59e0b', exploded: false },
+        { x: width * 0.5,  y: height, targetY: height * 0.2,  vy: -10, color: '#ec4899', exploded: false },
+        { x: width * 0.75, y: height, targetY: height * 0.3,  vy: -8.5, color: '#3b82f6', exploded: false },
+        { x: width * 0.38, y: height, targetY: height * 0.35, vy: -8, color: '#10b981', exploded: false },
+        { x: width * 0.62, y: height, targetY: height * 0.28, vy: -9.2, color: '#8b5cf6', exploded: false }
+      ];
+
+      function explodeRocket(r) {
+        const count = 60;
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.2;
+          const speed = 2 + Math.random() * 5.5;
+          particles.push({
+            x: r.x,
+            y: r.targetY,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            radius: 2.5 + Math.random() * 2,
+            alpha: 1,
+            decay: 0.01 + Math.random() * 0.015
+          });
+        }
+      }
+
+      function stepGrand() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, 0, width, height);
+
+        rockets.forEach(r => {
+          if (!r.exploded) {
+            r.y += r.vy;
+            ctx.beginPath();
+            ctx.arc(r.x, r.y, 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = r.color;
+            ctx.fill();
+
+            if (r.y <= r.targetY) {
+              r.exploded = true;
+              explodeRocket(r);
+            }
+          }
+        });
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.06;
+          p.vx *= 0.98;
+          p.alpha = Math.max(0, p.alpha - p.decay);
+
+          if (p.alpha > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        _victoryAnimId = requestAnimationFrame(stepGrand);
+      }
+      _victoryAnimId = requestAnimationFrame(stepGrand);
+      return;
+    }
+
+    // ── 6. 기본 클래식 컨페티 ──
+    const confettiColors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#fbbf24'];
+    const CONFETTI_COUNT = 80;
+    for (let i = 0; i < CONFETTI_COUNT; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: -10 - Math.random() * 250,
+        vx: (Math.random() - 0.5) * 3,
+        vy: 2.5 + Math.random() * 3.5,
+        w: 8 + Math.random() * 6,
+        h: 12 + Math.random() * 8,
+        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.1,
+        wobble: Math.random() * 10
+      });
+    }
+
+    function stepConfetti() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        p.wobble += 0.05;
+        p.x += Math.sin(p.wobble) * 0.8;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.scale(Math.cos(p.rot * 1.5), 1);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      _victoryAnimId = requestAnimationFrame(stepConfetti);
+    }
+    _victoryAnimId = requestAnimationFrame(stepConfetti);
+  }
+
+  function _stopVictoryEffect() {
+    if (_victoryAnimId) {
+      cancelAnimationFrame(_victoryAnimId);
+      _victoryAnimId = null;
+    }
+    if (_victoryPreviewTimer) {
+      clearTimeout(_victoryPreviewTimer);
+      _victoryPreviewTimer = null;
+    }
+    const canvas = $('victory-effects-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.classList.add('hidden');
+      if (canvas._onResize) {
+        window.removeEventListener('resize', canvas._onResize);
+        canvas._onResize = null;
+      }
+    }
+  }
+
+  window._previewVictoryEffect = function(effectKey) {
+    _triggerVictoryEffect(effectKey);
+    if (_victoryPreviewTimer) clearTimeout(_victoryPreviewTimer);
+    _victoryPreviewTimer = setTimeout(() => {
+      _stopVictoryEffect();
+    }, 3200);
+  };
+
   function _handleBuyProfileCard(item) {
     if (myCoins < item.price) {
       showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
@@ -1545,6 +2487,102 @@
     }
 
     if (typeof _syncOnlinePresence === 'function') _syncOnlinePresence();
+  }
+
+  /* ── 💬 말풍선 스킨 구매 / 착용 ── */
+  function _handleBuyChatBubble(item) {
+    if (myCoins < item.price) {
+      showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
+      return;
+    }
+    myCoins -= item.price;
+    localStorage.setItem('arcade_user_coins', String(myCoins));
+    if (!myPurchasedChatBubbles.includes(item.id)) myPurchasedChatBubbles.push(item.id);
+    localStorage.setItem('arcade_purchased_chat_bubbles', JSON.stringify(myPurchasedChatBubbles));
+    myChatBubble = item.id;
+    localStorage.setItem('arcade_user_chat_bubble', myChatBubble);
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { coins: myCoins, chatBubble: myChatBubble, purchasedChatBubbles: myPurchasedChatBubbles }).catch(() => {});
+    }
+    _updateCoinsUI();
+    _renderShopUI();
+    showToast(`🎉 [${item.name}] 말풍선을 구매하여 착용했습니다!`, 'success');
+  }
+
+  function _handleEquipChatBubble(item) {
+    myChatBubble = (item.isDefault) ? 'default' : item.id;
+    if (myChatBubble && myChatBubble !== 'default') { localStorage.setItem('arcade_user_chat_bubble', myChatBubble); } else { localStorage.removeItem('arcade_user_chat_bubble'); }
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { chatBubble: myChatBubble }).catch(() => {});
+    }
+    _renderShopUI();
+    showToast(item.isDefault ? '기본 말풍선으로 복원되었습니다.' : `[${item.name}] 말풍선으로 변경되었습니다.`, 'info');
+  }
+
+  /* ── 🖼️ 아바타 테두리 구매 / 착용 ── */
+  function _handleBuyAvatarFrame(item) {
+    if (myCoins < item.price) {
+      showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
+      return;
+    }
+    myCoins -= item.price;
+    localStorage.setItem('arcade_user_coins', String(myCoins));
+    if (!myPurchasedAvatarFrames.includes(item.id)) myPurchasedAvatarFrames.push(item.id);
+    localStorage.setItem('arcade_purchased_avatar_frames', JSON.stringify(myPurchasedAvatarFrames));
+    myAvatarFrame = item.id;
+    localStorage.setItem('arcade_user_avatar_frame', myAvatarFrame);
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { coins: myCoins, avatarFrame: myAvatarFrame, purchasedAvatarFrames: myPurchasedAvatarFrames }).catch(() => {});
+    }
+    _updateCoinsUI();
+    _renderShopUI();
+    showToast(`🎉 [${item.name}] 테두리를 구매하여 착용했습니다!`, 'success');
+  }
+
+  function _handleEquipAvatarFrame(item) {
+    myAvatarFrame = (item.isDefault) ? 'default' : item.id;
+    if (myAvatarFrame && myAvatarFrame !== 'default') { localStorage.setItem('arcade_user_avatar_frame', myAvatarFrame); } else { localStorage.removeItem('arcade_user_avatar_frame'); }
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { avatarFrame: myAvatarFrame }).catch(() => {});
+    }
+    _renderShopUI();
+    showToast(item.isDefault ? '기본 테두리로 복원되었습니다.' : `[${item.name}] 테두리로 변경되었습니다.`, 'info');
+  }
+
+  /* ── 🎆 승리 세레머니 연출 구매 / 착용 ── */
+  function _handleBuyVictoryEffect(item) {
+    if (myCoins < item.price) {
+      showToast(`코인이 부족합니다! (필요: ${item.price} 코인 / 보유: ${myCoins} 코인)`, 'warn');
+      return;
+    }
+    myCoins -= item.price;
+    localStorage.setItem('arcade_user_coins', String(myCoins));
+    if (!myPurchasedVictoryEffects.includes(item.id)) myPurchasedVictoryEffects.push(item.id);
+    localStorage.setItem('arcade_purchased_victory_effects', JSON.stringify(myPurchasedVictoryEffects));
+    myVictoryEffect = item.id;
+    localStorage.setItem('arcade_user_victory_effect', myVictoryEffect);
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { coins: myCoins, victoryEffect: myVictoryEffect, purchasedVictoryEffects: myPurchasedVictoryEffects }).catch(() => {});
+    }
+    _updateCoinsUI();
+    _renderShopUI();
+    showToast(`🎉 [${item.name}] 승리 연출을 구매하여 착용했습니다!`, 'success');
+  }
+
+  function _handleEquipVictoryEffect(item) {
+    myVictoryEffect = (item.isDefault) ? 'default' : item.id;
+    if (myVictoryEffect && myVictoryEffect !== 'default') { localStorage.setItem('arcade_user_victory_effect', myVictoryEffect); } else { localStorage.removeItem('arcade_user_victory_effect'); }
+    _applyCosmeticsToAllUI();
+    if (typeof AppSupabase !== 'undefined' && AppSupabase.getCurrentUser()) {
+      AppSupabase.saveProfile(AppSupabase.getCurrentUser().id, { victoryEffect: myVictoryEffect }).catch(() => {});
+    }
+    _renderShopUI();
+    showToast(item.isDefault ? '기본 승리 연출로 복원되었습니다.' : `[${item.name}] 승리 연출로 변경되었습니다.`, 'info');
   }
 
   /* ── 🌐 Firebase 실시간 글로벌 로비 목록 (전체 / 공개방 / 비밀방 탭 필터링 & 게임별 필터) ── */
@@ -1781,6 +2819,9 @@
       profileCard: myProfileCard || 'default',
       avatarIcon: myAvatarIcon || 'fa-solid fa-dog',
       avatarColor: myAvatarColor || '#38a169',
+      avatarFrame: myAvatarFrame || 'default',
+      chatBubble: myChatBubble || 'default',
+      victoryEffect: myVictoryEffect || 'default',
       level: myLevel || 1,
       exp: myExp || 0,
       stats: _getMyStats()
@@ -1928,6 +2969,8 @@
       const statsObj = isMe ? _getMyStats() : user.stats;
       const ucard = isMe ? myProfileCard : (user.profileCard || 'default');
       const cardThemeClass = (ucard && ucard !== 'default') ? `pcard-theme-${ucard}` : '';
+      const uframe = isMe ? myAvatarFrame : (user.avatarFrame || 'default');
+      const frameClass = (uframe && uframe !== 'default') ? `frame-${uframe.replace(/^frame_/, '')}` : '';
 
       let winRateStr = '전적 없음';
       if (statsObj && statsObj.total && typeof statsObj.total.plays === 'number' && statsObj.total.plays > 0) {
@@ -1940,7 +2983,7 @@
       return `
         <div class="online-user-item ${cardThemeClass} ${isMe ? 'is-me' : ''}" data-idx="${idx}" title="${_escapeHtml(uname)}님의 전적 보기">
           <div class="user-avatar-wrap">
-            <div class="user-avatar sm" style="background: ${ucolor};">
+            <div class="user-avatar sm ${frameClass}" style="background: ${ucolor};">
               <i class="${uicon}"></i>
             </div>
             <span class="user-level-badge ${tierClass}">${ulevel}</span>
@@ -3316,6 +4359,9 @@
         profileCard: myProfileCard || 'default',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        avatarFrame: myAvatarFrame || 'default',
+        chatBubble: myChatBubble || 'default',
+        victoryEffect: myVictoryEffect || 'default',
         level: myLevel,
         exp: myExp,
         password: currentRoomPassword || '',
@@ -3858,6 +4904,18 @@
     myPurchasedProfileCards = ['default'];
     localStorage.removeItem('arcade_profile_card');
     localStorage.removeItem('arcade_purchased_profile_cards');
+    myChatBubble = 'default';
+    myPurchasedChatBubbles = ['default'];
+    localStorage.removeItem('arcade_user_chat_bubble');
+    localStorage.removeItem('arcade_purchased_chat_bubbles');
+    myAvatarFrame = 'default';
+    myPurchasedAvatarFrames = ['default'];
+    localStorage.removeItem('arcade_user_avatar_frame');
+    localStorage.removeItem('arcade_purchased_avatar_frames');
+    myVictoryEffect = 'default';
+    myPurchasedVictoryEffects = ['default'];
+    localStorage.removeItem('arcade_user_victory_effect');
+    localStorage.removeItem('arcade_purchased_victory_effects');
 
     if ($('profile-input-nick')) $('profile-input-nick').value = myNickname;
     _updateHomeUserBar();
@@ -4148,6 +5206,51 @@
       localStorage.setItem('arcade_purchased_profile_cards', JSON.stringify(myPurchasedProfileCards));
     }
 
+    // 9. 💬 말풍선 스킨 & 구매 목록 복원
+    if (profile.chatBubble !== undefined) {
+      myChatBubble = profile.chatBubble || 'default';
+      if (myChatBubble && myChatBubble !== 'default') {
+        localStorage.setItem('arcade_user_chat_bubble', myChatBubble);
+      } else {
+        localStorage.removeItem('arcade_user_chat_bubble');
+      }
+    }
+    if (Array.isArray(profile.purchasedChatBubbles)) {
+      myPurchasedChatBubbles = [...profile.purchasedChatBubbles];
+      if (!myPurchasedChatBubbles.includes('default')) myPurchasedChatBubbles.push('default');
+      localStorage.setItem('arcade_purchased_chat_bubbles', JSON.stringify(myPurchasedChatBubbles));
+    }
+
+    // 10. 🖼️ 아바타 테두리 & 구매 목록 복원
+    if (profile.avatarFrame !== undefined) {
+      myAvatarFrame = profile.avatarFrame || 'default';
+      if (myAvatarFrame && myAvatarFrame !== 'default') {
+        localStorage.setItem('arcade_user_avatar_frame', myAvatarFrame);
+      } else {
+        localStorage.removeItem('arcade_user_avatar_frame');
+      }
+    }
+    if (Array.isArray(profile.purchasedAvatarFrames)) {
+      myPurchasedAvatarFrames = [...profile.purchasedAvatarFrames];
+      if (!myPurchasedAvatarFrames.includes('default')) myPurchasedAvatarFrames.push('default');
+      localStorage.setItem('arcade_purchased_avatar_frames', JSON.stringify(myPurchasedAvatarFrames));
+    }
+
+    // 11. 🎆 승리 세레머니 연출 & 구매 목록 복원
+    if (profile.victoryEffect !== undefined) {
+      myVictoryEffect = profile.victoryEffect || 'default';
+      if (myVictoryEffect && myVictoryEffect !== 'default') {
+        localStorage.setItem('arcade_user_victory_effect', myVictoryEffect);
+      } else {
+        localStorage.removeItem('arcade_user_victory_effect');
+      }
+    }
+    if (Array.isArray(profile.purchasedVictoryEffects)) {
+      myPurchasedVictoryEffects = [...profile.purchasedVictoryEffects];
+      if (!myPurchasedVictoryEffects.includes('default')) myPurchasedVictoryEffects.push('default');
+      localStorage.setItem('arcade_purchased_victory_effects', JSON.stringify(myPurchasedVictoryEffects));
+    }
+
     // 클라우드와 로컬에 차이가 있다면 클라우드에도 즉시 동기화
     if (userId && typeof AppSupabase !== 'undefined') {
       AppSupabase.saveProfile(userId, {
@@ -4156,6 +5259,12 @@
         purchasedNameColors: myPurchasedNameColors,
         profileCard: myProfileCard,
         purchasedProfileCards: myPurchasedProfileCards,
+        chatBubble: myChatBubble,
+        purchasedChatBubbles: myPurchasedChatBubbles,
+        avatarFrame: myAvatarFrame,
+        purchasedAvatarFrames: myPurchasedAvatarFrames,
+        victoryEffect: myVictoryEffect,
+        purchasedVictoryEffects: myPurchasedVictoryEffects,
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
         coins: myCoins,
@@ -4697,6 +5806,9 @@
         profileCard: myProfileCard || 'default',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        avatarFrame: myAvatarFrame || 'default',
+        chatBubble: myChatBubble || 'default',
+        victoryEffect: myVictoryEffect || 'default',
         level: myLevel,
         exp: myExp,
         isHost: true,
@@ -4799,6 +5911,9 @@
         profileCard: myProfileCard || 'default',
         avatarIcon: myAvatarIcon,
         avatarColor: myAvatarColor,
+        avatarFrame: myAvatarFrame || 'default',
+        chatBubble: myChatBubble || 'default',
+        victoryEffect: myVictoryEffect || 'default',
         level: myLevel,
         exp: myExp,
         password: inputPassword || '',
@@ -4895,6 +6010,9 @@
         profileCard: data.profileCard || 'default',
         avatarIcon: data.avatarIcon || _getRandomAvatarIcon(),
         avatarColor: data.avatarColor || _getRandomAvatarColor(),
+        avatarFrame: data.avatarFrame || 'default',
+        chatBubble: data.chatBubble || 'default',
+        victoryEffect: data.victoryEffect || 'default',
         level: typeof data.level === 'number' ? data.level : 1,
         exp: typeof data.exp === 'number' ? data.exp : 0,
         isHost: false,
@@ -4955,6 +6073,9 @@
         if (data.profileCard !== undefined) player.profileCard = data.profileCard;
         if (data.avatarIcon) player.avatarIcon = data.avatarIcon;
         if (data.avatarColor) player.avatarColor = data.avatarColor;
+        if (data.avatarFrame !== undefined) player.avatarFrame = data.avatarFrame;
+        if (data.chatBubble !== undefined) player.chatBubble = data.chatBubble;
+        if (data.victoryEffect !== undefined) player.victoryEffect = data.victoryEffect;
         if (typeof data.level === 'number') player.level = data.level;
         if (typeof data.exp === 'number') player.exp = data.exp;
         if (data.stats) player.stats = data.stats;
@@ -4967,6 +6088,9 @@
           if (data.profileCard !== undefined) ap.profileCard = data.profileCard;
           if (data.avatarIcon) ap.avatarIcon = data.avatarIcon;
           if (data.avatarColor) ap.avatarColor = data.avatarColor;
+          if (data.avatarFrame !== undefined) ap.avatarFrame = data.avatarFrame;
+          if (data.chatBubble !== undefined) ap.chatBubble = data.chatBubble;
+          if (data.victoryEffect !== undefined) ap.victoryEffect = data.victoryEffect;
         }
 
         _broadcastRoomState();
@@ -5308,6 +6432,9 @@
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const timeStr = `${hours}:${minutes}`;
 
+    const myBubbleItemForSend = SHOP_CHAT_BUBBLES.find(b => b.id === myChatBubble);
+    const myBubbleClassForSend = (myBubbleItemForSend && myBubbleItemForSend.bubbleClass && myBubbleItemForSend.bubbleClass !== 'bubble-default') ? myBubbleItemForSend.bubbleClass : '';
+
     const msgObj = {
       type: 'chat_msg',
       senderId: P2P.getMyId(),
@@ -5315,7 +6442,8 @@
       senderNameColor: myNicknameColor || null,
       isHost: P2P.isHost(),
       text: cleanText, // 검열된 텍스트 적용
-      time: timeStr
+      time: timeStr,
+      chatBubbleClass: myBubbleClassForSend
     };
 
     // 내 화면에 메시지 렌더링
@@ -5352,8 +6480,12 @@
     const isHost = data.isHost;
     const senderName = data.senderName || '플레이어';
     const senderColor = isMe ? myNicknameColor : data.senderNameColor;
-    const initial = senderName.charAt(0);
     const time = data.time || '';
+
+    // 말풍선 스킨 클래스 - 내 메시지면 내 설정, 상대 메시지면 상대가 보낸 bubbleClass 사용
+    const myBubbleItem = SHOP_CHAT_BUBBLES.find(b => b.id === myChatBubble);
+    const myBubbleClass = (myBubbleItem && myBubbleItem.bubbleClass && myBubbleItem.bubbleClass !== 'bubble-default') ? myBubbleItem.bubbleClass : '';
+    const senderBubbleClass = data.chatBubbleClass || '';
 
     targetContainers.forEach(container => {
       if (!container) return;
@@ -5363,7 +6495,7 @@
 
       if (isMe) {
         msgEl.innerHTML = `
-          <div class="chat-bubble">${_escapeHtml(data.text)}</div>
+          <div class="chat-bubble ${myBubbleClass}">${_escapeHtml(data.text)}</div>
           <div class="chat-time">${_escapeHtml(time)}</div>
         `;
       } else {
@@ -5372,7 +6504,7 @@
             <span style="${senderColor ? `color:${senderColor}; font-weight:800;` : ''}">${_escapeHtml(senderName)}</span>
             ${isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.65rem;"></i>' : ''}
           </div>
-          <div class="chat-bubble">${_escapeHtml(data.text)}</div>
+          <div class="chat-bubble ${senderBubbleClass}">${_escapeHtml(data.text)}</div>
           <div class="chat-time">${_escapeHtml(time)}</div>
         `;
       }
@@ -5567,6 +6699,8 @@
       li.setAttribute('data-player-id', p.id);
       li.setAttribute('data-id', p.id);
       const cardTheme = p.profileCard || (isMe ? myProfileCard : 'default');
+      const pFrame = p.avatarFrame || (isMe ? myAvatarFrame : 'default');
+      const frameClass = (pFrame && pFrame !== 'default') ? `frame-${pFrame.replace(/^frame_/, '')}` : '';
       li.className = 'player-item' + 
         (isMe ? ' is-me' : '') +
         (isInActiveGame ? ' is-in-game' : (isReadyGuest ? ' ready' : (isThisHost ? ' host-item' : ''))) + 
@@ -5582,7 +6716,7 @@
 
       li.innerHTML = `
         <div class="player-avatar-wrap">
-          <div class="player-avatar" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
+          <div class="player-avatar ${frameClass}" style="background:${p.avatarColor || '#38a169'};"><i class="${p.avatarIcon || 'fa-solid fa-paw'}"></i></div>
           <span class="player-level-badge ${_getLevelTierClass(p.level || 1)}">${p.level || 1}</span>
         </div>
         <div class="player-meta">
@@ -6474,7 +7608,13 @@
       scoreRowEl.innerHTML = rowsHtml;
       scoreRowEl.classList.remove('hidden');
 
-      if (iAmWinner) Sound.playWin(); else Sound.playLose();
+      if (iAmWinner) {
+        Sound.playWin();
+        _triggerVictoryEffect(myVictoryEffect);
+      } else {
+        Sound.playLose();
+        _stopVictoryEffect();
+      }
 
     } else if (isDrawObject) {
       iconEl.innerHTML = '<i class="fa-solid fa-handshake"></i>';
@@ -6488,6 +7628,7 @@
       scoreRowEl.innerHTML = `<span>나: <b>${drawInfo.myScore || 0}점</b></span> &nbsp;|&nbsp; <span>상대: <b>${drawInfo.oppScore || 0}점</b></span>`;
       scoreRowEl.classList.remove('hidden');
       Sound.playClick();
+      _stopVictoryEffect();
 
     } else if (win) {
       iconEl.innerHTML = '<i class="fa-solid fa-trophy"></i>';
@@ -6500,6 +7641,7 @@
       msgEl.textContent = reasonMsg || '멋진 승리입니다! 축하합니다!';
       scoreRowEl.classList.add('hidden');
       Sound.playWin();
+      _triggerVictoryEffect(myVictoryEffect);
 
     } else {
       iconEl.innerHTML = '<i class="fa-regular fa-face-frown"></i>';
@@ -6512,6 +7654,7 @@
       msgEl.textContent = reasonMsg || '아쉽게 패배했습니다. 다시 도전해 보세요!';
       scoreRowEl.classList.add('hidden');
       Sound.playLose();
+      _stopVictoryEffect();
     }
 
     // 🌟 경험치 및 레벨업 보상 배너 렌더링
@@ -6566,6 +7709,7 @@
   }
 
   function _hideResultOverlay() {
+    _stopVictoryEffect();
     if (_backHistoryIfModal('result')) return;
     if ($('overlay-result')) $('overlay-result').classList.add('hidden');
   }

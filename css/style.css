@@ -11460,3 +11460,287 @@ html, body {
     padding: 6px 14px;
   }
 }
+
+/* =====================================================================
+   🛒 아케이드 상점 신규 아이템 스타일 (프로필 카드, 말풍선, 아바타 테두리, 승리 세레머니)
+   ===================================================================== */
+
+/* ── 상점 탭 가로 스크롤바 최적화 ── */
+.shop-tab-scroll {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding-bottom: 2px !important;
+}
+.shop-tab-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* ── 연출 미리보기 버튼 ── */
+.btn-fx-preview-test {
+  padding: 3px 9px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 1px solid var(--accent, #6366f1);
+  color: var(--accent, #6366f1);
+  background: rgba(99, 102, 241, 0.08);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.18s ease;
+}
+.btn-fx-preview-test:hover {
+  background: var(--accent, #6366f1);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+/* ── 상점 미니 프리뷰 컨테이너 ── */
+.shop-fx-preview {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+  border: 1px dashed var(--border, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.shop-bubble-preview {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+  border: 1px dashed var(--border, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  margin: 8px 0;
+  min-height: 56px;
+}
+.shop-frame-preview {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+  border: 1px dashed var(--border, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.avatar-frame-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎴 신규 프로필 카드 테마 4종
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. 사이버 매트릭스 */
+.pcard-theme-matrix,
+[class*="pcard-theme-matrix"] {
+  background: linear-gradient(135deg, #021208 0%, #062b12 50%, #010d05 100%) !important;
+  background-image: linear-gradient(rgba(16, 185, 129, 0.08) 50%, transparent 50%), linear-gradient(135deg, #021208 0%, #062b12 100%) !important;
+  background-size: 100% 4px, 100% 100% !important;
+  border: 1px solid #10b981 !important;
+  box-shadow: inset 0 0 14px rgba(16, 185, 129, 0.22), 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+.pcard-theme-matrix .online-user-name,
+.pcard-theme-matrix .player-name,
+.pcard-theme-matrix .home-user-name {
+  color: #34d399 !important;
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+/* 2. 노르딕 오로라 */
+.pcard-theme-aurora,
+[class*="pcard-theme-aurora"] {
+  background: linear-gradient(135deg, #090e24 0%, #0c2b3d 45%, #0f4c4c 75%, #18333e 100%) !important;
+  border: 1px solid #2dd4bf !important;
+  box-shadow: inset 0 0 16px rgba(45, 212, 191, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+}
+.pcard-theme-aurora .online-user-name,
+.pcard-theme-aurora .player-name,
+.pcard-theme-aurora .home-user-name {
+  color: #5eead4 !important;
+  text-shadow: 0 0 8px rgba(94, 234, 212, 0.55);
+}
+
+/* 3. 딥 스페이스 */
+.pcard-theme-space,
+[class*="pcard-theme-space"] {
+  background: linear-gradient(135deg, #080b18 0%, #111538 45%, #1e1b4b 80%, #0d0f22 100%) !important;
+  border: 1px solid #818cf8 !important;
+  box-shadow: inset 0 0 16px rgba(129, 140, 248, 0.25), 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+}
+.pcard-theme-space .online-user-name,
+.pcard-theme-space .player-name,
+.pcard-theme-space .home-user-name {
+  color: #c7d2fe !important;
+  text-shadow: 0 0 8px rgba(199, 210, 254, 0.55);
+}
+
+/* 4. 아케이드 레트로팝 */
+.pcard-theme-arcade-neon,
+[class*="pcard-theme-arcade-neon"] {
+  background: linear-gradient(135deg, #2b0938 0%, #4a044e 45%, #1e1035 80%, #0f071a 100%) !important;
+  border: 1px solid #f43f5e !important;
+  box-shadow: inset 0 0 16px rgba(244, 63, 94, 0.3), 0 4px 16px rgba(244, 63, 94, 0.22) !important;
+}
+.pcard-theme-arcade-neon .online-user-name,
+.pcard-theme-arcade-neon .player-name,
+.pcard-theme-arcade-neon .home-user-name {
+  color: #fda4af !important;
+  text-shadow: 0 0 8px rgba(253, 164, 175, 0.65);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   💬 말풍선 스킨 6종
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. 레트로 8-Bit 도트 */
+.chat-bubble.bubble-retro-dot {
+  background: #18181b !important;
+  color: #4ade80 !important;
+  border: 2px solid #22c55e !important;
+  border-radius: 4px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  box-shadow: 2px 2px 0px #15803d !important;
+}
+
+/* 2. 사이버 네온 */
+.chat-bubble.bubble-cyber-neon {
+  background: #090d16 !important;
+  color: #e2e8f0 !important;
+  border: 1.5px solid #06b6d4 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.38), inset 0 0 6px rgba(6, 182, 212, 0.15) !important;
+}
+
+/* 3. 청량 민트 소다 */
+.chat-bubble.bubble-mint-soda {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  border: 1px solid #14b8a6 !important;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35) !important;
+}
+
+/* 4. 코지 피치 */
+.chat-bubble.bubble-cozy-peach {
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%) !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  border: 1px solid #fdba74 !important;
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.35) !important;
+}
+
+/* 5. 팝아트 코믹 */
+.chat-bubble.bubble-pop-comic {
+  background: #fef08a !important;
+  color: #0f172a !important;
+  border: 2.5px solid #0f172a !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  box-shadow: 3px 3px 0px #0f172a !important;
+}
+
+/* 6. 로열 벨벳 */
+.chat-bubble.bubble-royal-velvet {
+  background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%) !important;
+  color: #fef08a !important;
+  border: 1.5px solid #ca8a04 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 3px 12px rgba(88, 28, 135, 0.45) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🖼️ 아바타 테두리 (Avatar Frames) 6종
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. 황금 월계관 */
+.user-avatar.frame-gold-wreath,
+.player-avatar.frame-gold-wreath,
+.avatar-frame-demo.frame-gold-wreath {
+  outline: 3px solid #eab308 !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.7), inset 0 0 4px rgba(254, 240, 138, 0.6) !important;
+}
+
+/* 2. 사이버 펄스 */
+.user-avatar.frame-cyber-pulse,
+.player-avatar.frame-cyber-pulse,
+.avatar-frame-demo.frame-cyber-pulse {
+  outline: 2.5px solid #06b6d4 !important;
+  outline-offset: 1.5px !important;
+  box-shadow: 0 0 12px #06b6d4, inset 0 0 4px #ec4899 !important;
+  animation: cyberFramePulse 2.2s infinite alternate !important;
+}
+@keyframes cyberFramePulse {
+  0%   { box-shadow: 0 0 6px #06b6d4, inset 0 0 3px #06b6d4; }
+  100% { box-shadow: 0 0 14px #ec4899, inset 0 0 5px #ec4899; }
+}
+
+/* 3. 레트로 8-Bit 픽셀 */
+.user-avatar.frame-retro-pixel,
+.player-avatar.frame-retro-pixel,
+.avatar-frame-demo.frame-retro-pixel {
+  border-radius: 4px !important;
+  outline: 3px solid #a855f7 !important;
+  outline-offset: 1px !important;
+  box-shadow: 2px 2px 0px #581c87 !important;
+}
+
+/* 4. 빙하 크리스탈 */
+.user-avatar.frame-ice-crystal,
+.player-avatar.frame-ice-crystal,
+.avatar-frame-demo.frame-ice-crystal {
+  outline: 2.5px solid #38bdf8 !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), inset 0 0 5px #e0f2fe !important;
+}
+
+/* 5. 타오르는 불꽃 */
+.user-avatar.frame-fire-flame,
+.player-avatar.frame-fire-flame,
+.avatar-frame-demo.frame-fire-flame {
+  outline: 3px solid #f97316 !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.85), inset 0 0 4px #fef08a !important;
+  animation: fireFrameFlicker 1.6s infinite alternate !important;
+}
+@keyframes fireFrameFlicker {
+  0%   { box-shadow: 0 0 8px #f97316; }
+  100% { box-shadow: 0 0 16px #ef4444; }
+}
+
+/* 6. 로열 크라운 */
+.user-avatar.frame-royal-crown,
+.player-avatar.frame-royal-crown,
+.avatar-frame-demo.frame-royal-crown {
+  outline: 3px solid #d97706 !important;
+  outline-offset: 1.5px !important;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.65), inset 0 0 4px #fef08a !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎆 승리 세레머니 캔버스 오버레이
+   ═══════════════════════════════════════════════════════════════ */
+#victory-effects-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 99999 !important;
+}
