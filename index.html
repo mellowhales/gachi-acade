@@ -278,28 +278,33 @@
       <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
       <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
         <div class="lobby-header shop-header">
-          <div class="shop-title-row">
+          <div class="lobby-title-area shop-title-area">
             <span class="lobby-title"><i class="fa-solid fa-store" style="color:var(--yellow);"></i> 상점</span>
+            <div class="lobby-tab-group shop-tab-scroll" id="shop-filter-tabs">
+              <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
+                <i class="fa-solid fa-palette"></i> 닉네임
+              </button>
+              <button type="button" class="lobby-tab-btn" data-shop-tab="profile_card" id="tab-shop-profile-card">
+                <i class="fa-solid fa-id-card"></i> 프로필 카드
+              </button>
+              <button type="button" class="lobby-tab-btn" data-shop-tab="chat_bubble" id="tab-shop-chat-bubble">
+                <i class="fa-regular fa-comment-dots"></i> 말풍선
+              </button>
+              <button type="button" class="lobby-tab-btn" data-shop-tab="avatar_frame" id="tab-shop-avatar-frame">
+                <i class="fa-solid fa-square"></i> 테두리
+              </button>
+              <button type="button" class="lobby-tab-btn" data-shop-tab="victory_effect" id="tab-shop-victory-effect">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 세레머니
+              </button>
+            </div>
+          </div>
+          <div class="shop-header-right">
             <div class="shop-coin-pill">
               <i class="fa-solid fa-coins"></i>
               <strong id="shop-coin-balance">0</strong>
             </div>
-          </div>
-          <div class="lobby-tab-group shop-tab-scroll" id="shop-filter-tabs">
-            <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
-              <i class="fa-solid fa-palette"></i> 닉네임
-            </button>
-            <button type="button" class="lobby-tab-btn" data-shop-tab="profile_card" id="tab-shop-profile-card">
-              <i class="fa-solid fa-id-card"></i> 프로필 카드
-            </button>
-            <button type="button" class="lobby-tab-btn" data-shop-tab="chat_bubble" id="tab-shop-chat-bubble">
-              <i class="fa-regular fa-comment-dots"></i> 말풍선
-            </button>
-            <button type="button" class="lobby-tab-btn" data-shop-tab="avatar_frame" id="tab-shop-avatar-frame">
-              <i class="fa-solid fa-square"></i> 테두리
-            </button>
-            <button type="button" class="lobby-tab-btn" data-shop-tab="victory_effect" id="tab-shop-victory-effect">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> 세레머니
+            <button type="button" class="btn-icon sm" id="btn-close-shop" title="방 목록으로 돌아가기">
+              <i class="fa-solid fa-layer-group"></i>
             </button>
           </div>
         </div>
@@ -1196,7 +1201,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.1.1</span>
+              <span class="about-version-tag">v1.1.2</span>
             </div>
           </div>
         </div>
@@ -1209,6 +1214,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.1.2]</span>
+              <span class="changelog-text">모바일 접속자 2열 다행 스크롤, 방 목록 탭 좌측 정렬, PC 상점 롤백 및 여백 확대, 모바일 상점 헤더 개편</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.1.1]</span>
               <span class="changelog-text">로비 전체채팅 말풍선 미적용, 프로필 테두리 버그 수정, 아이템명 단순화 및 모바일 로비/상점 레이아웃 개선</span>
             </div>
@@ -1241,7 +1250,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.1.1</span>
+        <span class="settings-version-badge">v1.1.2</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span>닫기</span>

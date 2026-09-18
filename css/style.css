@@ -1312,9 +1312,9 @@ body {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     width: 100% !important;
-    gap: 6px !important;
+    gap: 8px !important;
   }
   .lobby-card .lobby-title {
     font-size: 0.92rem !important;
@@ -1325,8 +1325,8 @@ body {
   #lobby-filter-tabs {
     display: flex !important;
     flex-direction: row !important;
-    gap: 2px !important;
-    margin-left: auto !important;
+    gap: 3px !important;
+    margin-left: 0 !important;
     flex-shrink: 0 !important;
   }
   .lobby-tab-btn {
@@ -1335,6 +1335,53 @@ body {
     border-radius: 6px !important;
     white-space: nowrap !important;
     gap: 3px !important;
+  }
+
+  /* 🌟 모바일 상점 전용 헤더 (1행: 상점 - 코인, 2행 중앙: 선택 항목) 🌟 */
+  .shop-header {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px 0 !important;
+    width: 100% !important;
+  }
+  .shop-title-area {
+    display: contents !important;
+  }
+  .shop-header .lobby-title {
+    order: 1 !important;
+    margin-right: auto !important;
+  }
+  .shop-header-right {
+    order: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    gap: 0 !important;
+  }
+  .shop-header-right #btn-close-shop {
+    display: none !important; /* 모바일에서는 돌아가기 버튼 숨김 */
+  }
+  #shop-filter-tabs {
+    order: 3 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 4px auto 0 !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    gap: 4px !important;
+  }
+  #shop-filter-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+  #shop-filter-tabs .lobby-tab-btn {
+    flex-shrink: 0 !important;
+    padding: 3px 8px !important;
+    font-size: 0.72rem !important;
   }
   .lobby-list {
     display: flex !important;
@@ -1396,39 +1443,49 @@ body {
     min-height: 0 !important;
   }
   .online-users-card {
-    flex: 1 1 auto !important;
-    padding: 8px 12px !important;
+    flex: 0 0 auto !important;
+    padding: 6px 10px !important;
     border-radius: var(--radius) !important;
-    gap: 6px !important;
-    height: clamp(140px, 24vh, 195px) !important;
-    max-height: 220px !important;
-    min-height: 120px !important;
+    gap: 4px !important;
+    height: clamp(95px, 15vh, 120px) !important;
+    max-height: 125px !important;
+    min-height: 90px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
   .online-users-list {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    gap: 6px !important;
+    gap: 5px !important;
     padding: 2px !important;
     flex: 1 !important;
     height: 100% !important;
+    align-content: start !important;
   }
   .online-user-item {
     flex-shrink: 0 !important;
-    padding: 6px 10px !important;
+    padding: 4px 6px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+  }
+  .online-user-item .user-avatar.sm {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.75rem !important;
+  }
+  .online-user-name {
+    font-size: 0.78rem !important;
   }
   .online-user-sub {
-    display: block !important;
-    font-size: 0.7rem !important;
+    display: none !important;
   }
   .online-user-item .btn-view-stats {
-    display: flex !important;
+    display: none !important;
   }
   .lobby-chat-card {
     position: fixed !important;
@@ -10265,16 +10322,23 @@ html, body {
 
 .shop-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.shop-title-row {
-  display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shop-title-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shop-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .shop-coin-pill {
@@ -10313,17 +10377,18 @@ html, body {
 .shop-items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
+  gap: 16px;
+  padding: 2px 2px 8px 2px;
 }
 
 .shop-item-card {
   display: flex;
   flex-direction: column;
-  padding: 14px;
+  padding: 16px 18px;
   border-radius: var(--radius);
   background: var(--bg-hover);
   border: 1.5px solid var(--border);
-  gap: 10px;
+  gap: 14px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   position: relative;
 }
