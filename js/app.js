@@ -7387,11 +7387,17 @@
     showScreen('home');
   }
 
-  // 🌟 방 코드 복사 (아이콘 시각 피드백 연동)
+  // 🌟 방 코드 복사 (아이콘 시각 피드백 연동 및 룸 코드 클릭 복사)
   const btnCopyRoom = $('btn-copy-room-code');
   if (btnCopyRoom) {
     btnCopyRoom.addEventListener('click', () => {
       _copyToClipboard(currentRoomCode, btnCopyRoom);
+    });
+  }
+  const roomCodeDisplay = $('room-code-display');
+  if (roomCodeDisplay) {
+    roomCodeDisplay.addEventListener('click', () => {
+      _copyToClipboard(currentRoomCode, roomCodeDisplay);
     });
   }
   const btnCopyCode2 = $('btn-copy-code');

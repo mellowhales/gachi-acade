@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.1.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.1.4-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -84,6 +84,9 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.1.4 (2026-09)
+  - 모바일 방 목록·방 만들기 카드 일체형 배치 및 접속 중인 플레이어 최하단 이동
+  - 모바일 방 화면 상단바 룸 코드 클릭 자동 복사 및 복사 버튼 제거
 - v1.1.3 (2026-09)
   - 모바일 방 화면 이모지 버튼 패널 라운딩 통일
   - 모바일 환경에서 방 화면 하단 팁 바 숨김 처리

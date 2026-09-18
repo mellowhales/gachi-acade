@@ -1282,19 +1282,24 @@ body {
     max-height: 100% !important;
     min-height: 0 !important;
     margin: 0 !important;
-    overflow: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     justify-content: flex-start !important;
+    padding-bottom: 8px !important;
   }
 
-  /* 🌟 방 목록/상점 카드 (세로 크기 최적화) 🌟 */
+  /* 🌟 방 목록/상점 카드 (세로 크기 최적화 및 일체형 상단 배치) 🌟 */
   .lobby-card {
+    order: 1 !important;
     flex: 0 0 auto !important;
     width: 100% !important;
     height: clamp(170px, 30vh, 225px) !important;
     max-height: clamp(170px, 30vh, 225px) !important;
     min-height: 155px !important;
     padding: 8px 12px !important;
-    border-radius: var(--radius) !important;
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    border-bottom: 1px solid var(--border-sub) !important;
+    box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 6px !important;
@@ -1457,14 +1462,10 @@ body {
   }
 
   .lobby-right-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    width: 100% !important;
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
+    display: contents !important;
   }
   .online-users-card {
+    order: 3 !important;
     flex: 0 0 auto !important;
     padding: 6px 10px !important;
     border-radius: var(--radius) !important;
@@ -1472,6 +1473,7 @@ body {
     height: clamp(95px, 15vh, 120px) !important;
     max-height: 125px !important;
     min-height: 90px !important;
+    margin-top: 4px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
@@ -1569,13 +1571,16 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 / 참가 카드 (콤팩트 축소 + 큼직한 버튼/글씨) 🌟 */
+  /* 🌟 방 만들기 / 참가 카드 (방 목록과 일체형 결합 - order 2, gap 상쇄) 🌟 */
   .connect-card {
+    order: 2 !important;
     flex: 0 0 auto !important;
     height: auto !important;
     max-height: 235px !important;
     padding: 10px 12px !important;
-    border-radius: var(--radius) !important;
+    border-radius: 0 0 var(--radius) var(--radius) !important;
+    border-top: none !important;
+    margin-top: -8px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
@@ -2302,6 +2307,21 @@ body {
   color: var(--green-deep);
   letter-spacing: 5px;
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+}
+.room-code-badge:hover {
+  background: var(--green-tint-hi, rgba(16, 185, 129, 0.25));
+  border-color: var(--green);
+  transform: translateY(-1px);
+}
+.room-code-badge:active {
+  transform: scale(0.96);
 }
 
 .room-capacity {
@@ -4696,18 +4716,7 @@ html, body {
     border-radius: var(--radius-xs) !important;
   }
   #btn-copy-room-code {
-    width: 28px !important;
-    height: 28px !important;
-    flex-shrink: 0 !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius-xs) !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: var(--t2) !important;
-    font-size: 0.85rem !important;
+    display: none !important; /* 모바일에서 복사 버튼 숨김 - 룸 코드 뱃지 클릭으로 복사 가능 */
   }
 
   /* 우측 상단바 액션 버튼 (친구 초대 & 환경설정 버튼 통일: 테두리 있고 배경색 없음) */
