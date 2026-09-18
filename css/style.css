@@ -4861,10 +4861,10 @@ html, body {
     border: 1px solid #f6e05e !important;
   }
 
-  /* 🌟 방 화면 이모지 패널 🌟 */
+  /* 🌟 방 화면 이모지 패널 (다른 패널들과 라운딩 통일) 🌟 */
   .room-emoji-panel {
     padding: 4px 12px !important;
-    border-radius: 20px !important;
+    border-radius: var(--radius-sm) !important;
     gap: 8px !important;
     width: auto !important;
     align-self: center !important;
@@ -4885,6 +4885,12 @@ html, body {
   .room-emoji-panel .emoji-img {
     width: 20px !important;
     height: 20px !important;
+  }
+
+  /* 🌟 모바일 방 화면 하단 팁 바 숨김 🌟 */
+  .room-tip-bar,
+  #room-tip-bar {
+    display: none !important;
   }
 
   /* 🌟 방 화면 중앙 게임 선택 카드 (카드는 고정, 내부 게임들은 2열 스크롤) 🌟 */
