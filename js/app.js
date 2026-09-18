@@ -538,9 +538,16 @@
     }
   }
 
-  /* ── 사운드 & 환경 설정 모달 시스템 ── */
-  function _openSettingsModal() {
-    _pushHistory({ modal: 'settings' }, '#settings');
+  /* ── ⚙️ 환경 설정 대개편 시스템 (v1.0.0 — 5개 탭 & 버그 제보 DB) ── */
+  function _applyGlobalSettings() {
+    const fontScale = localStorage.getItem('arcade_font_scale') || 'normal';
+    document.documentElement.classList.toggle('large-text-scale', fontScale === 'large');
+
+    const animEnabled = localStorage.getItem('arcade_anim_enabled') !== 'false';
+    document.documentElement.classList.toggle('reduce-motion', !animEnabled);
+  }
+
+  function _syncSettingsUI() {
     const isBgmMuted = Sound.isBgmMuted();
     const isSfxMuted = Sound.isSfxMuted();
     const bgmVol = Math.round(Sound.getBgmVolume() * 100);
@@ -553,24 +560,68 @@
     if ($('text-bgm-vol')) $('text-bgm-vol').textContent = `${bgmVol}%`;
     if ($('text-sfx-vol')) $('text-sfx-vol').textContent = `${sfxVol}%`;
 
-    // 자동 준비 체크박스 상태 복원
-    const chkAutoReady = $('chk-auto-ready');
-    if (chkAutoReady) {
-      chkAutoReady.checked = (localStorage.getItem('arcade_auto_ready') === 'true');
+    // [화면 탭] 옵션 복원
+    if ($('chk-anim-enabled')) {
+      $('chk-anim-enabled').checked = (localStorage.getItem('arcade_anim_enabled') !== 'false');
+    }
+    if ($('chk-shake-enabled')) {
+      $('chk-shake-enabled').checked = (localStorage.getItem('arcade_shake_enabled') !== 'false');
+    }
+    if ($('select-font-scale')) {
+      $('select-font-scale').value = localStorage.getItem('arcade_font_scale') || 'normal';
+    }
+
+    // [게임 편의 탭] 옵션 복원
+    if ($('chk-auto-ready')) {
+      $('chk-auto-ready').checked = (localStorage.getItem('arcade_auto_ready') === 'true');
+    }
+    if ($('chk-dnd-mode')) {
+      $('chk-dnd-mode').checked = (localStorage.getItem('arcade_dnd_mode') === 'true');
+    }
+    if ($('chk-show-emojis')) {
+      $('chk-show-emojis').checked = (localStorage.getItem('arcade_show_emojis') !== 'false');
+    }
+    if ($('chk-chat-notify')) {
+      $('chk-chat-notify').checked = (localStorage.getItem('arcade_chat_notify') !== 'false');
     }
 
     _updateSettingsMuteButtons(isBgmMuted, isSfxMuted);
+  }
+
+  function _openSettingsModal() {
+    _pushHistory({ modal: 'settings' }, '#settings');
+    _syncSettingsUI();
 
     if ($('overlay-settings')) $('overlay-settings').classList.remove('hidden');
   }
 
   function _closeSettingsModal() {
-    // 자동 준비 설정 저장
-    const chkAutoReady = $('chk-auto-ready');
-    if (chkAutoReady) {
-      localStorage.setItem('arcade_auto_ready', chkAutoReady.checked ? 'true' : 'false');
+    // 설정값 로컬 저장
+    if ($('chk-auto-ready')) {
+      localStorage.setItem('arcade_auto_ready', $('chk-auto-ready').checked ? 'true' : 'false');
     }
-    // 🌟 모달 즉시 닫기 (두 번 눌러야 닫히는 버그 완전 해결)
+    if ($('chk-anim-enabled')) {
+      localStorage.setItem('arcade_anim_enabled', $('chk-anim-enabled').checked ? 'true' : 'false');
+    }
+    if ($('chk-shake-enabled')) {
+      localStorage.setItem('arcade_shake_enabled', $('chk-shake-enabled').checked ? 'true' : 'false');
+    }
+    if ($('select-font-scale')) {
+      localStorage.setItem('arcade_font_scale', $('select-font-scale').value);
+    }
+    if ($('chk-dnd-mode')) {
+      localStorage.setItem('arcade_dnd_mode', $('chk-dnd-mode').checked ? 'true' : 'false');
+    }
+    if ($('chk-show-emojis')) {
+      localStorage.setItem('arcade_show_emojis', $('chk-show-emojis').checked ? 'true' : 'false');
+    }
+    if ($('chk-chat-notify')) {
+      localStorage.setItem('arcade_chat_notify', $('chk-chat-notify').checked ? 'true' : 'false');
+    }
+
+    _applyGlobalSettings();
+
+    // 모달 즉시 닫기
     if ($('overlay-settings')) $('overlay-settings').classList.add('hidden');
     _backHistoryIfModal('settings');
   }
@@ -589,15 +640,203 @@
         : '<i class="fa-solid fa-volume-high" style="color:var(--green);"></i>';
     }
 
+    const masterMuteStatus = $('text-master-mute-status');
+    const masterMuteBtn = $('btn-master-mute-toggle');
+    const allMuted = (isBgmMuted && isSfxMuted);
+    if (masterMuteStatus) {
+      masterMuteStatus.textContent = allMuted ? '소리 꺼짐 (음소거)' : '소리 켜짐';
+    }
+    if (masterMuteBtn) {
+      masterMuteBtn.innerHTML = allMuted
+        ? '<i class="fa-solid fa-volume-xmark" style="color:var(--coral); margin-right:4px;"></i> <span>소리 켜기</span>'
+        : '<i class="fa-solid fa-volume-high" style="color:var(--green); margin-right:4px;"></i> <span>전체 끄기</span>';
+    }
+
     const mainSoundIcon = $('sound-icon');
     const soundStatusText = $('sound-status-text');
     if (mainSoundIcon) {
-      mainSoundIcon.className = (isBgmMuted && isSfxMuted)
+      mainSoundIcon.className = allMuted
         ? 'fa-solid fa-volume-xmark'
         : 'fa-solid fa-volume-high';
     }
     if (soundStatusText) {
-      soundStatusText.textContent = (isBgmMuted && isSfxMuted) ? '소리 꺼짐' : '소리 설정';
+      soundStatusText.textContent = allMuted ? '소리 꺼짐' : '소리 설정';
+    }
+  }
+
+  // ── 환경 설정 탭 전환 핸들러 ──
+  function _initSettingsTabs() {
+    const tabBtns = document.querySelectorAll('.settings-tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        if (!targetTab) return;
+
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.settings-tab-pane').forEach(pane => {
+          pane.classList.remove('active');
+        });
+
+        const targetPane = $(`pane-settings-${targetTab}`);
+        if (targetPane) targetPane.classList.add('active');
+
+        if (typeof Sound !== 'undefined' && Sound.playClick) Sound.playClick();
+      });
+    });
+  }
+
+  // ── 버그 문의 폼 실시간 접수 핸들러 ──
+  function _initBugReportForm() {
+    const bugContent = $('bug-content');
+    const charCount = $('bug-char-count');
+    if (bugContent && charCount) {
+      bugContent.addEventListener('input', () => {
+        const len = bugContent.value.length;
+        charCount.textContent = `${len} / 500자`;
+      });
+    }
+
+    const submitBtn = $('btn-submit-bug');
+    const form = $('form-bug-report');
+
+    async function doSubmit() {
+      const titleEl = $('bug-title');
+      const contentEl = $('bug-content');
+      const typeEl = $('bug-type');
+      const gameEl = $('bug-game');
+
+      if (!titleEl || !contentEl) return;
+      const title = titleEl.value.trim();
+      const content = contentEl.value.trim();
+
+      if (title.length < 2) {
+        showToast('문의 제목을 2자 이상 입력해주세요.', 'warn');
+        titleEl.focus();
+        return;
+      }
+      if (content.length < 5) {
+        showToast('상세 내용을 5자 이상 작성해주세요.', 'warn');
+        contentEl.focus();
+        return;
+      }
+
+      if (typeof FirebaseLobby === 'undefined' || !FirebaseLobby.submitBugReport) {
+        showToast('데이터베이스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.', 'warn');
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>접수 중...</span>';
+      }
+
+      const reportData = {
+        userId: myPeerId || '',
+        userNickname: myNickname || '익명',
+        type: typeEl ? typeEl.value : 'bug',
+        game: gameEl ? gameEl.value : 'all',
+        title: title,
+        content: content,
+        deviceInfo: `${navigator.platform || ''} / ${navigator.userAgent || ''} (${window.innerWidth}x${window.innerHeight})`
+      };
+
+      const res = await FirebaseLobby.submitBugReport(reportData);
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>문의 접수하기</span>';
+      }
+
+      if (res && res.success) {
+        showToast('버그 문의가 정상적으로 접수되었습니다. 감사합니다!', 'success');
+        if (typeof Sound !== 'undefined' && Sound.playWordSubmit) Sound.playWordSubmit();
+        titleEl.value = '';
+        contentEl.value = '';
+        if (charCount) charCount.textContent = '0 / 500자';
+      } else {
+        showToast(res?.message || '접수 중 오류가 발생했습니다.', 'warn');
+      }
+    }
+
+    if (submitBtn) submitBtn.addEventListener('click', doSubmit);
+    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); doSubmit(); });
+  }
+
+  // ── 환경 설정 초기화 핸들러 ──
+  function _initSettingsReset() {
+    const resetBtn = $('btn-reset-settings');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        showConfirmModal('환경 설정을 기본값으로 초기화하시겠습니까?', () => {
+          localStorage.removeItem('arcade_auto_ready');
+          localStorage.removeItem('arcade_anim_enabled');
+          localStorage.removeItem('arcade_shake_enabled');
+          localStorage.removeItem('arcade_font_scale');
+          localStorage.removeItem('arcade_dnd_mode');
+          localStorage.removeItem('arcade_show_emojis');
+          localStorage.removeItem('arcade_chat_notify');
+
+          Sound.setBgmVolume(0.35);
+          Sound.setSfxVolume(0.70);
+          if (Sound.isBgmMuted()) Sound.toggleBgmMute();
+          if (Sound.isSfxMuted()) Sound.toggleSfxMute();
+
+          _applyGlobalSettings();
+          _syncSettingsUI();
+          showToast('환경 설정이 기본값으로 초기화되었습니다.', 'success');
+        });
+      });
+    }
+
+    // 마스터 음소거 토글
+    const masterBtn = $('btn-master-mute-toggle');
+    if (masterBtn) {
+      masterBtn.addEventListener('click', () => {
+        const bothMuted = Sound.isBgmMuted() && Sound.isSfxMuted();
+        if (bothMuted) {
+          if (Sound.isBgmMuted()) Sound.toggleBgmMute();
+          if (Sound.isSfxMuted()) Sound.toggleSfxMute();
+          showToast('모든 사운드가 켜졌습니다.', 'info');
+        } else {
+          if (!Sound.isBgmMuted()) Sound.toggleBgmMute();
+          if (!Sound.isSfxMuted()) Sound.toggleSfxMute();
+          showToast('모든 사운드가 음소거되었습니다.', 'info');
+        }
+        _updateSettingsMuteButtons(Sound.isBgmMuted(), Sound.isSfxMuted());
+      });
+    }
+
+    // 사운드 테스트 청취
+    const testSoundBtn = $('btn-test-sound');
+    if (testSoundBtn) {
+      testSoundBtn.addEventListener('click', () => {
+        if (Sound.isSfxMuted()) {
+          showToast('효과음이 음소거되어 있습니다. 음소거를 해제해주세요.', 'warn');
+        } else {
+          Sound.playClick();
+          showToast('효과음 테스트 재생 완료', 'info');
+        }
+      });
+    }
+
+    // 폰트 스케일 즉시 반영
+    const fontScaleSelect = $('select-font-scale');
+    if (fontScaleSelect) {
+      fontScaleSelect.addEventListener('change', () => {
+        localStorage.setItem('arcade_font_scale', fontScaleSelect.value);
+        _applyGlobalSettings();
+      });
+    }
+
+    // 애니메이션 토글 즉시 반영
+    const animToggle = $('chk-anim-enabled');
+    if (animToggle) {
+      animToggle.addEventListener('change', () => {
+        localStorage.setItem('arcade_anim_enabled', animToggle.checked ? 'true' : 'false');
+        _applyGlobalSettings();
+      });
     }
   }
 
@@ -668,6 +907,11 @@
       if (!isMuted) Sound.playClick();
     });
   }
+
+  _initSettingsTabs();
+  _initBugReportForm();
+  _initSettingsReset();
+  _applyGlobalSettings();
 
   // 전역 버튼 클릭 효과음 자동 연동
   document.addEventListener('click', (e) => {
@@ -1331,6 +1575,7 @@
           tabs.forEach(t => t.el && t.el.classList.toggle('active', t.type === type));
 
           _renderLobbyRooms(_latestLobbyRoomsData);
+          if (typeof Sound !== 'undefined' && Sound.playClick) Sound.playClick();
         });
       }
     });
@@ -1891,6 +2136,7 @@
     if (paneList) paneList.classList.toggle('active', tabName === 'list');
     if (paneReqs) paneReqs.classList.toggle('active', tabName === 'requests');
     _renderFriendsModalContent();
+    if (typeof Sound !== 'undefined' && Sound.playClick) Sound.playClick();
   }
 
   function _renderFriendsModalContent() {
@@ -2267,6 +2513,7 @@
   }
 
   function _handleReceivedRoomInvite(invite) {
+    if (localStorage.getItem('arcade_dnd_mode') === 'true') return; // 초대 방해금지 모드
     if (!invite || !invite.roomCode) return;
     if (invite.fromName === myNickname) return;
     if (currentRoomCode && currentRoomCode === invite.roomCode) return;
@@ -5411,6 +5658,29 @@
       $('selected-game-name').textContent = selGameObj ? `${selGameObj.title} 선택됨` : '게임을 선택해 주세요';
     }
 
+    // 🌟 현재 선택된 게임 프리뷰 요약 바 갱신
+    const bannerEl = $('room-selected-game-banner');
+    if (bannerEl && selGameObj) {
+      try {
+        const iconEl = $('rsgb-icon');
+        const titleEl = $('rsgb-title');
+        const tagEl = $('rsgb-tag');
+        const descEl = $('rsgb-desc');
+
+        const is2P = (selGameObj.maxPlayers === 2);
+        const tooltipMeta = (typeof GAME_TOOLTIP_DATA !== 'undefined' && GAME_TOOLTIP_DATA[selectedGameKey]) ? GAME_TOOLTIP_DATA[selectedGameKey] : null;
+        if (iconEl) iconEl.className = (tooltipMeta && tooltipMeta.icon) || selGameObj.icon || 'fa-solid fa-gamepad';
+        if (titleEl) titleEl.textContent = selGameObj.title;
+        if (tagEl) {
+          tagEl.textContent = is2P ? '2인 전용' : (selGameObj.maxPlayers ? `2~${selGameObj.maxPlayers}인` : '다인원');
+          tagEl.className = `rsgb-tag ${is2P ? 'tag-2p' : 'tag-multi'}`;
+        }
+        if (descEl) descEl.textContent = (tooltipMeta && tooltipMeta.desc) || selGameObj.desc || '';
+      } catch (e) {
+        console.warn('Banner update error:', e);
+      }
+    }
+
     if ($('game-select-role-hint')) {
       if (playerCount >= 3) {
         $('game-select-role-hint').textContent = amIHost ? '3인 이상은 2~5인 게임만 선택 가능' : '방장만 변경 가능';
@@ -5717,38 +5987,55 @@
     showScreen('home');
   }
 
-  // 방 코드 및 초대 링크 복사
-  $('btn-copy-room-code').addEventListener('click', () => {
-    _copyToClipboard(currentRoomCode);
-  });
-  $('btn-copy-code').addEventListener('click', () => {
-    _copyToClipboard(currentRoomCode);
-  });
-  if ($('btn-copy-room-link')) {
-    $('btn-copy-room-link').addEventListener('click', () => {
-      if (!currentRoomCode || currentRoomCode === '——') return;
-      const url = `${window.location.origin}${window.location.pathname}?room=${currentRoomCode}`;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url)
-          .then(() => showToast('방 초대 링크가 복사되었습니다. 친구에게 공유해보세요!', 'success'))
-          .catch(() => _fallbackCopy(url));
-      } else {
-        _fallbackCopy(url);
-      }
+  // 🌟 방 코드 복사 (아이콘 시각 피드백 연동)
+  const btnCopyRoom = $('btn-copy-room-code');
+  if (btnCopyRoom) {
+    btnCopyRoom.addEventListener('click', () => {
+      _copyToClipboard(currentRoomCode, btnCopyRoom);
+    });
+  }
+  const btnCopyCode2 = $('btn-copy-code');
+  if (btnCopyCode2) {
+    btnCopyCode2.addEventListener('click', () => {
+      _copyToClipboard(currentRoomCode, btnCopyCode2);
     });
   }
 
-  function _copyToClipboard(text) {
+  // 🌟 대기실 친구 초대 버튼 리스너
+  const btnRoomInvite = $('btn-room-invite');
+  if (btnRoomInvite) {
+    btnRoomInvite.addEventListener('click', () => {
+      if (typeof Sound !== 'undefined' && Sound.playClick) Sound.playClick();
+      _openFriendsModal('list');
+    });
+  }
+
+  function _copyToClipboard(text, btnEl) {
     if (!text || text === '——') return;
+    const onSuccess = () => {
+      showToast('방 코드가 복사되었습니다: ' + text, 'success');
+      if (btnEl) {
+        const icon = btnEl.querySelector('i');
+        if (icon) {
+          const origClass = icon.className;
+          icon.className = 'fa-solid fa-check';
+          icon.style.color = 'var(--green)';
+          setTimeout(() => {
+            icon.className = origClass;
+            icon.style.color = '';
+          }, 1500);
+        }
+      }
+    };
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text)
-        .then(() => showToast('방 코드가 복사되었습니다: ' + text, 'success'))
-        .catch(() => _fallbackCopy(text));
+        .then(onSuccess)
+        .catch(() => _fallbackCopy(text, onSuccess));
     } else {
-      _fallbackCopy(text);
+      _fallbackCopy(text, onSuccess);
     }
   }
-  function _fallbackCopy(text) {
+  function _fallbackCopy(text, onSuccess) {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.position = 'fixed';
@@ -5757,7 +6044,8 @@
     ta.select();
     try {
       document.execCommand('copy');
-      showToast('방 코드가 복사되었습니다: ' + text, 'success');
+      if (onSuccess) onSuccess();
+      else showToast('방 코드가 복사되었습니다: ' + text, 'success');
     } catch (_) {
       showToast('복사 실패. 코드를 직접 입력하세요.', 'error');
     }
@@ -6590,6 +6878,7 @@
 
   // 2. DOM 요소에 실제 이모지 버블 생성하는 보조 함수
   function _renderProfileEmojiDOM(playerId, emojiSrc) {
+    if (localStorage.getItem('arcade_show_emojis') === 'false') return;
     const targets = document.querySelectorAll(`[data-player-id="${playerId}"], [data-id="${playerId}"]`);
     
     targets.forEach(playerEl => {

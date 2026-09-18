@@ -4,7 +4,7 @@
  */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getDatabase, ref, set, get, remove, update,
+  getDatabase, ref, set, get, remove, update, push,
   onValue, off, serverTimestamp, onDisconnect as dbOnDisconnect
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
@@ -712,6 +712,38 @@ const FirebaseLobby = {
         await remove(ref(_db, `friend_removals_by_name/${cleanName}/${cleanFromKey}`));
       }
     } catch (_) {}
+  },
+
+  /**
+   * 버그 문의 및 피드백 접수 — Firebase /bug_reports/{id} 에 실시간 저장
+   */
+  async submitBugReport(reportData) {
+    if (!_db) {
+      return { success: false, message: '데이터베이스 연결이 준비되지 않았습니다.' };
+    }
+    try {
+      const reportsRef = ref(_db, 'bug_reports');
+      const newRef = push(reportsRef);
+      const payload = {
+        id: newRef.key,
+        userId: reportData.userId || '',
+        userNickname: reportData.userNickname || '익명',
+        type: reportData.type || 'bug',
+        game: reportData.game || 'all',
+        title: reportData.title || '',
+        content: reportData.content || '',
+        deviceInfo: reportData.deviceInfo || (typeof navigator !== 'undefined' ? navigator.userAgent : ''),
+        createdAt: Date.now(),
+        version: '1.0.0',
+        status: 'open'
+      };
+      await set(newRef, payload);
+      console.log('[Firebase] 버그 문의 등록 완료:', newRef.key);
+      return { success: true, id: newRef.key };
+    } catch (e) {
+      console.error('[Firebase] submitBugReport 에러:', e);
+      return { success: false, message: e.message || '전송 중 오류가 발생했습니다.' };
+    }
   },
 
   isReady() {

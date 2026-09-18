@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=20260918_v6" />
   <link rel="stylesheet" href="css/games.css" />
   <link rel="stylesheet" href="css/chesswarfare.css?v=4.1" />
   <link rel="stylesheet" href="css/roulette.css" />
@@ -494,11 +494,11 @@
       <button class="btn-icon sm" id="btn-copy-room-code" title="방 코드 복사">
         <i class="fa-regular fa-copy"></i>
       </button>
-      <button class="btn-icon sm" id="btn-copy-room-link" title="초대 링크 복사">
-        <i class="fa-solid fa-link"></i>
-      </button>
     </div>
     <div class="room-header-actions" style="display:flex; gap:8px;">
+      <button class="btn-icon" id="btn-room-invite" title="친구 초대하기">
+        <i class="fa-solid fa-user-plus"></i>
+      </button>
       <button class="btn-icon" id="btn-room-settings" title="환경설정">
         <i class="fa-solid fa-gear"></i>
       </button>
@@ -596,6 +596,20 @@
           </div>
 
           <span class="panel-sub" id="game-select-role-hint">방장만 변경 가능</span>
+        </div>
+
+        <!-- 🌟 신규: 현재 선택된 게임 프리뷰 요약 바 🌟 -->
+        <div class="room-selected-game-banner" id="room-selected-game-banner">
+          <div class="rsgb-icon-wrap" id="rsgb-icon-wrap">
+            <i class="fa-solid fa-chess-board" id="rsgb-icon"></i>
+          </div>
+          <div class="rsgb-content">
+            <div class="rsgb-title-row">
+              <strong class="rsgb-title" id="rsgb-title">오목</strong>
+              <span class="rsgb-tag tag-2p" id="rsgb-tag">2인 전용</span>
+            </div>
+            <span class="rsgb-desc" id="rsgb-desc">15×15 정통 바둑판에서 먼저 5목을 완성하면 승리합니다.</span>
+          </div>
         </div>
 
         <div class="room-game-grid" id="room-game-grid">
@@ -751,6 +765,7 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
+
       <div class="chat-messages-wrap" id="room-chat-messages">
         <div class="chat-system-msg">방 채팅에 입장했습니다. 매너 있는 대화를 나눠보세요!</div>
       </div>
@@ -882,88 +897,341 @@
 <!-- ═══════════════════════════════════════════════════════════════
      OVERLAY: 환경 설정 (BGM 및 효과음 볼륨 스와이프 조절)
 ═══════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 환경 설정 (v1.0.0 대개편 — 5개 탭 분리 & 버그 문의 DB)
+═══════════════════════════════════════════════════════════════ -->
 <div id="overlay-settings" class="overlay hidden">
-  <div class="settings-modal card">
+  <div class="settings-modal card" id="settings-modal-card">
+    <!-- 헤더: 제목 + 닫기 버튼 -->
     <div class="settings-header">
       <h3><i class="fa-solid fa-gear"></i> 환경 설정</h3>
       <button type="button" class="btn-close-settings" id="btn-close-settings" title="닫기">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
+
+    <!-- 탭 네비게이션 바 (5개 탭) -->
+    <div class="settings-tab-bar" id="settings-tab-bar">
+      <button type="button" class="settings-tab-btn active" data-tab="env" id="tab-settings-env">
+        <i class="fa-solid fa-display"></i>
+        <span>화면</span>
+      </button>
+      <button type="button" class="settings-tab-btn" data-tab="sound" id="tab-settings-sound">
+        <i class="fa-solid fa-volume-high"></i>
+        <span>음향</span>
+      </button>
+      <button type="button" class="settings-tab-btn" data-tab="game" id="tab-settings-game">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>게임</span>
+      </button>
+      <button type="button" class="settings-tab-btn" data-tab="support" id="tab-settings-support">
+        <i class="fa-solid fa-bug"></i>
+        <span>문의</span>
+      </button>
+      <button type="button" class="settings-tab-btn" data-tab="about" id="tab-settings-about">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>정보</span>
+      </button>
+    </div>
     
-    <div class="settings-body">
-      <!-- 테마 설정 (라이트 모드 / 다크 모드 전환 토글) -->
-      <div class="setting-item">
-        <div class="setting-meta">
-          <div class="setting-title">
-            <i class="fa-solid fa-circle-half-stroke" style="color:var(--yellow);"></i>
-            <span>화면 테마</span>
+    <!-- 탭 컨텐츠 바디 (스크롤 가능) -->
+    <div class="settings-body custom-scroll">
+
+      <!-- [탭 1] 🖥️ 화면 / 환경 설정 패널 -->
+      <div class="settings-tab-pane active" id="pane-settings-env">
+        <!-- 테마 설정 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-circle-half-stroke" style="color:var(--yellow);"></i>
+              <span>화면 테마</span>
+            </div>
+            <div class="theme-toggle-group" id="theme-toggle-group">
+              <button type="button" class="btn-theme-toggle active" id="btn-theme-light" data-theme="light">
+                <i class="fa-solid fa-sun"></i>
+                <span>라이트</span>
+              </button>
+              <button type="button" class="btn-theme-toggle" id="btn-theme-dark" data-theme="dark">
+                <i class="fa-solid fa-moon"></i>
+                <span>다크</span>
+              </button>
+            </div>
           </div>
-          <div class="theme-toggle-group" id="theme-toggle-group">
-            <button type="button" class="btn-theme-toggle active" id="btn-theme-light" data-theme="light">
-              <i class="fa-solid fa-sun"></i>
-              <span>라이트</span>
+        </div>
+
+        <!-- 부드러운 애니메이션 & 파티클 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--purple);"></i>
+              <span>시각 효과 & 애니메이션</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-anim-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 화면 흔들림 효과 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-wave-square" style="color:var(--coral);"></i>
+              <span>화면 흔들림 효과</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-shake-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- UI 텍스트 크기 스케일 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-font" style="color:var(--sky);"></i>
+              <span>글꼴 크기</span>
+            </div>
+            <select class="settings-select" id="select-font-scale">
+              <option value="normal" selected>보통</option>
+              <option value="large">크게</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- [탭 2] 🔊 음향 / 사운드 설정 패널 -->
+      <div class="settings-tab-pane" id="pane-settings-sound">
+        <!-- 전체 사운드 마스터 음소거 스위치 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-volume-xmark" style="color:var(--coral);"></i>
+              <span>전체 사운드</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-master-mute-toggle">
+              <i class="fa-solid fa-volume-high"></i>
+              <span id="text-master-mute-status">소리 켜짐</span>
             </button>
-            <button type="button" class="btn-theme-toggle" id="btn-theme-dark" data-theme="dark">
-              <i class="fa-solid fa-moon"></i>
-              <span>다크</span>
+          </div>
+        </div>
+
+        <!-- 배경음악 (BGM) 설정 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-music" style="color:var(--sky);"></i>
+              <span>배경음악 (BGM)</span>
+            </div>
+            <button type="button" class="btn-sound-toggle" id="btn-toggle-bgm-mute" title="BGM 음소거">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="slider-bgm-vol" min="0" max="100" value="35" class="sound-range-slider" />
+            <span class="vol-text" id="text-bgm-vol">35%</span>
+          </div>
+        </div>
+
+        <!-- 효과음 (SFX) 설정 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-volume-high" style="color:var(--green);"></i>
+              <span>효과음 (SFX)</span>
+            </div>
+            <button type="button" class="btn-sound-toggle" id="btn-toggle-sfx-mute" title="효과음 음소거">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="slider-sfx-vol" min="0" max="100" value="70" class="sound-range-slider" />
+            <span class="vol-text" id="text-sfx-vol">70%</span>
+          </div>
+        </div>
+
+        <!-- 사운드 테스트 청취 버튼 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-headphones" style="color:var(--yellow);"></i>
+              <span>사운드 테스트</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-test-sound">
+              <i class="fa-solid fa-play"></i>
+              <span>재생</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- 배경음악 (BGM) 설정 -->
-      <div class="setting-item">
-        <div class="setting-meta">
-          <div class="setting-title">
-            <i class="fa-solid fa-music" style="color:var(--sky);"></i>
-            <span>배경음악 (BGM)</span>
+      <!-- [탭 3] 🎮 게임 편의 설정 패널 -->
+      <div class="settings-tab-pane" id="pane-settings-game">
+        <!-- 자동 준비 설정 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-bolt" style="color:var(--yellow);"></i>
+              <span>대기실 자동 준비</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-auto-ready" />
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          <button type="button" class="btn-sound-toggle" id="btn-toggle-bgm-mute">
-            <i class="fa-solid fa-volume-high"></i>
-          </button>
         </div>
-        <div class="slider-row">
-          <input type="range" id="slider-bgm-vol" min="0" max="100" value="35" class="sound-range-slider" />
-          <span class="vol-text" id="text-bgm-vol">35%</span>
+
+        <!-- 초대 방해금지 (DND) 모드 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-bell-slash" style="color:var(--coral);"></i>
+              <span>초대 방해금지</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-dnd-mode" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 인게임 감정표현(이모지) 표시 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-regular fa-face-smile" style="color:var(--sky);"></i>
+              <span>인게임 감정표현</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-show-emojis" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 채팅 알림 배지 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-regular fa-comments" style="color:var(--green);"></i>
+              <span>채팅 알림 뱃지</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="chk-chat-notify" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- 효과음 (SFX) 설정 -->
-      <div class="setting-item">
-        <div class="setting-meta">
-          <div class="setting-title">
-            <i class="fa-solid fa-volume-high" style="color:var(--green);"></i>
-            <span>효과음 (SFX)</span>
-          </div>
-          <button type="button" class="btn-sound-toggle" id="btn-toggle-sfx-mute">
-            <i class="fa-solid fa-volume-high"></i>
-          </button>
-        </div>
-        <div class="slider-row">
-          <input type="range" id="slider-sfx-vol" min="0" max="100" value="70" class="sound-range-slider" />
-          <span class="vol-text" id="text-sfx-vol">70%</span>
+      <!-- [탭 4] 🐛 고객지원 / 버그 문의 패널 (DB 연동) -->
+      <div class="settings-tab-pane" id="pane-settings-support">
+        <div class="bug-report-card">
+          <form class="bug-report-form" id="form-bug-report" onsubmit="return false;">
+            <div class="bug-form-row">
+              <div class="bug-form-field">
+                <label for="bug-type"><i class="fa-solid fa-tag"></i> 유형</label>
+                <select class="settings-select" id="bug-type" required>
+                  <option value="bug">버그 / 기능 오류</option>
+                  <option value="rule">게임 룰 / 판정 오류</option>
+                  <option value="suggestion">개선 및 기능 제안</option>
+                  <option value="etc">기타 문의</option>
+                </select>
+              </div>
+              <div class="bug-form-field">
+                <label for="bug-game"><i class="fa-solid fa-gamepad"></i> 대상 게임</label>
+                <select class="settings-select" id="bug-game">
+                  <option value="all">전체 / 공통</option>
+                  <option value="chesswarfare">쓰레기 체스</option>
+                  <option value="janggi">장기</option>
+                  <option value="alkkagi">알까기</option>
+                  <option value="quoridor">쿼리도</option>
+                  <option value="baskin">베스킨라빈스 31</option>
+                  <option value="roulette">러시안 룰렛</option>
+                  <option value="wordchain">끝말잇기</option>
+                  <option value="apple">사과게임</option>
+                  <option value="typing">타자연습 대결</option>
+                  <option value="catchmind">캐치마인드</option>
+                  <option value="yutnori">윷놀이</option>
+                  <option value="yacht">야추 다이스</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="bug-form-field">
+              <label for="bug-title"><i class="fa-solid fa-pen"></i> 제목</label>
+              <input type="text" id="bug-title" class="bug-input" placeholder="문의 제목을 입력하세요..." maxlength="50" required />
+            </div>
+
+            <div class="bug-form-field">
+              <label for="bug-content"><i class="fa-solid fa-align-left"></i> 내용</label>
+              <textarea id="bug-content" class="bug-textarea" rows="4" placeholder="발생한 상황 또는 건의 내용을 적어주세요 (최대 500자)..." maxlength="500" required></textarea>
+              <span class="bug-char-count" id="bug-char-count">0 / 500자</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-bug" style="width:100%; height:38px;">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>문의 접수</span>
+            </button>
+          </form>
         </div>
       </div>
 
-      <!-- 자동 준비 설정 -->
-      <div class="setting-item">
-        <div class="setting-meta">
-          <div class="setting-title">
-            <i class="fa-solid fa-bolt" style="color:var(--yellow);"></i>
-            <span>자동 준비</span>
+      <!-- [탭 5] ℹ️ 정보 & 버전 패널 (v1.0.0) -->
+      <div class="settings-tab-pane" id="pane-settings-about">
+        <!-- 브랜드 & 버전 카드 -->
+        <div class="about-brand-card">
+          <div class="about-logo-badge">
+            <i class="fa-solid fa-gamepad"></i>
           </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="chk-auto-ready">
-            <span class="toggle-slider"></span>
-          </label>
+          <div class="about-brand-info">
+            <div class="about-title-row">
+              <h4 class="about-app-name">GachiArcade</h4>
+              <span class="about-version-tag">v1.0.0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 기능 요약 -->
+        <div class="setting-item">
+          <ul class="about-release-list">
+            <li><strong>12종 게임</strong>: 체스, 장기, 알까기, 쿼리도, 베스킨, 룰렛, 끝말잇기, 사과, 타자, 캐치마인드, 윷놀이, 야추</li>
+            <li><strong>실시간 P2P</strong>: WebRTC 기반 직접 통신망</li>
+            <li><strong>친구 시스템</strong>: 실시간 접속 확인 및 대전 초대</li>
+            <li><strong>테마 지원</strong>: 라이트 / 다크 모드</li>
+          </ul>
+        </div>
+
+        <!-- 설정 초기화 -->
+        <div class="setting-item">
+          <div class="setting-meta">
+            <div class="setting-title">
+              <i class="fa-solid fa-rotate-left" style="color:var(--coral);"></i>
+              <span>환경 설정 초기화</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-reset-settings">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>초기화</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="about-copyright">
+          <span>© 2026 GachiArcade. All rights reserved.</span>
         </div>
       </div>
+
     </div>
 
+    <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
-      <button type="button" class="btn btn-primary" id="btn-confirm-settings" style="width:100%;">
-        <span>확인</span>
+      <div class="settings-footer-info">
+        <span class="settings-version-badge">v1.0.0</span>
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
+        <span>닫기</span>
       </button>
     </div>
   </div>
