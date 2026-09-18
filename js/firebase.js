@@ -37,7 +37,7 @@ const FirebaseLobby = {
   /**
    * 방 생성 — Firebase /rooms/{code} 에 방 정보 등록 + onDisconnect 자동 삭제 훅
    */
-  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword, hostNameColor, hostLevel, hostProfileCard) {
+  async registerRoom(roomCode, hostName, peerId, maxPlayers, hostAvatarIcon, hostAvatarColor, isPrivate, hasPassword, hostNameColor, hostLevel, hostProfileCard, game) {
     if (!_db) return;
     _myRoomCode = roomCode;
     _myRoomRef  = ref(_db, `rooms/${roomCode}`);
@@ -50,6 +50,7 @@ const FirebaseLobby = {
       hostAvatarColor: hostAvatarColor || '#38a169',
       hostLevel:       typeof hostLevel === 'number' ? hostLevel : 1,
       hostProfileCard: hostProfileCard || 'default',
+      game:            game || 'gomoku',
       playerCount:     1,
       maxPlayers:      maxPlayers || 5,
       isPrivate:       !!isPrivate,
@@ -75,6 +76,22 @@ const FirebaseLobby = {
       console.log('[Firebase] 방 등록 완료:', roomCode);
     } catch (err) {
       console.error('[Firebase] 방 등록 실패:', err);
+    }
+  },
+
+  /**
+   * 게임 종류 업데이트 (방장이 게임 변경 시)
+   */
+  async updateRoomGame(roomCode, game) {
+    if (!_db) return;
+    const code = roomCode || _myRoomCode;
+    if (!code || !game) return;
+    try {
+      const roomSnap = await get(ref(_db, `rooms/${code}`));
+      if (!roomSnap.exists()) return;
+      await update(ref(_db, `rooms/${code}`), { game: game, lastSeen: Date.now() });
+    } catch (err) {
+      console.error('[Firebase] 게임 종류 업데이트 실패:', err);
     }
   },
 
@@ -614,6 +631,85 @@ const FirebaseLobby = {
       if (myNickname) {
         const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
         await remove(ref(_db, `friend_accepts_by_name/${cleanName}/${cleanFromKey}`));
+      }
+    } catch (_) {}
+  },
+
+  async cancelFriendRequest(targetKey, targetName, myKey) {
+    if (!_db || !myKey) return;
+    try {
+      const cleanMyKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+      if (targetKey) {
+        const cleanTargetKey = encodeURIComponent(String(targetKey).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_requests/${cleanTargetKey}/${cleanMyKey}`));
+      }
+      if (targetName) {
+        const cleanName = encodeURIComponent(String(targetName).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_requests_by_name/${cleanName}/${cleanMyKey}`));
+      }
+    } catch (_) {}
+  },
+
+  async sendFriendRemoval(targetKey, targetName, removalData) {
+    if (!_db || (!targetKey && !targetName) || !removalData) return false;
+    try {
+      const cleanFromKey = encodeURIComponent(String(removalData.fromKey).trim()).replace(/\./g, '%2E');
+      if (targetKey) {
+        const cleanTargetKey = encodeURIComponent(String(targetKey).trim()).replace(/\./g, '%2E');
+        await set(ref(_db, `friend_removals/${cleanTargetKey}/${cleanFromKey}`), removalData);
+      }
+      if (targetName) {
+        const cleanName = encodeURIComponent(String(targetName).trim()).replace(/\./g, '%2E');
+        await set(ref(_db, `friend_removals_by_name/${cleanName}/${cleanFromKey}`), removalData);
+      }
+      return true;
+    } catch (err) {
+      console.warn('[Firebase] 친구 삭제 알림 전송 실패:', err);
+      return false;
+    }
+  },
+
+  onFriendRemovals(myKey, myNickname, callback) {
+    if (!_db || (!myKey && !myNickname)) return null;
+    try {
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_removals/${cleanKey}`), (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            Object.values(val).forEach(rem => {
+              if (rem && rem.fromKey) callback(rem);
+            });
+          }
+        });
+      }
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        onValue(ref(_db, `friend_removals_by_name/${cleanName}`), (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            Object.values(val).forEach(rem => {
+              if (rem && rem.fromKey) callback(rem);
+            });
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('[Firebase] 친구 삭제 리스너 등록 실패:', err);
+    }
+  },
+
+  async removeFriendRemoval(myKey, myNickname, fromKey) {
+    if (!_db || !fromKey) return;
+    try {
+      const cleanFromKey = encodeURIComponent(String(fromKey).trim()).replace(/\./g, '%2E');
+      if (myKey) {
+        const cleanKey = encodeURIComponent(String(myKey).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_removals/${cleanKey}/${cleanFromKey}`));
+      }
+      if (myNickname) {
+        const cleanName = encodeURIComponent(String(myNickname).trim()).replace(/\./g, '%2E');
+        await remove(ref(_db, `friend_removals_by_name/${cleanName}/${cleanFromKey}`));
       }
     } catch (_) {}
   },

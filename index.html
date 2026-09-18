@@ -258,9 +258,14 @@
               </button>
             </div>
           </div>
-          <button type="button" class="btn-icon sm" id="btn-refresh-lobby" title="목록 새로고침">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
+          <div class="lobby-header-actions">
+            <select id="lobby-game-filter" class="lobby-game-select" title="게임별 방 필터">
+              <option value="all">모든 게임</option>
+            </select>
+            <button type="button" class="btn-icon sm" id="btn-refresh-lobby" title="목록 새로고침">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
         </div>
         <div class="lobby-list is-empty" id="lobby-room-list">
           <div class="lobby-empty">
@@ -486,8 +491,11 @@
     <div class="room-title">
       <span class="room-name-label">ROOM CODE</span>
       <span class="room-code-badge" id="room-code-display">——</span>
-      <button class="btn-icon sm" id="btn-copy-room-code" title="코드 복사">
+      <button class="btn-icon sm" id="btn-copy-room-code" title="방 코드 복사">
         <i class="fa-regular fa-copy"></i>
+      </button>
+      <button class="btn-icon sm" id="btn-copy-room-link" title="초대 링크 복사">
+        <i class="fa-solid fa-link"></i>
       </button>
     </div>
     <div class="room-header-actions" style="display:flex; gap:8px;">
@@ -1328,6 +1336,13 @@
 
     <!-- 탭 1: 내 친구 목록 -->
     <div class="friends-tab-pane active" id="pane-friends-list">
+      <div class="friends-search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="input-search-friends" placeholder="친구 닉네임 검색..." maxlength="20" autocomplete="off" />
+        <button type="button" class="btn-clear-search hidden" id="btn-clear-friend-search" title="검색어 지우기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
       <div class="friends-list custom-scroll" id="friends-items-list">
         <!-- JS 동적 렌더링 -->
       </div>
