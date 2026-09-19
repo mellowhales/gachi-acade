@@ -185,6 +185,13 @@ body {
 .topbar-logo:active .logo-icon-wrap {
   transform: none !important;
 }
+.topbar-logo-svg,
+.about-logo-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+}
 .topbar-logo .logo-title {
   font-size: 1.52rem;
   font-weight: 900;
@@ -261,26 +268,33 @@ body {
 /* ── 사이드바 상단 프로필 카드 바 (원래 로고 자리) ── */
 .sidebar-header,
 .sidebar-profile-header {
-  padding: 12px 14px;
+  height: 68px !important;
+  min-height: 68px !important;
+  max-height: 68px !important;
+  padding: 10px 14px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-sub);
   display: flex;
   align-items: center;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .home-user-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 0 12px;
   margin: 0;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
   background: var(--bg-subtle);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   width: 100%;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   box-shadow: var(--shadow-sm);
 }
 
@@ -657,8 +671,8 @@ body {
 
 /* ── 🌟 현재 사이트 접속자 카드 ── */
 .online-users-card {
-  flex: 1;
-  min-height: 160px;
+  flex: 1 1 185px;
+  min-height: 185px;
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -718,23 +732,36 @@ body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scroll-padding: 2px 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding-right: 2px;
+  gap: 6px;
+  padding: 2px 4px 4px 2px;
+  box-sizing: border-box;
 }
 
 .online-user-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 10px;
+  padding: 0 10px;
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
   border-radius: 10px;
   background: var(--bg-subtle);
   border: 1px solid var(--border-sub);
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
 }
 
 .online-user-item:hover {
@@ -746,6 +773,8 @@ body {
 .online-user-item.is-me {
   position: relative;
   overflow: hidden;
+  background: var(--green-tint) !important;
+  border-color: var(--green-border) !important;
 }
 .online-user-item.is-me::before {
   content: '';
@@ -883,9 +912,9 @@ body {
 
 /* ── 💬 로비 전체 실시간 채팅 카드 ── */
 .lobby-chat-card {
-  flex: 0 0 190px;
-  height: 190px;
-  max-height: 200px;
+  flex: 0 0 160px;
+  height: 160px;
+  max-height: 180px;
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1109,11 +1138,15 @@ body {
   .sidebar-header,
   .sidebar-profile-header {
     display: flex !important;
-    padding: 8px 12px 4px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    padding: 6px 12px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     width: 100% !important;
+    flex-shrink: 0 !important;
     box-sizing: border-box !important;
   }
 
@@ -1129,12 +1162,16 @@ body {
   .home-user-bar {
     width: 100% !important;
     margin: 0 !important;
-    padding: 8px 12px !important;
+    padding: 0 12px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
     border-radius: var(--radius) !important;
     box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
+    flex-shrink: 0 !important;
     box-sizing: border-box !important;
   }
 
@@ -1260,10 +1297,10 @@ body {
 
   /* 🌟 메인 컨테이너 (상단바와 동일하게 좌우 여백 12px로 꽉 찬 너비) 🌟 */
   .home-main {
-    flex: 1 !important;
-    height: calc(100vh - 98px) !important;
-    max-height: calc(100vh - 98px) !important;
+    flex: 1 1 auto !important;
+    height: auto !important;
     min-height: 0 !important;
+    max-height: none !important;
     overflow: hidden !important;
     padding: 2px 12px 12px 12px !important;
     display: flex !important;
@@ -1467,43 +1504,56 @@ body {
   .online-users-card {
     order: 3 !important;
     flex: 0 0 auto !important;
-    padding: 6px 10px !important;
+    padding: 8px 10px !important;
     border-radius: var(--radius) !important;
-    gap: 4px !important;
-    height: clamp(95px, 15vh, 120px) !important;
-    max-height: 125px !important;
-    min-height: 90px !important;
+    gap: 6px !important;
+    height: auto !important;
+    min-height: 110px !important;
+    max-height: clamp(140px, 24vh, 220px) !important;
     margin-top: 4px !important;
-    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    box-sizing: border-box !important;
   }
   .online-users-list {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    gap: 5px !important;
-    padding: 2px !important;
-    flex: 1 !important;
-    height: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: contain !important;
+    scrollbar-width: thin !important;
+    gap: 6px !important;
+    padding: 2px 2px 4px 2px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     align-content: start !important;
+    box-sizing: border-box !important;
   }
   .online-user-item {
     flex-shrink: 0 !important;
-    padding: 4px 6px !important;
+    padding: 5px 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
     min-width: 0 !important;
     gap: 6px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+  .online-user-item.is-me {
+    background: var(--green-tint, rgba(16,185,129,0.08)) !important;
+    border-color: var(--green-border, rgba(16,185,129,0.3)) !important;
+    box-shadow: 0 0 0 1px var(--green-border, rgba(16,185,129,0.3)) !important;
   }
   .online-user-item .user-avatar.sm {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 0.75rem !important;
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.8rem !important;
+    flex-shrink: 0 !important;
   }
   .online-user-name {
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
   }
   .online-user-sub {
     display: none !important;
@@ -11439,6 +11489,20 @@ html, body {
     box-sizing: border-box !important;
   }
 
+  /* 🌟 세로 창 축소 시 로비 접속자 카드 찌그러짐 방지 & 프로필 카드 세로 높이 보존 🌟 */
+  .lobby-right-col {
+    gap: 10px !important;
+  }
+  .online-users-card {
+    min-height: 185px !important;
+    flex: 1 1 185px !important;
+  }
+  .lobby-chat-card {
+    flex: 0 0 155px !important;
+    height: 155px !important;
+    max-height: 155px !important;
+  }
+
   .room-center-wrap {
     display: flex !important;
     flex-direction: column !important;
@@ -11580,6 +11644,36 @@ html, body {
     min-height: 46px !important;
     max-height: 46px !important;
     padding: 0 14px !important;
+  }
+
+  /* 로비 우측 컬럼 높이 보존 및 프로필 카드 상하 잘림 원천 차단 */
+  .lobby-right-col {
+    gap: 8px !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+  }
+  .online-users-card {
+    min-height: 180px !important;
+    flex: 1 1 180px !important;
+  }
+  .online-users-list {
+    scroll-snap-type: y mandatory !important;
+    scroll-padding: 2px 0 !important;
+  }
+  .online-user-item {
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+  }
+  .lobby-chat-card {
+    flex: 0 0 130px !important;
+    height: 130px !important;
+    max-height: 130px !important;
+  }
+  .connect-card {
+    padding: 12px 14px !important;
   }
 
   .room-body {

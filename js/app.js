@@ -3162,8 +3162,17 @@
       }
     }
 
-    // 3. 레벨 높은 순(내림차순) 정렬
+    // 3. '내 프로필'을 항상 최상단에 고정하고, 나머지 플레이어는 레벨 내림차순 정렬
     const list = uniqueUsers.sort((a, b) => {
+      const isMeA = (myPresenceKey && a.presenceKey === myPresenceKey) ||
+                    (mySupabaseId && a.supabaseId === mySupabaseId) ||
+                    (a.name === myNickname);
+      const isMeB = (myPresenceKey && b.presenceKey === myPresenceKey) ||
+                    (mySupabaseId && b.supabaseId === mySupabaseId) ||
+                    (b.name === myNickname);
+      if (isMeA && !isMeB) return -1;
+      if (!isMeA && isMeB) return 1;
+
       const lvlA = typeof a.level === 'number' ? a.level : 1;
       const lvlB = typeof b.level === 'number' ? b.level : 1;
       return lvlB - lvlA;
@@ -3174,7 +3183,7 @@
     listEl.innerHTML = list.map((user, idx) => {
       const isMe = (myPresenceKey && user.presenceKey === myPresenceKey) ||
                    (mySupabaseId && user.supabaseId === mySupabaseId) ||
-                   (user.name === myNickname && idx === 0);
+                   (user.name === myNickname);
 
       // 내 자신은 항상 실시간 로컬 최신 프로필로 렌더링 (새로고침 시 과거 잔여 데이터 노출 방지)
       const uname = isMe ? myNickname : (user.name || '플레이어');

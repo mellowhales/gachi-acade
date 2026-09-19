@@ -6,21 +6,21 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>가치아케이드 | 서버 없는 실시간 멀티플레이 웹 게임</title>
+  <title>가치아케이드</title>
   
   <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="alternate icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.svg" />
-  <meta name="theme-color" content="#38a169" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260919_v5" />
+  <link rel="alternate icon" type="image/png" href="favicon.png?v=20260919_v5" />
+  <link rel="apple-touch-icon" href="favicon.svg?v=20260919_v5" />
+  <meta name="theme-color" content="#10b981" />
 
   <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="가치아케이드" />
-  <meta property="og:title" content="가치아케이드 | 서버 없는 실시간 멀티 웹 게임" />
-  <meta property="og:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 친구와 설치 없이 4자리 번호로 1초 만에 바로 즐기세요!" />
-  <meta property="og:image" content="og-image.png" />
-  <meta property="og:image:secure_url" content="og-image.png" />
+  <meta property="og:title" content="가치아케이드" />
+  <meta property="og:description" content="친구와 브라우저에서 바로 즐기는 실시간 멀티플레이 웹 아케이드" />
+  <meta property="og:image" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v5" />
+  <meta property="og:image:secure_url" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v5" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,15 +28,15 @@
 
   <!-- 🐦 트위터 카드 (Twitter Card) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="가치아케이드 | 실시간 멀티플레이 웹 게임" />
-  <meta name="twitter:description" content="오목, 체스, 쿼리도, 끝말잇기, 사과게임, 타자대결, 캐치마인드, 윷놀이를 브라우저에서 바로 즐기세요!" />
-  <meta name="twitter:image" content="og-image.png" />
+  <meta name="twitter:title" content="가치아케이드" />
+  <meta name="twitter:description" content="친구와 브라우저에서 바로 즐기는 실시간 멀티플레이 웹 아케이드" />
+  <meta name="twitter:image" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v5" />
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=20260918_v7" />
+  <link rel="stylesheet" href="css/style.css?v=20260919_v9" />
   <link rel="stylesheet" href="css/games.css" />
   <link rel="stylesheet" href="css/chesswarfare.css?v=4.1" />
   <link rel="stylesheet" href="css/roulette.css" />
@@ -65,7 +65,7 @@
     <div class="room-title">
       <div class="topbar-logo">
         <div class="logo-icon-wrap">
-          <i class="fa-solid fa-shapes"></i>
+          <img src="favicon.svg?v=20260919_v5" alt="가치아케이드 로고" class="topbar-logo-svg" />
         </div>
         <span class="logo-title">가치아케이드</span>
       </div>
@@ -1196,12 +1196,12 @@
         <!-- 브랜드 & 버전 카드 -->
         <div class="about-brand-card">
           <div class="about-logo-badge">
-            <i class="fa-solid fa-gamepad"></i>
+            <img src="favicon.svg?v=20260919_v5" alt="가치아케이드 로고" class="about-logo-svg" />
           </div>
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.1.4</span>
+              <span class="about-version-tag">v1.2.6</span>
             </div>
           </div>
         </div>
@@ -1214,6 +1214,34 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.2.6]</span>
+              <span class="changelog-text">접속자 목록 프로필 카드 높이(52px) 고정 및 스크롤 스냅(Scroll Snap)으로 상하 잘림 원천 차단</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.5]</span>
+              <span class="changelog-text">창 세로 크기 축소 시 로비 내 프로필 카드 세로 높이 불변 고정(Fixed Height) 적용</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.4]</span>
+              <span class="changelog-text">접속자 목록 내 프로필 카드 최상단 고정 및 모바일/PC 로비 스크롤 짤림 방지 최적화</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.3]</span>
+              <span class="changelog-text">카톡 오픈그래프 절대 URL 캐시 우회(og-image-v2), 서브텍스트 제거 및 둥글고 두꺼운 타이틀 폰트 적용</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.2]</span>
+              <span class="changelog-text">세모·동그라미·네모 심볼 크기 140px로 확대 및 20px 간격 밀집 배치 리파인</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.1]</span>
+              <span class="changelog-text">고유 컬러 플랫 단색(#10b981) 적용 및 세모·동그라미·네모 완벽 균등 비율 리파인</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.2.0]</span>
+              <span class="changelog-text">사이트 타이틀 간소화(가치아케이드), 세모·동그라미·네모 고유 브랜드 SVG(파비콘 및 카카오톡 공유 이미지) 전면 리디자인</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.1.4]</span>
               <span class="changelog-text">모바일 방 목록·방 만들기 일체형 배치 및 접속자 하단 이동, 룸 코드 클릭 자동 복사 및 중앙 정렬</span>
             </div>
@@ -1258,7 +1286,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.1.4</span>
+        <span class="settings-version-badge">v1.2.6</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span>닫기</span>
