@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.2.9-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -84,6 +84,8 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.3.0 (2026-09)
+  - 윷놀이 코너 지름길 스킵 오류 수정, 윷/모 잡기 추가 던지기 제거, 참먹이(도착 칸) 착지 룰 구현
 - v1.2.9 (2026-09)
   - 로비 접속자 목록 및 공통 커스텀 슬림 스크롤바(에메랄드 틴트) UI 개선
 - v1.2.8 (2026-09)

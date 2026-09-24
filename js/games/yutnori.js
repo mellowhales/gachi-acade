@@ -195,10 +195,71 @@ const YutnoriGame = (() => {
   /* =====================================================================
      2. 4대 표준 경로 상태 머신 연산 엔진
      ===================================================================== */
+  /**
+   * 단일 보 전진 시 다음 노드 및 경로 상태 계산
+   * @param {number|string} node 현재 노드
+   * @param {string} route 현재 경로 ('OUTER', 'DIAG_5', 'DIAG_10', 'CENTER')
+   * @param {boolean} isFirstStep 이번 이동의 첫 번째 걸음 여부 (모퉁이 꺾임 판정에 사용)
+   * @returns {{ nextNode: number|string, nextRoute: string }}
+   */
+  function _stepForward(node, route, isFirstStep) {
+    if (node === 'FINISH') return { nextNode: 'FINISH', nextRoute: route };
+
+    // 0번(참먹이)에 이미 서 있던 말은 1보만 전진해도 즉시 완주 골인
+    if (node === 0) return { nextNode: 'FINISH', nextRoute: 'OUTER' };
+
+    // 코너 노드(5, 10, 22)에 정확히 서 있던 말이 '첫 걸음'을 뗄 때 지름길로 분기
+    let r = route || 'OUTER';
+    if (isFirstStep) {
+      if (node === 5) r = 'DIAG_5';
+      else if (node === 10) r = 'DIAG_10';
+      else if (node === 22) r = 'CENTER';
+    }
+
+    if (r === 'OUTER') {
+      if (node === 19) return { nextNode: 0, nextRoute: 'OUTER' }; // 19 -> 0 (참먹이 착지)
+      return { nextNode: node + 1, nextRoute: 'OUTER' };
+    }
+
+    if (r === 'DIAG_5') {
+      if (node === 5)  return { nextNode: 20, nextRoute: 'DIAG_5' };
+      if (node === 20) return { nextNode: 21, nextRoute: 'DIAG_5' };
+      if (node === 21) return { nextNode: 22, nextRoute: 'DIAG_5' }; // 중앙 방아 도착
+      // 중앙(22)을 멈추지 않고 통과하여 지나갈 때는 23번(15번 모퉁이 방향)으로 직진
+      if (node === 22) return { nextNode: 23, nextRoute: 'DIAG_5' };
+      if (node === 23) return { nextNode: 24, nextRoute: 'DIAG_5' };
+      if (node === 24) return { nextNode: 15, nextRoute: 'OUTER' };  // 15번에서 외곽으로 합류
+      if (node === 15) return { nextNode: 16, nextRoute: 'OUTER' };
+      if (node === 19) return { nextNode: 0, nextRoute: 'OUTER' };   // 0 (참먹이 착지)
+      return { nextNode: node + 1, nextRoute: 'OUTER' };
+    }
+
+    if (r === 'DIAG_10') {
+      if (node === 10) return { nextNode: 25, nextRoute: 'DIAG_10' };
+      if (node === 25) return { nextNode: 26, nextRoute: 'DIAG_10' };
+      if (node === 26) return { nextNode: 22, nextRoute: 'DIAG_10' }; // 중앙 방아 도착
+      // 10번에서 온 대각선은 중앙(22) 통과 시 출구 지름길(27번) 방향으로 직진
+      if (node === 22) return { nextNode: 27, nextRoute: 'CENTER' };
+      if (node === 27) return { nextNode: 28, nextRoute: 'CENTER' };
+      if (node === 28) return { nextNode: 0, nextRoute: 'OUTER' };    // 0 (참먹이 착지)
+      return { nextNode: node + 1, nextRoute: 'OUTER' };
+    }
+
+    if (r === 'CENTER') {
+      if (node === 22) return { nextNode: 27, nextRoute: 'CENTER' };
+      if (node === 27) return { nextNode: 28, nextRoute: 'CENTER' };
+      if (node === 28) return { nextNode: 0, nextRoute: 'OUTER' };    // 0 (참먹이 착지)
+      return { nextNode: node + 1, nextRoute: 'OUTER' };
+    }
+
+    return { nextNode: node + 1, nextRoute: 'OUTER' };
+  }
+
   function _calcDestination(currentNode, steps, currentRoute, hasMoved) {
     if (steps === -1) {
       if (currentNode === null || currentNode === 'FINISH') return 'INVALID';
       if (currentNode === 0 && !hasMoved) return 'INVALID';
+      // 0번(참먹이)에 서 있는 말이 빽도 시 19번으로 후퇴
       if (currentNode === 0) return 19;
 
       const PREV_MAP = {
@@ -222,113 +283,76 @@ const YutnoriGame = (() => {
       return prev !== undefined ? prev : 'INVALID';
     }
 
+    // 대기실 말 출발
     if (currentNode === null) {
       if (steps === 5) return 5;
       return steps;
     }
 
+    // 이미 0번(참먹이)에 서 있던 말은 1보 이상 전진 시 즉시 FINISH
     if (currentNode === 0) {
       return 'FINISH';
     }
 
     let node = currentNode;
-    // 코너(5, 10, 22)에 정확히 착지했을 때만 대각 경로 결정 (이미 지나온 말은 기존 route 유지)
     let route = currentRoute || 'OUTER';
-    if (currentNode === 5 && route === 'OUTER') route = 'DIAG_5';
-    else if (currentNode === 10 && route === 'OUTER') route = 'DIAG_10';
-    else if (currentNode === 22 && (route === 'DIAG_5' || route === 'DIAG_10')) route = 'CENTER';
 
     for (let s = 0; s < steps; s++) {
       if (node === 'FINISH') return 'FINISH';
-
-      if (route === 'OUTER') {
-        if (node === 19) { node = 0; }
-        else if (node === 0) return 'FINISH';
-        else node = node + 1;
-      } else if (route === 'DIAG_5') {
-        if (node === 5) { node = 20; }
-        else if (node === 20) { node = 21; }
-        else if (node === 21) { node = 22; }
-        else if (node === 22) { node = 23; }
-        else if (node === 23) { node = 24; }
-        else if (node === 24) { node = 15; }
-        else if (node === 15) { node = 16; route = 'OUTER'; }
-        else if (node === 19) { node = 0; }
-        else if (node === 0) return 'FINISH';
-        else { node = node + 1; }
-      } else if (route === 'DIAG_10') {
-        if (node === 10) { node = 25; }
-        else if (node === 25) { node = 26; }
-        else if (node === 26) { node = 22; }
-        else if (node === 22) { node = 27; }
-        else if (node === 27) { node = 28; }
-        else if (node === 28) { node = 0; route = 'OUTER'; }
-        else if (node === 0) return 'FINISH';
-        else { node = node + 1; }
-      } else if (route === 'CENTER') {
-        if (node === 22) { node = 27; }
-        else if (node === 27) { node = 28; }
-        else if (node === 28) { node = 0; route = 'OUTER'; }
-        else if (node === 0) return 'FINISH';
-        else { node = node + 1; }
-      }
+      const stepRes = _stepForward(node, route, s === 0);
+      node = stepRes.nextNode;
+      route = stepRes.nextRoute;
     }
 
-    if (node === 0) return 'FINISH';
     return node;
   }
 
   function _calcRouteAfterMove(currentNode, steps, currentRoute) {
-    if (steps === -1) return currentRoute || 'OUTER';
+    if (steps === -1) {
+      if (currentNode === 0) return 'OUTER';
+      if (currentNode === 20) return 'OUTER';
+      if (currentNode === 25) return 'OUTER';
+      return currentRoute || 'OUTER';
+    }
 
     if (currentNode === null) {
-      if (steps === 5) return 'DIAG_5';
+      if (steps === 5) return 'OUTER'; // 5번에 멈춤 (다음 출발 시 DIAG_5로 분기)
       return 'OUTER';
     }
 
-    // 시작 route 결정 (코너 착지 시에만 변경)
-    let r = currentRoute || 'OUTER';
-    if (currentNode === 5 && r === 'OUTER') r = 'DIAG_5';
-    else if (currentNode === 10 && r === 'OUTER') r = 'DIAG_10';
-    else if (currentNode === 22 && (r === 'DIAG_5' || r === 'DIAG_10')) r = 'CENTER';
-
-    // 이동 후 최종 route를 시뮬레이션
-    let node = currentNode;
-    for (let s = 0; s < steps; s++) {
-      if (node === 0 || node === 'FINISH') break;
-
-      if (r === 'OUTER') {
-        if (node === 19) node = 0;
-        else node = node + 1;
-      } else if (r === 'DIAG_5') {
-        if (node === 5) node = 20;
-        else if (node === 20) node = 21;
-        else if (node === 21) node = 22;
-        else if (node === 22) node = 23;
-        else if (node === 23) node = 24;
-        else if (node === 24) node = 15;
-        else if (node === 15) { node = 16; r = 'OUTER'; }
-        else if (node === 19) node = 0;
-        else if (node === 0) break;
-        else node = node + 1;
-      } else if (r === 'DIAG_10') {
-        if (node === 10) node = 25;
-        else if (node === 25) node = 26;
-        else if (node === 26) node = 22;
-        else if (node === 22) node = 27;
-        else if (node === 27) node = 28;
-        else if (node === 28) { node = 0; r = 'OUTER'; }
-        else if (node === 0) break;
-        else node = node + 1;
-      } else if (r === 'CENTER') {
-        if (node === 22) node = 27;
-        else if (node === 27) node = 28;
-        else if (node === 28) { node = 0; r = 'OUTER'; }
-        else if (node === 0) break;
-        else node = node + 1;
-      }
+    if (currentNode === 0) {
+      return 'OUTER';
     }
-    return r;
+
+    let node = currentNode;
+    let route = currentRoute || 'OUTER';
+
+    for (let s = 0; s < steps; s++) {
+      if (node === 'FINISH') break;
+      const stepRes = _stepForward(node, route, s === 0);
+      node = stepRes.nextNode;
+      route = stepRes.nextRoute;
+    }
+
+    // 이동 완료 후 도착한 노드 기준으로 안정적인 경로 결정
+    if (node === 5 || node === 10 || node === 15 || node === 0 || (typeof node === 'number' && node >= 1 && node <= 19)) {
+      return 'OUTER';
+    }
+    if (node === 22) {
+      // 중앙 방구점에 멈춘 말은 다음 턴에 최단 경로(27번 방향)로 진행
+      return 'CENTER';
+    }
+    if (node === 20 || node === 21 || node === 23 || node === 24) {
+      return 'DIAG_5';
+    }
+    if (node === 25 || node === 26) {
+      return 'DIAG_10';
+    }
+    if (node === 27 || node === 28) {
+      return 'CENTER';
+    }
+
+    return route;
   }
 
   /* =====================================================================
@@ -518,13 +542,18 @@ const YutnoriGame = (() => {
             ep.route = 'OUTER';
             ep.hasMoved = false;
           });
-          _hostState.bannerMessage = curPlayer.name + '님이 말을 잡았습니다! (윷 1회 추가)';
         }
       });
 
       if (caughtEnemy) {
-        _hostState.rollCountLeft = 1;
         moveEventType = 'CATCH';
+        // 🌟 윷(yut)이나 모(mo)로 잡았을 때는 추가 던지기 기회 없음 (도/개/걸/빽도로 잡았을 때만 +1 기회 부여)
+        if (yutDef.isBonus) {
+          _hostState.bannerMessage = curPlayer.name + '님이 ' + yutDef.name + '(으)로 말을 잡았습니다!';
+        } else {
+          _hostState.rollCountLeft = 1;
+          _hostState.bannerMessage = curPlayer.name + '님이 말을 잡았습니다! (윷 1회 추가)';
+        }
       }
 
       // 2. 업기 검사
