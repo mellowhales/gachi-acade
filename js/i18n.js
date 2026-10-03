@@ -143,6 +143,47 @@ const I18N = (() => {
     '방 코드로 참가': { en:'Join with Code', es:'Unirse con Código', tr:'Kod ile Katıl', ru:'Войти по Коду', zh:'使用房间号加入', ja:'コードで参加' },
     '방 코드 4자리 입력': { en:'Enter 4-letter code', es:'Ingresa código de 4 letras', tr:'4 haneli kod girin', ru:'Введите 4-значный код', zh:'输入4位房间代码', ja:'4桁のコードを入力' },
 
+
+    // 채팅 & 로비
+    '전체 채팅': { en:'Global Chat', es:'Chat General', tr:'Genel Sohbet', ru:'Общий чат', zh:'全员聊天', ja:'全体チャット' },
+    '로비 전체 채팅방입니다. 자유롭게 대화해보세요!': { en:'This is the lobby chat. Feel free to chat!', es:'Este es el chat del lobby. ¡Siente libre de chatear!', tr:'Bu lobi genel sohbet odasıdır. Özgürce sohbet edin!', ru:'Это общий чат лобби. Общайтесь свободно!', zh:'这是大厅公共聊天室。请自由交流！', ja:'ロビー全体チャットです。ご自由に会話をお楽しみください！' },
+    '메시지 입력 (최대 80자)...': { en:'Enter message (max 80 chars)...', es:'Escribe un mensaje (máx. 80 car.)...', tr:'Mesaj girin (maks 80 karakter)...', ru:'Введите сообщение (макс. 80 симв.)...', zh:'输入消息（最多80字）...', ja:'メッセージを入力（最大80文字）...' },
+    '친구 방에 참가하기': { en:'Join Friend Room', es:'Unirse a Sala de Amigo', tr:'Arkadaş Odasına Katıl', ru:'Войти в комнату друга', zh:'加入好友房间', ja:'フレンドの部屋に参加' },
+    '공유받은 4자리 방 코드를 입력하여 입장하세요.': { en:'Enter the shared 4-digit room code to join.', es:'Ingresa el código de sala de 4 dígitos compartido para entrar.', tr:'Giriş yapmak için paylaşılan 4 haneli oda kodunu girin.', ru:'Введите полученный 4-значный код комнаты для входа.', zh:'请输入分享的4位房间代码以进入。', ja:'共有された4桁のルームコードを入力して入場してください。' },
+    '입장하기': { en:'Enter', es:'Entrar', tr:'Giriş Yap', ru:'Войти', zh:'进入', ja:'入場する' },
+
+    // 친구 관리
+    '내 친구': { en:'My Friends', es:'Mis Amigos', tr:'Arkadaşlarım', ru:'Мои друзья', zh:'我的好友', ja:'フレンド' },
+    '나에게 온 친구 신청': { en:'Incoming Friend Requests', es:'Solicitudes de amistad recibidas', tr:'Gelen Arkadaşlık İstekleri', ru:'Входящие запросы в друзья', zh:'收到感好友申请', ja:'届いたフレンド申請' },
+    '새로운 친구 신청이 없습니다.': { en:'No new friend requests.', es:'No hay nuevas solicitudes de amistad.', tr:'Yeni arkadaşlık isteği yok.', ru:'Нет новых запросов в друзья.', zh:'没有新的好友申请。', ja:'新しいフレンド申請はありません。' },
+    '친구 신청은 대기실이나 로비에서 다른 플레이어의 프로필을 클릭하여 전적창에서 보낼 수 있습니다.': { en:'Friend requests can be sent from the record window by clicking another player profile in the waiting room or lobby.', es:'Las solicitudes de amistad se pueden enviar desde la ventana de récords haciendo clic en el perfil de otro jugador en la sala de espera o lobby.', tr:'Arkadaşlık istekleri, bekleme odasında veya lobide başka bir oyuncunun profiline tıklayarak geçmiş penceresinden gönderilebilir.', ru:'Запросы в друзья можно отправить из окна статистики, нажав на профиль другого игрока в комнате ожидания или лобби.', zh:'可在等候室或大厅点击其他玩家的个人资料，在战绩窗口中发送好友申请。', ja:'フレンド申請は、待機室やロビーで他のプレイヤーのプロフィールをクリックし、戦績画面から送信できます。' },
+
+    // 대기실 & 게임 선택
+    '명': { en:'Players', es:'Jugadores', tr:'Oyuncu', ru:'игроков', zh:'人', ja:'人' },
+    '참가자 대기 중...': { en:'Waiting for players...', es:'Esperando jugadores...', tr:'Oyuncu bekleniyor...', ru:'Ожидание игроков...', zh:'等待玩家加入...', ja:'参加者を待っています...' },
+    '실시간 채팅': { en:'Live Chat', es:'Chat en vivo', tr:'Canlı Sohbet', ru:'Чат в реальном времени', zh:'实时聊天', ja:'リアルタイムチャット' },
+    '방 채팅에 입장했습니다. 매너 있는 대화를 나눠보세요!': { en:'Entered room chat. Please maintain polite conversation!', es:'Has entrado al chat de la sala. ¡Mantén una conversación respetuosa!', tr:'Oda sohbetine girildi. Lütfen kibar bir şekilde sohbet edin!', ru:'Вы вошли в чат комнаты. Соблюдайте вежливость в общении!', zh:'已进入房间聊天。请礼貌交流！', ja:'ルームチャットに入場しました。マナーを守って会話を楽しみましょう！' },
+    '메시지를 입력하세요...': { en:'Enter a message...', es:'Escribe un mensaje...', tr:'Bir mesaj girin...', ru:'Введите сообщение...', zh:'请输入消息...', ja:'メッセージを入力してください...' },
+    '드래그하여 선택한 사과 속 숫자들의 합이 정확히 10이 되면 사과가 제거됩니다. 60초 동안 더 많은 사과를 없애 높은 점수를 기록하세요!': { en:'Drag to select apples so that the sum of their numbers equals exactly 10 to clear them. Clear as many apples as possible in 60 seconds to set a high score!', es:'Arrastra para seleccionar manzanas cuya suma de números sea exactamente 10 para eliminarlas. ¡Elimina tantas manzanas como puedas en 60 segundos para obtener una puntuación alta!', tr:'Sürükleyerek seçtiğiniz elmalardaki sayıların toplamı tam 10 olduğunda elmalar temizlenir. 60 saniye içinde daha fazla elma temizleyerek yüksek skor yapın!', ru:'Перетащите, чтобы выбрать яблоки, сумма чисел на которых равна ровно 10, чтобы удалить их. Удалите как можно больше яблок за 60 секунд, чтобы набрать рекордные очки!', zh:'拖动选择苹果，使其中数字之和正好为10即可消除苹果。在60秒内消除更多苹果,刷新最高分吧！', ja:'ドラッグして選択したリンゴの中の数字の合計がちょうど10になるとリンゴが消えます。60秒間により多くのリンゴを消して高得点を狙いましょう！' },
+    '실시간 물리 알까기 배틀': { en:'Real-time physics Alkkagi battle', es:'Batalla de Alkkagi con física en tiempo real', tr:'Gerçek zamanlı fiziksel Alkkagi savaşı', ru:'Битва Альккаги с реальной физикой', zh:'实时物理弹珠对战', ja:'リアルタイム物理アルカギバトル' },
+    '9×9 미로 벽 세우기': { en:'9x9 Maze Wall Building', es:'Construcción de muros en laberinto 9x9', tr:'9x9 Duvar Örme Labirenti', ru:'Строительство стен в лабиринте 9x9', zh:'9x9迷宫建墙', ja:'9×9迷路の壁立て' },
+    '15초 한국어 어휘력': { en:'15-second Korean Vocabulary', es:'Vocabulario coreano en 15 segundos', tr:'15 Saniyelik Korece Kelime Bilgisi', ru:'Корейский словарный запас за 15 секунд', zh:'15秒韩语词汇测试', ja:'15秒韓国語語彙力' },
+    '합 10 숫자 퍼즐': { en:'Sum of 10 Number Puzzle', es:'Rompecabezas de suma 10', tr:'Toplamı 10 Sayı Bulmacası', ru:'Головоломка "Сумма 10"', zh:'和为10数字拼图', ja:'合計10数字パズル' },
+    '실시간 문장 속타전': { en:'Real-time Speed Typing Battle', es:'Batalla de mecanografía rápida en tiempo real', tr:'Gerçek zamanlı hızlı yazma savaşı', ru:'Скоростная печать предложений в реальном времени', zh:'实时句子打字速速战', ja:'リアルタイム文章タイピング対戦' },
+    '게임 시작': { en:'Start Game', es:'Iniciar Juego', tr:'Oyunu Başlat', ru:'Начать Игру', zh:'开始游戏', ja:'ゲーム開始' },
+    '개발자 모드: 1인 테스트 시작 가능': { en:'Developer Mode: Single-player testing available', es:'Modo desarrollador: Prueba individual disponible', tr:'Geliştirici Modu: Tek kişilik test başlatılabilir', ru:'Режим разработчика: Доступно одиночное тестирование', zh:'开发者模式：可开启单人测试', ja:'開発者モード：1人テスト開始可能' },
+    'Tip - 상점에서 프로필 카드와 닉네임 염색약을 구매해 나만의 개성을 뽐내보세요!': { en:'Tip - Purchase profile cards and nickname dyes in the shop to show off your style!', es:'Consejo: ¡Compra tarjetas de perfil y tintes de apodo en la tienda para presumir tu estilo!', tr:'İpucu - Mağazadan profil kartı ve takma ad boyası satın alarak tarzınızı sergileyin!', ru:'Совет — покупайте карточки профиля и красители для никнейма в магазине, чтобы проявить свою индивидуальность!', zh:'Tip - 在商店购买个人资料卡和昵称染色剂，展示你的专属个性吧！', ja:'Tip - ショップでプロフィールカードやニックネームの染色薬を購入して、自分だけの個性をアピールしましょう！' },
+
+    // 인게임
+    '참가자': { en:'Participants', es:'Participantes', tr:'Katılımcılar', ru:'Участники', zh:'参赛者', ja:'参加者' },
+    '상대방 차례 (흑)': { en:'Opponent Turn (Black)', es:'Turno del oponente (Negro)', tr:'Rakibin Sırası (Siyah)', ru:'Ход соперника (Черные)', zh:'对方回合（黑）', ja:'相手の番（黒）' },
+    '인게임 채팅': { en:'In-Game Chat', es:'Chat del Juego', tr:'Oyun İçi Sohbet', ru:'Внутриигровой чат', zh:'局内聊天', ja:'インゲームチャット' },
+    '게임 중 실시간 응원과 대화를 나눠보세요!': { en:'Cheer each other on and chat in real-time during the game!', es:'¡Anímense y chateen en tiempo real durante el juego!', tr:'Oyun sırasında gerçek zamanlı olarak tezahürat yapın ve sohbet edin!', ru:'Общайтесь и поддерживайте друг друга в реальном времени во время игры!', zh:'游戏过程中请实时加油互动并愉快聊天！', ja:'ゲーム中にリアルタイムで応援や会話を楽しんでみましょう！' },
+    '메시지 입력...': { en:'Enter message...', es:'Ingresa mensaje...', tr:'Mesaj girin...', ru:'Введите сообщение...', zh:'输入消息...', ja:'メッセージを入力...' },
+    '1번 (흑 차례)': { en:'P1 (Black Turn)', es:'P1 (Turno de Negro)', tr:'1 (Siyahın Sırası)', ru:'Игрок 1 (Ход черных)', zh:'1号 (黑方回合)', ja:'1番 (黒の番)' },
+    '2번 (백)': { en:'P2 (White)', es:'P2 (Blanco)', tr:'2 (Beyaz)', ru:'Игрок 2 (Белые)', zh:'2号 (白)', ja:'2番 (白)' },
+    '[흑 선공]': { en:'[Black First]', es:'[Negro Primero]', tr:'[Siyah İlk Hamle]', ru:'[Черные - Первые]', zh:'[黑先]', ja:'[黒 先攻]' },
+    '[백 후공]': { en:'[White Second]', es:'[Blanco Segundo]', tr:'[Beyaz İkinci Hamle]', ru:'[Белые - Вторые]', zh:'[白后]', ja:'[白 後攻]' },
     // 상점
     '상점': { en:'Shop', es:'Tienda', tr:'Dükkan', ru:'Магазин', zh:'商店', ja:'ショップ' },
     '닉네임': { en:'Nickname', es:'Apodo', tr:'Takma Ad', ru:'Никнейм', zh:'昵称', ja:'ニックネーム' },
