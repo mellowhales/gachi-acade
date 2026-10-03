@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,8 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.4.1 (2026-10)
+  - 상점, 친구, 방, 모달 및 인게임 전반의 모든 텍스트 사전 전수 확장 번역 적용
 - v1.4.0 (2026-10)
   - i18n 정식 아키텍처 개편 (locales/ JSON 사전, 점 표기법 네임스페이스, 템플릿 변수 보간 및 헤더 전역 언어 전환기 도입)
 - v1.3.3 (2026-10)

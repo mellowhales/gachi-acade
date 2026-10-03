@@ -14,6 +14,12 @@
       "leave": "방 나가기",
       "rematch": "다시 하기",
       "send": "전송",
+      "accept": "수락",
+      "decline": "거절",
+      "enter": "입장",
+      "kick": "강퇴하기",
+      "transfer": "방장 위임",
+      "stats": "전적 보기",
       "play": "재생",
       "buy": "구매",
       "equip": "장착",
@@ -26,12 +32,14 @@
       "playing": "게임 중",
       "victory": "승리!",
       "defeat": "패배",
-      "draw": "무승부"
+      "draw": "무승부",
+      "connecting": "연결 중..."
     },
     "filter": {
       "all": "전체",
       "public": "공개방",
-      "private": "비밀방"
+      "private": "비밀방",
+      "allGames": "모든 게임"
     },
     "user": {
       "player": "플레이어",
@@ -52,66 +60,70 @@
     "joinRoom": "방 참가",
     "joinWithCode": "방 코드로 참가",
     "noRooms": "현재 열린 방이 없습니다",
+    "noRoomsDesc": "현재 열려있는 공개방이 없습니다.\n새로운 방을 직접 만들어 보세요!",
     "onlinePlayers": "접속 중인 플레이어 ({count}명)",
-    "chatPlaceholder": "메시지를 입력하세요..."
+    "chatPlaceholder": "메시지 입력 (최대 80자)...",
+    "chatWelcome": "로비 전체 채팅방입니다. 자유롭게 대화해보세요!",
+    "refreshList": "목록 새로고침",
+    "refreshPlayers": "접속자 새로고침"
+  },
+  "shop": {
+    "title": "상점",
+    "tabs": {
+      "nickname": "닉네임",
+      "profileCard": "프로필 카드",
+      "chatBubble": "말풍선",
+      "avatarFrame": "테두리",
+      "victoryEffect": "세레머니"
+    },
+    "backToRooms": "방 목록으로 돌아가기"
+  },
+  "friends": {
+    "title": "친구 관리",
+    "tabs": {
+      "myFriends": "내 친구",
+      "requests": "받은 신청"
+    },
+    "searchPlaceholder": "친구 닉네임 검색...",
+    "addFriend": "친구 신청",
+    "invite": "친구 초대하기"
+  },
+  "stats": {
+    "title": "게임별 상세 전적",
+    "totalPlays": "총 판수",
+    "wins": "승리",
+    "losses": "패배",
+    "draws": "무승부",
+    "winRate": "승률"
+  },
+  "room": {
+    "exitToLobby": "로비로 나가기",
+    "copyCode": "방 코드 복사",
+    "clickToCopy": "클릭하여 방 코드 복사",
+    "playersList": "참가자 목록",
+    "selectGame": "게임 선택",
+    "hostOnly": "방장만 변경 가능",
+    "rounds": "라운드:",
+    "side": "진영:",
+    "shuffle": "셔플",
+    "hostBlack": "방장 흑",
+    "hostWhite": "방장 백"
   },
   "games": {
-    "gomoku": {
-      "name": "오목",
-      "desc": "15×15 턴제 전략 바둑판 대결"
-    },
-    "chess": {
-      "name": "체스",
-      "desc": "실시간 2인 클래식 체스"
-    },
-    "chesswarfare": {
-      "name": "체스 워페어",
-      "desc": "16×16 영토 점령 전략전"
-    },
-    "janggi": {
-      "name": "장기",
-      "desc": "정통 2인 한국 장기"
-    },
-    "alkkagi": {
-      "name": "알까기",
-      "desc": "실시간 물리 엔진 알까기 대결"
-    },
-    "quoridor": {
-      "name": "쿼리도",
-      "desc": "미로 탈출 & 벽 세우기 두뇌 싸움"
-    },
-    "baskin31": {
-      "name": "베스킨라빈스 31",
-      "desc": "1~3 숫자 심리 승부"
-    },
-    "roulette": {
-      "name": "러시안 룰렛",
-      "desc": "실탄과 공포탄 서바이벌"
-    },
-    "wordchain": {
-      "name": "끝말잇기",
-      "desc": "15초 스피드 어휘 대결"
-    },
-    "apple": {
-      "name": "사과게임",
-      "desc": "60초 숫자 합 10 퍼즐"
-    },
-    "typing": {
-      "name": "타이핑",
-      "desc": "스피드 타자 배틀"
-    },
-    "catchmind": {
-      "name": "캐치마인드",
-      "desc": "실시간 그림 그리기 & 맞추기"
-    },
-    "yutnori": {
-      "name": "윷놀이",
-      "desc": "전통 한국 윷놀이 보드게임"
-    },
-    "yacht": {
-      "name": "야추",
-      "desc": "5개 주사위 조합 점수 전략"
-    }
+    "gomoku": { "name": "오목", "desc": "15×15 턴제 전략" },
+    "chess": { "name": "체스", "desc": "실시간 2인 클래식 체스" },
+    "chesswarfare": { "name": "체스 워페어", "desc": "16×16 영토 점령전" },
+    "janggi": { "name": "장기", "desc": "정통 2인 한국 장기" },
+    "alkkagi": { "name": "알까기", "desc": "실시간 물리 알까기 대결" },
+    "quoridor": { "name": "쿼리도", "desc": "미로 탈출 & 벽 세우기" },
+    "baskin31": { "name": "베스킨라빈스 31", "desc": "1~3 숫자 심리전" },
+    "roulette": { "name": "러시안 룰렛", "desc": "실탄&공포탄 서바이벌" },
+    "wordchain": { "name": "끝말잇기", "desc": "15초 스피드 대결" },
+    "apple": { "name": "사과게임", "desc": "60초 숫자 퍼즐" },
+    "typing": { "name": "타자연습 대결", "desc": "실시간 속타 배틀" },
+    "catchmind": { "name": "캐치마인드", "desc": "실시간 그림 퀴즈 배틀" },
+    "yutnori": { "name": "윷놀이", "desc": "전통 윷놀이 말판 배틀" },
+    "yacht": { "name": "야추 다이스", "desc": "3D 주사위 족보 배틀" }
   },
   "settings": {
     "title": "환경 설정",
@@ -144,15 +156,13 @@
     },
     "game": {
       "autoReady": "대기실 자동 준비",
-      "autoReadyDesc": "방 입장 시 바로 준비 완료 상태로 전환합니다.",
       "dnd": "초대 방해금지",
-      "dndDesc": "게임 중 다른 방 초대를 받지 않습니다.",
       "emojis": "이모지 표시",
       "chatNotify": "채팅 알림"
     },
     "language": {
       "title": "언어 선택",
-      "desc": "앱 전체 표시 언어를 선택하세요."
+      "desc": "앱 표시 언어를 선택하세요."
     },
     "about": {
       "changelog": "업데이트 내역",
