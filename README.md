@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -17,6 +17,7 @@
 - 계정 및 상점 시스템: Supabase 기반 유저 계정, 승패 전적, 코인 및 커스터마이징 아이템(테두리, 프로필 카드, 말풍선, 닉네임)
 - 실시간 인게임/로비 채팅 및 모바일 터치 제스처를 지원하는 반응형 웹 환경
 - Web Audio API 기반 오디오 신디사이저 내장으로 별도 음원 로딩 지연 없는 사운드 출력
+- 7개 국어 다국어 지원: 한국어, 영어, 스페인어, 터키어, 러시아어, 중국어(간체), 일본어
 
 ---
 
@@ -41,11 +42,13 @@
 ├── index.html               # SPA 메인 페이지 및 템플릿
 ├── AGRULES.md               # 에이전트 작업 지침 및 버전 관리 규칙
 ├── README.md                # 프로젝트 문서
+├── locales/                 # 다국어 JSON 번역 사전 (ko.json, en.json 등)
 ├── css/
 │   ├── style.css            # 공통 스타일, 테마, 반응형 레이아웃
 │   └── games/               # 게임별 개별 스타일
 └── js/
     ├── app.js               # 메인 앱 컨트롤러
+    ├── i18n.js              # 다국어(7개 언어) 번역 엔진
     ├── p2p.js               # PeerJS P2P 통신 모듈
     ├── firebase.js          # Firebase 실시간 로비 및 접속자 관리
     ├── supabase.js          # Supabase 인증 및 데이터 관리
@@ -84,6 +87,14 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.4.0 (2026-10)
+  - i18n 정식 아키텍처 개편 (locales/ JSON 사전, 점 표기법 네임스페이스, 템플릿 변수 보간 및 헤더 전역 언어 전환기 도입)
+- v1.3.3 (2026-10)
+  - 전체 DOM 텍스트 노드 자동 감지 기반 전역 번역 엔진 구축으로 사이트 내 모든 텍스트 다국어 지원
+- v1.3.2 (2026-10)
+  - 윷놀이 보드 디자인 심플화, 리얼 윷가락 3D 그래픽 및 불필요한 가이드 텍스트 제거
+- v1.3.1 (2026-10)
+  - 7개 언어 다국어(i18n) 설정 추가 (한국어, 영어, 스페인어, 터키어, 러시아어, 중국어, 일본어)
 - v1.3.0 (2026-09)
   - 윷놀이 코너 지름길 스킵 오류 수정, 윷/모 잡기 추가 던지기 제거, 참먹이(도착 칸) 착지 룰 구현
 - v1.2.9 (2026-09)

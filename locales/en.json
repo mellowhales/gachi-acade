@@ -1,0 +1,168 @@
+{
+  "app": {
+    "title": "GachiArcade",
+    "subtitle": "Real-time multiplayer web arcade with friends"
+  },
+  "common": {
+    "button": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close",
+      "ready": "Ready",
+      "start": "Start Game",
+      "leave": "Leave Room",
+      "rematch": "Rematch",
+      "send": "Send",
+      "play": "Play",
+      "buy": "Buy",
+      "equip": "Equip",
+      "equipped": "Equipped"
+    },
+    "status": {
+      "online": "Online",
+      "ready": "Ready",
+      "waiting": "Waiting",
+      "playing": "In Game",
+      "victory": "Victory!",
+      "defeat": "Defeat",
+      "draw": "Draw"
+    },
+    "filter": {
+      "all": "All",
+      "public": "Public",
+      "private": "Private"
+    },
+    "user": {
+      "player": "Player",
+      "level": "Lv.{level}",
+      "greeting": "Hello, {name}!"
+    }
+  },
+  "nav": {
+    "shop": "Open Shop",
+    "friends": "Friends List",
+    "settings": "Settings",
+    "chat": "Chat",
+    "games": "Games"
+  },
+  "lobby": {
+    "roomsTitle": "Rooms",
+    "createRoom": "Create Room",
+    "joinRoom": "Join Room",
+    "joinWithCode": "Join with Code",
+    "noRooms": "No open rooms available",
+    "onlinePlayers": "Online Players ({count})",
+    "chatPlaceholder": "Type a message..."
+  },
+  "games": {
+    "gomoku": {
+      "name": "Gomoku",
+      "desc": "15×15 turn-based strategy board game"
+    },
+    "chess": {
+      "name": "Chess",
+      "desc": "Classic 2-player real-time chess"
+    },
+    "chesswarfare": {
+      "name": "Chess Warfare",
+      "desc": "16×16 territory conquest battle"
+    },
+    "janggi": {
+      "name": "Janggi",
+      "desc": "Traditional Korean 2-player chess"
+    },
+    "alkkagi": {
+      "name": "Alkkagi",
+      "desc": "Real-time physics piece-flicking duel"
+    },
+    "quoridor": {
+      "name": "Quoridor",
+      "desc": "Maze escape and wall-building tactics"
+    },
+    "baskin31": {
+      "name": "Baskin 31",
+      "desc": "1 to 3 number psychological showdown"
+    },
+    "roulette": {
+      "name": "Russian Roulette",
+      "desc": "Live & blank ammo tension survival"
+    },
+    "wordchain": {
+      "name": "Word Chain",
+      "desc": "15-second speed vocabulary battle"
+    },
+    "apple": {
+      "name": "Apple Game",
+      "desc": "60-second sum-to-10 number puzzle"
+    },
+    "typing": {
+      "name": "Typing Battle",
+      "desc": "Speed keystroke typing challenge"
+    },
+    "catchmind": {
+      "name": "Catch Mind",
+      "desc": "Real-time sketch & guess party game"
+    },
+    "yutnori": {
+      "name": "Yutnori",
+      "desc": "Traditional Korean stick-tossing board game"
+    },
+    "yacht": {
+      "name": "Yacht Dice",
+      "desc": "5-dice combination high score strategy"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "env": "Display",
+      "sound": "Sound",
+      "game": "Game",
+      "support": "Support",
+      "about": "About",
+      "language": "Language"
+    },
+    "env": {
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "anim": "Visual Effects & Animations",
+      "shake": "Screen Shake Effect",
+      "font": "Font Size",
+      "fontNormal": "Normal",
+      "fontLarge": "Large"
+    },
+    "sound": {
+      "master": "Master Sound",
+      "on": "Sound On",
+      "off": "Sound Off",
+      "bgm": "Background Music (BGM)",
+      "sfx": "Sound Effects (SFX)",
+      "test": "Sound Test",
+      "play": "Play"
+    },
+    "game": {
+      "autoReady": "Auto Ready in Room",
+      "autoReadyDesc": "Automatically become Ready when joining a room.",
+      "dnd": "Do Not Disturb",
+      "dndDesc": "Block invitations while currently playing.",
+      "emojis": "Show Emojis",
+      "chatNotify": "Chat Notifications"
+    },
+    "language": {
+      "title": "Language Selection",
+      "desc": "Select the application display language."
+    },
+    "about": {
+      "changelog": "Changelog",
+      "copyright": "© 2026 GachiArcade. All rights reserved."
+    }
+  },
+  "errors": {
+    "notFound": "The requested resource could not be found.",
+    "networkError": "Network connection is unstable.",
+    "roomFull": "This room is already full.",
+    "invalidCode": "Invalid room code."
+  }
+}

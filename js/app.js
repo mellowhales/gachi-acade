@@ -942,6 +942,7 @@
   function _openSettingsModal() {
     _pushHistory({ modal: 'settings' }, '#settings');
     _syncSettingsUI();
+    if (typeof I18N !== 'undefined') I18N.applyToDocument();
 
     if ($('overlay-settings')) $('overlay-settings').classList.remove('hidden');
   }
@@ -1034,6 +1035,48 @@
         if (targetPane) targetPane.classList.add('active');
 
         if (typeof Sound !== 'undefined' && Sound.playClick) Sound.playClick();
+      });
+    });
+  }
+
+  // ── 🌐 언어 탭 초기화 & 언어 버튼 그리드 렌더링 ──
+  function _initLanguageTab() {
+    if (typeof I18N === 'undefined') return;
+
+    const grid = $('lang-choice-grid');
+    if (!grid) return;
+
+    const langs = I18N.getLanguages();
+    const currentLang = I18N.getCurrentLang();
+
+    grid.innerHTML = langs.map(l => `
+      <button type="button" class="lang-choice-btn${l.code === currentLang ? ' active' : ''}" data-lang="${l.code}">
+        <span class="lang-flag">${l.flag}</span>
+        <span class="lang-label">${l.label}</span>
+        ${l.code === currentLang ? '<i class="fa-solid fa-check lang-check"></i>' : ''}
+      </button>
+    `).join('');
+
+    grid.querySelectorAll('.lang-choice-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.lang;
+        if (!code) return;
+        I18N.setLanguage(code);
+        // 체크마크 갱신
+        grid.querySelectorAll('.lang-choice-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.lang === code);
+          const existingCheck = b.querySelector('.lang-check');
+          if (b.dataset.lang === code) {
+            if (!existingCheck) {
+              const chk = document.createElement('i');
+              chk.className = 'fa-solid fa-check lang-check';
+              b.appendChild(chk);
+            }
+          } else {
+            if (existingCheck) existingCheck.remove();
+          }
+        });
+        if (typeof Sound !== 'undefined' && Sound.playPop) Sound.playPop();
       });
     });
   }
@@ -1230,6 +1273,23 @@
       animToggle.addEventListener('change', () => {
         localStorage.setItem('arcade_anim_enabled', animToggle.checked ? 'true' : 'false');
         _applyGlobalSettings();
+      });
+    }
+  }
+
+  // 🌐 다국어(i18n) 시스템 초기화 — DOM 준비 후 즉시 번역 적용
+  if (typeof I18N !== 'undefined') {
+    I18N.init();
+    _initLanguageTab();
+
+    const globalLangSelect = $('select-global-language');
+    if (globalLangSelect) {
+      globalLangSelect.addEventListener('change', (e) => {
+        const lang = e.target.value;
+        if (lang) {
+          I18N.setLanguage(lang);
+          if (typeof Sound !== 'undefined' && Sound.playPop) Sound.playPop();
+        }
       });
     }
   }

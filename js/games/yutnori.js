@@ -836,38 +836,38 @@ const YutnoriGame = (() => {
       '  </div>',
       '',
       '  <div class="yut-main-layout">',
-      '    <!-- 1. 전통 윷판 & 대기 말 바 -->',
+      '    <!-- 1. 심플 원목 윷판 & 대기 말 -->',
       '    <div class="yut-board-wrapper">',
       '      <div class="yut-board-surface" id="yut-board-surface">',
-      '        <svg class="yut-board-svg" viewBox="0 0 100 100">',
-      '          <line x1="88" y1="88" x2="88" y2="12" stroke="#b08968" stroke-width="2.2" stroke-dasharray="3 1.5"/>',
-      '          <line x1="88" y1="12" x2="12" y2="12" stroke="#b08968" stroke-width="2.2" stroke-dasharray="3 1.5"/>',
-      '          <line x1="12" y1="12" x2="12" y2="88" stroke="#b08968" stroke-width="2.2" stroke-dasharray="3 1.5"/>',
-      '          <line x1="12" y1="88" x2="88" y2="88" stroke="#b08968" stroke-width="2.2" stroke-dasharray="3 1.5"/>',
-      '          <line x1="88" y1="12" x2="12" y2="88" stroke="#c08552" stroke-width="2" stroke-dasharray="3 1.5"/>',
-      '          <line x1="12" y1="12" x2="88" y2="88" stroke="#c08552" stroke-width="2" stroke-dasharray="3 1.5"/>',
+      '        <svg class="yut-board-svg" viewBox="0 0 100 100" preserveAspectRatio="none">',
+      '          <!-- 주 격자선 -->',
+      '          <rect x="12" y="12" width="76" height="76" class="yut-grid-main-track" />',
+      '          <line x1="88" y1="12" x2="12" y2="88" class="yut-grid-diag-track" />',
+      '          <line x1="12" y1="12" x2="88" y2="88" class="yut-grid-diag-track" />',
       '        </svg>',
       '        <div class="yut-nodes-layer" id="yut-nodes-layer"></div>',
       '        <div class="yut-pieces-layer" id="yut-pieces-layer"></div>',
       '        <div class="yut-finish-target" id="yut-finish-target" style="display:none;">',
-      '          <button type="button" class="btn btn-primary yut-finish-btn" id="btn-finish-goal"><i class="fa-solid fa-flag-checkered"></i> <span>완주 골인!</span></button>',
+      '          <button type="button" class="btn btn-primary yut-finish-btn" id="btn-finish-goal"><i class="fa-solid fa-flag-checkered"></i> <span>골인!</span></button>',
       '        </div>',
       '      </div>',
       '      ',
       '      <!-- 대기 말 바 -->',
       '      <div class="yut-waiting-section" id="yut-waiting-section">',
-      '        <div class="yut-waiting-header">대기 말</div>',
+      '        <div class="yut-waiting-header">',
+      '          <span class="yut-wh-title"><i class="fa-solid fa-chess-pawn"></i> 대기 말</span>',
+      '        </div>',
       '        <div class="yut-waiting-list" id="yut-waiting-list"></div>',
       '      </div>',
       '    </div>',
       '',
-      '    <!-- 2. 컨트롤 패널 -->',
+      '    <!-- 2. 컨트롤 패널 (윷가락 & 던지기) -->',
       '    <div class="yut-control-panel card">',
       '      <div class="yut-mat-arena" id="yut-mat-arena">',
-      '        <div class="yut-stick-item" id="stick-0"><div class="stick-wood-body"><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span></div></div>',
-      '        <div class="yut-stick-item" id="stick-1"><div class="stick-wood-body"><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span></div></div>',
-      '        <div class="yut-stick-item" id="stick-2"><div class="stick-wood-body"><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span></div></div>',
-      '        <div class="yut-stick-item" id="stick-3"><div class="stick-wood-body"><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span><span class="stick-x-pattern"></span></div></div>',
+      '        <div class="yut-stick-item" id="stick-0"><div class="stick-wood-body"><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span></div></div>',
+      '        <div class="yut-stick-item" id="stick-1"><div class="stick-wood-body"><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span></div></div>',
+      '        <div class="yut-stick-item" id="stick-2"><div class="stick-wood-body"><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span></div></div>',
+      '        <div class="yut-stick-item" id="stick-3"><div class="stick-wood-body"><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span><span class="stick-x-pattern">✕</span></div></div>',
       '      </div>',
       '',
       '      <div class="yut-throw-control-area">',
@@ -880,7 +880,7 @@ const YutnoriGame = (() => {
       '        </button>',
       '      </div>',
       '',
-      '      <!-- 동그란 원형 윷패 토큰 바 -->',
+      '      <!-- 원형 윷패 토큰 바 -->',
       '      <div class="yut-queue-tokens-container">',
       '        <div class="yut-queue-tokens-bar" id="yut-queue-tokens-bar"></div>',
       '      </div>',
@@ -1083,11 +1083,23 @@ const YutnoriGame = (() => {
       });
     }
 
-    // 4. 던지기 버튼 제어
+    // 4. 던지기 버튼 및 안내 텍스트 제어
     const powerBtn = document.getElementById('btn-yut-power');
     const btnMainText = document.getElementById('yut-btn-main-text');
+    const panelGuideEl = document.getElementById('yut-panel-guide');
+    const canRoll = isMyTurn && state.rollCountLeft > 0 && state.status === 'PLAYING';
+
+    if (panelGuideEl) {
+      if (canRoll) {
+        panelGuideEl.textContent = '버튼을 길게 눌러 게이지 파워를 조절하세요';
+      } else if (isMyTurn && state.yutQueue.length > 0) {
+        panelGuideEl.textContent = '움직일 말을 클릭한 후 목적지(붉은 칸)를 누르세요';
+      } else {
+        panelGuideEl.textContent = curPlayer.name + '님의 차례 진행 중...';
+      }
+    }
+
     if (powerBtn && btnMainText) {
-      const canRoll = isMyTurn && state.rollCountLeft > 0 && state.status === 'PLAYING';
       powerBtn.disabled = !canRoll;
       powerBtn.className = 'btn btn-primary btn-lg yut-power-btn ' + (canRoll ? '' : 'disabled');
       if (canRoll) {
@@ -1129,6 +1141,8 @@ const YutnoriGame = (() => {
           coinEl.title = yDef.name + (yDef.isBonus ? ' (보너스)' : '');
           tokensBarEl.appendChild(coinEl);
         });
+      } else {
+        tokensBarEl.innerHTML = '<span class="yut-queue-empty-tip"><i class="fa-solid fa-coins"></i> 던진 윷패가 여기에 보관됩니다</span>';
       }
     }
 
@@ -1140,7 +1154,7 @@ const YutnoriGame = (() => {
         const unplacedPieces = myPlayerData.pieces.filter(p => p.node === null && !p.isFinished);
 
         if (unplacedPieces.length === 0) {
-          waitingListEl.innerHTML = '<span class="yut-waiting-empty">모두 출발함</span>';
+          waitingListEl.innerHTML = '<span class="yut-waiting-empty"><i class="fa-solid fa-circle-check"></i> 모든 말이 판 위에 출전했습니다</span>';
         } else {
           const avatarIcon = myPlayerData.avatarIcon || 'fa-solid fa-dog';
           unplacedPieces.forEach(p => {

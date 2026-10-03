@@ -6449,38 +6449,46 @@ html, body {
   }
 }
 
-/* ── 1. 전통 윷놀이 보드판 & 바로 아래 대기 말 ── */
+/* ── 1. 정통 원목 윷놀이 보드판 ── */
 .yut-board-wrapper {
-  background: #fbf8f1;
-  border: 3px solid #b08968;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
-  box-shadow: inset 0 0 24px rgba(176, 137, 104, 0.18), 0 8px 24px rgba(0, 0, 0, 0.06);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   touch-action: none !important;
   user-select: none;
   -webkit-user-drag: none;
   box-sizing: border-box;
   overflow: hidden !important;
+  position: relative;
 }
 
+/* 🌟 심플 원목 윷판 표면 */
 .yut-board-surface {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   max-width: 480px;
   max-height: 480px;
-  background: #fffdf9;
-  border: 2px solid #e6ccb2;
-  border-radius: var(--radius);
-  box-shadow: inset 0 0 14px rgba(176, 137, 104, 0.1);
+  background: linear-gradient(180deg, #fdf6e2 0%, #f9ecc8 100%);
+  border: 2px solid #c8a368;
+  border-radius: 12px;
+  box-shadow: inset 0 0 12px rgba(160, 110, 50, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
   touch-action: none !important;
   user-select: none;
   -webkit-user-drag: none;
   overflow: hidden !important;
+}
+
+[data-theme="dark"] .yut-board-surface {
+  background: linear-gradient(180deg, #2a2016 0%, #1e160e 100%);
+  border-color: #6d4c2b;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.5);
 }
 
 .yut-board-svg {
@@ -6492,7 +6500,25 @@ html, body {
   pointer-events: none;
 }
 
-/* 29개 노드 */
+/* 🌟 심플 격자선 */
+.yut-grid-main-track {
+  fill: none;
+  stroke: #4a2e12;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+.yut-grid-diag-track {
+  stroke: #4a2e12;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+[data-theme="dark"] .yut-grid-main-track,
+[data-theme="dark"] .yut-grid-diag-track {
+  stroke: #9a7346;
+}
+
+/* 🌟 29개 정밀 음각 노드 레이어 */
 .yut-nodes-layer {
   position: absolute;
   top: 0;
@@ -6507,44 +6533,136 @@ html, body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid #ddb892;
+  background: radial-gradient(circle at 35% 35%, #fffdf8, #faebd1 65%, #edd4a4 100%);
+  border: 2px solid #331d0c;
+  box-shadow: inset 0 1.5px 3px rgba(35, 18, 5, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, -50%);
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 2;
+  box-sizing: border-box;
 }
-.yut-board-node.corner-node {
-  width: 28px;
-  height: 28px;
-  border: 2.5px solid #b08968;
-  background: #ede0d4;
-}
-.yut-board-node.center-node {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #c08552;
-  background: #e6ccb2;
-}
-.yut-board-node.start-node {
-  border-color: #38a169;
-  background: #f0fff4;
+.yut-board-node::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #331d0c;
+  opacity: 0.75;
 }
 
-/* 🌟 이동 목적지 노드 하이라이트 (빛남 펄스) */
+/* 🌟 모퉁이 코너 노드 (5: 앞모퉁이, 10: 뒷모퉁이, 15: 찌모퉁이) */
+.yut-board-node.corner-node {
+  width: 29px;
+  height: 29px;
+  border: 2.5px solid #241306;
+  background: radial-gradient(circle at 35% 35%, #fffdf9, #fbe8c3 65%, #e8c688 100%);
+  box-shadow: inset 0 2px 4px rgba(35, 18, 5, 0.4), 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+.yut-board-node.corner-node::before {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #3a2210;
+  background: rgba(255, 255, 255, 0.35);
+  opacity: 1;
+}
+
+/* 🌟 중앙 방아 노드 (22번 - 북극성 천원 중심점) */
+.yut-board-node.center-node {
+  width: 35px;
+  height: 35px;
+  border: 3px solid #1a0b02;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #fed7aa 60%, #ea580c 100%);
+  box-shadow: inset 0 2px 5px rgba(35, 18, 5, 0.5), 0 3px 8px rgba(0, 0, 0, 0.35), 0 0 0 2px #f59e0b;
+}
+.yut-board-node.center-node::before {
+  width: 19px;
+  height: 19px;
+  border: 1.8px solid #7c2d12;
+  background: #fef3c7;
+  opacity: 1;
+}
+.yut-board-node.center-node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c2410c;
+}
+
+/* 🌟 시작 & 날밭 참먹이 노드 (0번) */
+.yut-board-node.start-node {
+  width: 31px;
+  height: 31px;
+  border: 3px solid #14532d;
+  background: radial-gradient(circle at 35% 35%, #f0fdf4, #bbf7d0 65%, #22c55e 100%);
+  box-shadow: inset 0 2px 4px rgba(20, 83, 45, 0.4), 0 3px 8px rgba(0, 0, 0, 0.25), 0 0 0 2px #4ade80;
+}
+.yut-board-node.start-node::before {
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #166534;
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 1;
+}
+
+/* 🌟 이동 목적지 노드 하이라이트 (빛남 펄스 & 붉은 인장) */
 .yut-board-node.dest-highlight {
-  border-color: #e53e3e !important;
-  background: #ffeded !important;
-  transform: translate(-50%, -50%) scale(1.35) !important;
-  box-shadow: 0 0 18px rgba(229, 62, 62, 0.8), inset 0 0 8px rgba(229, 62, 62, 0.5) !important;
+  border-color: #dc2626 !important;
+  background: radial-gradient(circle at 35% 35%, #fee2e2, #f87171) !important;
+  transform: translate(-50%, -50%) scale(1.3) !important;
+  box-shadow: 0 0 0 3px #ffffff, 0 0 22px rgba(220, 38, 38, 0.95), inset 0 0 8px rgba(220, 38, 38, 0.6) !important;
   animation: destNodeGlow 0.9s infinite alternate ease-in-out;
-  z-index: 12 !important;
+  z-index: 50 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+.yut-board-node.dest-highlight::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 51;
+  background: transparent !important;
+  border: none !important;
+  opacity: 0 !important;
+}
+.yut-board-node.dest-highlight::after {
+  content: attr(data-yut-label);
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 52;
 }
 @keyframes destNodeGlow {
-  from { box-shadow: 0 0 8px rgba(229, 62, 62, 0.5); }
-  to { box-shadow: 0 0 22px rgba(229, 62, 62, 1); }
+  from { box-shadow: 0 0 0 3px #ffffff, 0 0 14px rgba(220, 38, 38, 0.7); }
+  to { box-shadow: 0 0 0 3px #ffffff, 0 0 26px rgba(220, 38, 38, 1); }
 }
 
-/* 🌟 보드 위 말 (노드보다 무조건 위에 오도록 z-index: 30) */
+/* 🌟 보드 위 말 (전통 칠기 원목 말) */
 .yut-pieces-layer {
   position: absolute;
   top: 0;
@@ -6556,19 +6674,19 @@ html, body {
 }
 .yut-board-piece {
   position: absolute;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: 2.5px solid #ffffff;
   color: #ffffff;
   font-weight: 900;
-  font-size: 1.05rem;
+  font-size: 1.12rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transform: translate(-50%, -50%);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
-  transition: transform 0.18s ease, box-shadow 0.18s;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.42), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s;
   cursor: pointer;
   pointer-events: auto !important;
   user-select: none;
@@ -6576,29 +6694,114 @@ html, body {
   z-index: 35 !important;
 }
 .ybp-animal-icon {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: #ffffff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
-/* UI 흔들림 없는 정돈된 말 하이라이트 */
-.yut-board-piece.interactive {
-  cursor: pointer;
-  box-shadow: 0 0 0 3px #ffffff, 0 0 14px rgba(72, 187, 120, 0.9);
-}
-.yut-board-piece.interactive:hover {
+.yut-board-piece.selectable:hover {
   transform: translate(-50%, -50%) scale(1.15);
-  box-shadow: 0 0 0 4px #ffffff, 0 0 20px rgba(72, 187, 120, 1);
+  box-shadow: 0 0 0 3.5px #ffffff, 0 0 18px rgba(74, 222, 128, 0.95);
 }
+.yut-board-piece.selected {
+  transform: translate(-50%, -50%) scale(1.22) !important;
+  box-shadow: 0 0 0 3.5px #ffffff, 0 0 22px #22c55e, 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+  animation: pieceSelectedBounce 0.9s infinite alternate ease-in-out;
+}
+@keyframes pieceSelectedBounce {
+  from { transform: translate(-50%, -50%) scale(1.18); }
+  to { transform: translate(-50%, -50%) scale(1.26); }
+}
+
 .ybp-stack-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #1a202c;
+  top: -7px;
+  right: -7px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
   color: #fbbf24;
+  border: 1.5px solid #f59e0b;
   font-size: 0.72rem;
   font-weight: 900;
   padding: 1px 6px;
   border-radius: 999px;
-  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+/* ── 🌟 윷판 바로 아래 대기실 말 바 (고급 흑단 목제 말 보관함) ── */
+.yut-waiting-section {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: linear-gradient(145deg, #2b170a 0%, #1a0c04 100%);
+  border: 2.5px solid #5a3215;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.yut-waiting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.35);
+  padding-bottom: 6px;
+}
+.yut-wh-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #e2c08d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.yut-wh-sub {
+  font-size: 0.75rem;
+  color: #a88d75;
+  font-weight: 600;
+}
+.yut-waiting-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 42px;
+}
+.yut-waiting-empty {
+  font-size: 0.82rem;
+  color: #a88d75;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.yut-waiting-token {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+  cursor: default;
+  transition: transform 0.16s ease, box-shadow 0.16s;
+  user-select: none;
+}
+.yut-waiting-token.selectable {
+  cursor: pointer;
+}
+.yut-waiting-token.selectable:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 0 0 3px #ffffff, 0 6px 14px rgba(74, 222, 128, 0.95);
+}
+.yut-waiting-token.selected {
+  transform: scale(1.18) !important;
+  box-shadow: 0 0 0 3.5px #ffffff, 0 0 18px #22c55e !important;
 }
 
 /* ── 2. 우측 컨트롤 패널 ── */
@@ -6607,28 +6810,65 @@ html, body {
   flex-direction: column;
   gap: 16px;
   padding: 20px;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.yut-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.yut-panel-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--t1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.yut-panel-guide {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
-/* 🪵 윷놀이 멍석 아레나 매트 (3D 윷가락 4개) */
+/* 🪵 윷놀이 멍석 아레나 매트 */
 .yut-mat-arena {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  padding: 26px 18px;
-  background: radial-gradient(circle at center, #eed9a4, #d4a373 90%);
-  border: 3.5px solid #8b261e;
+  gap: 16px;
+  padding: 22px 14px;
+  background: radial-gradient(ellipse at center, #eedbb0 0%, #ddc490 65%, #cca96a 100%);
+  border: 3px solid #8b5a2b;
   border-radius: var(--radius);
-  min-height: 135px;
-  box-shadow: inset 0 0 20px rgba(139, 38, 30, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1);
+  min-height: 130px;
+  box-shadow: inset 0 0 16px rgba(100, 50, 15, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
   perspective: 800px;
+  position: relative;
 }
 
-/* 윷가락 개별 아이템 */
+[data-theme="dark"] .yut-mat-arena {
+  background: radial-gradient(ellipse at center, #2e2316 0%, #22180e 100%);
+  border-color: #5c3b1a;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.6);
+}
+
+/* 윷가락 개별 아이템 (실제 윷가락 비율 및 곡면) */
 .yut-stick-item {
   width: 32px;
   height: 104px;
-  border-radius: 16px;
+  border-radius: 14px;
   position: relative;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
@@ -6637,70 +6877,54 @@ html, body {
 .stick-wood-body {
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  padding: 8px 0;
+  padding: 6px 0;
   box-sizing: border-box;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-  border: 2px solid #582f0e;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid #4a280c;
   transition: all 0.25s ease;
 }
 
-/* 1) 둥근 등면 (Round Face - 짙은 원목 엠보싱) */
-/* 1) 둥근 등면 (Round Face - 짙은 박달나무 3D 입체 실린더) */
+/* 1) 둥근 등면 (Round Face - 짙은 밤색 나무 질감과 둥근 하이라이트) */
 .yut-stick-item.is-round .stick-wood-body {
-  background: linear-gradient(90deg, #3d1c06 0%, #603813 25%, #854d0e 48%, #9a5b13 52%, #603813 75%, #3d1c06 100%);
-  border-color: #241002;
-  box-shadow: inset 3px 0 6px rgba(255, 255, 255, 0.25), inset -3px 0 6px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(90deg, #3d1c06 0%, #6b3711 25%, #8f4d1a 50%, #6b3711 75%, #3d1c06 100%);
+  border-color: #2b1203;
+  box-shadow: inset 2px 0 4px rgba(255, 255, 255, 0.2), inset -2px 0 5px rgba(0, 0, 0, 0.6), 0 6px 14px rgba(0, 0, 0, 0.35);
 }
 .yut-stick-item.is-round .stick-x-pattern {
   display: none;
 }
 
-/* 2) 평평한 배면 (Flat Face - 따뜻한 백목 + 3줄 전통 불도장 음각) */
+/* 2) 평평한 배면 (Flat Face - 밝은 백목/소나무 속살 질감 + 선명한 X 각인) */
 .yut-stick-item.is-flat .stick-wood-body {
-  background: linear-gradient(180deg, #fefae0 0%, #faedcd 50%, #fefae0 100%);
-  border-color: #c98a4c;
-  box-shadow: inset 0 0 12px rgba(187, 148, 87, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(180deg, #fffdf2 0%, #fef3c7 50%, #fde68a 100%);
+  border-color: #854d0e;
+  box-shadow: inset 0 0 8px rgba(180, 83, 9, 0.2), 0 5px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 전통 X자 불도장 음각 패턴 */
+/* 전통 X자 각인 */
 .stick-x-pattern {
-  position: relative;
-  width: 15px;
-  height: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.stick-x-pattern::before, .stick-x-pattern::after {
-  content: '';
-  position: absolute;
-  width: 14px;
-  height: 2.6px;
-  background-color: #6f3b0c;
-  border-radius: 1.5px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-.stick-x-pattern::before {
-  transform: rotate(45deg);
-}
-.stick-x-pattern::after {
-  transform: rotate(-45deg);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #78350f;
+  line-height: 1;
+  user-select: none;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
-/* 빽도(Back-Do) 붉은 X자 각인 */
+/* 빽도(Back-Do) 표시: 특수 별표 각인 */
+/* 빽도(Back-Do) 표시: 특수 붉은 X 각인 */
 .yut-stick-item.is-backdo .stick-wood-body {
-  border-color: #e53e3e;
+  border-color: #dc2626;
 }
-.yut-stick-item.is-backdo .stick-x-pattern:nth-child(2)::before,
-.yut-stick-item.is-backdo .stick-x-pattern:nth-child(2)::after {
-  background-color: #e53e3e;
-  height: 3.5px;
-  box-shadow: 0 0 6px rgba(229, 62, 62, 0.8);
+.yut-stick-item.is-backdo .stick-x-pattern {
+  color: #dc2626;
+  font-weight: 900;
+  text-shadow: 0 0 6px rgba(220, 38, 38, 0.4);
 }
 
 /* 🌟 리얼 윷 던지기 3D 물리 텀블링 애니메이션 🌟 */
@@ -6742,7 +6966,7 @@ html, body {
   100% { transform: translateY(0) rotateX(1080deg) rotateY(-720deg) rotateZ(-4deg) scale(1); }
 }
 
-/* ── 🌟 파워 게이지 (글씨 없는 깔끔한 게이지 바) ── */
+/* ── 🌟 파워 게이지 ── */
 .yut-throw-control-area {
   display: flex;
   flex-direction: column;
@@ -6751,13 +6975,13 @@ html, body {
 
 .yut-gauge-track {
   width: 100%;
-  height: 18px;
+  height: 20px;
   background: var(--bg-hover);
-  border: 1.5px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 999px;
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .yut-gauge-fill {
@@ -6766,9 +6990,9 @@ html, body {
   top: 0;
   height: 100%;
   width: 0%;
-  background: #38a169;
+  background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
   border-radius: 999px;
-  transition: width 0.02s linear, background-color 0.15s;
+  transition: width 0.02s linear;
 }
 
 .yut-power-btn {
@@ -6782,20 +7006,39 @@ html, body {
   gap: 10px;
   user-select: none;
   touch-action: none;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+.yut-power-btn:not(.disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
 }
 .yut-power-btn:active {
   transform: scale(0.98);
 }
 
-/* ── 🌟 윷 던지는 곳 바로 아래: 동그란 원형 윷패 토큰 바 (글씨 없이 토큰만 나열) 🌟 ── */
+/* ── 🌟 원형 윷패 토큰 바 (엽전·놋쇠 코인 스타일) ── */
 .yut-queue-tokens-container {
   width: 100%;
-  min-height: 48px;
+  min-height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--bg-hover);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  box-sizing: border-box;
 }
-
+.yut-queue-empty-tip {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .yut-queue-tokens-bar {
   display: flex;
   align-items: center;
@@ -6805,22 +7048,22 @@ html, body {
 }
 
 .yut-token-coin {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2.5px solid currentColor;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.4);
   animation: tokenPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .yut-token-coin.is-bonus {
-  box-shadow: 0 0 14px rgba(5, 150, 105, 0.5), inset 0 0 6px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 0 16px rgba(5, 150, 105, 0.6), inset 0 0 6px rgba(5, 150, 105, 0.3);
   animation: tokenPop 0.22s cubic-bezier(0.16, 1, 0.3, 1), bonusGlow 1.2s infinite alternate ease-in-out;
 }
 
@@ -6831,113 +7074,7 @@ html, body {
 
 @keyframes bonusGlow {
   from { transform: scale(1); }
-  to { transform: scale(1.1); box-shadow: 0 0 18px rgba(5, 150, 105, 0.8); }
-}
-
-/* ── 🌟 윷판 바로 아래 대기실 말 바 🌟 ── */
-.yut-waiting-section {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background: rgba(255, 253, 249, 0.95);
-  border: 1.5px dashed #c98a4c;
-  border-radius: var(--radius);
-  padding: 8px 12px;
-  box-sizing: border-box;
-  min-height: 64px;
-}
-.yut-waiting-header {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: #8b5e34;
-}
-.yut-waiting-list {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-  min-height: 38px;
-}
-.yut-waiting-empty {
-  font-size: 0.82rem;
-  color: var(--t3);
-  font-weight: 600;
-}
-
-/* 🌟 동그란 원형 대기말 토큰 */
-.yut-waiting-token {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2.5px solid #ffffff;
-  color: #ffffff;
-  font-weight: 900;
-  font-size: 0.92rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-  cursor: default;
-  transition: transform 0.16s ease, box-shadow 0.16s;
-  user-select: none;
-}
-.yut-waiting-token.selectable {
-  cursor: pointer;
-}
-.yut-waiting-token.selectable:hover {
-  transform: translateY(-2px) scale(1.08);
-  box-shadow: 0 0 0 3px #ffffff, 0 4px 12px rgba(72, 187, 120, 0.9);
-}
-.yut-waiting-token.selected, .yut-board-piece.selected {
-  transform: scale(1.15) !important;
-  box-shadow: 0 0 0 3px #ffffff, 0 0 16px #38a169 !important;
-  border-color: #ffffff !important;
-}
-
-/* 🌟 체스 방식: 목적지 노드 위에 윷패 이름(도, 개 등) 뱃지 표시 및 52px 넓은 터치 영역 🌟 */
-.yut-board-node.dest-highlight {
-  border-color: #e53e3e !important;
-  background: #ffeded !important;
-  transform: translate(-50%, -50%) scale(1.3) !important;
-  box-shadow: 0 0 16px rgba(229, 62, 62, 0.9), inset 0 0 6px rgba(229, 62, 62, 0.5) !important;
-  animation: destNodeGlow 0.9s infinite alternate ease-in-out;
-  z-index: 50 !important;
-  cursor: pointer !important;
-  pointer-events: auto !important;
-}
-
-/* 🌟 대충 근처를 눌러도 100% 클릭되도록 투명 히트박스 확장 */
-.yut-board-node.dest-highlight::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 51;
-}
-
-.yut-board-node.dest-highlight::after {
-  content: attr(data-yut-label);
-  position: absolute;
-  top: -24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #e53e3e;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 999px;
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-  z-index: 52;
+  to { transform: scale(1.1); box-shadow: 0 0 20px rgba(5, 150, 105, 0.9); }
 }
 
 /* 🏁 완주 골인 전용 대형 클릭 영역 */
@@ -6952,20 +7089,20 @@ html, body {
   justify-content: center;
 }
 .yut-finish-btn {
-  background: linear-gradient(135deg, #e53e3e, #c53030) !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
   color: #ffffff !important;
   font-size: 1.05rem !important;
   font-weight: 900 !important;
   padding: 10px 24px !important;
   border-radius: 999px !important;
   border: 2px solid #ffffff !important;
-  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.6) !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.6) !important;
   cursor: pointer !important;
   animation: finishPulse 1s infinite alternate ease-in-out;
 }
 @keyframes finishPulse {
-  from { transform: scale(1); box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5); }
-  to { transform: scale(1.08); box-shadow: 0 6px 20px rgba(229, 62, 62, 0.9); }
+  from { transform: scale(1); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5); }
+  to { transform: scale(1.08); box-shadow: 0 6px 22px rgba(16, 185, 129, 0.9); }
 }
 
 
@@ -12213,4 +12350,72 @@ html, body {
     background: var(--bg-card) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════
+   🌐 i18n 언어 설정 탭 스타일  (v1.3.1)
+══════════════════════════════════════════════════════ */
+.setting-desc {
+  font-size: 0.82rem;
+  color: var(--t2);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 6px 0 10px;
+}
+
+.lang-choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.18s ease;
+  text-align: left;
+  position: relative;
+}
+.lang-choice-btn:hover {
+  border-color: var(--green);
+  background: rgba(56, 161, 105, 0.07);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(56, 161, 105, 0.15);
+}
+.lang-choice-btn.active {
+  border-color: var(--green);
+  background: rgba(56, 161, 105, 0.12);
+  color: var(--green);
+  font-weight: 700;
+}
+.lang-flag {
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.lang-label {
+  flex: 1;
+}
+.lang-check {
+  font-size: 0.8rem;
+  color: var(--green);
+  margin-left: auto;
+}
+
+/* 탭 바 6개 탭일 때 아이콘+텍스트 레이아웃 유지 */
+.settings-tab-bar {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.settings-tab-btn span {
+  white-space: nowrap;
 }

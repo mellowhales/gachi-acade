@@ -1,0 +1,168 @@
+{
+  "app": {
+    "title": "가치아케이드",
+    "subtitle": "친구와 함께 즐기는 실시간 멀티플레이 웹 아케이드"
+  },
+  "common": {
+    "button": {
+      "save": "저장",
+      "cancel": "취소",
+      "confirm": "확인",
+      "close": "닫기",
+      "ready": "준비",
+      "start": "게임 시작",
+      "leave": "방 나가기",
+      "rematch": "다시 하기",
+      "send": "전송",
+      "play": "재생",
+      "buy": "구매",
+      "equip": "장착",
+      "equipped": "장착 중"
+    },
+    "status": {
+      "online": "접속 중",
+      "ready": "준비 완료",
+      "waiting": "대기 중",
+      "playing": "게임 중",
+      "victory": "승리!",
+      "defeat": "패배",
+      "draw": "무승부"
+    },
+    "filter": {
+      "all": "전체",
+      "public": "공개방",
+      "private": "비밀방"
+    },
+    "user": {
+      "player": "플레이어",
+      "level": "Lv.{level}",
+      "greeting": "안녕하세요, {name}님!"
+    }
+  },
+  "nav": {
+    "shop": "상점 열기",
+    "friends": "친구 목록",
+    "settings": "환경 설정",
+    "chat": "채팅",
+    "games": "게임 목록"
+  },
+  "lobby": {
+    "roomsTitle": "방 목록",
+    "createRoom": "방 만들기",
+    "joinRoom": "방 참가",
+    "joinWithCode": "방 코드로 참가",
+    "noRooms": "현재 열린 방이 없습니다",
+    "onlinePlayers": "접속 중인 플레이어 ({count}명)",
+    "chatPlaceholder": "메시지를 입력하세요..."
+  },
+  "games": {
+    "gomoku": {
+      "name": "오목",
+      "desc": "15×15 턴제 전략 바둑판 대결"
+    },
+    "chess": {
+      "name": "체스",
+      "desc": "실시간 2인 클래식 체스"
+    },
+    "chesswarfare": {
+      "name": "체스 워페어",
+      "desc": "16×16 영토 점령 전략전"
+    },
+    "janggi": {
+      "name": "장기",
+      "desc": "정통 2인 한국 장기"
+    },
+    "alkkagi": {
+      "name": "알까기",
+      "desc": "실시간 물리 엔진 알까기 대결"
+    },
+    "quoridor": {
+      "name": "쿼리도",
+      "desc": "미로 탈출 & 벽 세우기 두뇌 싸움"
+    },
+    "baskin31": {
+      "name": "베스킨라빈스 31",
+      "desc": "1~3 숫자 심리 승부"
+    },
+    "roulette": {
+      "name": "러시안 룰렛",
+      "desc": "실탄과 공포탄 서바이벌"
+    },
+    "wordchain": {
+      "name": "끝말잇기",
+      "desc": "15초 스피드 어휘 대결"
+    },
+    "apple": {
+      "name": "사과게임",
+      "desc": "60초 숫자 합 10 퍼즐"
+    },
+    "typing": {
+      "name": "타이핑",
+      "desc": "스피드 타자 배틀"
+    },
+    "catchmind": {
+      "name": "캐치마인드",
+      "desc": "실시간 그림 그리기 & 맞추기"
+    },
+    "yutnori": {
+      "name": "윷놀이",
+      "desc": "전통 한국 윷놀이 보드게임"
+    },
+    "yacht": {
+      "name": "야추",
+      "desc": "5개 주사위 조합 점수 전략"
+    }
+  },
+  "settings": {
+    "title": "환경 설정",
+    "tabs": {
+      "env": "화면",
+      "sound": "음향",
+      "game": "게임",
+      "support": "문의",
+      "about": "정보",
+      "language": "언어"
+    },
+    "env": {
+      "theme": "화면 테마",
+      "light": "라이트",
+      "dark": "다크",
+      "anim": "시각 효과 & 애니메이션",
+      "shake": "화면 흔들림 효과",
+      "font": "글꼴 크기",
+      "fontNormal": "보통",
+      "fontLarge": "크게"
+    },
+    "sound": {
+      "master": "전체 사운드",
+      "on": "소리 켜짐",
+      "off": "소리 꺼짐",
+      "bgm": "배경음악 (BGM)",
+      "sfx": "효과음 (SFX)",
+      "test": "사운드 테스트",
+      "play": "재생"
+    },
+    "game": {
+      "autoReady": "대기실 자동 준비",
+      "autoReadyDesc": "방 입장 시 바로 준비 완료 상태로 전환합니다.",
+      "dnd": "초대 방해금지",
+      "dndDesc": "게임 중 다른 방 초대를 받지 않습니다.",
+      "emojis": "이모지 표시",
+      "chatNotify": "채팅 알림"
+    },
+    "language": {
+      "title": "언어 선택",
+      "desc": "앱 전체 표시 언어를 선택하세요."
+    },
+    "about": {
+      "changelog": "업데이트 내역",
+      "copyright": "© 2026 GachiArcade. 모든 권리 보유."
+    }
+  },
+  "errors": {
+    "notFound": "요청하신 페이지를 찾을 수 없습니다.",
+    "networkError": "네트워크 연결이 원활하지 않습니다.",
+    "roomFull": "방의 인원이 가득 찼습니다.",
+    "invalidCode": "유효하지 않은 방 코드입니다."
+  }
+}
