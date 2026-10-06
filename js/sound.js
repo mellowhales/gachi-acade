@@ -55,56 +55,36 @@ const Sound = (() => {
   let _baseInterval = 200; // 살짝 더 경쾌하고 리드미컬한 템포
   let _currentInterval = 200;
 
-  // 1. 로비 감성 리믹스 확장 트랙 (C -> G -> Am -> F 기반 4개 섹션 총 96스텝 대곡!)
-  // 기본 음의 틀을 충실히 유지하면서 변형 리믹스, 멜로디 러시, 옥타브 도약, 브릿지 피날레로 4배 길이 확장
+  // 1. 로비 감성 16박자 루프 트랙 (C -> G -> Am -> F, 각 코드 4박자 = 정확히 16박자 순환 반복!)
   const LOBBY_NOTES = [
-    // ── Part A: 원곡 테마 도입 (정제된 맑은 아르페지오) ──
-    261.63, 329.63, 392.00, 523.25, 392.00, 329.63, // C (C4, E4, G4, C5, G4, E4)
-    196.00, 246.94, 293.66, 392.00, 293.66, 246.94, // G (G3, B3, D4, G4, D4, B3)
-    220.00, 261.63, 329.63, 440.00, 329.63, 261.63, // Am (A3, C4, E4, A4, E4, C4)
-    174.61, 220.00, 261.63, 349.23, 261.63, 220.00, // F (F3, A3, C4, F4, C4, A3)
-
-    // ── Part B: 리드미컬 바운스 리믹스 변주 (당김음 & 경쾌한 멜로디 런) ──
-    261.63, 392.00, 329.63, 523.25, 659.25, 587.33, // C (C4, G4, E4, C5, E5, D5)
-    246.94, 293.66, 392.00, 493.88, 587.33, 493.88, // G (B3, D4, G4, B4, D5, B4)
-    220.00, 329.63, 440.00, 523.25, 659.25, 493.88, // Am (A3, E4, A4, C5, E5, B4)
-    174.61, 261.63, 349.23, 440.00, 523.25, 392.00, // F (F3, C4, F4, A4, C5, G4)
-
-    // ── Part C: 화려한 아케이드 신스 솔로 멜로디 (옥타브 도약 & 클라이맥스) ──
-    329.63, 392.00, 523.25, 659.25, 783.99, 659.25, // C (E4, G4, C5, E5, G5, E5)
-    293.66, 392.00, 493.88, 587.33, 698.46, 587.33, // G (D4, G4, B4, D5, F5, D5)
-    261.63, 329.63, 440.00, 523.25, 659.25, 523.25, // Am (C4, E4, A4, C5, E5, C5)
-    220.00, 261.63, 349.23, 440.00, 493.88, 587.33, // F->G (A3, C4, F4, A4, B4, D5)
-
-    // ── Part D: 리드미컬 빌드업 & 브릿지 피날레 (루프 전환 & 하모니) ──
-    440.00, 329.63, 261.63, 440.00, 523.25, 659.25, // Am (A4, E4, C4, A4, C5, E5)
-    392.00, 329.63, 246.94, 392.00, 493.88, 587.33, // Em (G4, E4, B3, G4, B4, D5)
-    349.23, 440.00, 523.25, 698.46, 659.25, 587.33, // F (F4, A4, C5, F5, E5, D5)
-    392.00, 493.88, 587.33, 698.46, 587.33, 493.88  // G7 (G4, B4, D5, F5, D5, B4)
+    // 1~4박: C 코드 아르페지오 (C4, E4, G4, C5)
+    261.63, 329.63, 392.00, 523.25,
+    // 5~8박: G 코드 아르페지오 (B3, D4, G4, D5)
+    246.94, 293.66, 392.00, 587.33,
+    // 9~12박: Am 코드 아르페지오 (A3, C4, E4, A4)
+    220.00, 261.63, 329.63, 440.00,
+    // 13~16박: F 코드 아르페지오 & 루프 턴어라운드 (F3, A3, C4, G4)
+    174.61, 220.00, 261.63, 392.00
   ];
 
-  // 로비 펑키 리믹스 베이스 (옥타브 바운스)
+  // 로비 16박자 옥타브 바운스 베이스
   const LOBBY_BASS = [
-    // Part A
-    130.81, 261.63, 98.00, 196.00, 110.00, 220.00, 87.31, 174.61,
-    // Part B
-    130.81, 196.00, 98.00, 146.83, 110.00, 164.81, 87.31, 130.81,
-    // Part C
-    130.81, 261.63, 98.00, 196.00, 110.00, 220.00, 87.31, 98.00,
-    // Part D
-    110.00, 164.81, 82.41, 123.47, 87.31, 174.61, 98.00, 196.00
+    // C (1~4박)
+    130.81, 261.63, 130.81, 261.63,
+    // G (5~8박)
+    98.00, 196.00, 98.00, 196.00,
+    // Am (9~12박)
+    110.00, 220.00, 110.00, 220.00,
+    // F (13~16박)
+    87.31, 174.61, 87.31, 174.61
   ];
 
-  // 서브 하모니 코드 패드 (파트별 3도/5도 화음 레이어)
+  // 서브 하모니 코드 패드 (C, G, Am, F 각 4박자씩 총 16박자)
   const LOBBY_CHORDS = [
-    // C, G, Am, F
-    329.63, 392.00, 246.94, 293.66, 261.63, 329.63, 220.00, 261.63,
-    // Part B
-    392.00, 523.25, 293.66, 392.00, 329.63, 440.00, 261.63, 349.23,
-    // Part C
-    523.25, 659.25, 392.00, 493.88, 440.00, 523.25, 349.23, 440.00,
-    // Part D
-    440.00, 523.25, 392.00, 493.88, 349.23, 440.00, 392.00, 493.88
+    329.63, // C (E4)
+    293.66, // G (D4)
+    261.63, // Am (C4)
+    261.63  // F (C4)
   ];
 
   // 2. 끝말잇기 전용 스피디 긴박 트랙 (Am -> F -> Dm -> E7 댄스 배틀 스타일)
@@ -153,7 +133,7 @@ const Sound = (() => {
     _bgmPlaying = true;
     _bgmStep = 0;
 
-    _baseInterval = (track === 'wordchain') ? 165 : 200;
+    _baseInterval = (track === 'wordchain') ? 165 : 210;
     _currentInterval = _baseInterval;
 
     if (!_bgmMasterGain) {
@@ -196,7 +176,7 @@ const Sound = (() => {
 
       const noteDuration = (_currentInterval / 1000) * 0.95;
 
-      // ── 1. 메인 아르페지오 & 리드 멜로디 (밝고 경쾌한 칩튠/신스) ──
+      // ── 1. 메인 아르페지오 & 리드 멜로디 (16박자 순환 반복) ──
       const noteFreq = notes[_bgmStep % notes.length];
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -213,9 +193,9 @@ const Sound = (() => {
       osc.start(now);
       osc.stop(now + noteDuration + 0.01);
 
-      // ── 2. 서브 하모니 코드 패드 레이어 (로비 트랙일 때 화음감 부여) ──
-      if (!isWordchain && _bgmStep % 3 === 0) {
-        const chordIdx = Math.floor((_bgmStep % notes.length) / 3) % LOBBY_CHORDS.length;
+      // ── 2. 서브 하모니 코드 패드 레이어 (로비 16박자 기준 매 4박자마다 화음 전환) ──
+      if (!isWordchain && _bgmStep % 4 === 0) {
+        const chordIdx = Math.floor((_bgmStep % 16) / 4);
         const chordFreq = LOBBY_CHORDS[chordIdx];
         const chordOsc = ctx.createOscillator();
         const chordGain = ctx.createGain();
@@ -223,8 +203,8 @@ const Sound = (() => {
         chordOsc.type = 'sine';
         chordOsc.frequency.setValueAtTime(chordFreq, now);
 
-        const chordDuration = noteDuration * 2.8;
-        chordGain.gain.setValueAtTime(_bgmVolume * 0.07, now);
+        const chordDuration = noteDuration * 3.8;
+        chordGain.gain.setValueAtTime(_bgmVolume * 0.08, now);
         chordGain.gain.exponentialRampToValueAtTime(0.0001, now + chordDuration);
 
         chordOsc.connect(chordGain);
@@ -234,38 +214,32 @@ const Sound = (() => {
         chordOsc.stop(now + chordDuration + 0.01);
       }
 
-      // ── 3. 묵직하고 신나는 옥타브 바운스 베이스 ──
-      const bassStepInterval = isWordchain ? 2 : 3;
-      if (_bgmStep % bassStepInterval === 0) {
-        const bassIdx = Math.floor((_bgmStep % notes.length) / bassStepInterval) % bassNotes.length;
-        const bassFreq = bassNotes[bassIdx];
+      // ── 3. 묵직하고 신나는 옥타브 바운스 베이스 (16박자 동기화) ──
+      const bassFreq = bassNotes[_bgmStep % bassNotes.length];
+      const bassOsc = ctx.createOscillator();
+      const bassGain = ctx.createGain();
 
-        const bassOsc = ctx.createOscillator();
-        const bassGain = ctx.createGain();
+      bassOsc.type = 'triangle';
+      bassOsc.frequency.setValueAtTime(bassFreq, now);
 
-        bassOsc.type = isWordchain ? 'triangle' : 'triangle';
-        bassOsc.frequency.setValueAtTime(bassFreq, now);
+      bassGain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.28 : 0.2), now);
+      bassGain.gain.exponentialRampToValueAtTime(0.0001, now + noteDuration);
 
-        const bassDuration = noteDuration * bassStepInterval;
-        bassGain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.28 : 0.22), now);
-        bassGain.gain.exponentialRampToValueAtTime(0.0001, now + bassDuration);
+      bassOsc.connect(bassGain);
+      bassGain.connect(_bgmMasterGain);
 
-        bassOsc.connect(bassGain);
-        bassGain.connect(_bgmMasterGain);
+      bassOsc.start(now);
+      bassOsc.stop(now + noteDuration + 0.01);
 
-        bassOsc.start(now);
-        bassOsc.stop(now + bassDuration + 0.02);
-      }
-
-      // ── 4. 가벼운 아케이드 리듬 스냅 (틱 / 하이햇 비트) ──
-      if (!isWordchain && (_bgmStep % 2 === 1 || _bgmStep % 6 === 0)) {
+      // ── 4. 가벼운 아케이드 리듬 스냅 (16박자 비트 완벽 동기화) ──
+      if (!isWordchain && (_bgmStep % 2 === 1 || _bgmStep % 4 === 2)) {
         const noise = _getNoiseBuffer(ctx);
         if (noise) {
           const noiseSrc = ctx.createBufferSource();
           noiseSrc.buffer = noise;
           const noiseGain = ctx.createGain();
 
-          const isSnare = (_bgmStep % 6 === 0);
+          const isSnare = (_bgmStep % 4 === 2);
           noiseGain.gain.setValueAtTime(_bgmVolume * (isSnare ? 0.05 : 0.025), now);
           noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
 

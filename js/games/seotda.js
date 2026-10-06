@@ -57,6 +57,12 @@ const SeotdaGame = (() => {
   const START_CHIPS = 10000;
   const DEFAULT_ANTE = 100;
 
+  /* ── 사람 같은 봇 닉네임 풀 ── */
+  const BOT_NICKNAMES = [
+    '타짜조승우', '불꽃피망', '포커페이스', '한강뷰가자', '황금손',
+    '밑장빼기금지', '섯다마스터', '고니의제자', '아귀의의수', '평경장'
+  ];
+
   let _state = {
     round: 1,
     pot: 0,
@@ -235,19 +241,28 @@ const SeotdaGame = (() => {
       ? _context.players.slice(0, 5)
       : [{ id: _myId, name: '나', isHost: true }];
 
-    _state.players = rawPlayers.map(p => ({
-      id: String(p.id),
-      name: p.name || '플레이어',
-      isBot: !!p.isBot,
-      chips: START_CHIPS,
-      currentBet: 0,
-      totalBet: 0,
-      folded: false,
-      cards: [],
-      hand: null,
-      theme: p.theme,
-      avatarIcon: p.avatarIcon || 'fa-solid fa-user'
-    }));
+    let botNickIdx = 0;
+    const shuffledNicknames = [...BOT_NICKNAMES].sort(() => Math.random() - 0.5);
+
+    _state.players = rawPlayers.map(p => {
+      let assignedName = p.name || '플레이어';
+      if (p.isBot && (!p.name || p.name.startsWith('봇') || p.name.startsWith('Bot'))) {
+        assignedName = shuffledNicknames[botNickIdx++ % shuffledNicknames.length];
+      }
+      return {
+        id: String(p.id),
+        name: assignedName,
+        isBot: !!p.isBot,
+        chips: START_CHIPS,
+        currentBet: 0,
+        totalBet: 0,
+        folded: false,
+        cards: [],
+        hand: null,
+        theme: p.theme,
+        avatarIcon: p.avatarIcon || 'fa-solid fa-user'
+      };
+    });
 
     _renderTemplate();
 
@@ -544,8 +559,9 @@ const SeotdaGame = (() => {
     }
   }
 
+
   /* ═══════════════════════════════════════════════════════════════════
-     7. AI 봇 두뇌 (자연스러운 확률적 의사결정)
+     7. AI 봇 두뇌 (사람처럼 자연스러운 심리전 & 가변 생각 시간)
      ═══════════════════════════════════════════════════════════════════ */
   function _startTurnTimer() {
     clearInterval(_turnCountdownTimer);
@@ -557,11 +573,22 @@ const SeotdaGame = (() => {
 
     _updateTurnLabel();
 
-    // 봇인 경우 1~1.5초 후 자동 판단
+    // 봇인 경우 사람처럼 상황별 고민 시간(Thinking Time) 후 행동
     if (curPlayer.isBot && _isHost) {
+      const needed = _state.highestBet - curPlayer.currentBet;
+      let thinkDelay = 1000 + Math.random() * 800; // 기본 1.0~1.8초
+
+      // 큰 판돈(따당/하프/올인)을 맞닥뜨렸을 때 깊은 고민 (2.0~3.2초)
+      if (needed >= curPlayer.chips * 0.4 || needed >= DEFAULT_ANTE * 4) {
+        thinkDelay = 1800 + Math.random() * 1200;
+      } else if (needed === 0) {
+        // 평화로운 체크/선 턴일 때 빠른 판단 (0.8~1.4초)
+        thinkDelay = 800 + Math.random() * 600;
+      }
+
       _botTimer = setTimeout(() => {
         _executeBotDecision(curPlayer);
-      }, 1200 + Math.random() * 600);
+      }, thinkDelay);
       return;
     }
 
@@ -571,7 +598,6 @@ const SeotdaGame = (() => {
       _updateTurnLabel();
       if (_turnTimeLeft <= 0) {
         clearInterval(_turnCountdownTimer);
-        // 시간 초과 시: 체크 가능하면 체크, 아니면 다이
         const needed = _state.highestBet - curPlayer.currentBet;
         if (needed === 0) {
           handleBetAction('check', curPlayer.id);
@@ -586,46 +612,94 @@ const SeotdaGame = (() => {
     const needed = _state.highestBet - bot.currentBet;
     const cards = bot.cards;
 
-    // 패 평가
+    // 봇 성향 (라운드별 개성: aggressive, tight, bluffer, trapper)
+    if (!bot.personality) {
+      const personalities = ['aggressive', 'tight', 'bluffer', 'trapper', 'normal'];
+      bot.personality = personalities[Math.floor(Math.random() * personalities.length)];
+    }
+
+    // 패 강도 평가
     let rank = 15;
     if (cards.length >= 2) {
       rank = evaluateHand(cards[0], cards[1]).rank;
     } else if (cards.length === 1) {
-      // 1장일 때 광이나 열끗이면 가치 상승
-      if (cards[0].type === 'gwang') rank = 60;
+      if (cards[0].type === 'gwang') rank = 65;
       else if (cards[0].month === 10 || cards[0].month === 1) rank = 50;
-      else rank = 30;
+      else if (cards[0].type === 'yul') rank = 35;
+      else rank = 20;
     }
 
-    // 허풍(블러핑) 확률 10%
-    const isBluffing = Math.random() < 0.1;
-
-    if (rank >= 70 || isBluffing) {
-      // 강한 패 (땡, 광땡): 하프, 따당, 콜
-      const r = Math.random();
-      if (r < 0.4 && bot.chips >= needed + _state.pot * 0.5) handleBetAction('half', bot.id);
-      else if (r < 0.7 && bot.chips >= needed + _state.lastRaiseAmount * 2) handleBetAction('dadang', bot.id);
-      else if (needed > 0) handleBetAction('call', bot.id);
-      else handleBetAction('ping', bot.id);
-    } else if (rank >= 40) {
-      // 중간 패 (알리, 독사, 7~9끗): 콜, 삥, 체크
-      if (needed === 0) {
-        if (Math.random() < 0.5) handleBetAction('ping', bot.id);
-        else handleBetAction('check', bot.id);
-      } else if (needed <= bot.chips * 0.3) {
-        handleBetAction('call', bot.id);
-      } else {
-        handleBetAction('fold', bot.id);
-      }
-    } else {
-      // 약한 패 (1~4끗, 망통): 체크 또는 다이
+    // 1. 슬로우 플레이(트랩): 아주 강한 패(광땡, 장땡, 알리)를 쥐었을 때 1차전에서는 일부러 체크/콜로 유인
+    if (bot.personality === 'trapper' && rank >= 65 && _state.bettingStage === 1) {
       if (needed === 0) {
         handleBetAction('check', bot.id);
-      } else if (needed <= DEFAULT_ANTE * 2 && Math.random() < 0.3) {
+      } else {
         handleBetAction('call', bot.id);
+      }
+      return;
+    }
+
+    // 2. 블러핑(허풍): 약한 패(rank < 30)임에도 판을 흔듦
+    const canBluff = (bot.personality === 'bluffer' || Math.random() < 0.12) && _state.pot <= bot.chips * 0.4;
+    if (canBluff && rank < 30) {
+      if (needed === 0) {
+        if (Math.random() < 0.6) handleBetAction('half', bot.id);
+        else handleBetAction('ping', bot.id);
+      } else if (needed <= bot.chips * 0.25) {
+        if (Math.random() < 0.5) handleBetAction('dadang', bot.id);
+        else handleBetAction('call', bot.id);
       } else {
         handleBetAction('fold', bot.id);
       }
+      return;
+    }
+
+    // 3. 초강력 패 (광땡, 땡 70점 이상)
+    if (rank >= 70) {
+      if (bot.chips >= needed + Math.floor(_state.pot * 0.5) && Math.random() < 0.45) {
+        handleBetAction('half', bot.id);
+      } else if (bot.chips >= needed + _state.lastRaiseAmount * 2 && Math.random() < 0.7) {
+        handleBetAction('dadang', bot.id);
+      } else if (needed > 0) {
+        handleBetAction('call', bot.id);
+      } else {
+        handleBetAction('ping', bot.id);
+      }
+      return;
+    }
+
+    // 4. 중상급 패 (알리, 독사, 구삥, 장삥, 7~9끗, rank 40~69)
+    if (rank >= 40) {
+      if (needed === 0) {
+        if (Math.random() < 0.55) handleBetAction('ping', bot.id);
+        else handleBetAction('check', bot.id);
+      } else if (needed <= bot.chips * 0.35) {
+        // 판돈 대비 콜 비용이 적당하면 콜
+        if (Math.random() < 0.25 && bot.chips >= needed + _state.lastRaiseAmount * 2) {
+          handleBetAction('dadang', bot.id);
+        } else {
+          handleBetAction('call', bot.id);
+        }
+      } else {
+        // 비용이 너무 비싸면 tight 성향은 다이
+        if (bot.personality === 'tight' || Math.random() < 0.5) {
+          handleBetAction('fold', bot.id);
+        } else {
+          handleBetAction('call', bot.id);
+        }
+      }
+      return;
+    }
+
+    // 5. 약한 패 (1~4끗, 망통, rank < 40)
+    if (needed === 0) {
+      handleBetAction('check', bot.id);
+    } else if (needed <= DEFAULT_ANTE && Math.random() < 0.4) {
+      // 앤티 정도의 적은 판돈은 가볍게 콜
+      handleBetAction('call', bot.id);
+    } else {
+      // 그 외는 자연스럽게 다이
+      handleBetAction('fold', bot.id);
     }
   }
 
@@ -652,9 +726,11 @@ const SeotdaGame = (() => {
           </div>
         </div>
 
-        <!-- 2. 중앙 카지노 그린 모포 테이블 -->
+        <!-- 2. 중앙 카지노 그린 모포 테이블 (상단 상대 좌석, 중앙 팟, 하단 내 좌석으로 쾌적하게 3단 분리) -->
         <div class="seotda-table-mat custom-scroll">
-          
+          <!-- 타 플레이어 좌석 (상단 가로 전개) -->
+          <div class="seotda-opponents-row" id="seotda-opponents-row"></div>
+
           <!-- 중앙 팟 (Pot) 영역 -->
           <div class="seotda-center-pot">
             <div class="seotda-round-pill" id="seotda-round-pill">ROUND 1</div>
@@ -668,9 +744,6 @@ const SeotdaGame = (() => {
             <div class="seotda-status-msg" id="seotda-status-msg"></div>
           </div>
 
-          <!-- 타 플레이어 좌석 (상단/좌우) -->
-          <div class="seotda-opponents-row" id="seotda-opponents-row"></div>
-
           <!-- 내 좌석 (하단 중앙) -->
           <div class="seotda-my-seat" id="seotda-my-seat">
             <div class="seotda-my-cards-wrap" id="seotda-my-cards-wrap"></div>
@@ -679,31 +752,39 @@ const SeotdaGame = (() => {
           </div>
         </div>
 
-        <!-- 3. 하단 베팅 컨트롤 패널 -->
+        <!-- 3. 하단 베팅 컨트롤 패널 (실제 섯다 게임 스타일 액션 & 금액 서브텍스트) -->
         <div class="seotda-bet-controls" id="seotda-bet-controls">
           <button type="button" class="btn-bet-act btn-bet-fold" data-act="fold">
-            <i class="fa-solid fa-flag"></i> <strong>다이</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-flag"></i> 다이</span>
+            <span class="btn-bet-sub" id="sub-fold">기권</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-check" data-act="check">
-            <i class="fa-solid fa-check"></i> <strong>체크</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-check"></i> 체크</span>
+            <span class="btn-bet-sub" id="sub-check">통과</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-call" data-act="call">
-            <i class="fa-solid fa-hand-holding-dollar"></i> <strong id="lbl-call">콜</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-hand-holding-dollar"></i> 콜</span>
+            <span class="btn-bet-sub" id="sub-call">0</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-ping" data-act="ping">
-            <i class="fa-solid fa-arrow-up"></i> <strong>삥</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-arrow-up"></i> 삥</span>
+            <span class="btn-bet-sub" id="sub-ping">+100</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-dadang" data-act="dadang">
-            <i class="fa-solid fa-angles-up"></i> <strong>따당</strong>
-          </button>
-          <button type="button" class="btn-bet-act btn-bet-half" data-act="half">
-            <i class="fa-solid fa-circle-half-stroke"></i> <strong>하프</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-angles-up"></i> 따당</span>
+            <span class="btn-bet-sub" id="sub-dadang">+200</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-quarter" data-act="quarter">
-            <i class="fa-solid fa-chart-pie"></i> <strong>쿼터</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-chart-pie"></i> 쿼터</span>
+            <span class="btn-bet-sub" id="sub-quarter">+25%</span>
+          </button>
+          <button type="button" class="btn-bet-act btn-bet-half" data-act="half">
+            <span class="btn-bet-main"><i class="fa-solid fa-circle-half-stroke"></i> 하프</span>
+            <span class="btn-bet-sub" id="sub-half">+50%</span>
           </button>
           <button type="button" class="btn-bet-act btn-bet-allin" data-act="allin">
-            <i class="fa-solid fa-fire"></i> <strong>올인</strong>
+            <span class="btn-bet-main"><i class="fa-solid fa-fire"></i> 올인</span>
+            <span class="btn-bet-sub" id="sub-allin">전액</span>
           </button>
         </div>
 
@@ -908,27 +989,59 @@ const SeotdaGame = (() => {
     const me = curPlayer;
     const needed = _state.highestBet - me.currentBet;
 
-    // 콜 라벨에 필요한 금액 표시
-    const lblCall = document.getElementById('lbl-call');
-    if (lblCall) lblCall.textContent = needed > 0 ? `콜 (+${needed.toLocaleString()})` : '콜';
+    // 1. 각 베팅별 필요 금액 산출
+    const dadangRaise = Math.max(DEFAULT_ANTE, _state.lastRaiseAmount * 2);
+    const dadangPay = needed + dadangRaise;
 
-    // 체크 버튼: 낼 돈이 없을 때만 가능
+    const quarterRaise = Math.max(DEFAULT_ANTE, Math.floor(_state.pot * 0.25));
+    const quarterPay = needed + quarterRaise;
+
+    const halfRaise = Math.max(DEFAULT_ANTE, Math.floor(_state.pot * 0.5));
+    const halfPay = needed + halfRaise;
+
+    // 2. 버튼 서브텍스트 실시간 갱신
+    const subCheck = document.getElementById('sub-check');
+    if (subCheck) subCheck.textContent = needed === 0 ? '통과' : '불가';
+
+    const subCall = document.getElementById('sub-call');
+    if (subCall) subCall.textContent = needed > 0 ? `+${needed.toLocaleString()}` : '0';
+
+    const subPing = document.getElementById('sub-ping');
+    if (subPing) subPing.textContent = `+${DEFAULT_ANTE.toLocaleString()}`;
+
+    const subDadang = document.getElementById('sub-dadang');
+    if (subDadang) subDadang.textContent = `+${dadangPay.toLocaleString()}`;
+
+    const subQuarter = document.getElementById('sub-quarter');
+    if (subQuarter) subQuarter.textContent = `+${quarterPay.toLocaleString()}`;
+
+    const subHalf = document.getElementById('sub-half');
+    if (subHalf) subHalf.textContent = `+${halfPay.toLocaleString()}`;
+
+    const subAllin = document.getElementById('sub-allin');
+    if (subAllin) subAllin.textContent = `${me.chips.toLocaleString()}`;
+
+    // 3. 버튼 활성화 / 비활성화 처리
     const btnCheck = controls.querySelector('.btn-bet-check');
     if (btnCheck) btnCheck.disabled = needed > 0;
 
-    // 삥 버튼: 선 첫 베팅 시 주로 가능
+    const btnCall = controls.querySelector('.btn-bet-call');
+    if (btnCall) btnCall.disabled = needed === 0 && _state.highestBet === 0;
+
     const btnPing = controls.querySelector('.btn-bet-ping');
     if (btnPing) btnPing.disabled = needed > 0 || me.chips < DEFAULT_ANTE;
 
-    // 따당, 하프, 쿼터
     const btnDadang = controls.querySelector('.btn-bet-dadang');
-    if (btnDadang) btnDadang.disabled = me.chips < (needed + _state.lastRaiseAmount * 2);
-
-    const btnHalf = controls.querySelector('.btn-bet-half');
-    if (btnHalf) btnHalf.disabled = me.chips < (needed + Math.floor(_state.pot * 0.5));
+    if (btnDadang) btnDadang.disabled = me.chips < dadangPay;
 
     const btnQuarter = controls.querySelector('.btn-bet-quarter');
-    if (btnQuarter) btnQuarter.disabled = me.chips < (needed + Math.floor(_state.pot * 0.25));
+    if (btnQuarter) btnQuarter.disabled = me.chips < quarterPay;
+
+    const btnHalf = controls.querySelector('.btn-bet-half');
+    if (btnHalf) btnHalf.disabled = me.chips < halfPay;
+
+    const btnAllin = controls.querySelector('.btn-bet-allin');
+    if (btnAllin) btnAllin.disabled = me.chips <= 0;
   }
 
   function _updateTurnLabel() {

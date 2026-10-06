@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.8.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.9.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,10 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.9.0 (2026-10)
+  - Web Audio BGM 신디사이저 엔진 16박자(16-beat) 루프 및 리듬 스냅 완벽 동기화
+  - 섯다 AI 고도화 (인간적인 가변 생각 시간, 성향 시스템, 슬로우 플레이·블러핑 심리전 및 자연스러운 사람 닉네임 탑재)
+  - 섯다 테이블 UI 전면 리디자인 (그라데이션 제거 단색 플랫 테마, 10px 라운딩 통일, 상단 상대석-중앙 팟-하단 내 좌석 3단 쾌적 배치 및 실제 섯다형 베팅 컨트롤)
 - v1.8.0 (2026-10)
   - 신규 2장 섯다(Seotda) 게임 추가 (2~5인 실시간 멀티플레이 & AI 봇 완벽 지원)
   - 실제 고화질 화투패 20장 벡터 애셋 및 전용 모포 테이블 디자인
