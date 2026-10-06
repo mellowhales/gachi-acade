@@ -79,6 +79,25 @@ const ChessGame = (() => {
     }
 
     _renderGameLayout();
+
+    const resignBtn = document.getElementById('btn-chess-resign');
+    if (resignBtn) {
+      resignBtn.addEventListener('click', async () => {
+        if (gameOver) return;
+        const ok = window.showConfirmDialog ? await window.showConfirmDialog({
+          title: '기권 확인',
+          message: '정말로 기권하시겠습니까? 즉시 패배 처리됩니다.',
+          confirmText: '기권',
+          cancelText: '취소',
+          icon: 'fa-regular fa-flag',
+          isDanger: true
+        }) : confirm('정말로 기권하시겠습니까?');
+        if (ok) {
+          _resign(true);
+        }
+      });
+    }
+
     _updateUI();
     _startTimer();
 
@@ -95,17 +114,23 @@ const ChessGame = (() => {
 
     _container.innerHTML = `
       <div class="chess-wrap">
-        <!-- 상단 헤더: 턴 인디케이터 & 상태 -->
+        <!-- 상단 헤더: 턴 인디케이터 & 우측 기권 버튼 (통일 규격) -->
         <div class="chess-header-area">
           <div class="turn-indicator">
             <span class="turn-label" id="chess-turn-label">
               <i class="fa-solid fa-chess"></i>
-              <span id="chess-turn-text">턴 계산 중...</span>
+              <span id="chess-turn-text">내 턴</span>
             </span>
           </div>
-          <div class="chess-status-badge hidden" id="chess-status-badge">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <span id="chess-status-text">체크!</span>
+          <div class="chess-header-actions" style="display:flex; align-items:center; gap:8px;">
+            <div class="chess-status-badge hidden" id="chess-status-badge">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span id="chess-status-text">체크!</span>
+            </div>
+            <button type="button" class="btn-game-resign" id="btn-chess-resign" title="대국 기권">
+              <i class="fa-regular fa-flag"></i>
+              <span>기권</span>
+            </button>
           </div>
         </div>
 
@@ -404,13 +429,10 @@ const ChessGame = (() => {
     }
   }
 
-  function _handleTimeout(loserColor) {
+  function _finishGame(iWon, reason) {
     if (gameOver) return;
     gameOver = true;
     _stopTimer();
-
-    const iWon = (loserColor !== myColor);
-    const reason = iWon ? '상대방의 시간 초과로 승리!' : '시간 초과로 패배하셨습니다!';
 
     if (typeof Sound !== 'undefined') {
       if (iWon) Sound.playWin();
@@ -418,8 +440,21 @@ const ChessGame = (() => {
     }
 
     setTimeout(() => {
-      _onResult && _onResult(iWon, null);
+      _onResult && _onResult(iWon, reason || null);
     }, 1000);
+  }
+
+  function _handleTimeout(loserColor) {
+    const iWon = (loserColor !== myColor);
+    const reason = iWon ? '상대방의 시간 초과로 승리!' : '시간 초과로 패배하셨습니다!';
+    _finishGame(iWon, reason);
+  }
+
+  function _resign(isLocal) {
+    if (isLocal) {
+      P2P.send({ type: 'chess_resign', resignerColor: myColor });
+      _finishGame(false, '기권하여 패배했습니다.');
+    }
   }
 
   function _updateUI() {
@@ -430,7 +465,6 @@ const ChessGame = (() => {
 
     const turn = chess.turn(); // 'w' or 'b'
     const isMyTurn = (turn === myColor);
-    const colorName = (turn === 'w') ? '백(White)' : '흑(Black)';
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {
       window.App.updateInGameTurn(turn);
@@ -440,10 +474,7 @@ const ChessGame = (() => {
       label.className = 'turn-label ' + (isMyTurn ? 'my-turn' : 'opp-turn');
     }
     if (text) {
-      const icon = (turn === 'w')
-        ? '<i class="fa-regular fa-circle" style="color:var(--t1);"></i>'
-        : '<i class="fa-solid fa-circle" style="color:#1a1a1a;"></i>';
-      text.innerHTML = `${icon} <span>${isMyTurn ? '내 차례 ('+colorName+')' : '상대방 차례 ('+colorName+')'}</span>`;
+      text.textContent = isMyTurn ? '내 턴' : '상대 턴';
     }
 
     if (chess.in_check() && !chess.in_checkmate()) {
@@ -536,6 +567,8 @@ const ChessGame = (() => {
       _renderBoard();
       _updateUI();
       if (!gameOver) _startTimer();
+    } else if (data.type === 'chess_resign') {
+      _finishGame(data.resignerColor !== myColor, '상대방이 기권하여 승리했습니다!');
     } else if (data.type === 'chess_rematch') {
       _doRematch();
     }

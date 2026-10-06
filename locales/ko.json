@@ -112,28 +112,29 @@
   "games": {
     "gomoku": { "name": "오목", "desc": "15×15 턴제 전략" },
     "chess": { "name": "체스", "desc": "실시간 2인 클래식 체스" },
-    "chesswarfare": { "name": "체스 워페어", "desc": "16×16 영토 점령전" },
     "janggi": { "name": "장기", "desc": "정통 2인 한국 장기" },
     "alkkagi": { "name": "알까기", "desc": "실시간 물리 알까기 대결" },
     "quoridor": { "name": "쿼리도", "desc": "미로 탈출 & 벽 세우기" },
     "baskin31": { "name": "베스킨라빈스 31", "desc": "1~3 숫자 심리전" },
-    "roulette": { "name": "러시안 룰렛", "desc": "실탄&공포탄 서바이벌" },
     "wordchain": { "name": "끝말잇기", "desc": "15초 스피드 대결" },
     "apple": { "name": "사과게임", "desc": "60초 숫자 퍼즐" },
     "typing": { "name": "타자연습 대결", "desc": "실시간 속타 배틀" },
     "catchmind": { "name": "캐치마인드", "desc": "실시간 그림 퀴즈 배틀" },
     "yutnori": { "name": "윷놀이", "desc": "전통 윷놀이 말판 배틀" },
-    "yacht": { "name": "야추 다이스", "desc": "3D 주사위 족보 배틀" }
+    "yacht": { "name": "야추 다이스", "desc": "3D 주사위 족보 배틀" },
+    "seotda": { "name": "섯다", "desc": "2장 섯다 & 베팅 배틀" }
   },
   "settings": {
     "title": "환경 설정",
     "tabs": {
       "env": "화면",
+      "display": "화면",
       "sound": "음향",
       "game": "게임",
       "support": "문의",
       "about": "정보",
-      "language": "언어"
+      "language": "언어",
+      "lang": "언어"
     },
     "env": {
       "theme": "화면 테마",
@@ -164,11 +165,20 @@
       "title": "언어 선택",
       "desc": "앱 표시 언어를 선택하세요."
     },
+    "close": "닫기",
     "about": {
+      "title": "업데이트 내역",
       "changelog": "업데이트 내역",
       "copyright": "© 2026 GachiArcade. 모든 권리 보유."
     }
   },
+  "lang": {
+    "title": "언어 선택",
+    "desc": "앱 표시 언어를 선택하세요."
+  },
+  "settings.close": "닫기",
+  "lang.title": "언어 선택",
+  "lang.desc": "앱 표시 언어를 선택하세요.",
   "errors": {
     "notFound": "요청하신 페이지를 찾을 수 없습니다.",
     "networkError": "네트워크 연결이 원활하지 않습니다.",

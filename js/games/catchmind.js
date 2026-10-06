@@ -981,6 +981,12 @@ const CatchmindGame = (() => {
           <div class="cm-meta-row">
 
             <span class="cm-round-badge" id="cm-round-badge">Round ${round}/${totalRounds}</span>
+            <div class="cm-score-badge-header" id="cm-score-badge-header" style="
+              display: inline-flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 800; color: #d97706;
+            ">
+              <i class="fa-solid fa-star" style="color:#f59e0b;"></i>
+              <span id="cm-my-score-display">내 점수: 0점</span>
+            </div>
             <div class="cm-drawer-badge">
               <i class="fa-solid fa-palette"></i>
               <span id="cm-drawer-name">출제자 준비 중...</span>
@@ -2523,11 +2529,28 @@ const CatchmindGame = (() => {
     players.forEach((p, idx) => {
       const item = document.getElementById(`gsp-item-${idx}`);
       if (!item) return;
-      const tagEl = item.querySelector('.gsp-tag');
-      if (!tagEl) return;
 
       const pScore = (scores && typeof scores[p.id] === 'number') ? scores[p.id] : 0;
-      const scorePrefix = `<span style="font-size:0.75rem; font-weight:800; color:var(--t2); margin-right:5px;">${pScore}점</span>`;
+
+      // 🌟 [항시 표기] 사이드바 플레이어 카드 전용 점수 뱃지
+      let scoreBadge = item.querySelector('.cm-gsp-score-badge');
+      if (!scoreBadge) {
+        scoreBadge = document.createElement('span');
+        scoreBadge.className = 'cm-gsp-score-badge';
+        scoreBadge.style.cssText = 'display:inline-flex; align-items:center; gap:3px; font-size:0.78rem; font-weight:900; color:#d97706; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); border-radius:999px; padding:1px 7px; margin-left:6px;';
+        const metaEl = item.querySelector('.gsp-info') || item.querySelector('.gsp-meta') || item;
+        metaEl.appendChild(scoreBadge);
+      }
+      scoreBadge.innerHTML = `<i class="fa-solid fa-star" style="color:#f59e0b;font-size:0.7rem;"></i> ${pScore}점`;
+
+      // 🌟 상단 헤더 내 점수 실시간 갱신
+      if (String(p.id) === String(myId)) {
+        const myScoreEl = document.getElementById('cm-my-score-display');
+        if (myScoreEl) myScoreEl.textContent = `내 점수: ${pScore}점`;
+      }
+
+      const tagEl = item.querySelector('.gsp-tag');
+      if (!tagEl) return;
 
       let roleHtml = '';
       if (idx === safeIdx) {
@@ -2541,7 +2564,7 @@ const CatchmindGame = (() => {
         item.classList.remove('is-current-turn');
       }
 
-      tagEl.innerHTML = `<span style="display:inline-flex; align-items:center;">${scorePrefix}${roleHtml}</span>`;
+      tagEl.innerHTML = `<span style="display:inline-flex; align-items:center;">${roleHtml}</span>`;
     });
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {
@@ -2817,5 +2840,49 @@ const CatchmindGame = (() => {
     }, targetPeerId);
   }
 
-  return { init, destroy, sendSnapshotTo, onSidebarRedrawn, isPlayerSolved };
+  /* ── 인게임 플레이어 탈주 처리 ── */
+  function removePlayer(playerId) {
+    if (isGameOver) return;
+    if (!players || players.length === 0) return;
+
+    const idx = players.findIndex(p => String(p.id) === String(playerId));
+    if (idx === -1) return;
+
+    const wasDrawer = idx === ((drawerIdx % players.length + players.length) % players.length);
+
+    players.splice(idx, 1);
+
+    if (players.length === 0) return;
+
+    // drawerIdx 재조정: 제거된 인덱스가 drawerIdx보다 작거나 같으면 하나 감소
+    if (idx < drawerIdx) {
+      drawerIdx = Math.max(0, drawerIdx - 1);
+    } else if (idx === drawerIdx) {
+      // 출제자가 나간 경우: drawerIdx 유지 (splice로 다음 사람이 앞으로 당겨짐)
+      drawerIdx = drawerIdx % players.length;
+    }
+
+    // 남은 플레이어가 1명이면 게임 종료 처리
+    if (players.length <= 1) {
+      if (!isHost) return;
+      isGameOver = true;
+      const winner = players[0];
+      if (winner) {
+        const iWon = (String(winner.id) === String(myId)) || (winner.isHost && isHost);
+        setTimeout(() => { _onResult && _onResult(iWon); }, 1500);
+      }
+      return;
+    }
+
+    // 호스트가 출제자였던 경우 새 라운드 시작 신호
+    if (isHost && wasDrawer) {
+      setTimeout(() => {
+        if (!isGameOver && typeof _hostStartRound === 'function') {
+          _hostStartRound();
+        }
+      }, 1500);
+    }
+  }
+
+  return { init, destroy, sendSnapshotTo, onSidebarRedrawn, isPlayerSolved, removePlayer };
 })();

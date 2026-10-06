@@ -64,6 +64,25 @@ const QuoridorGame = (() => {
     }
 
     _renderGameLayout();
+
+    const resignBtn = document.getElementById('btn-qd-resign');
+    if (resignBtn) {
+      resignBtn.addEventListener('click', async () => {
+        if (gameOver) return;
+        const ok = window.showConfirmDialog ? await window.showConfirmDialog({
+          title: '기권 확인',
+          message: '정말로 기권하시겠습니까? 즉시 패배 처리됩니다.',
+          confirmText: '기권',
+          cancelText: '취소',
+          icon: 'fa-regular fa-flag',
+          isDanger: true
+        }) : confirm('정말로 기권하시겠습니까?');
+        if (ok) {
+          _resign(true);
+        }
+      });
+    }
+
     _updateUI();
 
     P2P.offMessage(_onMessage);
@@ -73,16 +92,22 @@ const QuoridorGame = (() => {
   function _renderGameLayout() {
     _container.innerHTML = `
       <div class="quoridor-wrap">
-        <!-- 상단 헤더: 턴 & 모드 컨트롤 -->
+        <!-- 상단 헤더: 턴 인디케이터 & 우측 기권 버튼 (통일 규격) -->
         <div class="quoridor-header-area">
           <div class="turn-indicator">
             <span class="turn-label" id="qd-turn-label">
               <i class="fa-solid fa-shapes"></i>
-              <span id="qd-turn-text">턴 계산 중...</span>
+              <span id="qd-turn-text">내 턴</span>
             </span>
           </div>
-          <div class="qd-goal-hint" id="qd-goal-hint">
-            ${myPlayerIdx === 0 ? '목표: 맨 위쪽(상단) 끝 줄 도달' : '목표: 맨 아래쪽(하단) 끝 줄 도달'}
+          <div class="quoridor-header-actions" style="display:flex; align-items:center; gap:8px;">
+            <div class="qd-goal-hint" id="qd-goal-hint" style="font-size:0.8rem; color:var(--t3);">
+              ${myPlayerIdx === 0 ? '목표: 상단 끝 줄 도달' : '목표: 하단 끝 줄 도달'}
+            </div>
+            <button type="button" class="btn-game-resign" id="btn-qd-resign" title="대국 기권">
+              <i class="fa-regular fa-flag"></i>
+              <span>기권</span>
+            </button>
           </div>
         </div>
 
@@ -564,7 +589,8 @@ const QuoridorGame = (() => {
     }
   }
 
-  function _endGame(winnerIdx) {
+  function _endGame(winnerIdx, reason) {
+    if (gameOver) return;
     gameOver = true;
     const iWon = (winnerIdx === myPlayerIdx);
 
@@ -574,8 +600,15 @@ const QuoridorGame = (() => {
     }
 
     setTimeout(() => {
-      _onResult && _onResult(iWon, null);
+      _onResult && _onResult(iWon, reason || null);
     }, 1000);
+  }
+
+  function _resign(isLocal) {
+    if (isLocal) {
+      P2P.send({ type: 'quoridor_resign', resignerIdx: myPlayerIdx });
+      _endGame(1 - myPlayerIdx, '기권하여 패배했습니다.');
+    }
   }
 
   function _isMyTurn() {
@@ -591,15 +624,13 @@ const QuoridorGame = (() => {
     const myV = document.getElementById('qd-my-walls-v');
 
     const isMine = _isMyTurn();
-    const isSpectator = !!(_context && _context.isSpectator);
-    const curName = (currentTurn === 0) ? '<i class="fa-solid fa-circle" style="color:#3182ce;"></i> 파랑 (하단)' : '<i class="fa-solid fa-circle" style="color:#e53e3e;"></i> 빨강 (상단)';
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {
       window.App.updateInGameTurn(currentTurn);
     }
 
     if (label) label.className = 'turn-label ' + (isMine ? 'my-turn' : 'opp-turn');
-    if (text) text.innerHTML = isSpectator ? `${curName} 차례 (관전 중)` : (isMine ? '내 차례' : `${curName} 차례`);
+    if (text) text.textContent = isMine ? '내 턴' : '상대 턴';
 
     if (myH) myH.textContent = myPlayerIdx >= 0 ? wallsLeft[myPlayerIdx] : '-';
     if (myV) myV.textContent = myPlayerIdx >= 0 ? wallsLeft[myPlayerIdx] : '-';
@@ -656,6 +687,8 @@ const QuoridorGame = (() => {
       gameOver = !!data.gameOver;
       _renderBoard();
       _updateUI();
+    } else if (data.type === 'quoridor_resign') {
+      _endGame(myPlayerIdx, '상대방이 기권하여 승리했습니다!');
     } else if (data.type === 'quoridor_rematch') {
       _doRematch();
     }

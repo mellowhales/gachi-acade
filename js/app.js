@@ -9,18 +9,17 @@
   const GAMES = {
     gomoku:       { module: GomokuGame,       title: '오목',          maxPlayers: 2, isTurnBased: true },
     chess:        { module: ChessGame,        title: '체스',          maxPlayers: 2, isTurnBased: true },
-    chesswarfare: { module: ChessWarfareGame, title: '체스 워페어',    maxPlayers: 2, isTurnBased: true },
     janggi:       { module: JanggiGame,       title: '장기',          maxPlayers: 2, isTurnBased: true },
     alkkagi:   { module: AlkkagiGame,   title: '알까기',        maxPlayers: 2, isTurnBased: true },
     quoridor:  { module: QuoridorGame,  title: '쿼리도',        maxPlayers: 2, isTurnBased: true },
     baskin31:  { module: Baskin31Game,  title: '베스킨라빈스 31', maxPlayers: 8, isTurnBased: true },
-    roulette:  { module: RussianRouletteGame, title: '러시안 룰렛', maxPlayers: 8, isTurnBased: true },
     wordchain: { module: WordchainGame, title: '끝말잇기',      maxPlayers: 8, isTurnBased: true },
     apple:     { module: AppleGame,     title: '사과게임',        maxPlayers: 8, isTurnBased: false },
     typing:    { module: TypingGame,    title: '타자연습 대결',    maxPlayers: 8, isTurnBased: false },
     catchmind: { module: CatchmindGame, title: '캐치마인드',      maxPlayers: 8, isTurnBased: true },
     yutnori:   { module: YutnoriGame,   title: '윷놀이',          maxPlayers: 4, isTurnBased: true },
     yacht:     { module: YachtGame,     title: '야추 다이스',      maxPlayers: 4, isTurnBased: true },
+    seotda:    { module: SeotdaGame,    title: '섯다',            maxPlayers: 5, isTurnBased: true },
   };
 
   // 끝말잇기 첫 단어 랜덤 풀
@@ -70,7 +69,16 @@
   }
 
   /* ── 상태 변수 (기본 닉네임: 익명 + 랜덤 동물/색상 고유 부여) ── */
-  let myNickname = localStorage.getItem('arcade_nick') || '익명';
+  // 닉네임 초기화 - 익명인 경우 랜덤 숫자 4자리 붙여 고유화
+  function _generateUniqueAnonNick() {
+    const num = Math.floor(1000 + Math.random() * 9000);
+    return `익명${num}`;
+  }
+  let myNickname = localStorage.getItem('arcade_nick') || '';
+  if (!myNickname) {
+    myNickname = _generateUniqueAnonNick();
+    localStorage.setItem('arcade_nick', myNickname);
+  }
   let myAvatarIcon = localStorage.getItem('arcade_avatar_icon') || '';
   let myAvatarColor = localStorage.getItem('arcade_avatar_color') || '';
 
@@ -81,9 +89,6 @@
   if (!myAvatarColor) {
     myAvatarColor = _getRandomAvatarColor();
     localStorage.setItem('arcade_avatar_color', myAvatarColor);
-  }
-  if (!localStorage.getItem('arcade_nick')) {
-    localStorage.setItem('arcade_nick', myNickname);
   }
 
   // 🎨 닉네임 색상 염색약 (상점 아이템)
@@ -696,13 +701,11 @@
     'Tip - 대기실과 인게임 좌측 패널에서 플레이어를 클릭하면 프로필과 전적 통계를 볼 수 있어요.',
     'Tip - 프로필 카드를 장착하면 대기실, 인게임, 접속자 목록에 멋진 테마가 표시돼요.',
     'Tip - 캐치마인드에서 그림을 그릴 때 투명도, 브러시 크기, 무지개 컬러 휠을 활용해 보세요!',
-    'Tip - 러시안 룰렛에서는 돋보기, 맥주, 수갑 등 아이템을 적재적소에 사용하는 것이 승리의 열쇠예요.',
     'Tip - 야추 다이스는 주사위를 최대 3번까지 굴릴 수 있으며, 높은 족보를 전략적으로 선점하는 게 중요해요.',
     'Tip - 게임 도중 관전자로 참여해도 실시간으로 채팅과 이모지로 함께 응원할 수 있어요.',
     'Tip - 사이드바 상단의 프로필 설정 버튼을 눌러 언제든 귀여운 동물 아바타로 변경할 수 있어요.',
     'Tip - 다크 모드를 켜면 눈의 피로를 덜면서 더욱 몰입감 있게 게임을 즐길 수 있어요.',
     'Tip - 게임에서 아쉽게 패배하더라도 판수와 경험치가 누적되어 레벨을 올릴 수 있어요.',
-    'Tip - 쓰레기 체스는 폰 대신 다양한 룰과 영토 확장으로 색다른 전략을 즐길 수 있어요.',
     'Tip - 쿼리도는 말 이동뿐만 아니라 상대의 경로를 벽으로 막아 턴을 낭비시키는 전략이 핵심이에요.',
     'Tip - 로비 실시간 채팅에서 접속 중인 모든 플레이어들과 자유롭게 대화를 나눠보세요.'
   ];
@@ -790,7 +793,8 @@
   let _isJoinCancelled = false;
 
   function showLoading(text = '처리 중...') {
-    $('loading-text').textContent = text;
+    const translated = (typeof I18N !== 'undefined') ? I18N.t(text) : text;
+    $('loading-text').textContent = translated;
     $('overlay-loading').classList.remove('hidden');
   }
   function hideLoading() {
@@ -819,7 +823,8 @@
   let _toastTimer = null;
   function showToast(msg, type = '') {
     const el = $('toast');
-    el.textContent = msg;
+    const translated = (typeof I18N !== 'undefined') ? I18N.t(msg) : msg;
+    el.textContent = translated;
     el.className = 'toast ' + type;
     clearTimeout(_toastTimer);
     _toastTimer = setTimeout(() => el.classList.add('hidden'), 3000);
@@ -1545,8 +1550,6 @@
       progressBonus = 25;
     } else if (gameKey === 'wordchain') {
       progressBonus = 20;
-    } else if (gameKey === 'roulette') {
-      progressBonus = 18;
     } else if (gameKey === 'gomoku' || gameKey === 'chess' || gameKey === 'janggi') {
       progressBonus = 22;
     } else if (gameKey === 'othello' || gameKey === 'connect4') {
@@ -4292,7 +4295,7 @@
     if (!targetPlayer) return;
 
     const myId = P2P.getMyId();
-    const amIHost = P2P.isHost() || isHostPlayer;
+    const amIHost = P2P.isHost() || isHostPlayer || isDevMode;
     const isMe = (targetPlayer.id === myId) || (targetPlayer.isHost && amIHost);
 
     // 만약 나 자신을 클릭한 경우 내 전적 모달 바로 오픈
@@ -4381,9 +4384,14 @@
   // [강퇴하기] 버튼 클릭
   if ($('btn-host-kick')) {
     $('btn-host-kick').addEventListener('click', async () => {
-      if (!P2P.isHost() || !selectedTargetPlayer) return;
+      if ((!P2P.isHost() && !isDevMode) || !selectedTargetPlayer) return;
       const target = selectedTargetPlayer;
       _closeHostActionMenu();
+
+      if (isDevMode && target.id !== 'dev-player') {
+        _removeDevBotPlayer(target.id);
+        return;
+      }
 
       const ok = await showConfirmDialog({
         title: '참가자 강퇴',
@@ -5181,7 +5189,7 @@
     try { sessionStorage.removeItem('gachi_presence_key'); } catch (_) {}
 
     // 2. 로컬 프로필 게스트 기본값으로 초기화
-    myNickname = '익명';
+    myNickname = _generateUniqueAnonNick();
     myAvatarIcon = _getRandomAvatarIcon();
     myAvatarColor = _getRandomAvatarColor();
     myCoins = 0;
@@ -5359,14 +5367,13 @@
     alkkagi: { title: '알까기', icon: 'fa-solid fa-circle-dot' },
     quoridor: { title: '쿼리도', icon: 'fa-solid fa-border-all' },
     baskin31: { title: '배스킨라빈스 31', icon: 'fa-solid fa-ice-cream' },
-    roulette: { title: '러시안 룰렛', icon: 'fa-solid fa-skull-crossbones' },
     wordchain: { title: '끝말잇기', icon: 'fa-solid fa-spell-check' },
     apple: { title: '사과게임', icon: 'fa-solid fa-apple-whole' },
     typing: { title: '타자연습', icon: 'fa-solid fa-keyboard' },
     catchmind: { title: '캐치마인드', icon: 'fa-solid fa-palette' },
     yutnori: { title: '윷놀이', icon: 'fa-solid fa-dice' },
     yacht: { title: '요트 다이스', icon: 'fa-solid fa-dice-five' },
-    chesswarfare: { title: '체스 워페어', icon: 'fa-solid fa-chess-knight' }
+    seotda: { title: '섯다', icon: 'fa-solid fa-clone' }
   };
 
   function _createEmptyStats() {
@@ -6023,8 +6030,8 @@
 
     // 라운드 지원 게임: 끝말잇기, 캐치마인드, 타자연습 대결
     const isRoundGame = ['wordchain', 'catchmind', 'typing'].includes(selectedGameKey);
-    // 진영 지원 게임: 오목, 체스, 체스워페어, 장기, 알까기
-    const isSideGame = ['gomoku', 'chess', 'chesswarfare', 'janggi', 'alkkagi'].includes(selectedGameKey);
+    // 진영 지원 게임: 오목, 체스, 장기, 알까기
+    const isSideGame = ['gomoku', 'chess', 'janggi', 'alkkagi'].includes(selectedGameKey);
 
     const selectPanel = document.querySelector('.game-select-panel');
     if (selectPanel) {
@@ -6166,27 +6173,28 @@
   async function _startJoinRoom(code, inputPassword = '') {
     const cleanCode = String(code || '').replace(/\s+/g, '').trim();
 
-    // 🛠️ 개발자 테스트 모드 (0000 입력 시 1인 게임 테스트 활성화)
+    // 🛠️ 개발자 테스트 모드 (0000 입력 시 1인 게임 테스트 및 봇 생성 모드 활성화)
     if (cleanCode === '0000') {
       isDevMode = true;
       currentRoomCode = '0000';
-      currentRoomMaxPlayers = 5;
+      currentRoomMaxPlayers = 8;
       roomPlayers = [{
         id: 'dev-player',
         name: myNickname || '개발자',
-        avatarIcon: myAvatarIcon,
-        avatarColor: myAvatarColor,
-        level: myLevel,
-        exp: myExp,
+        avatarIcon: myAvatarIcon || 'fa-solid fa-code',
+        avatarColor: myAvatarColor || '#e53e3e',
+        level: myLevel || 99,
+        exp: myExp || 999,
         isHost: true,
         isReady: true
       }];
-      selectedGameKey = 'apple';
+      selectedGameKey = 'wordchain';
+      selectedGameRounds = 1;
       isMyReady = true;
 
       _resetChatLogs();
       _enterRoomScreen();
-      showToast('개발자 모드가 활성화되었습니다. (1인 플레이 가능)', 'success');
+      showToast('개발자 모드 활성화: 참가자 대기 버튼을 눌러 봇을 추가하고 1인 플레이를 진행하세요!', 'success');
       return;
     }
 
@@ -6997,8 +7005,68 @@
     _scrollRoomChatToBottom();
   }
 
+  /* ── 개발자 모드: 봇 플레이어 추가 ── */
+  function _addDevBotPlayer() {
+    if (!isDevMode) return;
+    if (roomPlayers.length >= 8) {
+      showToast('최대 8명까지만 추가할 수 있습니다.', 'warn');
+      return;
+    }
+    const botIdx = roomPlayers.length; // 1, 2, ...
+    const botNames = ['테스트봇 알파', '테스트봇 베타', '테스트봇 감마', '테스트봇 델타', '테스트봇 엡실론', '테스트봇 제타', '테스트봇 에타', '테스트봇 세타'];
+    const botIcons = ['fa-solid fa-robot', 'fa-solid fa-ghost', 'fa-solid fa-cat', 'fa-solid fa-dragon', 'fa-solid fa-bolt', 'fa-solid fa-gamepad', 'fa-solid fa-shield-halved', 'fa-solid fa-wand-magic-sparkles'];
+    const botColors = ['#3182ce', '#805ad5', '#dd6b20', '#38a169', '#e53e3e', '#d69e2e', '#319795', '#b83280'];
+
+    const botName = botNames[(botIdx - 1) % botNames.length] || `테스트봇 ${botIdx}`;
+    const botIcon = botIcons[(botIdx - 1) % botIcons.length];
+    const botColor = botColors[(botIdx - 1) % botColors.length];
+
+    const newBot = {
+      id: `dev-bot-${Date.now()}-${botIdx}`,
+      name: botName,
+      avatarIcon: botIcon,
+      avatarColor: botColor,
+      level: Math.min(99, botIdx * 5),
+      exp: 100,
+      isHost: false,
+      isReady: true,
+      isBot: true
+    };
+    roomPlayers.push(newBot);
+
+    // 🌟 플레이어 수 만큼 라운드 자동 연동
+    selectedGameRounds = roomPlayers.length;
+    const roundValEl = $('game-round-val');
+    if (roundValEl) roundValEl.textContent = `${selectedGameRounds} 라운드`;
+
+    // 슬롯 여유 유지
+    if (roomPlayers.length >= currentRoomMaxPlayers && currentRoomMaxPlayers < 8) {
+      currentRoomMaxPlayers = Math.min(8, roomPlayers.length + 1);
+    }
+
+    _updateRoomUI();
+    showToast(`${botName} 참가! (현재 ${roomPlayers.length}명 / 라운드: ${selectedGameRounds}R)`, 'success');
+  }
+
+  /* ── 개발자 모드: 봇 플레이어 추방(강퇴) ── */
+  function _removeDevBotPlayer(botId) {
+    if (!isDevMode) return;
+    const pIndex = roomPlayers.findIndex(p => p.id === botId);
+    if (pIndex === -1) return;
+    const removedName = roomPlayers[pIndex].name;
+    roomPlayers.splice(pIndex, 1);
+
+    // 🌟 플레이어 수 만큼 라운드 자동 연동
+    selectedGameRounds = Math.max(1, roomPlayers.length);
+    const roundValEl = $('game-round-val');
+    if (roundValEl) roundValEl.textContent = `${selectedGameRounds} 라운드`;
+
+    _updateRoomUI();
+    showToast(`${removedName} 추방 완료 (현재 ${roomPlayers.length}명 / 라운드: ${selectedGameRounds}R)`, 'info');
+  }
+
   function _updateRoomUI() {
-    const amIHost = P2P.isHost() || isHostPlayer;
+    const amIHost = P2P.isHost() || isHostPlayer || isDevMode;
     const playerCount = roomPlayers.length;
 
     if ($('room-capacity-text')) {
@@ -7062,6 +7130,7 @@
           <div class="player-role"></div>
         </div>
         ${readyBadgeHtml}
+        ${(isDevMode && !isThisHost) ? `<button type="button" class="btn-dev-kick-bot" data-bot-id="${p.id}" title="추방하기" style="background:rgba(229,62,62,0.12); color:#e53e3e; border:1px solid rgba(229,62,62,0.3); border-radius:6px; font-size:0.75rem; font-weight:800; cursor:pointer; padding:3px 8px; margin-left:8px; z-index:2; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-user-minus"></i> 추방</button>` : ''}
       `;
 
       // 🌟 참가자 클릭 이벤트 (전적 보기 & 방장 관리 메뉴)
@@ -7074,28 +7143,56 @@
         });
       }
       li.addEventListener('click', (e) => {
-        if (!e.target.closest('.btn-manage-trigger')) {
+        if (!e.target.closest('.btn-manage-trigger') && !e.target.closest('.btn-dev-kick-bot')) {
           _openPlayerActionMenu(e, p);
         }
       });
+
+      // 개발자 모드 즉시 추방 버튼 리스너
+      const devKickBtn = li.querySelector('.btn-dev-kick-bot');
+      if (devKickBtn) {
+        devKickBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          _removeDevBotPlayer(p.id);
+        });
+      }
 
       listEl.appendChild(li);
     });
 
     const slotsEl = $('player-slots');
     slotsEl.innerHTML = '';
-    const emptyCount = Math.max(0, currentRoomMaxPlayers - playerCount);
+    let effectiveMaxPlayers = currentRoomMaxPlayers;
+    if (isDevMode) {
+      effectiveMaxPlayers = Math.min(8, Math.max(playerCount + 1, currentRoomMaxPlayers));
+      currentRoomMaxPlayers = effectiveMaxPlayers;
+    }
+    const emptyCount = Math.max(0, effectiveMaxPlayers - playerCount);
     for (let i = 0; i < emptyCount; i++) {
       const slot = document.createElement('div');
       slot.className = 'player-slot-empty can-invite';
-      slot.title = '클릭하여 친구 초대하기';
-      slot.innerHTML = `
-        <div class="slot-avatar"><i class="fa-solid fa-user-plus"></i></div>
-        <div class="slot-text">참가자 대기 중...</div>
-      `;
-      slot.addEventListener('click', () => {
-        _openFriendsModal('list');
-      });
+      if (isDevMode) {
+        slot.title = '클릭하여 테스트 플레이어(봇) 추가';
+        slot.style.borderColor = 'var(--primary)';
+        slot.style.background = 'rgba(76, 175, 80, 0.05)';
+        slot.innerHTML = `
+          <div class="slot-avatar" style="color:var(--primary);"><i class="fa-solid fa-robot"></i></div>
+          <div class="slot-text" style="color:var(--primary); font-weight:800;">참가자 대기 중... (클릭 시 봇 추가)</div>
+        `;
+        slot.addEventListener('click', () => {
+          _addDevBotPlayer();
+        });
+      } else {
+        slot.title = '클릭하여 친구 초대하기';
+        slot.innerHTML = `
+          <div class="slot-avatar"><i class="fa-solid fa-user-plus"></i></div>
+          <div class="slot-text">참가자 대기 중...</div>
+        `;
+        slot.addEventListener('click', () => {
+          _openFriendsModal('list');
+        });
+      }
       slotsEl.appendChild(slot);
     }
 
@@ -7104,7 +7201,7 @@
       btn.classList.toggle('selected', gKey === selectedGameKey);
 
       const gDef = GAMES[gKey];
-      const isOverCap = gDef && gDef.maxPlayers && playerCount > gDef.maxPlayers;
+      const isOverCap = !isDevMode && gDef && gDef.maxPlayers && playerCount > gDef.maxPlayers;
 
       if (isOverCap) {
         btn.classList.add('disabled-3p');
@@ -7222,7 +7319,7 @@
       }
       const gKey = btn.dataset.game;
       const gDef = GAMES[gKey];
-      if (gDef && gDef.maxPlayers && roomPlayers.length > gDef.maxPlayers) {
+      if (!isDevMode && gDef && gDef.maxPlayers && roomPlayers.length > gDef.maxPlayers) {
         showToast(`${gDef.title}은(는) ${gDef.maxPlayers}인 전용 게임입니다 (현재 ${roomPlayers.length}명).`, 'warn');
         return;
       }
@@ -7255,13 +7352,16 @@
     if (!amIHost && !isDevMode) return;
     Sound.playStart();
     const curGameDef = GAMES[selectedGameKey];
-    if (curGameDef && curGameDef.maxPlayers && roomPlayers.length > curGameDef.maxPlayers) {
+    if (!isDevMode && curGameDef && curGameDef.maxPlayers && roomPlayers.length > curGameDef.maxPlayers) {
       showToast(`${curGameDef.title}은(는) ${curGameDef.maxPlayers}인 전용 게임입니다.`, 'warn');
       return;
     }
 
     // 🎯 진영 및 턴 순서 결정
     let finalPlayers = [...roomPlayers];
+    if (isDevMode && curGameDef && curGameDef.maxPlayers === 2 && finalPlayers.length > 2) {
+      finalPlayers = finalPlayers.slice(0, 2);
+    }
     if (finalPlayers.length >= 2) {
       const hostP = finalPlayers.find(p => p.isHost) || finalPlayers[0];
       const guestP = finalPlayers.find(p => !p.isHost) || finalPlayers[1];
@@ -7277,8 +7377,8 @@
         } else {
           finalPlayers = [hostP, guestP];
         }
-      } else if (selectedGameKey === 'chess' || selectedGameKey === 'chesswarfare') {
-        // 체스 / 체스 워페어: 0번=백(선공), 1번=흑(후공)
+      } else if (selectedGameKey === 'chess') {
+        // 체스: 0번=백(선공), 1번=흑(후공)
         if (selectedGameSideMode === 'host_white') {
           finalPlayers = [hostP, guestP];
         } else if (selectedGameSideMode === 'host_black') {
@@ -7569,15 +7669,22 @@
     }
 
     let currentActivePlayers = playersList || activeGamePlayers || [...roomPlayers];
-    if (isDevMode && currentActivePlayers.length === 1) {
+    const isSinglePlayerGame = (gameObj.maxPlayers === 1);
+    if (isDevMode && currentActivePlayers.length === 1 && !isSinglePlayerGame) {
       currentActivePlayers = [
         currentActivePlayers[0],
-        { id: 'dev-player-2', name: '플레이어2(개발용)', avatarIcon: 'fa-solid fa-robot', avatarColor: '#3182ce', isHost: false, isReady: true }
+        { id: 'dev-bot-alpha', name: '테스트봇 알파', avatarIcon: 'fa-solid fa-robot', avatarColor: '#3182ce', level: 10, exp: 100, isHost: false, isReady: true, isBot: true }
       ];
+    }
+    if (isDevMode && gameObj.maxPlayers === 2 && currentActivePlayers.length > 2) {
+      currentActivePlayers = currentActivePlayers.slice(0, 2);
     }
     activeGamePlayers = currentActivePlayers;
 
-    const rounds = (typeof targetRounds === 'number') ? targetRounds : (selectedGameRounds || 3);
+    // 🌟 개발자 모드 시 플레이어 수 만큼 라운드 수 자동 연동
+    const rounds = (isDevMode && roomPlayers.length > 0)
+      ? roomPlayers.length
+      : ((typeof targetRounds === 'number') ? targetRounds : (selectedGameRounds || 3));
     const side = sideMode || selectedGameSideMode || 'shuffle';
 
     currentGameModule = gameObj.module;
@@ -7796,46 +7903,73 @@
   function _getPlayerOrderTag(gameKey, idx, isTurn) {
     const gKey = gameKey || selectedGameKey;
 
+    // 공통 스타일
+    const turnStyle = 'color:var(--green);font-weight:900;';
+    const idleStyle = 'color:var(--t3);font-weight:600;';
+    const turnIcon = '<i class="fa-solid fa-caret-right" style="font-size:0.8rem;"></i>';
+
     if (gKey === 'gomoku') {
-      return idx === 0
-        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (흑 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#1a1a1a;"></i> 1번 (흑)')
-        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (백 차례)</span>' : '<i class="fa-regular fa-circle" style="color:#718096;"></i> 2번 (백)');
-    } else if (gKey === 'chess') {
-      return idx === 0
-        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (백 차례)</span>' : '<i class="fa-regular fa-circle" style="color:#718096;"></i> 1번 (백)')
-        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (흑 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#1a1a1a;"></i> 2번 (흑)');
-    } else if (gKey === 'chesswarfare') {
-      return idx === 0
-        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (White 선공)</span>' : '<i class="fa-solid fa-circle" style="color:#3182ce;"></i> 1번 (White)')
-        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (Black 후공)</span>' : '<i class="fa-solid fa-circle" style="color:#e53e3e;"></i> 2번 (Black)');
-    } else if (gKey === 'quoridor') {
-      return idx === 0
-        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (하단 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#3182ce;"></i> 1번 (하단)')
-        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (상단 차례)</span>' : '<i class="fa-solid fa-circle" style="color:#e53e3e;"></i> 2번 (상단)');
-    } else if (gKey === 'janggi' || gKey === 'alkkagi') {
-      return idx === 0
-        ? (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 1번 (초 턴)</span>' : '<i class="fa-solid fa-circle" style="color:#0b388f;"></i> 1번 (초)')
-        : (isTurn ? '<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> 2번 (한 턴)</span>' : '<i class="fa-solid fa-circle" style="color:#cc1f1a;"></i> 2번 (한)');
-    } else if (gKey === 'catchmind') {
+      const color = idx === 0 ? '#1a1a1a' : '#e2e8f0';
+      const border = idx === 0 ? '1px solid #555' : '1px solid #aaa';
+      const label = idx === 0 ? '흑' : '백';
+      const stone = `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color};border:${border};vertical-align:middle;margin-right:4px;"></span>`;
       return isTurn
-        ? '<span style="font-size:0.75rem;font-weight:800;color:var(--t2);margin-right:5px;">0점</span><span style="color:#ea580c;font-weight:900;"><i class="fa-solid fa-paintbrush"></i> 출제자</span>'
-        : '<span style="font-size:0.75rem;font-weight:800;color:var(--t2);margin-right:5px;">0점</span><span style="color:var(--t3);font-weight:700;"><i class="fa-solid fa-magnifying-glass"></i> 맞히는 중</span>';
+        ? `<span style="${turnStyle}">${turnIcon} ${stone}${label} (턴)</span>`
+        : `<span style="${idleStyle}">${stone}${label}</span>`;
+
+    } else if (gKey === 'chess') {
+      const color = idx === 0 ? '#e2e8f0' : '#1a1a1a';
+      const border = idx === 0 ? '1px solid #aaa' : '1px solid #555';
+      const label = idx === 0 ? '백' : '흑';
+      const stone = `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color};border:${border};vertical-align:middle;margin-right:4px;"></span>`;
+      return isTurn
+        ? `<span style="${turnStyle}">${turnIcon} ${stone}${label} (턴)</span>`
+        : `<span style="${idleStyle}">${stone}${label}</span>`;
+
+
+    } else if (gKey === 'quoridor') {
+      const clr = idx === 0 ? '#3182ce' : '#e53e3e';
+      const label = idx === 0 ? '하단' : '상단';
+      const dot = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${clr};vertical-align:middle;margin-right:4px;"></span>`;
+      return isTurn
+        ? `<span style="color:${clr};font-weight:900;">${turnIcon} ${dot}${label} (턴)</span>`
+        : `<span style="${idleStyle}">${dot}${label}</span>`;
+
+    } else if (gKey === 'janggi' || gKey === 'alkkagi') {
+      const clr = idx === 0 ? '#0b388f' : '#cc1f1a';
+      const label = idx === 0 ? '초' : '한';
+      const dot = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${clr};vertical-align:middle;margin-right:4px;"></span>`;
+      return isTurn
+        ? `<span style="color:${clr};font-weight:900;">${turnIcon} ${dot}${label} (턴)</span>`
+        : `<span style="${idleStyle}">${dot}${label}</span>`;
+
+    } else if (gKey === 'catchmind') {
+      // 캐치마인드: 점수는 onSidebarRedrawn에서 별도 처리
+      return isTurn
+        ? `<span style="color:#ea580c;font-weight:900;"><i class="fa-solid fa-paintbrush" style="font-size:0.8rem;"></i> 출제자</span>`
+        : `<span style="${idleStyle}"><i class="fa-solid fa-magnifying-glass" style="font-size:0.75rem;"></i> 맞히는 중</span>`;
+
     } else if (gKey === 'yutnori') {
-      const icons = ['빨강', '파랑', '초록', '노랑'];
-      const myColorName = icons[idx % icons.length] || `${idx + 1}번`;
+      const colors = ['#e53e3e', '#3182ce', '#38a169', '#d69e2e'];
+      const labels = ['빨강', '파랑', '초록', '노랑'];
+      const clr = colors[idx % colors.length];
+      const lbl = labels[idx % labels.length];
       let finCount = 0;
       if (window.Yutnori && typeof window.Yutnori.getPlayerFinishedCount === 'function') {
         finCount = window.Yutnori.getPlayerFinishedCount(idx);
       }
-      return `<span class="yut-gsp-finished-badge"><i class="fa-solid fa-flag-checkered"></i> ${finCount}/4</span>` +
-        (isTurn
-          ? `<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> ${myColorName}</span>`
-          : `<span style="color:var(--t2);font-weight:700;">${myColorName}</span>`);
+      const badge = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${clr};vertical-align:middle;margin-right:3px;"></span>`;
+      const fin = `<span style="color:var(--t3);font-size:0.72rem;"><i class="fa-solid fa-flag-checkered"></i> ${finCount}/4</span>`;
+      return fin + (isTurn
+        ? ` <span style="color:${clr};font-weight:900;">${turnIcon} ${badge}${lbl} (턴)</span>`
+        : ` <span style="${idleStyle}">${badge}${lbl}</span>`);
+
     } else {
-      // 야추, 베스킨31, 끝말잇기 등
+      // 야추, 베스킨31, 끝말잇기, 룰렛 등
+      const orderNum = `${idx + 1}번`;
       return isTurn
-        ? `<span style="color:var(--green-deep);font-weight:900;"><i class="fa-solid fa-play"></i> ${idx + 1}번째 순서 (현재 차례)</span>`
-        : `<span style="color:var(--t3);font-weight:700;">${idx + 1}번째 순서</span>`;
+        ? `<span style="${turnStyle}">${turnIcon} ${orderNum} (턴)</span>`
+        : `<span style="${idleStyle}">${orderNum}</span>`;
     }
   }
 
@@ -8178,13 +8312,6 @@
       tagClass: 'tag-multi',
       desc: '자신의 턴마다 1개에서 3개까지 연속된 숫자를 부를 수 있습니다. 마지막 31을 부르게 되는 플레이어가 패배하는 스릴 넘치는 심리 게임입니다.'
     },
-    roulette: {
-      title: '러시안 룰렛',
-      icon: 'fa-solid fa-skull-crossbones',
-      tag: '2~8인 • 심리 서바이벌',
-      tagClass: 'tag-multi',
-      desc: '실탄과 공포탄이 장전된 리볼버 권총으로 벌이는 극한의 심리전! 자신을 쏘아 생존하면 연속 턴을 얻고, 돋보기·수갑·톱날 등 다양한 아이템을 활용하여 최후의 1인이 되세요!'
-    },
     wordchain: {
       title: '끝말잇기',
       icon: 'fa-solid fa-link',
@@ -8240,6 +8367,13 @@
       tag: '2~4인 • 주사위 보드게임',
       tagClass: 'tag-multi',
       desc: '5개의 3D 주사위를 최대 3번 굴려 12가지 족보(초이스, 풀하우스, 스트레이트, 야추 등)를 완성하고 최고 점수를 획득하는 보드게임입니다.'
+    },
+    seotda: {
+      title: '섯다',
+      icon: 'fa-solid fa-clone',
+      tag: '2~5인 • 화투 심리전',
+      tagClass: 'tag-multi',
+      desc: '1~10월 화투패 2장으로 38광땡부터 망통까지! 짜릿한 판돈 베팅과 쪼기 손맛이 살아있는 정통 2장 섯다 배틀입니다.'
     }
   };
 

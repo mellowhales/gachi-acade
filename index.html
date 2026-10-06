@@ -39,8 +39,6 @@
   <script src="js/i18n.js"></script>
   <link rel="stylesheet" href="css/style.css?v=20260919_v9" />
   <link rel="stylesheet" href="css/games.css" />
-  <link rel="stylesheet" href="css/chesswarfare.css?v=4.1" />
-  <link rel="stylesheet" href="css/roulette.css" />
 </head>
 <body>
 
@@ -72,29 +70,8 @@
       </div>
     </div>
 
-    <!-- 우측: 언어 전환 드롭다운 + 설정 버튼 -->
+    <!-- 우측: 설정 버튼 -->
     <div class="room-header-actions" style="display:flex; align-items:center; gap:8px;">
-      <div class="header-lang-selector" style="display:inline-flex; align-items:center; position:relative;">
-        <select id="select-global-language" class="header-lang-select" title="언어 선택 (Select Language)" style="
-          background: var(--bg-card);
-          color: var(--text);
-          border: 1.5px solid var(--border);
-          border-radius: 8px;
-          padding: 5px 8px;
-          font-size: 0.8rem;
-          font-weight: 700;
-          cursor: pointer;
-          outline: none;
-        ">
-          <option value="ko">한국어</option>
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="tr">Türkçe</option>
-          <option value="ru">Русский</option>
-          <option value="zh">中文</option>
-          <option value="ja">日本語</option>
-        </select>
-      </div>
       <button type="button" class="btn-icon" id="btn-open-settings" title="환경 설정 (소리/볼륨)">
         <i class="fa-solid fa-gear"></i>
       </button>
@@ -153,14 +130,6 @@
           </div>
           <div class="sg-tag tag-2p">2인 전용</div>
         </li>
-        <li class="sidebar-game-item" data-game="chesswarfare">
-          <div class="sg-icon"><i class="fa-solid fa-shield-halved"></i></div>
-          <div class="sg-info">
-            <strong>체스 워페어</strong>
-            <span>16×16 영토 점령전</span>
-          </div>
-          <div class="sg-tag tag-2p">2인 전용</div>
-        </li>
         <li class="sidebar-game-item" data-game="janggi">
           <div class="sg-icon"><i class="fa-solid fa-chess-rook"></i></div>
           <div class="sg-info">
@@ -190,14 +159,6 @@
           <div class="sg-info">
             <strong>베스킨라빈스 31</strong>
             <span>1~3 숫자 심리전</span>
-          </div>
-          <div class="sg-tag tag-multi">2~8인</div>
-        </li>
-        <li class="sidebar-game-item" data-game="roulette">
-          <div class="sg-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
-          <div class="sg-info">
-            <strong>러시안 룰렛</strong>
-            <span>실탄&공포탄 서바이벌</span>
           </div>
           <div class="sg-tag tag-multi">2~8인</div>
         </li>
@@ -248,6 +209,14 @@
             <span>3D 주사위 족보 배틀</span>
           </div>
           <div class="sg-tag tag-multi">2~4인</div>
+        </li>
+        <li class="sidebar-game-item" data-game="seotda">
+          <div class="sg-icon"><i class="fa-solid fa-clone"></i></div>
+          <div class="sg-info">
+            <strong>섯다</strong>
+            <span>2장 섯다 & 베팅 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~5인</div>
         </li>
       </ul>
     </nav>
@@ -660,14 +629,6 @@
             </div>
             <span class="rgb-tag tag-2p">2인 전용</span>
           </div>
-          <div class="room-game-btn" data-game="chesswarfare">
-            <div class="rgb-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <div class="rgb-info">
-              <strong>쓰레기 체스</strong>
-              <span>16×16 전장 영토전</span>
-            </div>
-            <span class="rgb-tag tag-2p">2인 전용</span>
-          </div>
           <div class="room-game-btn" data-game="janggi">
             <div class="rgb-icon"><i class="fa-solid fa-chess-rook"></i></div>
             <div class="rgb-info">
@@ -697,14 +658,6 @@
             <div class="rgb-info">
               <strong>베스킨라빈스 31</strong>
               <span>1~3 숫자 심리전</span>
-            </div>
-            <span class="rgb-tag tag-multi">2~8인</span>
-          </div>
-          <div class="room-game-btn" data-game="roulette">
-            <div class="rgb-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
-            <div class="rgb-info">
-              <strong>러시안 룰렛</strong>
-              <span>실탄&공포탄 서바이벌</span>
             </div>
             <span class="rgb-tag tag-multi">2~8인</span>
           </div>
@@ -755,6 +708,14 @@
               <span>3D 주사위 족보 배틀</span>
             </div>
             <span class="rgb-tag tag-multi">2~4인</span>
+          </div>
+          <div class="room-game-btn" data-game="seotda">
+            <div class="rgb-icon"><i class="fa-solid fa-clone"></i></div>
+            <div class="rgb-info">
+              <strong>섯다</strong>
+              <span>2장 섯다 & 베팅 배틀</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~5인</span>
           </div>
         </div>
 
@@ -948,27 +909,27 @@
     <div class="settings-tab-bar" id="settings-tab-bar">
       <button type="button" class="settings-tab-btn active" data-tab="env" id="tab-settings-env">
         <i class="fa-solid fa-display"></i>
-        <span data-i18n="화면">화면</span>
+        <span data-i18n="settings.tabs.display">화면</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="sound" id="tab-settings-sound">
         <i class="fa-solid fa-volume-high"></i>
-        <span data-i18n="음향">음향</span>
+        <span data-i18n="settings.tabs.sound">음향</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="game" id="tab-settings-game">
         <i class="fa-solid fa-gamepad"></i>
-        <span data-i18n="게임">게임</span>
+        <span data-i18n="settings.tabs.game">게임</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="support" id="tab-settings-support">
         <i class="fa-solid fa-bug"></i>
-        <span data-i18n="문의">문의</span>
+        <span data-i18n="settings.tabs.support">문의</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="about" id="tab-settings-about">
         <i class="fa-solid fa-circle-info"></i>
-        <span data-i18n="정보">정보</span>
+        <span data-i18n="settings.tabs.about">정보</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="language" id="tab-settings-language">
         <i class="fa-solid fa-language"></i>
-        <span data-i18n="언어">언어</span>
+        <span data-i18n="settings.tabs.lang">언어</span>
       </button>
     </div>
     
@@ -1182,12 +1143,10 @@
                 <label for="bug-game"><i class="fa-solid fa-gamepad"></i> 대상 게임</label>
                 <select class="settings-select" id="bug-game">
                   <option value="all">전체 / 공통</option>
-                  <option value="chesswarfare">쓰레기 체스</option>
                   <option value="janggi">장기</option>
                   <option value="alkkagi">알까기</option>
                   <option value="quoridor">쿼리도</option>
                   <option value="baskin">베스킨라빈스 31</option>
-                  <option value="roulette">러시안 룰렛</option>
                   <option value="wordchain">끝말잇기</option>
                   <option value="apple">사과게임</option>
                   <option value="typing">타자연습 대결</option>
@@ -1227,12 +1186,12 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.4.1</span>
+              <span class="about-version-tag">v1.8.0</span>
             </div>
           </div>
         </div>
 
-        <!-- 📜 버전 변경 이력 (Changelog) -->
+        <!-- 버전 변경 이력 (Changelog) -->
         <div class="setting-item setting-changelog-wrap">
           <div class="setting-title" style="margin-bottom: 6px;">
             <i class="fa-solid fa-clock-rotate-left" style="color:var(--green);"></i>
@@ -1240,6 +1199,22 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.8.0]</span>
+              <span class="changelog-text">신규 2장 섯다(Seotda) 게임 추가 (2~5인 실시간 멀티 & AI 봇 완벽 지원, 실제 고화질 화투패 20장 애셋, 판돈 및 단계별 베팅 시스템, 38광땡~망통·암행어사·땡잡이·구사 족보 및 전용 손맛 효과음 탑재)</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.7.0]</span>
+              <span class="changelog-text">윷놀이 골인 표시 3중첩 제거(프로필 단일화 & 심플 턴 인디케이터), 캐치마인드 실시간 점수 항시 표기(사이드바 & 헤더), 로비·대기실·인게임 전반 전역 영어 번역 전수 확장 적용</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.6.0]</span>
+              <span class="changelog-text">개발자 모드 전격 개편(가상 봇 플레이어 무제한 추가/추방 & 플레이어 수-라운드 자동 연동 및 1인 완벽 플레이), 인게임 라운드 표시 배경 제거, 턴 아이콘 중복 버그 수정, 러시안 룰렛 및 체스 워페어 영구 삭제</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.5.0]</span>
+              <span class="changelog-text">인게임 턴 및 기권 UI 통합 심플화(배경색 제거 및 일관된 위치 정렬), Web Audio BGM 신디사이저 리믹스 확장, 설정 모달 닫기/언어 번역 및 버전 표기 수정</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.4.1]</span>
               <span class="changelog-text">상점, 친구, 방, 모달 및 인게임 전반의 모든 텍스트 사전 전수 확장 번역 적용</span>
             </div>
@@ -1354,6 +1329,16 @@
             <p class="setting-desc" data-i18n="lang.desc">앱 표시 언어를 선택하세요.</p>
           </div>
         </div>
+        <!-- 언어 전환용 hidden select (i18n.js _syncHeaderDropdown 호환) -->
+        <select id="select-global-language" style="display:none;" aria-hidden="true">
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="tr">Türkçe</option>
+          <option value="ru">Русский</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+        </select>
         <!-- 언어 선택 버튼 그리드 -->
         <div class="lang-grid" id="lang-choice-grid">
           <!-- JS로 동적 생성 -->
@@ -1365,7 +1350,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.4.1</span>
+        <span class="settings-version-badge">v1.8.0</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
@@ -1799,14 +1784,13 @@
 <script src="js/games/alkkagi.js"></script>
 <script src="js/games/quoridor.js"></script>
 <script src="js/games/baskin31.js"></script>
-<script src="js/games/roulette.js"></script>
 <script src="js/games/wordchain.js"></script>
 <script src="js/games/apple.js"></script>
 <script src="js/games/typing.js"></script>
 <script src="js/games/catchmind.js"></script>
 <script src="js/games/yutnori.js"></script>
 <script src="js/games/yacht.js"></script>
-<script src="js/games/chesswarfare.js?v=4.1"></script>
+<script src="js/games/seotda.js"></script>
 <script type="module" src="js/firebase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>

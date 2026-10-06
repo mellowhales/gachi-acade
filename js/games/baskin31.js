@@ -184,7 +184,7 @@ const Baskin31Game = (() => {
       turnLabel.className = 'turn-label ' + (isMine ? 'my-turn' : 'opp-turn');
     }
     if (turnText) {
-      turnText.textContent = isMine ? '내 차례' : `${curPlayer ? curPlayer.name : '상대방'} 차례`;
+      turnText.textContent = isMine ? '내 턴' : `${curPlayer ? curPlayer.name : '상대'} 턴`;
     }
 
     const rem2 = MAX_NUM - currentNum;

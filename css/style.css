@@ -6365,21 +6365,19 @@ html, body {
 .yut-header-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: 10px;
 }
 
 .yut-turn-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  background: #ffffff;
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1.5px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  font-size: 1.05rem;
+  gap: 8px;
+  background: transparent !important;
+  padding: 4px 0;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 0.95rem;
   font-weight: 800;
 }
 .yut-pulse-dot {
@@ -6419,7 +6417,7 @@ html, body {
   background: #ffffff;
   border: 1.5px solid var(--border);
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-md, 12px);
   font-size: 0.9rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   transition: all 0.2s;
@@ -7120,10 +7118,10 @@ html, body {
 }
 
 .yacht-header {
-  padding: 12px 18px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  padding: 8px 4px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -7139,10 +7137,9 @@ html, body {
   font-size: 0.85rem;
   font-weight: 800;
   color: var(--green-deep);
-  background: var(--green-tint);
-  border: 1px solid var(--green-border);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 .yh-rolls-badge {
   display: flex;
@@ -7799,57 +7796,53 @@ html, body {
   gap: 8px;
 }
 
-.janggi-header-area .turn-label.cho-turn {
-  background: rgba(11, 56, 143, 0.12);
-  border-color: rgba(11, 56, 143, 0.35);
-  color: #0b388f;
-}
+.janggi-header-area .turn-label.cho-turn,
 .janggi-header-area .turn-label.han-turn {
-  background: rgba(204, 31, 26, 0.12);
-  border-color: rgba(204, 31, 26, 0.35);
-  color: #cc1f1a;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* 🌟 담백한 '장군' 알림 배지 */
+/* 🌟 담백한 '장군' 알림 배지: 배경색을 덜 자극적이면서도 심플하게 */
 .janggi-status-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #fee2e2;
-  color: #cc1f1a;
-  border: 1.5px solid #f87171;
-  padding: 5px 14px;
-  border-radius: 999px;
+  background: transparent !important;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 3px 10px;
+  border-radius: 6px;
   font-weight: 800;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   animation: pulseCheck 1s infinite;
 }
 @keyframes pulseCheck {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(204, 31, 26, 0.4); }
-  50% { transform: scale(1.05); box-shadow: 0 0 10px 2px rgba(204, 31, 26, 0.3); }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.04); opacity: 0.7; }
 }
 
-/* 상단 우측 기권 버튼 */
+/* 상단 우측 기권 버튼 (투명 고스트 스타일) */
 .btn-jg-header-resign {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 0.84rem;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
   font-weight: 700;
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: transparent !important;
+  color: var(--t3, #94a3b8);
+  border: 1px solid var(--border-sub, rgba(255, 255, 255, 0.12));
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: none !important;
 }
 .btn-jg-header-resign:hover {
-  background: #ef4444;
-  color: #ffffff;
-  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.4);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
 }
 
 /* 🌟 레퍼런스 이미지 대국판 카드 (황토빛 외곽 프레임) */

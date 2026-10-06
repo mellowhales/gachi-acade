@@ -825,15 +825,14 @@ const YutnoriGame = (() => {
     if (!_container) return;
 
     _container.innerHTML = [
-      '<div class="yut-game-container">',
-      '  <div class="yut-header-bar">',
-      '    <div class="yut-turn-badge" id="yut-turn-badge">',
-      '      <span class="yut-pulse-dot"></span>',
-      '      <strong id="yut-turn-text">로딩 중...</strong>',
-      '    </div>',
-      '    <div class="yut-banner-msg" id="yut-banner-msg">윷놀이</div>',
-      '    <div class="yut-score-pills" id="yut-score-pills"></div>',
+      '<div class="yut-header-bar">',
+      '  <div class="turn-indicator" id="yut-turn-indicator" style="margin: 0;">',
+      '    <span class="turn-label" id="yut-turn-label">',
+      '      <i class="fa-solid fa-dice"></i>',
+      '      <span id="yut-turn-text">턴 준비 중...</span>',
+      '    </span>',
       '  </div>',
+      '</div>',
       '',
       '  <div class="yut-main-layout">',
       '    <!-- 1. 심플 원목 윷판 & 대기 말 -->',
@@ -1038,29 +1037,14 @@ const YutnoriGame = (() => {
     const isMyTurn = _isCurrentTurnPlayer(curPlayer);
     const myPlayerData = _getMyPlayerData() || curPlayer;
 
-    // 1. 턴 텍스트
-    const turnTextEl = document.getElementById('yut-turn-text');
+    // 1. 턴 인디케이터
+    const turnLabelEl = document.getElementById('yut-turn-label');
+    const turnTextEl  = document.getElementById('yut-turn-text');
+    if (turnLabelEl) {
+      turnLabelEl.className = 'turn-label ' + (isMyTurn ? 'my-turn' : 'opp-turn');
+    }
     if (turnTextEl) {
-      turnTextEl.textContent = isMyTurn ? '내 차례' : (curPlayer.name + ' 차례');
-      turnTextEl.style.color = curPlayer.theme ? curPlayer.theme.color : '#3182ce';
-    }
-
-    // 2. 알림 텍스트
-    const bannerMsgEl = document.getElementById('yut-banner-msg');
-    if (bannerMsgEl) {
-      bannerMsgEl.textContent = state.bannerMessage || '윷놀이';
-    }
-
-    // 3. 점수 알약
-    const scorePillsEl = document.getElementById('yut-score-pills');
-    if (scorePillsEl) {
-      scorePillsEl.innerHTML = state.players.map((p, idx) => 
-        '<div class="yut-score-pill ' + (idx === state.currentTurnIdx ? 'active-turn' : '') + '" style="border-color:' + (p.theme ? p.theme.color : '#3182ce') + '">' +
-        '  <span class="yut-sp-marker"><i class="' + (p.avatarIcon || 'fa-solid fa-dog') + '"></i></span>' +
-        '  <span class="yut-sp-name">' + _escapeHtml(p.name) + '</span>' +
-        '  <strong class="yut-sp-score">' + p.finishedCount + '/' + NUM_PIECES + '</strong>' +
-        '</div>'
-      ).join('');
+      turnTextEl.textContent = isMyTurn ? '내 턴' : (curPlayer.name + ' 턴');
     }
 
     // 🌟 [모바일 UI] 인게임 프로필 카드에 완주 말 개수 (0/4) 실시간 표시

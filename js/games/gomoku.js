@@ -38,11 +38,20 @@ const GomokuGame = (() => {
 
     container.innerHTML = `
       <div class="gomoku-wrap">
-        <div class="turn-indicator" id="gm-turn-indicator">
-          <span class="turn-label" id="gm-turn-label">
-            <i class="fa-solid fa-circle" style="color:#1a1a1a"></i>
-            <span id="gm-turn-text">흑의 차례 ${myColor === 0 ? '' : (myColor === 1 ? '(내 턴)' : '(상대 턴)')}</span>
-          </span>
+        <!-- 상단 헤더: 턴 인디케이터 & 우측 기권 버튼 (통일 규격) -->
+        <div class="gomoku-header-area">
+          <div class="turn-indicator" id="gm-turn-indicator">
+            <span class="turn-label" id="gm-turn-label">
+              <i class="fa-solid fa-circle"></i>
+              <span id="gm-turn-text">내 턴</span>
+            </span>
+          </div>
+          <div class="gomoku-header-actions">
+            <button type="button" class="btn-game-resign" id="btn-gm-resign" title="대국 기권">
+              <i class="fa-regular fa-flag"></i>
+              <span>기권</span>
+            </button>
+          </div>
         </div>
         <div class="gomoku-canvas-wrap" id="gm-canvas-wrap">
           <canvas id="gomoku-canvas" width="${CANVAS_SIZE}" height="${CANVAS_SIZE}"></canvas>
@@ -74,6 +83,24 @@ const GomokuGame = (() => {
 
     _updateTurnIndicator();
     _draw();
+
+    const resignBtn = document.getElementById('btn-gm-resign');
+    if (resignBtn) {
+      resignBtn.addEventListener('click', async () => {
+        if (gameOver) return;
+        const ok = window.showConfirmDialog ? await window.showConfirmDialog({
+          title: '기권 확인',
+          message: '정말로 기권하시겠습니까? 즉시 패배 처리됩니다.',
+          confirmText: '기권',
+          cancelText: '취소',
+          icon: 'fa-regular fa-flag',
+          isDanger: true
+        }) : confirm('정말로 기권하시겠습니까?');
+        if (ok) {
+          _resign(true);
+        }
+      });
+    }
 
     P2P.offMessage(_onMessage);
     P2P.onMessage(_onMessage);
@@ -228,16 +255,31 @@ const GomokuGame = (() => {
 
     const won = _checkWin(row, col, color);
     if (won) {
-      gameOver = true;
-      const iWon = color === myColor;
-      setTimeout(() => {
-        _onResult && _onResult(iWon);
-      }, 400);
+      _finishGame(color === myColor);
       return;
     }
 
     currentTurn = currentTurn === 1 ? 2 : 1;
     _updateTurnIndicator();
+  }
+
+  function _finishGame(iWon, reason) {
+    if (gameOver) return;
+    gameOver = true;
+    if (typeof Sound !== 'undefined') {
+      if (iWon && Sound.playWin) Sound.playWin();
+      else if (Sound.playLose) Sound.playLose();
+    }
+    setTimeout(() => {
+      _onResult && _onResult(iWon, reason);
+    }, 600);
+  }
+
+  function _resign(isLocal) {
+    if (isLocal) {
+      P2P.send({ type: 'gomoku_resign', resignerColor: myColor });
+      _finishGame(false, '기권하여 패배했습니다.');
+    }
   }
 
   function _checkWin(row, col, color) {
@@ -270,10 +312,7 @@ const GomokuGame = (() => {
     const isMyTurn = currentTurn === myColor;
     label.className = 'turn-label ' + (isMyTurn ? 'my-turn' : 'opp-turn');
     const colorName = currentTurn === 1 ? '흑' : '백';
-    const icon = currentTurn === 1
-      ? '<i class="fa-solid fa-circle" style="color:#1a1a1a"></i>'
-      : '<i class="fa-regular fa-circle" style="color:#718096"></i>';
-    label.innerHTML = `${icon} <span>${isMyTurn ? '내 차례 ('+colorName+')' : '상대방 차례 ('+colorName+')'}</span>`;
+    label.innerHTML = `<i class="fa-solid fa-circle"></i> <span>${myColor === 0 ? colorName + ' 턴' : (isMyTurn ? '내 턴' : '상대 턴')}</span>`;
   }
 
   function _onMessage(data) {
@@ -290,6 +329,8 @@ const GomokuGame = (() => {
     } else if (data.type === 'gomoku_move') {
       if (gameOver) return;
       _placeStone(data.row, data.col, currentTurn);
+    } else if (data.type === 'gomoku_resign') {
+      _finishGame(data.resignerColor !== myColor, '상대방이 기권하여 승리했습니다!');
     } else if (data.type === 'gomoku_rematch') {
       _doRematch();
     }

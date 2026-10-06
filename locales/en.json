@@ -112,28 +112,29 @@
   "games": {
     "gomoku": { "name": "Gomoku", "desc": "15×15 turn-based strategy" },
     "chess": { "name": "Chess", "desc": "Classic 2-player real-time chess" },
-    "chesswarfare": { "name": "Chess Warfare", "desc": "16×16 territory conquest battle" },
     "janggi": { "name": "Janggi", "desc": "Traditional Korean 2-player chess" },
     "alkkagi": { "name": "Alkkagi", "desc": "Real-time physics flick duel" },
     "quoridor": { "name": "Quoridor", "desc": "Maze escape and wall-building tactics" },
     "baskin31": { "name": "Baskin 31", "desc": "1 to 3 number psychological showdown" },
-    "roulette": { "name": "Russian Roulette", "desc": "Live & blank ammo tension survival" },
     "wordchain": { "name": "Word Chain", "desc": "15-second speed vocabulary battle" },
     "apple": { "name": "Apple Game", "desc": "60-second sum-to-10 number puzzle" },
     "typing": { "name": "Typing Battle", "desc": "Speed keystroke typing challenge" },
     "catchmind": { "name": "Catch Mind", "desc": "Real-time sketch & guess party game" },
     "yutnori": { "name": "Yutnori", "desc": "Traditional Korean stick-tossing board game" },
-    "yacht": { "name": "Yacht Dice", "desc": "3D dice combination score battle" }
+    "yacht": { "name": "Yacht Dice", "desc": "3D dice combination score battle" },
+    "seotda": { "name": "Seotda", "desc": "2-card Korean poker & betting battle" }
   },
   "settings": {
     "title": "Settings",
     "tabs": {
       "env": "Display",
+      "display": "Display",
       "sound": "Sound",
       "game": "Game",
       "support": "Support",
       "about": "About",
-      "language": "Language"
+      "language": "Language",
+      "lang": "Language"
     },
     "env": {
       "theme": "Theme",
@@ -164,11 +165,20 @@
       "title": "Language Selection",
       "desc": "Choose your display language."
     },
+    "close": "Close",
     "about": {
+      "title": "Update History & Changelog",
       "changelog": "Changelog",
       "copyright": "© 2026 GachiArcade. All rights reserved."
     }
   },
+  "lang": {
+    "title": "Language Selection",
+    "desc": "Choose your display language."
+  },
+  "settings.close": "Close",
+  "lang.title": "Language Selection",
+  "lang.desc": "Choose your display language.",
   "errors": {
     "notFound": "The requested resource could not be found.",
     "networkError": "Network connection is unstable.",

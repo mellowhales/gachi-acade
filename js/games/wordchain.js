@@ -94,8 +94,8 @@ const WordchainGame = (() => {
               </span>
             </div>
             <span id="wc-round-badge" style="
-              padding:5px 14px;border-radius:999px;font-size:0.82rem;font-weight:900;
-              background:var(--green-tint);border:1.5px solid var(--green-border);color:var(--green-deep);
+              font-size:0.82rem;font-weight:900;
+              background:transparent;border:none;color:var(--green-deep);
             "><i class="fa-solid fa-flag"></i> Round ${currentRound} / ${MAX_ROUNDS}</span>
           </div>
           <div class="wc-timer-bars">
@@ -410,7 +410,7 @@ const WordchainGame = (() => {
     }
 
     if (label) label.className = 'turn-label ' + (isMine ? 'my-turn' : 'opp-turn');
-    if (text)  text.textContent = isMine ? '내 차례' : `${curPlayer ? curPlayer.name : '상대방'} 차례`;
+    if (text)  text.textContent = isMine ? '내 턴' : `${curPlayer ? curPlayer.name : '상대'} 턴`;
 
     if (input) {
       input.disabled = !isMine;

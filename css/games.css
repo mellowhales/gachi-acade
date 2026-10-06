@@ -48,33 +48,112 @@
   color: var(--t4);
 }
 
-/* 턴 표시 배지 */
-.turn-indicator {
-  text-align: center;
-  margin-bottom: 16px;
+/* ═══════════════════════════════════════════════════════════════════
+   인게임 상단 공통 턴 표시 & 기권 버튼 (미니멀 심플 디자인)
+   - 불필요한 배경색 박스를 완전히 제거하여 깔끔하고 세련된 텍스트 중심 UI
+   - 모든 게임에서 동일한 위치(좌측: 턴, 우측: 기권)와 통일된 색상 규칙 적용
+   ═══════════════════════════════════════════════════════════════════ */
+.in-game-top-bar,
+.gomoku-header-area,
+.chess-header-area,
+.janggi-header-area,
+.alkkagi-header-area,
+.quoridor-header-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto 12px auto;
+  padding: 0 4px;
+  min-height: 36px;
+  position: relative;
 }
+
+.turn-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0;
+  text-align: left;
+}
+
 .turn-indicator .turn-label {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 22px;
-  border-radius: 999px;
+  gap: 8px;
+  padding: 2px 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   font-size: 0.95rem;
   font-weight: 800;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
   color: var(--t2);
-  box-shadow: var(--shadow-sm);
+  letter-spacing: -0.3px;
+  transition: all 0.2s ease;
 }
-.turn-indicator .turn-label.my-turn {
-  color: var(--green-deep);
-  border-color: var(--green-border);
-  background: var(--green-tint);
+
+.turn-indicator .turn-label i,
+.turn-indicator .turn-label .turn-dot {
+  font-size: 0.65rem;
+  transition: all 0.2s ease;
 }
-.turn-indicator .turn-label.opp-turn {
-  color: var(--coral);
-  border-color: var(--coral-border);
-  background: var(--coral-tint);
+
+/* 내 턴: 배경색 없이 상쾌한 그린 텍스트 + 생동감 있는 펄스 닷 */
+.turn-indicator .turn-label.my-turn,
+.turn-label.my-turn {
+  color: var(--green, #10b981) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.turn-indicator .turn-label.my-turn i {
+  color: var(--green, #10b981) !important;
+  animation: turnPulseDot 1.5s infinite;
+}
+
+/* 상대 턴: 배경색 없이 차분하고 안정적인 뮤트 그레이 텍스트 */
+.turn-indicator .turn-label.opp-turn,
+.turn-label.opp-turn {
+  color: var(--t3, #94a3b8) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.turn-indicator .turn-label.opp-turn i {
+  color: var(--t3, #94a3b8) !important;
+  opacity: 0.7;
+}
+
+@keyframes turnPulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* 인게임 공통 기권 버튼: 배경색 제거, 미니멀 고스트 버튼 (우측 상단 통일 위치) */
+.btn-game-resign,
+.btn-jg-header-resign {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: transparent !important;
+  color: var(--t3, #94a3b8);
+  border: 1px solid var(--border-sub, rgba(255, 255, 255, 0.12));
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: auto;
+  box-shadow: none !important;
+}
+
+.btn-game-resign:hover,
+.btn-jg-header-resign:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  transform: translateY(-1px);
 }
 
 /* 타이머 바 */
@@ -218,7 +297,7 @@
 .baskin-num {
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1239,8 +1318,8 @@
 .qd-cell {
   position: relative;
   background: #deb887; /* 부드러운 오크 우드 톤 */
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1551,13 +1630,12 @@
 }
 
 .cm-round-badge {
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 800;
   color: var(--purple);
-  background: var(--purple-tint);
-  border: 1px solid var(--purple-border);
-  padding: 4px 10px;
-  border-radius: 999px;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .cm-drawer-badge {
@@ -2447,12 +2525,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 16px;
-  border-radius: 999px;
+  padding: 0;
+  border-radius: 0;
   font-size: 0.82rem;
   font-weight: 900;
-  background: var(--green-tint);
-  border: 1.5px solid var(--green-border);
+  background: transparent;
+  border: none;
   color: var(--green-deep);
 }
 
@@ -3011,3 +3089,505 @@
 #cm-word-choice-btns button:active {
   transform: translateY(0) scale(0.97) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   섯다 (Seotda) 2장 섯다 카지노 벨벳 모포 테이블 & 화투패 전용 스타일
+   ═══════════════════════════════════════════════════════════════════ */
+.seotda-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  gap: 8px;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.seotda-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+}
+
+.seotda-top-actions button {
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── 전통 모포 (그린 벨벳) 테이블 ── */
+.seotda-table-mat {
+  flex: 1;
+  min-height: 440px;
+  background: radial-gradient(ellipse at center, #15803d 0%, #166534 45%, #14532d 80%, #052e16 100%);
+  border: 4px solid #ca8a04;
+  border-radius: 24px;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 8px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 12px;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* ── 중앙 팟 (Pot) ── */
+.seotda-center-pot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.seotda-round-pill {
+  background: rgba(0, 0, 0, 0.45);
+  color: #fef08a;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  padding: 2px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.seotda-pot-box {
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #eab308;
+  border-radius: 16px;
+  padding: 6px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(234, 179, 8, 0.35);
+}
+
+.pot-coin-icon {
+  font-size: 1.6rem;
+  color: #facc15;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  animation: coinGlow 2s infinite alternate;
+}
+
+@keyframes coinGlow {
+  0% { transform: scale(0.95); opacity: 0.85; }
+  100% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 10px #fde047); }
+}
+
+.pot-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pot-label {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.pot-amount {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fef08a;
+  letter-spacing: 0.5px;
+}
+
+.seotda-status-msg {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  min-height: 22px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.status-nagari {
+  color: #f87171;
+  animation: pulse 1.5s infinite;
+}
+
+.status-showdown {
+  color: #facc15;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+/* ── 타 플레이어 좌석 행 (최대 4인) ── */
+.seotda-opponents-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.seotda-opp-seat {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  max-width: 140px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.seotda-opp-seat.active-turn {
+  border-color: #facc15;
+  box-shadow: 0 0 14px rgba(250, 204, 21, 0.7);
+  background: rgba(234, 179, 8, 0.15);
+  transform: translateY(-2px);
+}
+
+.seotda-opp-seat.folded {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+
+.opp-avatar {
+  width: 32px;
+  height: 32px;
+  background: #334155;
+  color: #f8fafc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.opp-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f8fafc;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.opp-cards {
+  display: flex;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.seotda-card-mini {
+  width: 34px;
+  height: 52px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s;
+}
+
+.seotda-card-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.seotda-card-mini.open {
+  animation: cardFlip 0.4s ease-out;
+}
+
+.opp-hand-badge {
+  background: #b91c1c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.opp-chips {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fde047;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.opp-bet-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.6);
+  color: #94a3b8;
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-top: 3px;
+}
+
+/* ── 내 좌석 (하단 중앙) ── */
+.seotda-my-seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-bottom: 4px;
+}
+
+.seotda-my-cards-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.seotda-hwatu-card {
+  width: 72px;
+  height: 114px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  cursor: pointer;
+  background: #18181b;
+}
+
+.seotda-hwatu-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.seotda-hwatu-card.card-peeking {
+  animation: peekPulse 1.8s infinite;
+  border-color: #f59e0b;
+}
+
+@keyframes peekPulse {
+  0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+  50% { transform: translateY(-4px) scale(1.04); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.6); }
+}
+
+.peeking-hint {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fde047;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.seotda-hwatu-card.card-open {
+  animation: cardFlip 0.35s ease-out;
+}
+
+@keyframes cardFlip {
+  0% { transform: scaleX(0.1); }
+  100% { transform: scaleX(1); }
+}
+
+.seotda-my-hand-badge {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-rank-tag {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #f8fafc;
+  border: 1.5px solid #64748b;
+  padding: 3px 14px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.my-rank-tag.tag-gold {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  color: #fffbeb;
+  border-color: #fde047;
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+  animation: goldShimmer 2s infinite alternate;
+}
+
+@keyframes goldShimmer {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.2); }
+}
+
+.seotda-my-info-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.my-meta-pill {
+  background: rgba(0, 0, 0, 0.55);
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.my-meta-pill strong {
+  color: #fde047;
+}
+
+/* ── 하단 베팅 컨트롤 패널 ── */
+.seotda-bet-controls {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  padding: 6px 2px;
+  transition: opacity 0.2s, pointer-events 0.2s;
+}
+
+.seotda-bet-controls.controls-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-bet-act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  color: #ffffff;
+}
+
+.btn-bet-act:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+.btn-bet-act:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-bet-act:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.btn-bet-fold { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.btn-bet-check { background: linear-gradient(135deg, #64748b, #475569); }
+.btn-bet-call { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.btn-bet-ping { background: linear-gradient(135deg, #10b981, #059669); }
+.btn-bet-dadang { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.btn-bet-half { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.btn-bet-quarter { background: linear-gradient(135deg, #ec4899, #be185d); }
+.btn-bet-allin {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  border: 1px solid #f87171;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+}
+
+/* ── 족보표 모달 ── */
+.seotda-rules-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.seotda-rules-modal.hidden {
+  display: none !important;
+}
+
+.seotda-rules-content {
+  width: 90%;
+  max-width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  border-radius: 20px;
+}
+
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.rules-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-tier {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.rule-tier strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+}
+
+.tier-gold { background: rgba(245, 158, 11, 0.12); border-left: 4px solid #f59e0b; color: #fef08a; }
+.tier-purple { background: rgba(168, 85, 247, 0.12); border-left: 4px solid #a855f7; color: #e9d5ff; }
+.tier-blue { background: rgba(59, 130, 246, 0.12); border-left: 4px solid #3b82f6; color: #bfdbfe; }
+.tier-green { background: rgba(16, 185, 129, 0.12); border-left: 4px solid #10b981; color: #a7f3d0; }
+.tier-red { background: rgba(239, 68, 68, 0.12); border-left: 4px solid #ef4444; color: #fecaca; }
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 640px) {
+  .seotda-bet-controls {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+  .seotda-hwatu-card {
+    width: 58px;
+    height: 92px;
+  }
+  .seotda-opp-seat {
+    min-width: 80px;
+    padding: 6px;
+  }
+  .seotda-card-mini {
+    width: 26px;
+    height: 40px;
+  }
+}
+

@@ -49,20 +49,63 @@ const Sound = (() => {
   window.addEventListener('touchstart', _unlock, { once: true, passive: true });
 
   /* ═══════════════════════════════════════════════════════════════════
-     BGM 신디사이저 엔진 (로비 트랙 / 끝말잇기 전용 긴박 가속 트랙)
+     BGM 신디사이저 엔진 (로비 리믹스 확장 트랙 / 끝말잇기 전용 긴박 가속 트랙)
      ═══════════════════════════════════════════════════════════════════ */
   let _currentTrack = 'lobby';
-  let _baseInterval = 240;
-  let _currentInterval = 240;
+  let _baseInterval = 200; // 살짝 더 경쾌하고 리드미컬한 템포
+  let _currentInterval = 200;
 
-  // 1. 로비 기본 감성 트랙 (C -> G -> Am -> F)
+  // 1. 로비 감성 리믹스 확장 트랙 (C -> G -> Am -> F 기반 4개 섹션 총 96스텝 대곡!)
+  // 기본 음의 틀을 충실히 유지하면서 변형 리믹스, 멜로디 러시, 옥타브 도약, 브릿지 피날레로 4배 길이 확장
   const LOBBY_NOTES = [
-    261.63, 329.63, 392.00, 523.25, 392.00, 329.63,
-    196.00, 246.94, 293.66, 392.00, 293.66, 246.94,
-    220.00, 261.63, 329.63, 440.00, 329.63, 261.63,
-    174.61, 220.00, 261.63, 349.23, 261.63, 220.00
+    // ── Part A: 원곡 테마 도입 (정제된 맑은 아르페지오) ──
+    261.63, 329.63, 392.00, 523.25, 392.00, 329.63, // C (C4, E4, G4, C5, G4, E4)
+    196.00, 246.94, 293.66, 392.00, 293.66, 246.94, // G (G3, B3, D4, G4, D4, B3)
+    220.00, 261.63, 329.63, 440.00, 329.63, 261.63, // Am (A3, C4, E4, A4, E4, C4)
+    174.61, 220.00, 261.63, 349.23, 261.63, 220.00, // F (F3, A3, C4, F4, C4, A3)
+
+    // ── Part B: 리드미컬 바운스 리믹스 변주 (당김음 & 경쾌한 멜로디 런) ──
+    261.63, 392.00, 329.63, 523.25, 659.25, 587.33, // C (C4, G4, E4, C5, E5, D5)
+    246.94, 293.66, 392.00, 493.88, 587.33, 493.88, // G (B3, D4, G4, B4, D5, B4)
+    220.00, 329.63, 440.00, 523.25, 659.25, 493.88, // Am (A3, E4, A4, C5, E5, B4)
+    174.61, 261.63, 349.23, 440.00, 523.25, 392.00, // F (F3, C4, F4, A4, C5, G4)
+
+    // ── Part C: 화려한 아케이드 신스 솔로 멜로디 (옥타브 도약 & 클라이맥스) ──
+    329.63, 392.00, 523.25, 659.25, 783.99, 659.25, // C (E4, G4, C5, E5, G5, E5)
+    293.66, 392.00, 493.88, 587.33, 698.46, 587.33, // G (D4, G4, B4, D5, F5, D5)
+    261.63, 329.63, 440.00, 523.25, 659.25, 523.25, // Am (C4, E4, A4, C5, E5, C5)
+    220.00, 261.63, 349.23, 440.00, 493.88, 587.33, // F->G (A3, C4, F4, A4, B4, D5)
+
+    // ── Part D: 리드미컬 빌드업 & 브릿지 피날레 (루프 전환 & 하모니) ──
+    440.00, 329.63, 261.63, 440.00, 523.25, 659.25, // Am (A4, E4, C4, A4, C5, E5)
+    392.00, 329.63, 246.94, 392.00, 493.88, 587.33, // Em (G4, E4, B3, G4, B4, D5)
+    349.23, 440.00, 523.25, 698.46, 659.25, 587.33, // F (F4, A4, C5, F5, E5, D5)
+    392.00, 493.88, 587.33, 698.46, 587.33, 493.88  // G7 (G4, B4, D5, F5, D5, B4)
   ];
-  const LOBBY_BASS = [130.81, 130.81, 98.00, 98.00, 110.00, 110.00, 87.31, 87.31];
+
+  // 로비 펑키 리믹스 베이스 (옥타브 바운스)
+  const LOBBY_BASS = [
+    // Part A
+    130.81, 261.63, 98.00, 196.00, 110.00, 220.00, 87.31, 174.61,
+    // Part B
+    130.81, 196.00, 98.00, 146.83, 110.00, 164.81, 87.31, 130.81,
+    // Part C
+    130.81, 261.63, 98.00, 196.00, 110.00, 220.00, 87.31, 98.00,
+    // Part D
+    110.00, 164.81, 82.41, 123.47, 87.31, 174.61, 98.00, 196.00
+  ];
+
+  // 서브 하모니 코드 패드 (파트별 3도/5도 화음 레이어)
+  const LOBBY_CHORDS = [
+    // C, G, Am, F
+    329.63, 392.00, 246.94, 293.66, 261.63, 329.63, 220.00, 261.63,
+    // Part B
+    392.00, 523.25, 293.66, 392.00, 329.63, 440.00, 261.63, 349.23,
+    // Part C
+    523.25, 659.25, 392.00, 493.88, 440.00, 523.25, 349.23, 440.00,
+    // Part D
+    440.00, 523.25, 392.00, 493.88, 349.23, 440.00, 392.00, 493.88
+  ];
 
   // 2. 끝말잇기 전용 스피디 긴박 트랙 (Am -> F -> Dm -> E7 댄스 배틀 스타일)
   const WORDCHAIN_NOTES = [
@@ -82,6 +125,19 @@ const Sound = (() => {
     82.41, 82.41, 82.41, 82.41      // E2
   ];
 
+  // 노이즈 버퍼 캐시 (가벼운 아케이드 칩튠 리듬용)
+  let _noiseBuffer = null;
+  function _getNoiseBuffer(ctx) {
+    if (_noiseBuffer) return _noiseBuffer;
+    const bufferSize = ctx.sampleRate * 0.05; // 50ms 노이즈
+    _noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = _noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+    return _noiseBuffer;
+  }
+
   function startBgm(track = 'lobby') {
     if (_bgmMuted) {
       _currentTrack = track;
@@ -97,7 +153,7 @@ const Sound = (() => {
     _bgmPlaying = true;
     _bgmStep = 0;
 
-    _baseInterval = (track === 'wordchain') ? 165 : 240;
+    _baseInterval = (track === 'wordchain') ? 165 : 200;
     _currentInterval = _baseInterval;
 
     if (!_bgmMasterGain) {
@@ -118,8 +174,6 @@ const Sound = (() => {
   // ── 시간에 비례한 실시간 BGM 가속 (배속) ──
   function setBgmSpeed(ratio = 1.0) {
     if (!_bgmPlaying || _currentTrack !== 'wordchain') return;
-    // ratio: 1.0 (최대 남은 시간) -> 0.0 (시간 다 됨)
-    // 165ms (1.0x) -> 75ms (2.2x 초긴박 가속)
     const clamped = Math.max(0, Math.min(1, ratio));
     const targetInterval = Math.round(75 + clamped * (165 - 75));
 
@@ -140,7 +194,9 @@ const Sound = (() => {
       const notes = isWordchain ? WORDCHAIN_NOTES : LOBBY_NOTES;
       const bassNotes = isWordchain ? WORDCHAIN_BASS : LOBBY_BASS;
 
-      // 1. 아르페지오 멜로디
+      const noteDuration = (_currentInterval / 1000) * 0.95;
+
+      // ── 1. 메인 아르페지오 & 리드 멜로디 (밝고 경쾌한 칩튠/신스) ──
       const noteFreq = notes[_bgmStep % notes.length];
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -148,8 +204,7 @@ const Sound = (() => {
       osc.type = isWordchain ? 'sawtooth' : 'triangle';
       osc.frequency.setValueAtTime(noteFreq, now);
 
-      const noteDuration = (_currentInterval / 1000) * 0.95;
-      gain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.12 : 0.18), now);
+      gain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.12 : 0.17), now);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + noteDuration);
 
       osc.connect(gain);
@@ -158,7 +213,28 @@ const Sound = (() => {
       osc.start(now);
       osc.stop(now + noteDuration + 0.01);
 
-      // 2. 묵직하고 신나는 베이스 비트
+      // ── 2. 서브 하모니 코드 패드 레이어 (로비 트랙일 때 화음감 부여) ──
+      if (!isWordchain && _bgmStep % 3 === 0) {
+        const chordIdx = Math.floor((_bgmStep % notes.length) / 3) % LOBBY_CHORDS.length;
+        const chordFreq = LOBBY_CHORDS[chordIdx];
+        const chordOsc = ctx.createOscillator();
+        const chordGain = ctx.createGain();
+
+        chordOsc.type = 'sine';
+        chordOsc.frequency.setValueAtTime(chordFreq, now);
+
+        const chordDuration = noteDuration * 2.8;
+        chordGain.gain.setValueAtTime(_bgmVolume * 0.07, now);
+        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + chordDuration);
+
+        chordOsc.connect(chordGain);
+        chordGain.connect(_bgmMasterGain);
+
+        chordOsc.start(now);
+        chordOsc.stop(now + chordDuration + 0.01);
+      }
+
+      // ── 3. 묵직하고 신나는 옥타브 바운스 베이스 ──
       const bassStepInterval = isWordchain ? 2 : 3;
       if (_bgmStep % bassStepInterval === 0) {
         const bassIdx = Math.floor((_bgmStep % notes.length) / bassStepInterval) % bassNotes.length;
@@ -167,11 +243,11 @@ const Sound = (() => {
         const bassOsc = ctx.createOscillator();
         const bassGain = ctx.createGain();
 
-        bassOsc.type = isWordchain ? 'triangle' : 'sine';
+        bassOsc.type = isWordchain ? 'triangle' : 'triangle';
         bassOsc.frequency.setValueAtTime(bassFreq, now);
 
         const bassDuration = noteDuration * bassStepInterval;
-        bassGain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.28 : 0.24), now);
+        bassGain.gain.setValueAtTime(_bgmVolume * (isWordchain ? 0.28 : 0.22), now);
         bassGain.gain.exponentialRampToValueAtTime(0.0001, now + bassDuration);
 
         bassOsc.connect(bassGain);
@@ -179,6 +255,26 @@ const Sound = (() => {
 
         bassOsc.start(now);
         bassOsc.stop(now + bassDuration + 0.02);
+      }
+
+      // ── 4. 가벼운 아케이드 리듬 스냅 (틱 / 하이햇 비트) ──
+      if (!isWordchain && (_bgmStep % 2 === 1 || _bgmStep % 6 === 0)) {
+        const noise = _getNoiseBuffer(ctx);
+        if (noise) {
+          const noiseSrc = ctx.createBufferSource();
+          noiseSrc.buffer = noise;
+          const noiseGain = ctx.createGain();
+
+          const isSnare = (_bgmStep % 6 === 0);
+          noiseGain.gain.setValueAtTime(_bgmVolume * (isSnare ? 0.05 : 0.025), now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+          noiseSrc.connect(noiseGain);
+          noiseGain.connect(_bgmMasterGain);
+
+          noiseSrc.start(now);
+          noiseSrc.stop(now + 0.045);
+        }
       }
 
       _bgmStep++;
@@ -1025,6 +1121,204 @@ const Sound = (() => {
     } catch (_) {}
   }
 
+  // 16. 화투 카드 딜 (Deal / Card Slide) - 슉! 바람을 가르는 부드러운 패 돌리기 소리
+  function playHwatuDeal() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      // 노이즈 버퍼 기반 카드 슬라이드 슉!
+      const bufferSize = ctx.sampleRate * 0.08;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2400, now);
+      filter.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.28 * _sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(now);
+    } catch (_) {}
+  }
+
+  // 17. 화투 패 바닥 스냅 (Snap / Flip / Slap) - 찰싹! 딱! 화투 특유의 맛깔나는 원목/모포 타격음
+  function playHwatuSnap() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      // 날카로운 딱! (고주파 트라이앵글)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(1400, now);
+      osc1.frequency.exponentialRampToValueAtTime(180, now + 0.05);
+
+      gain1.gain.setValueAtTime(0.45 * _sfxVolume, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
+
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.06);
+
+      // 묵직한 모포 쿠션감 (사인파 펀치)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(280, now);
+      osc2.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+
+      gain2.gain.setValueAtTime(0.35 * _sfxVolume, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.085);
+
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now);
+      osc2.stop(now + 0.09);
+    } catch (_) {}
+  }
+
+  // 18. 칩 베팅 / 판돈 투입 (Chip Bet) - 짤랑짤랑 경쾌하고 맑은 세라믹 칩 사운드
+  function playChipBet() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const pitches = [2400, 3200, 4100];
+      pitches.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        const start = now + idx * 0.025;
+        osc.frequency.setValueAtTime(freq, start);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.7, start + 0.08);
+
+        gain.gain.setValueAtTime(0.22 * _sfxVolume, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.09);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.1);
+      });
+    } catch (_) {}
+  }
+
+  // 19. 다이 (Fold) - 아쉬운 하향 톤
+  function playSeotdaFold() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(380, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+
+      gain.gain.setValueAtTime(0.25 * _sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } catch (_) {}
+  }
+
+  // 20. 땡 달성 (Ddaeng! 1땡~장땡) - 웅장하고 힘찬 팡파레
+  function playSeotdaDdaeng() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const chords = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      chords.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        const start = now + idx * 0.06;
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0.3 * _sfxVolume, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.45);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.48);
+      });
+    } catch (_) {}
+  }
+
+  // 21. 광땡 달성 (Gwang Ddaeng! 38광땡/13광땡/18광땡) - 눈부신 초특급 브라스 팡파레 & 아르페지오
+  function playSeotdaGwang() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; // C5, E5, G5, C6, E6, G6
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        const start = now + idx * 0.05;
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0.24 * _sfxVolume, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.65);
+      });
+    } catch (_) {}
+  }
+
+  // 22. 구사 재경기 / 나가리 (Rematch / Nagari) - 팽팽한 반전 긴장감 사운드
+  function playSeotdaRematch() {
+    if (_sfxMuted || _sfxVolume <= 0) return;
+    const ctx = _getCtx();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.setValueAtTime(466.16, now + 0.12);
+      osc.frequency.setValueAtTime(523.25, now + 0.24);
+
+      gain.gain.setValueAtTime(0.25 * _sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.5);
+    } catch (_) {}
+  }
+
   return {
     startBgm,
     stopBgm,
@@ -1064,6 +1358,13 @@ const Sound = (() => {
     playAlkkagiFlick,
     playAlkkagiHit,
     playAlkkagiFall,
-    playAlkkagiSelect
+    playAlkkagiSelect,
+    playHwatuDeal,
+    playHwatuSnap,
+    playChipBet,
+    playSeotdaFold,
+    playSeotdaDdaeng,
+    playSeotdaGwang,
+    playSeotdaRematch
   };
 })();

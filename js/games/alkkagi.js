@@ -228,15 +228,15 @@ const AlkkagiGame = (() => {
         <!-- 상단 헤더: 턴 알림 + 우측 기권 버튼 -->
         <div class="alkkagi-header-area">
           <div class="turn-indicator">
-            <span class="turn-label ${currentTurn === 'cho' ? 'cho-turn' : 'han-turn'}" id="ak-turn-label">
+            <span class="turn-label my-turn" id="ak-turn-label">
               <i class="fa-solid fa-chess-board"></i>
               <span id="ak-turn-text">${currentTurn === mySide ? '내 턴' : `${oppName} 턴`}</span>
             </span>
           </div>
 
           <div class="alkkagi-header-actions">
-            <button type="button" class="btn-jg-header-resign" id="btn-ak-resign" title="대국 기권">
-              <i class="fa-solid fa-flag"></i>
+            <button type="button" class="btn-game-resign" id="btn-ak-resign" title="대국 기권">
+              <i class="fa-regular fa-flag"></i>
               <span>기권</span>
             </button>
           </div>
@@ -781,7 +781,7 @@ const AlkkagiGame = (() => {
       : '상대방';
 
     if (turnLabel) {
-      turnLabel.className = 'turn-label ' + (currentTurn === 'cho' ? 'cho-turn' : 'han-turn') + (isMine ? ' my-turn' : ' opp-turn');
+      turnLabel.className = 'turn-label ' + (isMine ? 'my-turn' : 'opp-turn');
     }
     if (turnText) {
       turnText.textContent = isMine ? '내 턴' : `${oppName} 턴`;
