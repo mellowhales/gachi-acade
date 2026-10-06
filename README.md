@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.9.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.9.2-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,10 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.9.2 (2026-10)
+  - 구글 서치 콘솔(Google Search Console) 사이트 소유권 인증 메타태그 등록
+- v1.9.1 (2026-10)
+  - 구글 검색엔진 최적화(SEO) 전면 적용: '가치아케이드' 및 'gachiarcade' 검색 노출을 위한 메타태그, OpenGraph, Canonical URL, robots.txt, sitemap.xml 및 Schema.org JSON-LD 구조화 데이터 구축
 - v1.9.0 (2026-10)
   - Web Audio BGM 신디사이저 엔진 16박자(16-beat) 루프 및 리듬 스냅 완벽 동기화
   - 섯다 AI 고도화 (인간적인 가변 생각 시간, 성향 시스템, 슬로우 플레이·블러핑 심리전 및 자연스러운 사람 닉네임 탑재)
