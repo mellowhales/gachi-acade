@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.10.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.10.5-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,10 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.10.5 (2026-10)
+  - 성인 광고가 제외된 300×250 단일 배너만 선별하여 로비 사이드바, 방 대기실, 인게임 좌측 영역에 단정하게 배치
+- v1.10.4 (2026-10)
+  - 성인 광고 노출 차단을 위해 기존 Adsterra 광고 코드 전면 제거 (성인 제외 클린 광고 재발급 대기)
 - v1.10.3 (2026-10)
   - 로비 사이드바 및 환경설정 모달 내 불필요한 후원하기 버튼 제거, 순수 스폰서 배너 광고 영역 단일화
 - v1.10.2 (2026-10)

@@ -269,7 +269,7 @@
       </ul>
     </nav>
 
-    <!-- 📢 Adsterra (애드스테라) PC 전용 배너: 로비 사이드바 하단 -->
+    <!-- 📢 Adsterra (애드스테라) PC 전용 300x250 배너: 로비 사이드바 하단 -->
     <div class="arcade-ad-wrapper arcade-ad-sidebar-home" aria-label="스폰서 광고">
       <span class="arcade-ad-label">SPONSORED</span>
       <div class="arcade-ad-content" id="adsterra-banner-home">
@@ -613,12 +613,20 @@
         </button>
       </div>
 
-      <!-- 📢 Adsterra (애드스테라) PC 전용 네이티브 배너: 방 대기실 좌측 하단 -->
+      <!-- 📢 Adsterra (애드스테라) PC 전용 300x250 배너: 방 대기실 좌측 하단 -->
       <div class="arcade-ad-wrapper arcade-ad-room-left" aria-label="스폰서 광고">
         <span class="arcade-ad-label">SPONSORED</span>
         <div class="arcade-ad-content" id="adsterra-banner-room">
-          <script async="async" data-cfasync="false" src="https://bicea.org/21/849ad0e2839435cb021cff58dc2a432c"></script>
-          <div id="container-849ad0e2839435cb021cff58dc2a432c"></div>
+          <script>
+            atOptions = {
+              'key' : '7a492fdfb24d5a47625fa7524d0ef131',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bicea.org/22/7a492fdfb24d5a47625fa7524d0ef131"></script>
         </div>
       </div>
     </div>
@@ -910,7 +918,7 @@
         </button>
       </div>
 
-      <!-- 📢 Adsterra (애드스테라) PC 전용 배너: 인게임 좌측 하단 -->
+      <!-- 📢 Adsterra (애드스테라) PC 전용 300x250 배너: 인게임 좌측 하단 -->
       <div class="arcade-ad-wrapper arcade-ad-game-left" aria-label="스폰서 광고">
         <span class="arcade-ad-label">SPONSORED</span>
         <div class="arcade-ad-content" id="adsterra-banner-game">
@@ -1277,7 +1285,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.10.3</span>
+              <span class="about-version-tag">v1.10.5</span>
             </div>
           </div>
         </div>
@@ -1290,6 +1298,14 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.10.5]</span>
+              <span class="changelog-text">성인 광고가 제외된 300×250 단일 배너만 선별하여 로비 사이드바, 방 대기실, 인게임 좌측 영역에 깔끔하게 배치</span>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-ver">[v1.10.4]</span>
+              <span class="changelog-text">성인 광고 노출 차단을 위해 기존 Adsterra 광고 코드 전면 제거 (성인 제외 클린 광고 재발급 대기)</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.10.3]</span>
               <span class="changelog-text">로비 사이드바 및 설정 모달 내 불필요한 후원하기 버튼 제거, 순수 스폰서 배너 광고 영역 단일화</span>
             </div>
@@ -1473,7 +1489,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.10.3</span>
+        <span class="settings-version-badge">v1.10.5</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
@@ -1920,21 +1936,5 @@
 <script src="js/supabase.js"></script>
 <script src="js/app.js"></script>
 
-<!-- 📢 Adsterra PC 전용 소셜 바 (Social Bar): 화면 너비 900px 초과 PC 환경에서만 동적으로 로드하여 모바일 간섭 차단 -->
-<script>
-  (function() {
-    if (window.innerWidth > 900) {
-      var s = document.createElement('script');
-      s.src = 'https://bicea.org/14/ea89e66167bb08228671034ab00bcaa3';
-      s.setAttribute('data-cfasync', 'false');
-      document.body.appendChild(s);
-    }
-  })();
-</script>
-
-<!-- 📢 Adsterra 팝언더 (Popunder): 
-     실시간 게임 조작(돌 놓기, 카드 클릭 등) 중 브라우저 포커스 이탈을 방지하기 위해 기본 비활성화 처리되어 있습니다.
-     팝업 광고 수익을 활성화하시려면 아래 주석을 해제하세요. -->
-<!-- <script data-cfasync="false" src="https://afders.org/1/e2db06ad637a8c7d74c9f2639af5ea59"></script> -->
 </body>
 </html>

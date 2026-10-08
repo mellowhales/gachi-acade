@@ -12497,13 +12497,13 @@ html, body {
   min-height: 250px;
 }
 
-/* 2. 방 대기실 좌측 하단 배너 (네이티브 배너) */
+/* 2. 방 대기실 좌측 하단 배너 (300x250) */
 .arcade-ad-room-left {
   width: 100%;
   margin-top: 10px;
 }
 .arcade-ad-room-left .arcade-ad-content {
-  min-height: 120px;
+  min-height: 250px;
 }
 
 /* 3. 인게임 좌측 하단 배너 (300x250) */
