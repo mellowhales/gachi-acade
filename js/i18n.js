@@ -91,6 +91,9 @@ const I18N = (() => {
     '야추': { en:'Yacht Dice', es:'Yate (Dados)', tr:'Yat Zarı', ru:'Яхта (Кости)', zh:'快艇骰子', ja:'ヤッツー' },
     '야추 다이스': { en:'Yacht Dice', es:'Yate (Dados)', tr:'Yat Zarı', ru:'Яхта (Кости)', zh:'快艇骰子', ja:'ヤッツー' },
     '3D 주사위 족보 배틀': { en:'3D Dice High Score Duel', es:'Duelo de Dados 3D', tr:'3D Zar Oyunu', ru:'3D Кости Битва', zh:'3D骰子组合战', ja:'3Dサイコロ役バトル' },
+    '지뢰찾기': { en:'Minesweeper', es:'Buscaminas', tr:'Mayın Tarlası', ru:'Сапёр', zh:'扫雷', ja:'マインスイーパー' },
+    '실시간 멀티 배틀': { en:'Live Multiplayer Battle', es:'Batalla Multijugador en Vivo', tr:'Canlı Çok Oyunculu Savaş', ru:'Живая Мультиплеер Битва', zh:'实时多人对决', ja:'リアルタイムマルチバトル' },
+    '2~8인': { en:'2-8 Players', es:'2-8 Jugadores', tr:'2-8 Oyuncu', ru:'2-8 Игроков', zh:'2~8人', ja:'2~8人' },
 
     // 설정 모달
     '화면': { en:'Display', es:'Pantalla', tr:'Ekran', ru:'Экран', zh:'显示', ja:'画面' },

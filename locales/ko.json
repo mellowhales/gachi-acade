@@ -122,7 +122,8 @@
     "catchmind": { "name": "캐치마인드", "desc": "실시간 그림 퀴즈 배틀" },
     "yutnori": { "name": "윷놀이", "desc": "전통 윷놀이 말판 배틀" },
     "yacht": { "name": "야추 다이스", "desc": "3D 주사위 족보 배틀" },
-    "seotda": { "name": "섯다", "desc": "2장 섯다 & 베팅 배틀" }
+    "seotda": { "name": "섯다", "desc": "2장 섯다 & 베팅 배틀" },
+    "minesweeper": { "name": "지뢰찾기", "desc": "실시간 지뢰찾기 배틀" }
   },
   "settings": {
     "title": "환경 설정",

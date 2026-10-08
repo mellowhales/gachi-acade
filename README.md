@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.10.5-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.11.0-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,10 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.11.0 (2026-10)
+  - 신규 멀티 지뢰찾기(Minesweeper) 14번째 게임 추가 (2~8인 실시간 동시 경쟁, 하트 3개 시스템, 깃발/더블클릭 코드 오픈)
+  - 사과게임 & 지뢰찾기 호스트 동일 배열 동기화 (전원 100% 동일한 맵에서 공정 경쟁)
+  - 상대방 카드 및 사이드바 클릭 시 상대방 진행상황 실시간 관전(라이브 뷰어 모달) 기능 탑재
 - v1.10.5 (2026-10)
   - 성인 광고가 제외된 300×250 단일 배너만 선별하여 로비 사이드바, 방 대기실, 인게임 좌측 영역에 단정하게 배치
 - v1.10.4 (2026-10)

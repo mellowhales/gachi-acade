@@ -266,6 +266,14 @@
           </div>
           <div class="sg-tag tag-multi">2~5인</div>
         </li>
+        <li class="sidebar-game-item" data-game="minesweeper">
+          <div class="sg-icon"><i class="fa-solid fa-bomb"></i></div>
+          <div class="sg-info">
+            <strong>지뢰찾기</strong>
+            <span>실시간 멀티 배틀</span>
+          </div>
+          <div class="sg-tag tag-multi">2~8인</div>
+        </li>
       </ul>
     </nav>
 
@@ -799,6 +807,14 @@
             </div>
             <span class="rgb-tag tag-multi">2~5인</span>
           </div>
+          <div class="room-game-btn" data-game="minesweeper">
+            <div class="rgb-icon"><i class="fa-solid fa-bomb"></i></div>
+            <div class="rgb-info">
+              <strong>지뢰찾기</strong>
+              <span>실시간 멀티 배틀</span>
+            </div>
+            <span class="rgb-tag tag-multi">2~8인</span>
+          </div>
         </div>
 
 
@@ -1285,7 +1301,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.10.5</span>
+              <span class="about-version-tag">v1.11.0</span>
             </div>
           </div>
         </div>
@@ -1298,6 +1314,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.11.0]</span>
+              <span class="changelog-text">신규 멀티 지뢰찾기(Minesweeper) 추가, 사과게임 & 지뢰찾기 동일 배열 동기화(공정 경쟁) 및 상대방 진행상황 실시간 관전 기능 탑재</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.10.5]</span>
               <span class="changelog-text">성인 광고가 제외된 300×250 단일 배너만 선별하여 로비 사이드바, 방 대기실, 인게임 좌측 영역에 깔끔하게 배치</span>
             </div>
@@ -1489,7 +1509,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.10.5</span>
+        <span class="settings-version-badge">v1.11.0</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
@@ -1930,6 +1950,7 @@
 <script src="js/games/yutnori.js"></script>
 <script src="js/games/yacht.js"></script>
 <script src="js/games/seotda.js"></script>
+<script src="js/games/minesweeper.js"></script>
 <script type="module" src="js/firebase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>

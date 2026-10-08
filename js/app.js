@@ -20,6 +20,7 @@
     yutnori:   { module: YutnoriGame,   title: '윷놀이',          maxPlayers: 4, isTurnBased: true },
     yacht:     { module: YachtGame,     title: '야추 다이스',      maxPlayers: 4, isTurnBased: true },
     seotda:    { module: SeotdaGame,    title: '섯다',            maxPlayers: 5, isTurnBased: true },
+    minesweeper: { module: MinesweeperGame, title: '지뢰찾기',      maxPlayers: 8, isTurnBased: false },
   };
 
   // 끝말잇기 첫 단어 랜덤 풀
@@ -5373,7 +5374,8 @@
     catchmind: { title: '캐치마인드', icon: 'fa-solid fa-palette' },
     yutnori: { title: '윷놀이', icon: 'fa-solid fa-dice' },
     yacht: { title: '요트 다이스', icon: 'fa-solid fa-dice-five' },
-    seotda: { title: '섯다', icon: 'fa-solid fa-clone' }
+    seotda: { title: '섯다', icon: 'fa-solid fa-clone' },
+    minesweeper: { title: '지뢰찾기', icon: 'fa-solid fa-bomb' }
   };
 
   function _createEmptyStats() {
@@ -7724,7 +7726,7 @@
 
     console.log('[App] 게임 런치 context:', gameKey, 'targetRounds:', rounds, 'sideMode:', side, 'players:', currentActivePlayers.map(p=>p.name));
 
-    const needCountdown = ['apple', 'wordchain', 'typing'].includes(gameKey);
+    const needCountdown = ['apple', 'wordchain', 'typing', 'minesweeper'].includes(gameKey);
     if (needCountdown) {
       _runCountdown(() => {
         currentGameModule.init($('game-content'), _handleGameResult, context);
@@ -7805,6 +7807,10 @@
       }
       li.addEventListener('click', (e) => {
         if (!e.target.closest('.btn-manage-trigger')) {
+          if (currentGameModule && typeof currentGameModule.openOpponentViewer === 'function' && !isMe) {
+            currentGameModule.openOpponentViewer(p.id);
+            return;
+          }
           _openPlayerActionMenu(e, p);
         }
       });
@@ -8374,6 +8380,13 @@
       tag: '2~5인 • 화투 심리전',
       tagClass: 'tag-multi',
       desc: '1~10월 화투패 2장으로 38광땡부터 망통까지! 짜릿한 판돈 베팅과 쪼기 손맛이 살아있는 정통 2장 섯다 배틀입니다.'
+    },
+    minesweeper: {
+      title: '지뢰찾기',
+      icon: 'fa-solid fa-bomb',
+      tag: '2~8인 • 실시간 경쟁',
+      tagClass: 'tag-multi',
+      desc: '동일한 지뢰 맵에서 펼쳐지는 실시간 동시 지뢰찾기 배틀! 안전한 칸을 먼저 모두 찾아내거나 제한 시간 동안 더 많은 칸을 열어 승리하세요.'
     }
   };
 

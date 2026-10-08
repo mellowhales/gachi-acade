@@ -122,7 +122,8 @@
     "catchmind": { "name": "Catch Mind", "desc": "Real-time sketch & guess party game" },
     "yutnori": { "name": "Yutnori", "desc": "Traditional Korean stick-tossing board game" },
     "yacht": { "name": "Yacht Dice", "desc": "3D dice combination score battle" },
-    "seotda": { "name": "Seotda", "desc": "2-card Korean poker & betting battle" }
+    "seotda": { "name": "Seotda", "desc": "2-card Korean poker & betting battle" },
+    "minesweeper": { "name": "Minesweeper", "desc": "Live multiplayer minesweeper battle" }
   },
   "settings": {
     "title": "Settings",
