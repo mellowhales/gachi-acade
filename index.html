@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>가치아케이드 (GachiArcade) - 실시간 멀티플레이 웹 게임</title>
+  <title>가치아케이드</title>
   
   <!-- 🔍 검색엔진 최적화 (SEO) 메타 태그 -->
   <meta name="description" content="가치아케이드(GachiArcade)는 설치 없이 브라우저에서 친구와 함께 즐기는 실시간 멀티플레이 웹 아케이드 플랫폼입니다. 윷놀이, 캐치마인드, 섯다, 오목, 오델로 등 14종의 다양한 대전 게임을 무료로 플레이해보세요!" />
@@ -20,40 +20,52 @@
   <!-- 🔍 네이버 웹마스터도구(Naver Search Advisor) 소유권 확인 태그 (선택 사항) -->
   <meta name="naver-site-verification" content="" />
 
-  <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260919_v5" />
-  <link rel="alternate icon" type="image/png" href="favicon.png?v=20260919_v5" />
-  <link rel="apple-touch-icon" href="favicon.svg?v=20260919_v5" />
+  <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 (Googlebot-Favicon 최적화 정적 경로) -->
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="theme-color" content="#10b981" />
 
   <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="가치아케이드 (GachiArcade)" />
+  <meta property="og:site_name" content="가치아케이드" />
   <meta property="og:url" content="https://gachiarcade.kro.kr/" />
-  <meta property="og:title" content="가치아케이드 (GachiArcade) - 실시간 멀티플레이 웹 게임" />
+  <meta property="og:title" content="가치아케이드" />
   <meta property="og:description" content="설치 없이 브라우저에서 링크 하나로 친구와 함께 즐기는 실시간 멀티플레이 웹 아케이드! 윷놀이, 캐치마인드, 섯다 등 14종 게임 지원." />
   <meta property="og:image" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v6" />
   <meta property="og:image:secure_url" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v6" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="가치아케이드 (GachiArcade)" />
+  <meta property="og:image:alt" content="가치아케이드" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
 
   <!-- 🐦 트위터 카드 (Twitter Card) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="가치아케이드 (GachiArcade) - 실시간 멀티플레이 웹 게임" />
+  <meta name="twitter:title" content="가치아케이드" />
   <meta name="twitter:description" content="친구와 브라우저에서 바로 즐기는 실시간 멀티플레이 웹 아케이드" />
   <meta name="twitter:image" content="https://gachiarcade.kro.kr/og-image-v2.png?v=20260919_v6" />
 
-  <!-- 📊 구조화된 데이터 (JSON-LD - Schema.org) 구글 검색엔진 최적화 -->
+  <!-- 📊 구글 사이트 이름(Site Name) 지정 공식 구조화된 데이터 (WebSite Schema) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "가치아케이드",
+    "alternateName": ["GachiArcade", "gachiarcade"],
+    "url": "https://gachiarcade.kro.kr/"
+  }
+  </script>
+
+  <!-- 📊 웹 애플리케이션 구조화된 데이터 (WebApplication Schema) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "가치아케이드",
-    "alternateName": ["GachiArcade", "gachiarcade", "가치 아케이드"],
+    "alternateName": ["GachiArcade", "gachiarcade"],
     "url": "https://gachiarcade.kro.kr/",
     "applicationCategory": "GameApplication",
     "operatingSystem": "All",
@@ -1222,7 +1234,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.9.2</span>
+              <span class="about-version-tag">v1.9.3</span>
             </div>
           </div>
         </div>
@@ -1235,6 +1247,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.9.3]</span>
+              <span class="changelog-text">구글 검색 최적화(SEO) 리파인: 사이트 이름 '가치아케이드' 고정(WebSite Schema 및 og:site_name), 검색 제목 간소화 및 표준 favicon.ico 구축</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.9.2]</span>
               <span class="changelog-text">구글 서치 콘솔(Google Search Console) 사이트 소유권 인증 메타태그 등록</span>
             </div>
@@ -1398,7 +1414,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.9.2</span>
+        <span class="settings-version-badge">v1.9.3</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>

@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.9.2-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.9.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,8 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.9.3 (2026-10)
+  - 구글 검색 최적화(SEO) 리파인: 사이트 이름 '가치아케이드' 고정(WebSite Schema 및 og:site_name), 검색 제목 간소화 및 표준 favicon.ico 구축
 - v1.9.2 (2026-10)
   - 구글 서치 콘솔(Google Search Console) 사이트 소유권 인증 메타태그 등록
 - v1.9.1 (2026-10)
