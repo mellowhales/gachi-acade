@@ -461,17 +461,18 @@ const AlkkagiGame = (() => {
         if (isSimulating) {
           _forceStopAndEndTurn();
         }
-      }, 3000);
+      }, 2500);
     } else {
-      // 상대방 샷 수신 시 패킷 유실 대비 4.2초 백업 안전 타이머
+      // 상대방 샷 수신 시 패킷 유실 대비 3.2초 백업 안전 타이머
       simSafetyTimer = setTimeout(() => {
-        if (isSimulating) {
+        if (isSimulating || currentTurn !== mySide) {
           isSimulating = false;
           _isCurrentShotLocal = false;
-          pieces.forEach(p => { p.vx = 0; p.vy = 0; });
+          pieces.forEach(p => { p.vx = 0; p.vy = 0; if (p.isFalling) { p.isDead = true; p.isFalling = false; } });
+          currentTurn = (currentTurn === 'cho') ? 'han' : 'cho';
           _updateTurnUI();
         }
-      }, 4200);
+      }, 3200);
     }
 
     if (typeof Sound !== 'undefined' && Sound.playAlkkagiFlick) {
@@ -675,13 +676,23 @@ const AlkkagiGame = (() => {
       });
     }
 
+    const hasFalling = pieces.some(p => p.isFalling);
+
     if (!stillMoving && !hasFalling && isSimulating) {
       if (_isCurrentShotLocal) {
         _finishSimulationAndSwitchTurn();
       } else {
-        // 상대방이 쏜 샷인 경우: 내 로컬 시뮬레이션만 깔끔하게 정지하고 상대방 ALKKAGI_TURN_END 수신 대기
+        // 상대방이 쏜 샷인 경우: 내 로컬 시뮬레이션 정지 후 턴 전환 대기
         isSimulating = false;
         pieces.forEach(p => { p.vx = 0; p.vy = 0; });
+        // 상대방 패킷 지연 대비 0.8초 백업 턴 전환
+        setTimeout(() => {
+          if (currentTurn !== mySide && !isSimulating) {
+            const nextTurn = (currentTurn === 'cho') ? 'han' : 'cho';
+            currentTurn = nextTurn;
+            _updateTurnUI();
+          }
+        }, 800);
       }
     }
   }
@@ -775,16 +786,19 @@ const AlkkagiGame = (() => {
   function _updateTurnUI() {
     const turnLabel = document.getElementById('ak-turn-label');
     const turnText  = document.getElementById('ak-turn-text');
+    const isDev = !!(_context && _context.isDevMode);
     const isMine = _isMyTurn();
     const oppName = (players.length >= 2)
       ? (players.find(p => String(p.id) !== String(myId))?.name || '상대방')
       : '상대방';
 
+    const currentTurnName = (currentTurn === 'cho') ? '초(楚, 청)' : '한(漢, 홍)';
+
     if (turnLabel) {
       turnLabel.className = 'turn-label ' + (isMine ? 'my-turn' : 'opp-turn');
     }
     if (turnText) {
-      turnText.textContent = isMine ? '내 턴' : `${oppName} 턴`;
+      turnText.textContent = isDev ? `${currentTurnName} 턴` : (isMine ? '내 턴' : `${oppName} 턴`);
     }
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {
