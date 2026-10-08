@@ -1,0 +1,4 @@
+# Adsterra (애드스테라) ads.txt
+# Adsterra 대시보드 (Websites 메뉴 -> ads.txt 버튼)에서 제공하는 코드를 여기에 붙여넣어 주세요.
+# 예시:
+# adsterra.com, XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX, DIRECT

@@ -2454,7 +2454,7 @@ body {
 .room-body {
   flex: 1;
   display: grid;
-  grid-template-columns: clamp(240px, 18vw, 270px) 1fr clamp(280px, 22vw, 320px);
+  grid-template-columns: clamp(260px, 19vw, 316px) 1fr clamp(280px, 22vw, 320px);
   gap: clamp(14px, 1.5vw, 20px);
   padding: clamp(10px, 1.8vh, 20px) clamp(16px, 2vw, 28px);
   max-width: 1540px;
@@ -3365,7 +3365,7 @@ body {
   margin: 0 auto;
   padding: 20px 24px 40px 24px;
   display: grid;
-  grid-template-columns: 240px 1fr 280px;
+  grid-template-columns: clamp(260px, 19vw, 316px) 1fr 280px;
   gap: 20px;
   align-items: flex-start !important; /* 🌟 1. 최상단 라인에 맞춰 정렬 (items-start) */
   justify-content: center;
@@ -3376,7 +3376,7 @@ body {
 /* 야추 다이스 3인 이상 플레이 시 중앙 영역 및 전체 너비 확장 (채팅창 우측 이동) */
 .game-main-layout.yacht-wide-mode {
   max-width: 1750px !important;
-  grid-template-columns: 240px 1.8fr 280px !important;
+  grid-template-columns: clamp(260px, 19vw, 316px) 1.8fr 280px !important;
   align-items: flex-start !important;
 }
 
@@ -12411,4 +12411,136 @@ html, body {
 }
 .settings-tab-btn span {
   white-space: nowrap;
+}
+
+/* =====================================================================
+   Adsterra (애드스테라) PC 전용 광고 배너 스타일
+   - UI 간섭 방지, PC 뷰(>900px)에서만 노출, 모바일 환경 완전 숨김
+   ===================================================================== */
+.arcade-ad-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.arcade-ad-wrapper:hover {
+  border-color: var(--border-hi);
+}
+
+.arcade-ad-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--t4);
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.arcade-ad-content {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  text-align: center;
+}
+.arcade-ad-content iframe {
+  max-width: 100% !important;
+  display: block;
+  margin: 0 auto;
+  border: none !important;
+}
+.arcade-ad-content [id^="container-"] {
+  width: 100%;
+}
+
+.adsterra-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--t4);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 16px 8px;
+  text-align: center;
+  user-select: none;
+}
+.adsterra-placeholder i {
+  font-size: 1.4rem;
+  color: var(--t4);
+  opacity: 0.7;
+}
+
+/* 1. 로비 사이드바 하단 배너 (300x250) */
+.arcade-ad-sidebar-home {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+.arcade-ad-sidebar-home .arcade-ad-content {
+  min-height: 250px;
+}
+
+/* 2. 방 대기실 좌측 하단 배너 (네이티브 배너) */
+.arcade-ad-room-left {
+  width: 100%;
+  margin-top: 10px;
+}
+.arcade-ad-room-left .arcade-ad-content {
+  min-height: 120px;
+}
+
+/* 3. 인게임 좌측 하단 배너 (300x250) */
+.arcade-ad-game-left {
+  width: 100%;
+  margin-top: 10px;
+}
+.arcade-ad-game-left .arcade-ad-content {
+  min-height: 250px;
+}
+
+/* 4. 사이드바 / 설정창 후원 스마트링크 버튼 */
+.sidebar-sponsor-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--t2);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.sidebar-sponsor-link:hover {
+  background: var(--bg-hover);
+  color: var(--green-deep);
+  border-color: var(--green-border);
+  transform: translateY(-1px);
+}
+
+/* 📱 모바일 화면에서는 모든 배너를 원천 숨김 (UI 보호) */
+@media (max-width: 900px) {
+  .arcade-ad-wrapper {
+    display: none !important;
+  }
 }

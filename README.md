@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.9.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.10.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,17 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.10.3 (2026-10)
+  - 로비 사이드바 및 환경설정 모달 내 불필요한 후원하기 버튼 제거, 순수 스폰서 배너 광고 영역 단일화
+- v1.10.2 (2026-10)
+  - Adsterra(애드스테라) 실제 광고 유닛 연동: 로비 사이드바 및 인게임 300x250 디스플레이 배너, 방 대기실 네이티브 배너(100% 가변 위젯) 실장
+  - PC 환경(>900px) 전용 Adsterra 소셜 바(Social Bar) 동적 로드 체계 구축 및 모바일 UI 100% 비노출 유지
+  - 가치아케이드 후원용 Adsterra 스마트링크(Smartlink) 사이드바/설정창 연동
+  - 게임 플레이 중 포커스 이탈 방지를 위한 팝언더(Popunder) 안전 비활성화 가이드 제공
+- v1.10.1 (2026-10)
+  - 광고 플랫폼 Adsterra(애드스테라) 전면 전환: kro.kr 서브도메인 호환 광고 배너 템플릿(로비/방/인게임 PC 전용 비침범 영역) 구축 및 모바일 UI 100% 보호
+- v1.10.0 (2026-10)
+  - 구글 애드센스(Google AdSense) 공식 연동 체계 구축: PC 전용 로비 사이드바/방 대기실/인게임 비침범 배너 레이아웃 배치, 모바일 100% 숨김 및 ads.txt 생성
 - v1.9.3 (2026-10)
   - 구글 검색 최적화(SEO) 리파인: 사이트 이름 '가치아케이드' 고정(WebSite Schema 및 og:site_name), 검색 제목 간소화 및 표준 favicon.ico 구축
 - v1.9.2 (2026-10)
