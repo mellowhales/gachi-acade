@@ -316,12 +316,12 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: var(--bg-card, #ffffff);
-  border: 1px solid var(--border, #cbd5e1);
+  background: transparent !important; /* 배너가 바뀌어도 완전 투명 */
+  border: none !important; /* 테두리 제거 */
   color: var(--t2, #475569);
   font-size: 0.84rem;
   opacity: 1 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: none !important;
   transition: all 0.15s ease;
   flex-shrink: 0;
   cursor: pointer;
@@ -329,15 +329,16 @@ body {
 }
 
 #btn-change-nickname:hover {
-  background: var(--green, #38a169) !important;
-  border-color: var(--green, #38a169) !important;
-  color: #ffffff !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--green, #38a169) !important;
+  opacity: 0.75;
   transform: scale(1.08);
 }
 
 [data-theme="dark"] #btn-change-nickname {
-  background: #1e293b;
-  border-color: rgba(255, 255, 255, 0.18);
+  background: transparent !important;
+  border: none !important;
   color: #e2e8f0;
 }
 .user-avatar {
@@ -934,9 +935,8 @@ body {
   color: #e2e8f0;
 }
 
-/* 프로필 카드 테마가 착용된 아이템 내부 통계 및 프로필 설정 버튼: 항상 100% 불투명하고 선명하게 노출 */
+/* 프로필 카드 테마가 착용된 아이템 내부 통계 및 프로필 설정 버튼 */
 [class*="pcard-theme-"] .btn-view-stats,
-[class*="pcard-theme-"] #btn-change-nickname,
 [class*="pcard-theme-"] .profile-preview-stats-btn {
   background: #0f172a !important;
   border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
@@ -946,7 +946,6 @@ body {
 }
 
 [class*="pcard-theme-"] .btn-view-stats:hover,
-[class*="pcard-theme-"] #btn-change-nickname:hover,
 [class*="pcard-theme-"] .profile-preview-stats-btn:hover {
   background: var(--green, #22c55e) !important;
   border-color: #ffffff !important;
@@ -955,7 +954,6 @@ body {
 }
 
 .pcard-theme-royal-gold .btn-view-stats,
-.pcard-theme-royal-gold #btn-change-nickname,
 .pcard-theme-royal-gold .profile-preview-stats-btn {
   background: #ffffff !important;
   border: 1.5px solid rgba(184, 134, 11, 0.6) !important;
@@ -965,11 +963,23 @@ body {
 }
 
 .pcard-theme-royal-gold .btn-view-stats:hover,
-.pcard-theme-royal-gold #btn-change-nickname:hover,
 .pcard-theme-royal-gold .profile-preview-stats-btn:hover {
   background: #5c3d00 !important;
   border-color: #ffd700 !important;
   color: #ffd700 !important;
+}
+
+/* 프로필 편집 버튼: 배너가 바뀌어도 항상 배경과 테두리를 100% 투명 유지 */
+#btn-change-nickname,
+.btn-user-profile-edit,
+[class*="pcard-theme-"] #btn-change-nickname,
+[class*="pcard-theme-"] .btn-user-profile-edit,
+.pcard-theme-royal-gold #btn-change-nickname {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 /* ── 💬 로비 전체 실시간 채팅 카드 ── */
@@ -1217,7 +1227,7 @@ body {
     box-shadow: none !important;
   }
 
-  /* 1. 프로필 카드를 더 크게 & 둥글게(16px), 얇은 회색 테두리+그림자 */
+  /* 1. 프로필 카드를 더 크게 & 둥글게(16px), 선명한 연한 회색 테두리+그림자 */
   .home-user-bar {
     width: 100% !important;
     margin: 0 !important;
@@ -1225,7 +1235,7 @@ body {
     height: 66px !important;
     min-height: 66px !important;
     border-radius: 16px !important; /* 둥근 모서리 라운딩 */
-    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* 연한 회색 얇은 테두리 */
+    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04) !important; /* 입체 그림자 */
     display: flex !important;
     align-items: center !important;
@@ -1235,7 +1245,7 @@ body {
 
   .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border: 1.5px solid #cbd5e1 !important;
   }
   .home-user-bar .user-avatar-wrap {
     position: relative !important;
@@ -1456,30 +1466,30 @@ body {
     display: none !important;
   }
 
-  /* 🌟 3. [방 찾기] | [방 만들기] 탭: 버튼처럼 온전한 라운딩 마감 & 얇은 회색 테두리+그림자 🌟 */
+  /* 🌟 3. [방 목록] | [상점] 탭: 전체 컨테이너 회색 배경 & 개별 버튼 배경 제거 🌟 */
   .mobile-lobby-tabs {
     display: flex !important;
     flex-shrink: 0 !important;
-    margin: 0 0 8px 0 !important; /* 방 목록 카드와 분리된 여백 */
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* 연한 회색 얇은 테두리 */
+    margin: 0 0 8px 0 !important;
+    background: #e9ecef !important; /* 전체 컨테이너 배경 회색 */
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
     border-radius: 13px !important;
     padding: 3px !important;
-    gap: 4px !important;
+    gap: 3px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05) !important; /* 입체 그림자 */
+    box-shadow: none !important;
   }
-  /* 선택 안 된 탭: 확실한 연한 회색으로 시각적 구분감 제공 */
+  /* 미선택 탭: 버튼 배경색 없음 (투명) */
   .mobile-lobby-tab {
     flex: 1 !important;
     height: 38px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border: 1px solid rgba(0, 0, 0, 0.04) !important;
-    background: #e9ecef !important; /* 연한 회색 배경 */
-    color: #495057 !important; /* 선명한 회색 텍스트 */
+    border: none !important;
+    background: transparent !important; /* 버튼 배경색 제거 */
+    color: #495057 !important;
     font-size: 0.95rem !important;
     font-weight: 800 !important;
     border-radius: 10px !important;
@@ -1490,8 +1500,8 @@ body {
   .mobile-lobby-tab.active {
     background: var(--green) !important;
     color: #ffffff !important;
-    border: 1px solid var(--green) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
 
   /* 🌟 3. 메인 컨테이너 (좌우 여백 20px로 넉넉하게) 🌟 */
@@ -1535,7 +1545,7 @@ body {
     min-height: 0 !important;
     padding: 12px 14px !important;
     border-radius: 16px !important; /* 4면 모두 둥근 모서리 라운딩 */
-    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* 연한 회색 얇은 테두리 */
+    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.03) !important; /* 선명한 회색 그림자 */
     background: var(--bg-card) !important;
     display: flex !important;
@@ -1575,23 +1585,27 @@ body {
     display: none !important;
   }
 
-  /* 🌟 5. [전체] [공개방] [비밀방] 버튼: 미선택 시 연한 회색 & 무테 스타일 🌟 */
+  /* 🌟 5. [전체] [공개방] [비밀방] 탭: 전체 컨테이너 회색 배경 & 개별 버튼 배경 제거 🌟 */
   #lobby-filter-tabs {
     display: flex !important;
     flex-direction: row !important;
-    gap: 4px !important;
+    gap: 2px !important;
     margin-left: 0 !important;
     flex-shrink: 1 !important;
     min-width: 0 !important;
     align-items: center !important;
+    background: #e9ecef !important; /* 전체 배경색을 회색으로 */
+    padding: 2px 3px !important;
+    border-radius: 9px !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
   }
-  /* 미선택 버튼: 연한 회색 바탕과 진한 글씨로 확실한 구분감 제공 */
+  /* 미선택 버튼: 버튼 배경색 없음 (투명) */
   .lobby-tab-btn,
   #lobby-filter-tabs .lobby-tab-btn {
     padding: 4px 10px !important;
     font-size: 0.78rem !important;
     font-weight: 800 !important;
-    border-radius: 8px !important;
+    border-radius: 7px !important;
     white-space: nowrap !important;
     gap: 3px !important;
     height: 28px !important;
@@ -1601,9 +1615,9 @@ body {
     justify-content: center !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
-    background: #e9ecef !important; /* 연한 회색 배경 */
-    color: #495057 !important; /* 구분감 있는 회색 텍스트 */
-    border: none !important; /* 테두리 제거 */
+    background: transparent !important; /* 버튼 배경색 제거 */
+    color: #495057 !important;
+    border: none !important;
     transition: all 0.18s ease !important;
     cursor: pointer !important;
   }
@@ -1618,7 +1632,6 @@ body {
     background: var(--green) !important;
     color: #ffffff !important;
     border: none !important;
-    border-color: transparent !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
   }
   .lobby-tab-btn.active i,
@@ -1689,12 +1702,27 @@ body {
     -webkit-overflow-scrolling: touch !important;
     scroll-behavior: smooth !important;
     scrollbar-width: none !important;
-    gap: 4px !important;
-    padding: 1px 0 !important;
+    gap: 2px !important;
+    padding: 2px 3px !important;
     margin: 0 !important;
+    background: #e9ecef !important; /* 전체 배경색 회색 */
+    border-radius: 9px !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
   }
   #shop-filter-tabs::-webkit-scrollbar {
     display: none !important;
+  }
+  #shop-filter-tabs .lobby-tab-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #495057 !important;
+    border-radius: 7px !important;
+  }
+  #shop-filter-tabs .lobby-tab-btn.active {
+    background: var(--green) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
   }
   .shop-header-right {
     flex-shrink: 0 !important;
@@ -1766,7 +1794,7 @@ body {
     display: none !important;
   }
 
-  /* 🌟 모바일 전용 [방 설정] ↔ [방 만들기] 액션 버튼 🌟 */
+  /* 🌟 모바일 전용 [방 설정] 버튼: 방 목록 카드 내부 하단 배치 🌟 */
   .btn-mobile-room-action {
     display: flex !important;
     align-items: center !important;
@@ -1776,7 +1804,7 @@ body {
     height: 42px !important;
     min-height: 42px !important;
     background: var(--bg-hover) !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* 연한 회색 얇은 테두리 */
+    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
     border-radius: 12px !important; /* 둥근 모서리 라운딩 */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
     color: var(--t1) !important;
@@ -1784,7 +1812,9 @@ body {
     font-weight: 800 !important;
     cursor: pointer !important;
     flex-shrink: 0 !important;
-    margin-top: 8px !important;
+    order: 99 !important; /* 항상 카드 내부 맨 아래로 */
+    margin-top: auto !important; /* 카드 내부 하단 밀착 배치 */
+    margin-bottom: 0 !important;
     box-sizing: border-box !important;
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
   }
@@ -1795,25 +1825,6 @@ body {
   .btn-mobile-room-action i {
     color: var(--green) !important;
     font-size: 0.95rem !important;
-  }
-  /* 방 만들기 모드일 때 (방 설정 패널 열린 상태): 사이트 고유 초록색 강조 */
-  .btn-mobile-room-action.is-create-mode {
-    background: var(--green) !important;
-    border: 1px solid var(--green) !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
-  }
-  .btn-mobile-room-action.is-create-mode:active {
-    background: #059669 !important;
-    border-color: #059669 !important;
-  }
-  .btn-mobile-room-action.is-create-mode i {
-    color: #ffffff !important;
-  }
-
-  /* 상점 활성화 모바일 상태에서는 하단 방 액션 버튼 숨김 */
-  #screen-home.mobile-shop-active .btn-mobile-room-action {
-    display: none !important;
   }
 
   /* 🌟 모바일 방 만들기 헤더 (돌아가기 버튼 & 타이틀) 🌟 */
@@ -1832,24 +1843,26 @@ body {
     font-weight: 800 !important;
     color: var(--t1) !important;
   }
+  /* 뒤로가기 버튼: 배경과 테두리 완전히 제거 */
   .btn-back-to-room-list {
     width: 32px !important;
     height: 32px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 9px !important;
-    background: #e9ecef !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    color: #495057 !important;
+    background: transparent !important; /* 배경 제거 */
+    border: none !important; /* 테두리 제거 */
+    box-shadow: none !important;
+    color: var(--t1) !important;
     cursor: pointer !important;
-    transition: all 0.15s ease !important;
+    padding: 0 !important;
+    transition: opacity 0.15s ease !important;
   }
   .btn-back-to-room-list:active {
-    background: #dee2e6 !important;
+    opacity: 0.6 !important;
   }
   .btn-back-to-room-list i {
-    font-size: 0.9rem !important;
+    font-size: 1.15rem !important;
     color: var(--t1) !important;
   }
   .mobile-create-header-spacer {
@@ -1964,7 +1977,7 @@ body {
     min-height: 0 !important;
     padding: 14px 16px !important;
     border-radius: 16px !important; /* 4면 모두 둥근 라운딩 */
-    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* 연한 회색 얇은 테두리 */
+    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.03) !important; /* 선명한 회색 그림자 */
     margin: 0 !important;
     display: none !important;
@@ -1993,7 +2006,25 @@ body {
     gap: 12px !important;
   }
   .connect-card .btn-lg {
-    display: none !important; /* 하단 통일된 방 만들기 액션 버튼으로 대체 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    background: var(--green) !important;
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+    cursor: pointer !important;
+    order: 99 !important;
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box !important;
   }
 
   /* 모바일 탭 상태 클래스 제어 */
@@ -12620,50 +12651,53 @@ html, body {
   [data-theme="dark"] .lobby-card,
   [data-theme="dark"] .connect-card {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
 
   /* 4. 기본 프로필 카드: 다른 카드들과 100% 동일한 배경/테두리 지정 */
   .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border: 1.5px solid #cbd5e1 !important;
   }
   [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
 
-  /* 5. 다크 모드: 탭 및 필터 미선택 버튼의 명확한 구분감 */
-  [data-theme="dark"] .mobile-lobby-tabs {
+  /* 5. 다크 모드: 탭 컨테이너 회색 배경 & 개별 버튼 배경 제거 (투명화) */
+  [data-theme="dark"] .mobile-lobby-tabs,
+  [data-theme="dark"] #lobby-filter-tabs,
+  [data-theme="dark"] #shop-filter-tabs {
     background: #1e293b !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
-  [data-theme="dark"] .mobile-lobby-tab:not(.active) {
-    background: #334155 !important;
-    color: #cbd5e1 !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  }
-  [data-theme="dark"] #lobby-filter-tabs .lobby-tab-btn:not(.active) {
-    background: #334155 !important;
-    color: #cbd5e1 !important;
-  }
-  [data-theme="dark"] #lobby-filter-tabs .lobby-tab-btn:not(.active) i {
+  [data-theme="dark"] .mobile-lobby-tab:not(.active),
+  [data-theme="dark"] #lobby-filter-tabs .lobby-tab-btn:not(.active),
+  [data-theme="dark"] #shop-filter-tabs .lobby-tab-btn:not(.active) {
+    background: transparent !important; /* 버튼 배경색 완전 제거 */
+    border: none !important;
     color: #94a3b8 !important;
   }
-  [data-theme="dark"] .btn-mobile-room-action:not(.is-create-mode) {
+  [data-theme="dark"] #lobby-filter-tabs .lobby-tab-btn:not(.active) i,
+  [data-theme="dark"] #shop-filter-tabs .lobby-tab-btn:not(.active) i {
+    color: #64748b !important;
+  }
+  [data-theme="dark"] .btn-mobile-room-action {
     background: #1e293b !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     color: #cbd5e1 !important;
   }
-  [data-theme="dark"] .btn-mobile-room-action:not(.is-create-mode) i {
+  [data-theme="dark"] .btn-mobile-room-action i {
     color: var(--green) !important;
   }
   [data-theme="dark"] .mobile-create-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
+  /* 다크모드 뒤로가기 버튼: 배경과 테두리 완전 제거 */
   [data-theme="dark"] .btn-back-to-room-list {
-    background: #334155 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     color: #f1f5f9 !important;
   }
 }

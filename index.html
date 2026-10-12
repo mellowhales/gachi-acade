@@ -349,6 +349,11 @@
             <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
           </div>
         </div>
+        <!-- 🌟 모바일 전용 방 설정 버튼 (방 목록 카드 내부 하단 배치) 🌟 -->
+        <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
+          <i class="fa-solid fa-sliders"></i>
+          <span>방 설정</span>
+        </button>
       </div>
 
       <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
@@ -567,12 +572,6 @@
       </div> <!-- /.connect-card -->
     </div> <!-- /.lobby-right-col -->
   </div> <!-- /.home-lobby-container -->
-
-    <!-- 🌟 모바일 전용 하단 방 액션 버튼 ([방 설정] ↔ [방 만들기]) 🌟 -->
-    <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
-      <i class="fa-solid fa-sliders"></i>
-      <span>방 설정</span>
-    </button>
 
     <!-- 🌟 모바일 전용 하단 긴 채팅 버튼 (접속자 제거 후 사이트 고유색상 와이드 배치) 🌟 -->
     <button type="button" class="btn-lobby-long-chat" id="btn-lobby-long-chat">
@@ -1305,7 +1304,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.13.0</span>
+              <span class="about-version-tag">v1.13.1</span>
             </div>
           </div>
         </div>
@@ -1318,6 +1317,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.13.1]</span>
+              <span class="changelog-text">모바일 로비 리파인: 탭 컨테이너 회색 배경·버튼 배경 투명화, 방 설정 버튼 카드 내부 배치, 뒤로가기 무테/투명화</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.13.0]</span>
               <span class="changelog-text">모바일 로비 탭/버튼 전환(방 목록·상점·방 설정) 및 방 만들기 UI 연동</span>
             </div>
@@ -1557,7 +1560,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.13.0</span>
+        <span class="settings-version-badge">v1.13.1</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
