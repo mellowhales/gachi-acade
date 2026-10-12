@@ -485,69 +485,78 @@ body {
   color: var(--green-deep);
 }
 
-.sg-tag, .rgb-tag {
-  font-size: 0.7rem;
+.sg-tag, .rgb-tag, .rsgb-tag {
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
+  padding: 0 !important;
+  border-radius: 0 !important;
   white-space: nowrap;
   letter-spacing: -0.2px;
-  line-height: 1.35;
+  line-height: 1.2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  color: var(--t2);
-  transition: all 0.15s ease;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--t3, #64748b) !important;
+  transition: opacity 0.15s ease;
 }
 
 .tag-2p {
-  background: var(--green-tint);
-  border: 1px solid var(--green-border);
-  color: var(--green-deep);
-  font-weight: 800;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--green) !important;
+  font-weight: 800 !important;
 }
 .tag-multi {
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  color: var(--t2);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--t3, #64748b) !important;
+  font-weight: 700 !important;
 }
 
 .sidebar-game-item.active .sg-tag {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: var(--green-border);
-  color: var(--green-deep);
+  background: transparent !important;
+  border: none !important;
+  color: var(--green-deep) !important;
 }
 .sidebar-game-item.active .sg-tag.tag-2p {
-  background: #ffffff;
-  border-color: var(--green);
-  color: var(--green-deep);
+  background: transparent !important;
+  border: none !important;
+  color: var(--green) !important;
 }
 
 [data-theme="dark"] .sg-tag,
 [data-theme="dark"] .rgb-tag,
+[data-theme="dark"] .rsgb-tag,
 [data-theme="dark"] .tag-multi {
-  background: var(--bg-subtle) !important;
-  border-color: var(--border) !important;
-  color: var(--t2) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--t3, #94a3b8) !important;
 }
 
 [data-theme="dark"] .tag-2p {
-  background: rgba(16, 185, 129, 0.12) !important;
-  border-color: rgba(16, 185, 129, 0.35) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #34d399 !important;
   font-weight: 800 !important;
 }
 
 [data-theme="dark"] .sidebar-game-item.active .sg-tag {
-  background: rgba(0, 0, 0, 0.3) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: var(--green) !important;
 }
 [data-theme="dark"] .sidebar-game-item.active .sg-tag.tag-2p {
-  background: rgba(16, 185, 129, 0.22) !important;
-  border-color: var(--green) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #6ee7b7 !important;
 }
 
@@ -2869,30 +2878,33 @@ body {
   letter-spacing: 1.5px;
 }
 .room-code-badge {
-  background: var(--green-tint);
-  border: 1px solid var(--green-border);
-  border-radius: var(--radius-sm);
-  padding: 4px 16px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 4px !important;
   font-size: 1.45rem;
   font-weight: 900;
-  color: var(--green-deep);
-  letter-spacing: 5px;
+  color: var(--t1, #1e293b);
+  letter-spacing: 4px;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   user-select: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: opacity 0.15s ease;
   font-family: inherit;
+  transform: none !important;
 }
 .room-code-badge:hover {
-  background: var(--green-tint-hi, rgba(16, 185, 129, 0.25));
-  border-color: var(--green);
-  transform: translateY(-1px);
+  background: transparent !important;
+  border: none !important;
+  transform: none !important;
+  opacity: 0.8;
 }
 .room-code-badge:active {
-  transform: scale(0.96);
+  transform: none !important;
+  opacity: 0.65;
 }
 
 .room-capacity {
@@ -3178,7 +3190,7 @@ body {
   min-width: 0;
 }
 .player-name {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--t1);
   display: flex;
@@ -3272,6 +3284,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: clamp(10px, 1.5vh, 20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .game-select-panel {
@@ -3289,6 +3302,7 @@ body {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   padding: 12px 16px;
+  margin-bottom: 6px;
   box-sizing: border-box;
   transition: all 0.2s ease;
   position: relative;
@@ -3337,8 +3351,11 @@ body {
 .rsgb-tag {
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   line-height: 1.3;
 }
 .rsgb-desc {
@@ -3453,20 +3470,24 @@ body {
   position: absolute;
   top: 12px;
   right: 12px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 .room-game-btn.selected .rgb-tag {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: var(--green-border);
-  color: var(--green-deep);
+  background: transparent !important;
+  border: none !important;
+  color: var(--green) !important;
+  font-weight: 800 !important;
 }
 [data-theme="dark"] .room-game-btn.selected .rgb-tag {
-  background: rgba(0, 0, 0, 0.3) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: var(--green) !important;
+  background: transparent !important;
+  border: none !important;
+  color: #34d399 !important;
+  font-weight: 800 !important;
 }
 
 .selected-game-display {
@@ -4033,7 +4054,7 @@ body {
   min-width: 0;
 }
 .gsp-name {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--t1);
   display: flex;
@@ -5305,11 +5326,15 @@ html, body {
     display: none !important;
   }
   .room-code-badge {
-    font-size: 1.2rem !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 1.25rem !important;
     font-weight: 900 !important;
-    padding: 4px 12px !important;
+    padding: 0 4px !important;
     letter-spacing: 2px !important;
-    border-radius: var(--radius-xs) !important;
+    color: var(--t1, #1e293b) !important;
+    transform: none !important;
   }
   #btn-copy-room-code {
     display: none !important; /* 모바일에서 복사 버튼 숨김 - 룸 코드 뱃지 클릭으로 복사 가능 */
@@ -5519,7 +5544,7 @@ html, body {
     gap: 2px !important;
   }
   .player-name {
-    font-size: 1.05rem !important;
+    font-size: 0.94rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -5732,7 +5757,7 @@ html, body {
     padding: 10px 12px !important;
     border-radius: 16px !important; /* 16px 라운딩 */
     border: 1.5px solid #cbd5e1 !important; /* 1.5px 회색 테두리 */
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 입체 회색 그림자 */
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.06) !important; /* 선명하고 입체감 있는 카드 그림자 */
     background: var(--bg-card) !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
@@ -5747,16 +5772,16 @@ html, body {
     overflow: hidden !important;
     gap: 4px !important;
   }
-  /* 🌟 모바일 현재 선택 게임 요약 배너 (설명 제외, 컴팩트 PC UI 계승) 🌟 */
+  /* 🌟 모바일 현재 선택 게임 요약 배너 (약간 더 위에 배치, 게임 목록과 여백 확보) 🌟 */
   .room-selected-game-banner {
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
-    padding: 5px 10px !important;
+    padding: 6px 10px !important;
     border-radius: 12px !important;
     background: var(--bg-hover) !important;
     border: 1.5px solid #cbd5e1 !important;
-    margin: 2px 0 4px 0 !important;
+    margin: 0 0 10px 0 !important;
     flex-shrink: 0 !important;
     position: relative !important;
     box-sizing: border-box !important;
@@ -5789,8 +5814,11 @@ html, body {
   }
   .room-selected-game-banner .rsgb-tag {
     font-size: 0.65rem !important;
-    padding: 1px 6px !important;
-    border-radius: 6px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
   .room-selected-game-banner .rsgb-desc,
   .rsgb-desc,
@@ -5806,17 +5834,17 @@ html, body {
     display: none !important;
   }
 
-  /* 🌟 '게임 선택' 문구: 진영 선택이나 라운드가 없을 때만 나타남 🌟 */
+  /* 🌟 '게임 선택' 문구: 구분선 제거 및 콤팩트 배치 🌟 */
   .game-select-panel .panel-header {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 0 0 6px 0 !important;
+    padding: 0 0 2px 0 !important;
     gap: 4px !important;
-    min-height: 36px !important;
-    border-bottom: 1px solid var(--border-sub, #edf2f7) !important;
+    min-height: auto !important;
+    border-bottom: none !important;
   }
   .game-select-panel.has-extra-settings .panel-title {
     display: none !important;
@@ -5960,8 +5988,11 @@ html, body {
     right: 8px !important;
     font-size: 0.64rem !important;
     font-weight: 700 !important;
-    padding: 2px 5px !important;
-    border-radius: var(--radius-sm) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     line-height: 1.2 !important;
   }
 
@@ -6294,7 +6325,7 @@ html, body {
     gap: 2px !important;
   }
   .gsp-name {
-    font-size: 1.05rem !important;
+    font-size: 0.94rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -10176,12 +10207,19 @@ html, body {
   position: relative !important;
 }
 
-/* 인게임 사이드바 및 리스트 오버플로우 잘림 방지 */
-.game-sidebar-players,
-.gsp-list,
-.gsp-list li {
-  overflow: visible !important;
-  position: relative !important;
+/* 인게임 플레이어 리스트: 휠/터치 스크롤 및 턴 플레이어 자동 스크롤 완벽 보장 */
+.gsp-list {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+}
+
+/* 🌟 방 화면 현재 선택 게임 요약 배너: 준비 상태 및 인원 변동과 무관하게 항상 표시 유지 🌟 */
+.room-selected-game-banner {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex-shrink: 0 !important;
 }
 
 /* 인게임 아바타 영역 절대 좌표 기준 설정 */
@@ -12679,7 +12717,11 @@ html, body {
     top: 11px !important;
     right: 11px !important;
     font-size: 0.7rem !important;
-    padding: 2px 7px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   /* 듬직하고 안정감 있는 컨트롤 바 */

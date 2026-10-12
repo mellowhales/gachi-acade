@@ -7407,26 +7407,33 @@
       $('selected-game-name').textContent = selGameObj ? `${selGameObj.title} 선택됨` : '게임을 선택해 주세요';
     }
 
-    // 🌟 현재 선택된 게임 프리뷰 요약 바 갱신
+    // 🌟 현재 선택된 게임 프리뷰 요약 바 갱신 (준비/대기 토글 시에도 절대 사라지지 않고 항상 표시 유지)
     const bannerEl = $('room-selected-game-banner');
-    if (bannerEl && selGameObj) {
-      try {
-        const iconEl = $('rsgb-icon');
-        const titleEl = $('rsgb-title');
-        const tagEl = $('rsgb-tag');
-        const descEl = $('rsgb-desc');
+    if (bannerEl) {
+      bannerEl.classList.remove('hidden');
+      bannerEl.style.display = 'flex';
+      bannerEl.style.visibility = 'visible';
+      bannerEl.style.opacity = '1';
 
-        const is2P = (selGameObj.maxPlayers === 2);
-        const tooltipMeta = (typeof GAME_TOOLTIP_DATA !== 'undefined' && GAME_TOOLTIP_DATA[selectedGameKey]) ? GAME_TOOLTIP_DATA[selectedGameKey] : null;
-        if (iconEl) iconEl.className = (tooltipMeta && tooltipMeta.icon) || selGameObj.icon || 'fa-solid fa-gamepad';
-        if (titleEl) titleEl.textContent = selGameObj.title;
-        if (tagEl) {
-          tagEl.textContent = is2P ? '2인 전용' : (selGameObj.maxPlayers ? `2~${selGameObj.maxPlayers}인` : '다인원');
-          tagEl.className = `rsgb-tag ${is2P ? 'tag-2p' : 'tag-multi'}`;
+      if (selGameObj) {
+        try {
+          const iconEl = $('rsgb-icon');
+          const titleEl = $('rsgb-title');
+          const tagEl = $('rsgb-tag');
+          const descEl = $('rsgb-desc');
+
+          const is2P = (selGameObj.maxPlayers === 2);
+          const tooltipMeta = (typeof GAME_TOOLTIP_DATA !== 'undefined' && GAME_TOOLTIP_DATA[selectedGameKey]) ? GAME_TOOLTIP_DATA[selectedGameKey] : null;
+          if (iconEl) iconEl.className = (tooltipMeta && tooltipMeta.icon) || selGameObj.icon || 'fa-solid fa-gamepad';
+          if (titleEl) titleEl.textContent = selGameObj.title;
+          if (tagEl) {
+            tagEl.textContent = is2P ? '2인' : (selGameObj.maxPlayers ? `2~${selGameObj.maxPlayers}인` : '다인원');
+            tagEl.className = `rsgb-tag ${is2P ? 'tag-2p' : 'tag-multi'}`;
+          }
+          if (descEl) descEl.textContent = (tooltipMeta && tooltipMeta.desc) || selGameObj.desc || '';
+        } catch (e) {
+          console.warn('Banner update error:', e);
         }
-        if (descEl) descEl.textContent = (tooltipMeta && tooltipMeta.desc) || selGameObj.desc || '';
-      } catch (e) {
-        console.warn('Banner update error:', e);
       }
     }
 
@@ -8061,9 +8068,7 @@
     if (typeof currentGameModule !== 'undefined' && currentGameModule && typeof currentGameModule.onSidebarRedrawn === 'function') {
       currentGameModule.onSidebarRedrawn();
     }
-    requestAnimationFrame(() => {
-      _scrollToCurrentTurnPlayer();
-    });
+    _triggerTurnScroll();
   }
 
   function _checkIsPlayerTurn(playerObj, playerIdx, currentTurnPlayerIdOrIdx, gameKey) {
@@ -8181,21 +8186,34 @@
       }
     });
 
-    requestAnimationFrame(() => {
-      _scrollToCurrentTurnPlayer();
-    });
+    _triggerTurnScroll();
   }
 
-  // 🌟 현재 턴 플레이어로 인게임 참가자 목록 자연스럽게 스크롤
+  // 🌟 현재 턴 플레이어로 인게임 참가자 목록 자연스럽게 스크롤 (부드러운 최상단 이동)
   function _scrollToCurrentTurnPlayer() {
     const listEl = $('gsp-player-list');
     if (!listEl) return;
     const currentTurnEl = listEl.querySelector('.gsp-item.is-current-turn');
     if (!currentTurnEl) return;
+
+    // 현재 턴 플레이어가 목록 최상단에 오도록 자연스럽게 스크롤 (스크롤 한계 도달 시 자연스럽게 멈춤)
     const listRect = listEl.getBoundingClientRect();
     const itemRect = currentTurnEl.getBoundingClientRect();
-    const offsetWithinList = itemRect.top - listRect.top + listEl.scrollTop;
-    listEl.scrollTo({ top: Math.max(0, offsetWithinList), behavior: 'smooth' });
+    const targetScrollTop = listEl.scrollTop + (itemRect.top - listRect.top);
+    listEl.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+  }
+
+  // 🌟 턴 변경 및 DOM 렌더링 후 스크롤이 확실하게 동작하도록 다중 타이머 안전 호출
+  function _triggerTurnScroll() {
+    requestAnimationFrame(() => {
+      _scrollToCurrentTurnPlayer();
+    });
+    setTimeout(() => {
+      _scrollToCurrentTurnPlayer();
+    }, 60);
+    setTimeout(() => {
+      _scrollToCurrentTurnPlayer();
+    }, 180);
   }
 
   // 게임 결과 콜백
