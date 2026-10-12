@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.16.1" />
-  <link rel="stylesheet" href="css/games.css?v=1.16.1" />
+  <link rel="stylesheet" href="css/style.css?v=1.17.0" />
+  <link rel="stylesheet" href="css/games.css?v=1.17.0" />
 </head>
 <body>
 
@@ -426,7 +426,7 @@
         <div class="lobby-chat-card card" id="lobby-chat-card">
           <div class="lobby-chat-header">
             <div class="lobby-chat-title">
-              <i class="fa-solid fa-comments" style="color: var(--green);"></i>
+              <i class="fa-solid fa-comment-dots" style="color: var(--green);"></i>
               <span>전체 채팅</span>
             </div>
             <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-lobby-mobile-chat" title="채팅창 닫기">
@@ -609,9 +609,6 @@
       </button>
     </div>
     <div class="room-header-actions" style="display:flex; gap:8px;">
-      <button class="btn-icon" id="btn-room-invite" title="친구 초대하기">
-        <i class="fa-solid fa-user-plus"></i>
-      </button>
       <button class="btn-icon" id="btn-room-settings" title="환경설정">
         <i class="fa-solid fa-gear"></i>
       </button>
@@ -661,10 +658,15 @@
             <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
           </button>
         </div>
-        <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat" id="btn-room-side-chat" title="채팅 열기">
-          <i class="fa-solid fa-comment-dots"></i>
-          <span class="chat-badge-dot hidden" id="room-side-chat-badge"></span>
-        </button>
+        <div class="room-side-actions">
+          <button type="button" class="btn-card-side-action" id="btn-room-invite" title="친구 초대하기">
+            <i class="fa-solid fa-user-plus"></i>
+          </button>
+          <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat btn-card-side-sq" id="btn-room-side-chat" title="채팅 열기">
+            <i class="fa-solid fa-comment-dots"></i>
+            <span class="chat-badge-dot hidden" id="room-side-chat-badge"></span>
+          </button>
+        </div>
       </div>
 
 
@@ -880,7 +882,7 @@
     <!-- 3. 오른쪽: 방 실시간 채팅창 -->
     <section class="room-chat-panel card" id="room-chat-panel">
       <div class="panel-header">
-        <h3 class="panel-title"><i class="fa-regular fa-comments"></i> 실시간 채팅</h3>
+        <h3 class="panel-title"><i class="fa-solid fa-comment-dots" style="color:var(--green);"></i> 실시간 채팅</h3>
         <span class="chat-count-badge" id="chat-count-badge">ROOM</span>
         <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-room-mobile-chat" title="채팅창 닫기">
           <i class="fa-solid fa-xmark"></i>
@@ -982,7 +984,7 @@
     <!-- 3. 우측 인게임 실시간 채팅창 (모바일에서는 팝업 모달로 작동) -->
     <aside class="game-chat-panel card" id="game-chat-panel">
       <div class="gcp-header">
-        <h4><i class="fa-regular fa-comments"></i> 인게임 채팅</h4>
+        <h4><i class="fa-solid fa-comment-dots" style="color:var(--green);"></i> 인게임 채팅</h4>
         <button type="button" class="btn-icon sm btn-close-mobile-chat" id="btn-close-mobile-chat" title="채팅창 닫기">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -1055,10 +1057,6 @@
       <button type="button" class="settings-tab-btn" data-tab="game" id="tab-settings-game">
         <i class="fa-solid fa-gamepad"></i>
         <span data-i18n="settings.tabs.game">게임</span>
-      </button>
-      <button type="button" class="settings-tab-btn" data-tab="support" id="tab-settings-support">
-        <i class="fa-solid fa-bug"></i>
-        <span data-i18n="settings.tabs.support">문의</span>
       </button>
       <button type="button" class="settings-tab-btn" data-tab="about" id="tab-settings-about">
         <i class="fa-solid fa-circle-info"></i>
@@ -1262,58 +1260,7 @@
         </div>
       </div>
 
-      <!-- [탭 4] 🐛 고객지원 / 버그 문의 패널 (DB 연동) -->
-      <div class="settings-tab-pane" id="pane-settings-support">
-        <div class="bug-report-card">
-          <form class="bug-report-form" id="form-bug-report" onsubmit="return false;">
-            <div class="bug-form-row">
-              <div class="bug-form-field">
-                <label for="bug-type"><i class="fa-solid fa-tag"></i> 유형</label>
-                <select class="settings-select" id="bug-type" required>
-                  <option value="bug">버그 / 기능 오류</option>
-                  <option value="rule">게임 룰 / 판정 오류</option>
-                  <option value="suggestion">개선 및 기능 제안</option>
-                  <option value="etc">기타 문의</option>
-                </select>
-              </div>
-              <div class="bug-form-field">
-                <label for="bug-game"><i class="fa-solid fa-gamepad"></i> 대상 게임</label>
-                <select class="settings-select" id="bug-game">
-                  <option value="all">전체 / 공통</option>
-                  <option value="janggi">장기</option>
-                  <option value="alkkagi">알까기</option>
-                  <option value="quoridor">쿼리도</option>
-                  <option value="baskin">베스킨라빈스 31</option>
-                  <option value="wordchain">끝말잇기</option>
-                  <option value="apple">사과게임</option>
-                  <option value="typing">타자연습 대결</option>
-                  <option value="catchmind">캐치마인드</option>
-                  <option value="yutnori">윷놀이</option>
-                  <option value="yacht">야추 다이스</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="bug-form-field">
-              <label for="bug-title"><i class="fa-solid fa-pen"></i> 제목</label>
-              <input type="text" id="bug-title" class="bug-input" placeholder="문의 제목을 입력하세요..." maxlength="50" required />
-            </div>
-
-            <div class="bug-form-field">
-              <label for="bug-content"><i class="fa-solid fa-align-left"></i> 내용</label>
-              <textarea id="bug-content" class="bug-textarea" rows="4" placeholder="발생한 상황 또는 건의 내용을 적어주세요 (최대 500자)..." maxlength="500" required></textarea>
-              <span class="bug-char-count" id="bug-char-count">0 / 500자</span>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-bug" style="width:100%; height:38px;">
-              <i class="fa-solid fa-paper-plane"></i>
-              <span>문의 접수</span>
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- [탭 5] ℹ️ 정보 & 버전 패널 (v1.1.0) -->
+      <!-- [탭 4] ℹ️ 정보 & 버전 패널 (v1.1.0) -->
       <div class="settings-tab-pane" id="pane-settings-about">
         <!-- 브랜드 & 버전 카드 -->
         <div class="about-brand-card">
@@ -1323,7 +1270,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.16.0</span>
+              <span class="about-version-tag">v1.17.0</span>
             </div>
           </div>
         </div>
@@ -1336,6 +1283,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.17.0]</span>
+              <span class="changelog-text">모바일 채팅 UI 중앙 플로팅 팝업 모달 개편(부드러운 애니메이션, 입력칸 확대 및 전송 버튼 내장 일체화, 무테 닫기 버튼), 방 화면 친구 초대 버튼 사이드 이동 및 정사각형 배치, 설정 문의 탭 제거</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.16.1]</span>
               <span class="changelog-text">모바일 방 화면 및 인게임 화면 좌하단 플로팅 채팅 버튼 제거, 참가자 목록 1열 다행 스크롤 롤백</span>
             </div>
@@ -1623,7 +1574,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.16.1</span>
+        <span class="settings-version-badge">v1.17.0</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
@@ -2084,7 +2035,7 @@
 <script src="js/dict.js"></script>
 <script src="js/p2p.js"></script>
 <script src="js/games/gomoku.js"></script>
-<script src="js/games/chess.js?v=1.16.1"></script>
+<script src="js/games/chess.js?v=1.17.0"></script>
 <script src="js/games/janggi.js"></script>
 <script src="js/games/alkkagi.js"></script>
 <script src="js/games/quoridor.js"></script>
@@ -2101,7 +2052,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.16.1"></script>
+<script src="js/app.js?v=1.17.0"></script>
 
 </body>
 </html>
