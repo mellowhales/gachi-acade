@@ -1217,15 +1217,15 @@ body {
     box-shadow: none !important;
   }
 
-  /* 1. 프로필 카드를 더 크게 & 우측 버튼 확대 */
+  /* 1. 프로필 카드를 더 크게 & 둥글게(16px) */
   .home-user-bar {
     width: 100% !important;
     margin: 0 !important;
     padding: 10px 16px !important;
     height: 66px !important;
     min-height: 66px !important;
-    border-radius: var(--radius) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important; /* 은은한 회색 음영 구분감 */
+    border-radius: 16px !important; /* 둥근 모서리 라운딩 */
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07) !important; /* 은은한 회색 음영 구분감 */
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
@@ -1287,20 +1287,20 @@ body {
     border-radius: 3px !important;
   }
 
-  /* 🌟 모바일 프로필 편집 버튼: 텍스트 없이 크게 🌟 */
+  /* 🌟 모바일 프로필 편집 버튼: 배경 및 테두리 제거 (아이콘만 깔끔하게 노출) 🌟 */
   .btn-user-profile-edit {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
     padding: 0 !important;
-    border-radius: var(--radius-sm) !important;
-    border: 1px solid var(--border) !important;
-    background: var(--bg-hover) !important;
-    color: var(--t1) !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--t2) !important;
     font-size: 1.15rem !important;
     cursor: pointer !important;
     margin-left: auto !important;
@@ -1455,27 +1455,23 @@ body {
     display: none !important;
   }
 
-  /* 🌟 4. [방 찾기] | [방 만들기] 탭: 방 목록 카드와 빈틈없이 딱 붙도록 결합 🌟 */
+  /* 🌟 3. [방 찾기] | [방 만들기] 탭: 버튼처럼 온전한 라운딩 마감 🌟 */
   .mobile-lobby-tabs {
     display: flex !important;
     flex-shrink: 0 !important;
-    margin: 0 !important;
+    margin: 0 0 8px 0 !important; /* 방 목록 카드와 분리된 여백 */
     background: var(--bg-hover) !important;
     border: 1px solid var(--border) !important;
-    border-bottom: none !important;
-    border-top-left-radius: var(--radius) !important;
-    border-top-right-radius: var(--radius) !important;
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    padding: 4px 4px 0 4px !important;
+    border-radius: 13px !important; /* 아래도 일자가 아닌 온전한 라운딩 */
+    padding: 3px !important;
     gap: 4px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.03) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
   }
   .mobile-lobby-tab {
     flex: 1 !important;
-    height: 40px !important;
+    height: 38px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1484,20 +1480,17 @@ body {
     color: var(--t2) !important;
     font-size: 0.95rem !important;
     font-weight: 800 !important;
-    border-top-left-radius: var(--radius-sm) !important;
-    border-top-right-radius: var(--radius-sm) !important;
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
+    border-radius: 10px !important; /* 아래쪽도 일자가 아닌 둥근 버튼 마감 */
     cursor: pointer !important;
     transition: all 0.18s ease !important;
   }
   .mobile-lobby-tab.active {
     background: var(--green) !important;
     color: #ffffff !important;
-    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
   }
 
-  /* 🌟 3. 메인 컨테이너 (좌우 여백 20px로 넉넉하게, 탭-카드 밀착을 위한 gap: 0) 🌟 */
+  /* 🌟 3. 메인 컨테이너 (좌우 여백 20px로 넉넉하게) 🌟 */
   .home-main {
     flex: 1 1 auto !important;
     height: auto !important;
@@ -1511,24 +1504,24 @@ body {
     justify-content: flex-start !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    gap: 0 !important; /* 탭과 방 목록 사이 빈틈 0px 밀착 */
+    gap: 0 !important;
   }
   .home-lobby-container {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0 !important; /* 탭과 방 목록 밀착 결합 */
+    gap: 0 !important;
     width: 100% !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
     max-height: none !important;
     margin: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important; /* 카드 그림자가 사방으로 잘리지 않고 온전히 노출 */
     justify-content: flex-start !important;
     padding: 0 !important;
   }
 
-  /* 🌟 4. 방 목록 카드: 탭과 상단 0px 밀착 & 은은한 회색 음영 구분감 🌟 */
+  /* 🌟 4. 방 목록 카드: 둥근 모서리 라운딩(16px) & 선명한 회색 그림자 🌟 */
   .lobby-card {
     order: 1 !important;
     flex: 1 1 auto !important;
@@ -1537,13 +1530,10 @@ body {
     max-height: none !important;
     min-height: 0 !important;
     padding: 12px 14px !important;
-    border-top-left-radius: 0 !important; /* 상단 탭과 완벽 밀착 */
-    border-top-right-radius: 0 !important;
-    border-bottom-left-radius: var(--radius) !important;
-    border-bottom-right-radius: var(--radius) !important;
+    border-radius: 16px !important; /* 4면 모두 둥근 모서리 라운딩 */
     border: 1px solid var(--border) !important;
-    border-top: none !important; /* 탭 하단과 빈틈없이 밀착 결합 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important; /* 은은한 회색 음영 */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important; /* 선명하고 입체감 있는 회색 그림자 */
+    background: var(--bg-card) !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
@@ -1581,7 +1571,7 @@ body {
     display: none !important;
   }
 
-  /* 🌟 5. 컴팩트한 [전체] [공개방] [비밀방] 버튼 & 초록색 활성화 🌟 */
+  /* 🌟 5. [전체] [공개방] [비밀방] 버튼: 테두리 없이 깔끔한 칩 스타일 🌟 */
   #lobby-filter-tabs {
     display: flex !important;
     flex-direction: row !important;
@@ -1593,10 +1583,10 @@ body {
   }
   .lobby-tab-btn,
   #lobby-filter-tabs .lobby-tab-btn {
-    padding: 3px 8px !important;
+    padding: 4px 9px !important;
     font-size: 0.78rem !important;
     font-weight: 800 !important;
-    border-radius: var(--radius-sm) !important;
+    border-radius: 8px !important; /* 약간 더 둥근 라운딩 */
     white-space: nowrap !important;
     gap: 3px !important;
     height: 28px !important;
@@ -1608,7 +1598,7 @@ body {
     flex-shrink: 0 !important;
     background: var(--bg-hover) !important;
     color: var(--t2) !important;
-    border: 1px solid var(--border) !important;
+    border: none !important; /* 테두리 제거 */
     transition: all 0.18s ease !important;
     cursor: pointer !important;
   }
@@ -1620,8 +1610,9 @@ body {
   #lobby-filter-tabs .lobby-tab-btn.active {
     background: var(--green) !important;
     color: #ffffff !important;
-    border-color: var(--green) !important;
-    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3) !important;
+    border: none !important; /* 테두리 제거 */
+    border-color: transparent !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important; /* 회색 그림자 */
   }
   .lobby-tab-btn.active i,
   #lobby-filter-tabs .lobby-tab-btn.active i {
@@ -1779,8 +1770,8 @@ body {
     min-height: 42px !important;
     background: var(--bg-hover) !important;
     border: 1.5px solid var(--border) !important;
-    border-radius: var(--radius) !important; /* 원래 라운딩 규격 10px 유지 */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 12px !important; /* 둥근 모서리 라운딩 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
     color: var(--t1) !important;
     font-size: 0.95rem !important;
     font-weight: 800 !important;
@@ -1799,7 +1790,7 @@ body {
     font-size: 0.95rem !important;
   }
 
-  /* 🌟 모바일 전용 [와이드 채팅] 버튼: 사이트 고유 에메랄드 그린 컬러 하단 길쭉한 배치 🌟 */
+  /* 🌟 모바일 전용 [와이드 채팅] 버튼: 사이트 고유 에메랄드 그린 컬러 & 회색 그림자 🌟 */
   .btn-lobby-long-chat {
     display: flex !important;
     align-items: center !important;
@@ -1810,11 +1801,11 @@ body {
     min-height: 46px !important;
     background: var(--green) !important;
     border: none !important;
-    border-radius: var(--radius) !important; /* 원래 라운딩 규격 10px 유지 */
+    border-radius: 14px !important; /* 둥근 모서리 라운딩 */
     color: #ffffff !important;
     font-size: 1rem !important;
     font-weight: 800 !important;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important; /* 차분한 회색 그림자 적용 */
     cursor: pointer !important;
     flex-shrink: 0 !important;
     margin-top: 10px !important; /* 상하 여백 넉넉하게 확보 */
@@ -1897,7 +1888,7 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 카드: 모바일 탭 전환 및 상단 0px 밀착 결합 🌟 */
+  /* 🌟 방 만들기 카드: 둥근 모서리 라운딩(16px) & 선명한 회색 그림자 🌟 */
   .connect-card {
     order: 2 !important;
     flex: 1 1 auto !important;
@@ -1905,13 +1896,9 @@ body {
     max-height: none !important;
     min-height: 0 !important;
     padding: 14px 16px !important;
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-    border-bottom-left-radius: var(--radius) !important;
-    border-bottom-right-radius: var(--radius) !important;
+    border-radius: 16px !important; /* 4면 모두 둥근 라운딩 */
     border: 1px solid var(--border) !important;
-    border-top: none !important; /* 탭 하단과 0px 밀착 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important; /* 선명한 회색 그림자 */
     margin: 0 !important;
     display: none !important;
     flex-direction: column !important;
@@ -12556,16 +12543,24 @@ html, body {
     box-shadow: none !important;
   }
 
-  /* 3. 프로필 카드: 은은한 회색 음영을 주어 배경과의 명확한 구분감 생성 */
+  /* 3. 프로필 카드 & 방 카드: 은은한 회색 음영을 주어 배경과의 명확한 구분감 생성 */
   .home-user-bar,
   .home-user-bar:not([class*="pcard-theme-"]),
   .home-user-bar[class*="pcard-theme-"] {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07) !important;
+  }
+  .lobby-card,
+  .connect-card {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
   }
   [data-theme="dark"] .home-user-bar,
   [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]),
   [data-theme="dark"] .home-user-bar[class*="pcard-theme-"] {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  }
+  [data-theme="dark"] .lobby-card,
+  [data-theme="dark"] .connect-card {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
   }
 
   /* 4. 기본 프로필 카드: 다른 카드들과 100% 동일한 배경/테두리 지정 */
