@@ -864,6 +864,11 @@
       document.body.removeAttribute('data-theme');
     }
 
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme === 'dark' ? '#0f172a' : '#f6f8f7');
+    }
+
     const btnLight = $('btn-theme-light');
     const btnDark = $('btn-theme-dark');
     if (btnLight && btnDark) {
