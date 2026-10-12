@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.11.3-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.11.4-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,8 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.11.4 (2026-10)
+  - 로비 사이드바 가치클라우드 스폰서 배너 클릭 시 서비스(gachicloud.netlify.app)로 바로 이동하는 새 탭(`target="_blank"`) 링크 연동
 - v1.11.3 (2026-10)
   - 대기실 및 인게임 좌측 영역의 광고 UI(Adsterra) 완전 제거로 깔끔하고 군더더기 없는 게임 환경 조성
   - 로비 화면에만 광고 UI(SPONSORED)를 유지하고, 로비 사이드바 광고를 가치클라우드(gachicloud.png, 300:250 비율) 자체 스폰서 배너로 교체

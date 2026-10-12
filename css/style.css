@@ -12500,6 +12500,15 @@ html, body {
   padding: 0;
   background: transparent;
 }
+.arcade-banner-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+}
 .arcade-banner-img {
   width: 100%;
   height: 100%;
@@ -12509,9 +12518,10 @@ html, body {
   border-radius: var(--radius-sm);
   transition: transform 0.2s ease, filter 0.2s ease;
 }
-.arcade-ad-wrapper:hover .arcade-banner-img {
+.arcade-ad-wrapper:hover .arcade-banner-img,
+.arcade-banner-link:hover .arcade-banner-img {
   transform: scale(1.02);
-  filter: brightness(1.04);
+  filter: brightness(1.05);
 }
 
 /* 4. 사이드바 / 설정창 후원 스마트링크 버튼 */
