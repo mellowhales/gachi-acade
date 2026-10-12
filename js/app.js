@@ -4194,9 +4194,11 @@
       const chatCard = $('lobby-chat-card');
       const backdrop = $('lobby-mobile-chat-backdrop');
       const badge = $('lobby-mobile-chat-badge');
+      const longBadge = $('lobby-long-chat-badge');
       if (chatCard) chatCard.classList.add('mobile-open');
       if (backdrop) backdrop.classList.remove('hidden');
       if (badge) badge.classList.add('hidden');
+      if (longBadge) longBadge.classList.add('hidden');
       const input = $('lobby-chat-input');
       if (input) setTimeout(() => input.focus(), 150);
     }
@@ -4210,6 +4212,7 @@
     }
 
     if ($('btn-lobby-mobile-chat-toggle')) $('btn-lobby-mobile-chat-toggle').addEventListener('click', _openLobbyMobileChat);
+    if ($('btn-lobby-long-chat')) $('btn-lobby-long-chat').addEventListener('click', _openLobbyMobileChat);
     if ($('btn-close-lobby-mobile-chat')) $('btn-close-lobby-mobile-chat').addEventListener('click', _closeLobbyMobileChat);
     if ($('lobby-mobile-chat-backdrop')) $('lobby-mobile-chat-backdrop').addEventListener('click', _closeLobbyMobileChat);
   }
@@ -4234,6 +4237,8 @@
       if (chatCard && !chatCard.classList.contains('mobile-open')) {
         const badge = $('lobby-mobile-chat-badge');
         if (badge) badge.classList.remove('hidden');
+        const longBadge = $('lobby-long-chat-badge');
+        if (longBadge) longBadge.classList.remove('hidden');
       }
     }
 
@@ -4739,23 +4744,103 @@
     });
   }
 
-  // 홈 화면 탭 전환
-  $('tab-create').addEventListener('click', () => {
-    Sound.playClick();
-    $('tab-create').classList.add('active');
-    $('tab-join').classList.remove('active');
-    $('panel-create').classList.add('active');
-    $('panel-join').classList.remove('active');
-  });
+  // 홈 화면 탭 전환 (PC)
+  if ($('tab-create')) {
+    $('tab-create').addEventListener('click', () => {
+      Sound.playClick();
+      $('tab-create').classList.add('active');
+      $('tab-join').classList.remove('active');
+      $('panel-create').classList.add('active');
+      $('panel-join').classList.remove('active');
+    });
+  }
 
-  $('tab-join').addEventListener('click', () => {
+  if ($('tab-join')) {
+    $('tab-join').addEventListener('click', () => {
+      Sound.playClick();
+      $('tab-join').classList.add('active');
+      $('tab-create').classList.remove('active');
+      $('panel-join').classList.add('active');
+      $('panel-create').classList.remove('active');
+      setTimeout(() => $('input-room-code').focus(), 50);
+    });
+  }
+
+  // 🌟 모바일 전용 탭 전환 ([방 찾기] | [방 만들기]) 🌟
+  if ($('tab-mobile-find-room') && $('tab-mobile-create-room')) {
+    $('tab-mobile-find-room').addEventListener('click', () => {
+      Sound.playClick();
+      $('tab-mobile-find-room').classList.add('active');
+      $('tab-mobile-create-room').classList.remove('active');
+      const homeScreen = $('screen-home');
+      if (homeScreen) homeScreen.classList.remove('mobile-show-create');
+    });
+
+    $('tab-mobile-create-room').addEventListener('click', () => {
+      Sound.playClick();
+      $('tab-mobile-create-room').classList.add('active');
+      $('tab-mobile-find-room').classList.remove('active');
+      const homeScreen = $('screen-home');
+      if (homeScreen) homeScreen.classList.add('mobile-show-create');
+      // 방 만들기 패널 활성화
+      if ($('tab-create')) $('tab-create').classList.add('active');
+      if ($('tab-join')) $('tab-join').classList.remove('active');
+      if ($('panel-create')) $('panel-create').classList.add('active');
+      if ($('panel-join')) $('panel-join').classList.remove('active');
+    });
+  }
+
+  // 🌟 모바일 전용 [코드 참가] 모달 이벤트 🌟
+  function _openMobileCodeJoinModal() {
     Sound.playClick();
-    $('tab-join').classList.add('active');
-    $('tab-create').classList.remove('active');
-    $('panel-join').classList.add('active');
-    $('panel-create').classList.remove('active');
-    setTimeout(() => $('input-room-code').focus(), 50);
-  });
+    const modal = $('overlay-mobile-code-join');
+    const input = $('input-mobile-room-code');
+    if (modal) modal.classList.remove('hidden');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 80);
+    }
+  }
+
+  function _closeMobileCodeJoinModal() {
+    const modal = $('overlay-mobile-code-join');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function _confirmMobileCodeJoin() {
+    const input = $('input-mobile-room-code');
+    const code = (input ? input.value : '').replace(/\D/g, '').slice(0, 4);
+    if (!code || code.length !== 4) {
+      if (typeof _toast === 'function') _toast('4자리 숫자 방 코드를 입력해주세요.', 'error');
+      if (input) input.focus();
+      return;
+    }
+    _closeMobileCodeJoinModal();
+    if ($('input-room-code')) $('input-room-code').value = code;
+    if ($('btn-join-room')) $('btn-join-room').click();
+  }
+
+  if ($('btn-mobile-code-join')) $('btn-mobile-code-join').addEventListener('click', _openMobileCodeJoinModal);
+  if ($('btn-cancel-mobile-code')) $('btn-cancel-mobile-code').addEventListener('click', _closeMobileCodeJoinModal);
+  if ($('btn-confirm-mobile-code')) $('btn-confirm-mobile-code').addEventListener('click', _confirmMobileCodeJoin);
+  if ($('overlay-mobile-code-join')) {
+    $('overlay-mobile-code-join').addEventListener('click', (e) => {
+      if (e.target === $('overlay-mobile-code-join')) _closeMobileCodeJoinModal();
+    });
+  }
+  if ($('input-mobile-room-code')) {
+    $('input-mobile-room-code').addEventListener('input', (e) => {
+      e.target.value = (e.target.value || '').replace(/\D/g, '').slice(0, 4);
+    });
+    $('input-mobile-room-code').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        _confirmMobileCodeJoin();
+      } else if (e.key === 'Escape') {
+        _closeMobileCodeJoinModal();
+      }
+    });
+  }
 
   // 4자리 숫자 전용 입력 (공백 및 특수문자 완전 제거 & trim)
   $('input-room-code').addEventListener('input', (e) => {

@@ -105,8 +105,9 @@
       <button type="button" class="btn-icon" id="btn-marketplace" title="상점 열기">
         <i class="fa-solid fa-store"></i>
       </button>
-      <button type="button" class="btn-icon" id="btn-open-friends" title="친구 목록" style="position:relative;">
-        <i class="fa-solid fa-user-group"></i>
+      <button type="button" class="btn-icon" id="btn-open-friends" title="친구 / 알림" style="position:relative;">
+        <i class="fa-solid fa-user-group btn-icon-desktop"></i>
+        <i class="fa-regular fa-bell btn-icon-mobile"></i>
         <span class="friends-online-badge hidden" id="friends-online-count-badge">0</span>
       </button>
     </div>
@@ -156,8 +157,9 @@
               <div class="user-exp-fill" id="home-user-exp-fill" style="width: 0%;"></div>
             </div>
           </div>
-          <button type="button" class="btn-icon sm" id="btn-change-nickname" title="프로필 편집 (닉네임/동물 아바타)">
+          <button type="button" class="btn-icon sm btn-user-profile-edit" id="btn-change-nickname" title="프로필 편집 (닉네임/동물 아바타)">
             <i class="fa-solid fa-user-pen"></i>
+            <span class="btn-profile-label">내 프로필</span>
           </button>
         </div>
       </div>
@@ -299,6 +301,16 @@
 
   <!-- 오른쪽: 메인 영역 (좌측: 실시간 공개 방 목록, 우측: 방 만들기/참가) -->
   <main class="home-main">
+    <!-- 🌟 모바일 전용 상단 탭: [방 찾기] | [방 만들기] 🌟 -->
+    <div class="mobile-lobby-tabs" id="mobile-lobby-tabs">
+      <button type="button" class="mobile-lobby-tab active" id="tab-mobile-find-room">
+        <span>방 찾기</span>
+      </button>
+      <button type="button" class="mobile-lobby-tab" id="tab-mobile-create-room">
+        <span>방 만들기</span>
+      </button>
+    </div>
+
     <div class="home-lobby-container">
       
       <!-- 1. 좌측~중앙: 🌐 실시간 방 목록 (공개방 / 비밀방 필터 지원) -->
@@ -333,6 +345,11 @@
             <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
           </div>
         </div>
+        <!-- 🌟 모바일 전용 코드 참가 버튼 (방 입장하기/퀵 매칭 없이 단독 배치) 🌟 -->
+        <button type="button" class="btn-mobile-code-join" id="btn-mobile-code-join">
+          <i class="fa-solid fa-key"></i>
+          <span>코드 참가</span>
+        </button>
       </div>
 
       <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
@@ -538,10 +555,17 @@
               <span id="join-status-text">연결 중...</span>
             </div>
           </div>
-        </div>
-      </div> <!-- /.lobby-right-col -->
+        </div> <!-- /#panel-join -->
+      </div> <!-- /.connect-card -->
+    </div> <!-- /.lobby-right-col -->
+  </div> <!-- /.home-lobby-container -->
 
-    </div>
+    <!-- 🌟 모바일 전용 하단 긴 채팅 버튼 (접속자 제거 후 사이트 고유색상 와이드 배치) 🌟 -->
+    <button type="button" class="btn-lobby-long-chat" id="btn-lobby-long-chat">
+      <i class="fa-solid fa-comments"></i>
+      <span>채팅</span>
+      <span class="chat-badge-dot hidden" id="lobby-long-chat-badge"></span>
+    </button>
   </main>
   </div> <!-- /.home-body-wrap -->
 </div>
@@ -1267,7 +1291,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.11.4</span>
+              <span class="about-version-tag">v1.12.0</span>
             </div>
           </div>
         </div>
@@ -1280,6 +1304,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.12.0]</span>
+              <span class="changelog-text">모바일 UI 전면 개편(뷰포트 맞춤 원스크린 로비, 방 찾기/만들기 탭 전환, 코드 참가 버튼, 전역 앱 스타일 상단 바 통일, 와이드 채팅 버튼 실장)</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.11.4]</span>
               <span class="changelog-text">로비 스폰서 배너 클릭 시 가치클라우드(gachicloud.netlify.app) 바로가기 새 탭 링크 연결</span>
             </div>
@@ -1491,7 +1519,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.11.4</span>
+        <span class="settings-version-badge">v1.12.0</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
@@ -1793,6 +1821,38 @@
         <span>취소</span>
       </button>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-pwd" style="flex:1;">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>입장</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OVERLAY: 모바일 방 코드 직접 입력 모달
+═══════════════════════════════════════════════════════════════ -->
+<div id="overlay-mobile-code-join" class="overlay hidden">
+  <div class="pwd-modal card" style="max-width:320px;width:88%;text-align:center;padding:24px 20px;display:flex;flex-direction:column;gap:14px;border-radius:var(--radius-lg);">
+    <div style="width:48px;height:48px;border-radius:50%;background:var(--green-tint);border:1.5px solid var(--green-border);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:1.3rem;">
+      <i class="fa-solid fa-key"></i>
+    </div>
+    <h3 style="font-size:1.15rem;font-weight:800;color:var(--t1);margin:0;">코드 참가</h3>
+    <p style="font-size:0.82rem;color:var(--t3);margin:-6px 0 0;">공유받은 4자리 방 코드를 입력하세요.</p>
+    <input
+      type="text"
+      id="input-mobile-room-code"
+      class="code-input-field"
+      placeholder="0 0 0 0"
+      maxlength="4"
+      inputmode="numeric"
+      autocomplete="off"
+      style="font-size:1.5rem;letter-spacing:8px;height:48px;text-align:center;background:var(--bg-hover);"
+    />
+    <div style="display:flex;gap:8px;margin-top:2px;">
+      <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-mobile-code" style="flex:1;">
+        <span>취소</span>
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-mobile-code" style="flex:1;">
         <i class="fa-solid fa-arrow-right-to-bracket"></i>
         <span>입장</span>
       </button>
