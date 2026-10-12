@@ -4212,12 +4212,14 @@
       const backdrop = $('lobby-mobile-chat-backdrop');
       const badge = $('lobby-mobile-chat-badge');
       const longBadge = $('lobby-long-chat-badge');
+      const actionBadge = $('mobile-lobby-chat-badge');
       if (chatCard) chatCard.classList.add('mobile-open');
       if (backdrop) backdrop.classList.remove('hidden');
       if (badge) badge.classList.add('hidden');
       if (longBadge) longBadge.classList.add('hidden');
+      if (actionBadge) actionBadge.classList.add('hidden');
       const input = $('lobby-chat-input');
-      if (input) setTimeout(() => input.focus(), 150);
+      if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
     }
 
     function _closeLobbyMobileChat() {
@@ -4230,6 +4232,7 @@
 
     if ($('btn-lobby-mobile-chat-toggle')) $('btn-lobby-mobile-chat-toggle').addEventListener('click', _openLobbyMobileChat);
     if ($('btn-lobby-long-chat')) $('btn-lobby-long-chat').addEventListener('click', _openLobbyMobileChat);
+    if ($('btn-mobile-lobby-chat')) $('btn-mobile-lobby-chat').addEventListener('click', _openLobbyMobileChat);
     if ($('btn-close-lobby-mobile-chat')) $('btn-close-lobby-mobile-chat').addEventListener('click', _closeLobbyMobileChat);
     if ($('lobby-mobile-chat-backdrop')) $('lobby-mobile-chat-backdrop').addEventListener('click', _closeLobbyMobileChat);
   }
@@ -4256,6 +4259,8 @@
         if (badge) badge.classList.remove('hidden');
         const longBadge = $('lobby-long-chat-badge');
         if (longBadge) longBadge.classList.remove('hidden');
+        const actionBadge = $('mobile-lobby-chat-badge');
+        if (actionBadge) actionBadge.classList.remove('hidden');
       }
     }
 
@@ -4779,7 +4784,9 @@
       $('tab-create').classList.remove('active');
       $('panel-join').classList.add('active');
       $('panel-create').classList.remove('active');
-      setTimeout(() => $('input-room-code').focus(), 50);
+      if (window.innerWidth > 960) {
+        setTimeout(() => $('input-room-code').focus(), 50);
+      }
     });
   }
 
@@ -4856,7 +4863,7 @@
     if (modal) modal.classList.remove('hidden');
     if (input) {
       input.value = '';
-      setTimeout(() => input.focus(), 80);
+      if (window.innerWidth > 960) setTimeout(() => input.focus(), 80);
     }
   }
 
@@ -4965,7 +4972,7 @@
     popup.classList.add('active');
 
     setTimeout(() => {
-      if ($('profile-input-nick')) $('profile-input-nick').focus();
+      if ($('profile-input-nick') && window.innerWidth > 960) $('profile-input-nick').focus();
     }, 50);
   }
 
@@ -7008,7 +7015,7 @@
     if (backdrop) backdrop.classList.remove('hidden');
     if (badge) badge.classList.add('hidden');
     const input = $('game-chat-input');
-    if (input) setTimeout(() => input.focus(), 150);
+    if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
   }
 
   function _closeMobileChat() {
@@ -7052,7 +7059,7 @@
     if (badge) badge.classList.add('hidden');
     _scrollRoomChatToBottom();
     const input = $('room-chat-input');
-    if (input) setTimeout(() => input.focus(), 150);
+    if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
   }
 
   function _closeRoomMobileChat() {

@@ -1276,8 +1276,8 @@ body {
     min-width: 0 !important;
   }
   .home-user-bar .user-name {
-    font-size: 1.15rem !important; /* 닉네임 크기 확대 (시원한 가독성) */
-    font-weight: 900 !important;
+    font-size: 1.05rem !important; /* 닉네임 크기 적정 조정 (균형 잡힌 가독성) */
+    font-weight: 850 !important;
     color: var(--t1) !important;
     max-width: 170px !important;
     overflow: hidden !important;
@@ -1806,8 +1806,22 @@ body {
     display: none !important;
   }
 
-  /* 🌟 모바일 전용 [방 설정] 버튼: 가로 축소 & 좌측 정사각형(42px) 아이콘 버튼 🌟 */
-  .btn-mobile-room-action {
+  /* 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 설정 버튼] 🌟 */
+  .mobile-lobby-action-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: auto !important; /* 카드 내부 하단 밀착 배치 */
+    margin-bottom: 0 !important;
+    order: 99 !important; /* 항상 카드 내부 맨 아래로 */
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 1. 좌측 채팅 정사각형 버튼 (42px × 42px, 아이콘만) */
+  .btn-mobile-lobby-chat {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1817,18 +1831,54 @@ body {
     min-height: 42px !important;
     padding: 0 !important;
     background: var(--bg-hover) !important;
-    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
-    border-radius: 12px !important; /* 둥근 모서리 라운딩 */
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
     color: var(--t1) !important;
     cursor: pointer !important;
     flex-shrink: 0 !important;
-    order: 99 !important; /* 항상 카드 내부 맨 아래로 */
-    align-self: flex-start !important; /* 좌측 정렬 */
-    margin-top: auto !important; /* 카드 내부 하단 밀착 배치 */
-    margin-bottom: 0 !important;
-    margin-left: 0 !important;
-    margin-right: auto !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    transition: background 0.18s ease, border-color 0.18s ease !important;
+  }
+  .btn-mobile-lobby-chat:active {
+    background: var(--bg-active) !important;
+    border-color: var(--green) !important;
+  }
+  .btn-mobile-lobby-chat i {
+    color: var(--green) !important;
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+  }
+  .btn-mobile-lobby-chat .chat-badge-dot {
+    position: absolute !important;
+    top: 7px !important;
+    right: 7px !important;
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  /* 2. 우측 방 설정 버튼 (가로 줄이고 우측에 그대로 유지) 🌟 */
+  .btn-mobile-room-action {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important; /* 남은 우측 가로 공간 채움 */
+    width: auto !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 16px !important;
+    background: var(--bg-hover) !important;
+    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
+    border-radius: 12px !important; /* 둥근 모서리 라운딩 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    color: var(--t1) !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    flex-shrink: 1 !important;
+    margin: 0 !important;
     box-sizing: border-box !important;
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
   }
@@ -1837,11 +1887,11 @@ body {
     border-color: var(--green) !important;
   }
   .btn-mobile-room-action span {
-    display: none !important; /* 텍스트 숨김 (아이콘만 노출) */
+    display: inline !important; /* 텍스트 "방 설정" 그대로 노출 */
   }
   .btn-mobile-room-action i {
     color: var(--green) !important;
-    font-size: 1.15rem !important;
+    font-size: 0.95rem !important;
     margin: 0 !important;
   }
 
@@ -1955,14 +2005,14 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
+  /* 🌟 방 만들기 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 (공백 최소화 컴팩트 핏) 🌟 */
   .connect-card {
     order: 2 !important;
-    flex: 1 1 auto !important;
-    height: 100% !important;
-    max-height: 100% !important;
+    flex: 0 0 auto !important; /* 모바일에서 100% 억지 확장 방지: 공백 없이 컴팩트 핏 */
+    height: auto !important;
+    max-height: none !important;
     min-height: 0 !important;
-    padding: 12px 14px !important; /* lobby-card와 100% 동일 패딩 */
+    padding: 12px 14px 16px 14px !important;
     border-radius: 0 0 16px 16px !important; /* 하단만 둥근 모서리 라운딩 (상단 탭과 일체화) */
     border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
     border-top: none !important; /* 상단 탭의 border-bottom과 일체화 */
@@ -1970,9 +2020,9 @@ body {
     margin: 0 !important;
     display: none !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    gap: 6px !important;
-    overflow: hidden !important; /* 스크롤 절대 방지! 카드 크기 완전 고정 */
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    overflow: hidden !important;
     box-sizing: border-box !important;
     background: var(--bg-card) !important;
   }
@@ -2041,29 +2091,29 @@ body {
     display: none !important;
   }
   .connect-card .ctab-panel.active {
-    gap: 6px !important;
+    gap: 10px !important;
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important;
-    flex: 1 1 auto !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
     min-height: 0 !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     overflow: hidden !important;
   }
   .connect-card .create-room-options {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
-    flex: 1 1 auto !important;
+    flex: 0 0 auto !important;
     min-height: 0 !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
   }
   #panel-join .join-form {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
-    flex: 1 1 auto !important;
-    justify-content: center !important;
+    flex: 0 0 auto !important;
+    justify-content: flex-start !important;
   }
   #panel-join .code-input-field {
     text-align: center !important;
@@ -2099,7 +2149,7 @@ body {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
     cursor: pointer !important;
     order: 99 !important;
-    margin-top: auto !important;
+    margin-top: 6px !important;
     margin-bottom: 0 !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
@@ -5075,6 +5125,8 @@ body {
 .mobile-chat-backdrop { display: none; }
 .mobile-lobby-tabs { display: none; }
 .btn-mobile-code-join { display: none; }
+.mobile-lobby-action-row { display: none; }
+.btn-mobile-lobby-chat { display: none; }
 .btn-mobile-room-action { display: none; }
 .mobile-create-header { display: none; }
 .btn-lobby-long-chat { display: none; }
@@ -5214,44 +5266,51 @@ html, body {
     height: calc(100dvh - 54px) !important;
     max-height: calc(100dvh - 54px) !important;
     overflow: hidden !important;
-    padding: 0 20px 16px 20px !important; /* 로비와 100% 동일한 좌우 20px, 하단 16px */
+    padding: 8px 20px 16px 20px !important; /* 상단 여백 8px 부여 & 좌우 20px, 하단 16px */
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    gap: 12px !important;
+    gap: 10px !important;
     width: 100% !important;
     max-width: 100vw !important;
     box-sizing: border-box !important;
   }
 
-  /* 🌟 1. 참가자 영역 + 우측 세로 이모티콘 패널 🌟 */
+  /* 🌟 1. 참가자 영역 + 우측 세로 이모티콘 패널: 하나의 단일 카드로 자연스럽게 일체화 🌟 */
   .room-left-panel {
     order: 1 !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important; /* 가로 배치: 좌측 참가자 목록 / 우측 세로 이모지 패널 */
     align-items: stretch !important;
-    gap: 10px !important;
+    gap: 0 !important; /* 분리 갭 제거하여 단일 카드로 일체화 */
+    padding: 8px 10px !important;
+    border-radius: 16px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    background: var(--bg-card) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
     flex-shrink: 0 !important;
+    margin-top: 4px !important; /* 상단바와의 시원한 여백 */
+    box-sizing: border-box !important;
   }
 
-  /* 🌟 참가자 목록 패널: 16px 라운딩, 1.5px 회색 테두리 & 입체 그림자 🌟 */
+  /* 🌟 참가자 목록 패널: 외부 테두리/그림자 투명화로 일체형 결합 🌟 */
   .room-players-panel {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     width: auto !important;
     height: auto !important;
     max-height: none !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     box-sizing: border-box !important;
-    padding: 8px 10px !important;
-    border-radius: 16px !important;
-    border: 1.5px solid #cbd5e1 !important;
-    background: var(--bg-card) !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    padding: 0 8px 0 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
     flex-shrink: 0 !important;
   }
   .room-players-panel .panel-header {
@@ -5260,46 +5319,51 @@ html, body {
   .player-slots {
     display: none !important;
   }
+  /* 🌟 참가자 목록: 정확히 2행(2줄) 높이 고정 & 초과 시 부드러운 스크롤 🌟 */
   #player-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 6px !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow-y: auto !important;
-    max-height: 140px !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: 118px !important; /* 정확히 2줄(56px*2 + 6px = 118px) 고정 뷰포트 */
+    max-height: 118px !important;
     box-sizing: border-box !important;
+    scrollbar-width: thin !important;
   }
 
-  /* 🌟 개별 참가자 카드: 로비 프로필 카드 크기(62px)로 대형화 & 1.5px 테두리/그림자 🌟 */
+  /* 🌟 개별 참가자 카드: 56px 높이로 2행 비례 최적화 & 1.5px 테두리/그림자 🌟 */
   .player-item {
     width: 100% !important;
     min-width: 0 !important;
-    height: 62px !important;
-    min-height: 62px !important;
-    max-height: 62px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
     box-sizing: border-box !important;
     display: flex !important;
     align-items: center !important;
-    padding: 8px 12px !important;
+    padding: 6px 10px !important;
     font-size: 0.92rem !important;
-    border-radius: 14px !important;
-    gap: 12px !important;
+    border-radius: 12px !important;
+    gap: 10px !important;
     overflow: hidden !important;
     background: var(--bg-subtle, #f8fafc) !important;
     border: 1.5px solid #cbd5e1 !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    flex-shrink: 0 !important;
   }
   .player-item.ready {
     border-color: var(--green) !important;
     background: var(--green-tint, #f0fff4) !important;
   }
   .player-avatar {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    font-size: 1.15rem !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    font-size: 1.1rem !important;
     border-radius: 50% !important;
     flex-shrink: 0 !important;
   }
@@ -5362,16 +5426,19 @@ html, body {
     border: 1px solid #f6e05e !important;
   }
 
-  /* 🌟 방 화면 이모티콘 패널: 참가자 명단 오른쪽에 세로 배치 🌟 */
+  /* 🌟 방 화면 이모티콘 패널: 참가자 카드 내부 우측에 자연스럽게 일체화 (118px) 🌟 */
   .room-emoji-panel {
-    padding: 6px 4px !important;
-    border-radius: 16px !important;
-    gap: 6px !important;
-    width: 48px !important;
-    min-width: 48px !important;
-    border: 1.5px solid #cbd5e1 !important;
-    background: var(--bg-card) !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    padding: 0 0 0 8px !important;
+    border-radius: 0 !important;
+    gap: 4px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 118px !important; /* 참가자 2행(118px)과 정확히 일치 */
+    max-height: 118px !important;
+    border: none !important;
+    border-left: 1px solid var(--border-sub, #e2e8f0) !important; /* 참가자 목록과 자연스러운 세로 구분선 */
+    background: transparent !important;
+    box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important; /* 세로 배치 */
     align-items: center !important;
@@ -5380,15 +5447,15 @@ html, body {
     box-sizing: border-box !important;
   }
   .room-emoji-panel .btn-emoji {
-    width: 36px !important;
-    height: 36px !important;
+    width: 32px !important;
+    height: 26px !important;
     padding: 0 !important;
     border: none !important;
     background: transparent !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     cursor: pointer !important;
     transition: transform 0.12s ease !important;
   }
@@ -5396,8 +5463,8 @@ html, body {
     transform: scale(0.9) !important;
   }
   .room-emoji-panel .emoji-img {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
   }
 
   /* 🌟 모바일 방 화면 하단 팁 바 숨김 🌟 */
@@ -5422,12 +5489,13 @@ html, body {
     max-width: 100% !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    height: 100% !important;
+    height: auto !important;
+    max-height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    gap: 8px !important;
-    padding: 12px 14px !important;
+    gap: 6px !important;
+    padding: 10px 12px !important;
     border-radius: 16px !important; /* 16px 라운딩 */
     border: 1.5px solid #cbd5e1 !important; /* 1.5px 회색 테두리 */
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 입체 회색 그림자 */
@@ -5440,7 +5508,13 @@ html, body {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    gap: 6px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 4px !important;
+  }
+  .room-selected-game-banner {
+    display: none !important; /* 모바일에서 공간 확보를 위해 배너 숨김 -> 시작 버튼 안전 노출 */
   }
 
   /* 🌟 '게임 선택' 문구: 진영 선택이나 라운드가 없을 때만 나타남 🌟 */
@@ -5602,7 +5676,9 @@ html, body {
     border: none !important;
     box-shadow: none !important;
     padding: 6px 0 0 0 !important;
-    margin: 0 !important;
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important; /* 하단 시작 버튼 절대 사라지지 않고 고정 노출 */
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -5811,7 +5887,7 @@ html, body {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    padding: 0 20px 64px 20px !important; /* 로비 및 방 화면과 동일한 좌우 20px 패딩 */
+    padding: 8px 20px 64px 20px !important; /* 상단 여백 8px 부여 & 좌우 20px 패딩 */
     gap: 12px !important;
     height: auto !important;
     min-height: auto !important;
@@ -5823,70 +5899,81 @@ html, body {
     justify-content: flex-start !important;
   }
 
-  /* 🌟 1. 인게임 참가자 영역 + 우측 세로 이모티콘 패널 🌟 */
+  /* 🌟 1. 인게임 참가자 영역 + 우측 세로 이모티콘 패널: 하나의 단일 카드로 자연스럽게 일체화 🌟 */
   .game-left-panel {
     order: 1 !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important; /* 가로 배치: 좌측 참가자 목록 / 우측 세로 이모지 패널 */
     align-items: stretch !important;
-    gap: 10px !important;
-    flex-shrink: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 🌟 인게임 참가자 목록 패널: 16px 라운딩, 1.5px 회색 테두리 & 입체 그림자 🌟 */
-  .game-sidebar-players {
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    width: auto !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
+    gap: 0 !important; /* 분리 갭 제거하여 단일 카드로 일체화 */
     padding: 8px 10px !important;
     border-radius: 16px !important;
     border: 1.5px solid #cbd5e1 !important;
     background: var(--bg-card) !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
     flex-shrink: 0 !important;
+    margin-top: 4px !important; /* 상단바와의 시원한 여백 */
+    box-sizing: border-box !important;
+  }
+
+  /* 🌟 인게임 참가자 목록 패널: 외부 테두리/그림자 투명화로 일체형 결합 🌟 */
+  .game-sidebar-players {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    padding: 0 8px 0 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    flex-shrink: 0 !important;
   }
   .gsp-header {
     display: none !important; /* 불필요한 '참가자 (2)' 제목 숨김으로 화면 높이 확보 */
   }
+  /* 🌟 참가자 목록: 정확히 2행(2줄) 높이 고정 & 초과 시 부드러운 스크롤 🌟 */
   .gsp-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 6px !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow-y: auto !important;
-    max-height: 140px !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: 118px !important; /* 정확히 2줄(56px*2 + 6px = 118px) 고정 뷰포트 */
+    max-height: 118px !important;
     box-sizing: border-box !important;
+    scrollbar-width: thin !important;
   }
 
-  /* 🌟 인게임 개별 참가자 카드: 로비 프로필 카드 크기(62px)로 대형화 & 1.5px 테두리/그림자 🌟 */
+  /* 🌟 인게임 개별 참가자 카드: 56px 높이로 2행 비례 최적화 & 1.5px 테두리/그림자 🌟 */
   .gsp-item {
     width: 100% !important;
     min-width: 0 !important;
-    height: 62px !important;
-    min-height: 62px !important;
-    max-height: 62px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
     box-sizing: border-box !important;
     display: flex !important;
     align-items: center !important;
-    padding: 8px 12px !important;
+    padding: 6px 10px !important;
     font-size: 0.92rem !important;
-    border-radius: 14px !important;
-    gap: 12px !important;
+    border-radius: 12px !important;
+    gap: 10px !important;
     overflow: hidden !important;
     background: var(--bg-subtle, #f8fafc) !important;
     border: 1.5px solid #cbd5e1 !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    flex-shrink: 0 !important;
   }
   .gsp-item:not([class*="pcard-theme-"]) {
     background: var(--bg-subtle, #f8fafc) !important;
@@ -5898,10 +5985,10 @@ html, body {
     background: var(--green-tint, #f0fff4) !important;
   }
   .gsp-avatar {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    font-size: 1.15rem !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    font-size: 1.1rem !important;
     border-radius: 50% !important;
     flex-shrink: 0 !important;
   }
@@ -5948,16 +6035,19 @@ html, body {
     opacity: 0.85 !important;
   }
 
-  /* 🌟 인게임 이모티콘 패널: 참가자 명단 오른쪽에 세로 배치 🌟 */
+  /* 🌟 인게임 이모티콘 패널: 참가자 카드 내부 우측에 자연스럽게 일체화 (118px) 🌟 */
   .game-emoji-panel {
-    padding: 6px 4px !important;
-    border-radius: 16px !important;
-    gap: 6px !important;
-    width: 48px !important;
-    min-width: 48px !important;
-    border: 1.5px solid #cbd5e1 !important;
-    background: var(--bg-card) !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    padding: 0 0 0 8px !important;
+    border-radius: 0 !important;
+    gap: 4px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 118px !important; /* 참가자 2행(118px)과 정확히 일치 */
+    max-height: 118px !important;
+    border: none !important;
+    border-left: 1px solid var(--border-sub, #e2e8f0) !important; /* 참가자 목록과 자연스러운 세로 구분선 */
+    background: transparent !important;
+    box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important; /* 세로 배치 */
     align-items: center !important;
@@ -5967,22 +6057,21 @@ html, body {
     align-self: auto !important;
   }
   .game-emoji-panel .btn-emoji {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    min-height: 36px !important;
-    font-size: 1.25rem !important;
+    width: 32px !important;
+    height: 26px !important;
+    min-width: 32px !important;
+    min-height: 26px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     border: none !important;
     background: transparent !important;
   }
   .game-emoji-panel .emoji-img {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
   }
 
   /* 🌟 인게임 메인 플레이 영역 카드 테두리/그림자/라운딩 🌟 */
@@ -10912,7 +11001,7 @@ html, body {
 ══════════════════════════════════════════════════════ */
 @media (max-width: 960px) {
   .home-user-bar .user-name {
-    font-size: 1.15rem !important;
+    font-size: 1.05rem !important;
     max-width: 170px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -12860,11 +12949,13 @@ html, body {
   [data-theme="dark"] #shop-filter-tabs .lobby-tab-btn:not(.active) i {
     color: #64748b !important;
   }
+  [data-theme="dark"] .btn-mobile-lobby-chat,
   [data-theme="dark"] .btn-mobile-room-action {
     background: #1e293b !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     color: #cbd5e1 !important;
   }
+  [data-theme="dark"] .btn-mobile-lobby-chat i,
   [data-theme="dark"] .btn-mobile-room-action i {
     color: var(--green) !important;
   }
@@ -12904,15 +12995,27 @@ html, body {
     border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
-  /* 6. 다크 모드: 방 화면 및 인게임 화면 모든 카드 테두리 & 입체 그림자 */
-  [data-theme="dark"] .room-players-panel,
-  [data-theme="dark"] .room-emoji-panel,
+  /* 6. 다크 모드: 방 화면 및 인게임 화면 단일 결합 카드 및 센터/플레이 영역 */
+  [data-theme="dark"] .room-left-panel,
   [data-theme="dark"] .room-center-panel,
-  [data-theme="dark"] .game-sidebar-players,
-  [data-theme="dark"] .game-emoji-panel,
+  [data-theme="dark"] .game-left-panel,
   [data-theme="dark"] .game-play-area {
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  }
+  /* 일체화된 내부 서브 패널은 테두리 및 그림자 상속 방지 & 구분선 다크 처리 */
+  [data-theme="dark"] .room-players-panel,
+  [data-theme="dark"] .game-sidebar-players {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  [data-theme="dark"] .room-emoji-panel,
+  [data-theme="dark"] .game-emoji-panel {
+    border: none !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
   [data-theme="dark"] .player-item,
   [data-theme="dark"] .gsp-item {
