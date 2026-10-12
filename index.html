@@ -20,11 +20,13 @@
   <!-- 🔍 네이버 웹마스터도구(Naver Search Advisor) 소유권 확인 태그 (선택 사항) -->
   <meta name="naver-site-verification" content="" />
 
-  <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 (Googlebot-Favicon 최적화 정적 경로) -->
-  <link rel="icon" href="favicon.ico" sizes="any" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="icon" type="image/png" sizes="512x512" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.png" />
+  <!-- 🌟 파비콘 (Favicon) & 모바일 앱 아이콘 (Googlebot-Favicon 최적화 정적/절대경로) -->
+  <link rel="shortcut icon" href="https://gachiarcade.kro.kr/favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="https://gachiarcade.kro.kr/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="https://gachiarcade.kro.kr/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="https://gachiarcade.kro.kr/favicon.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="https://gachiarcade.kro.kr/favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://gachiarcade.kro.kr/favicon.png" />
   <meta name="theme-color" content="#10b981" />
 
   <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
@@ -53,8 +55,9 @@
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://gachiarcade.kro.kr/#website",
     "name": "가치아케이드",
-    "alternateName": ["GachiArcade", "gachiarcade"],
+    "alternateName": ["GachiArcade", "gachiarcade", "가치 아케이드"],
     "url": "https://gachiarcade.kro.kr/"
   }
   </script>
@@ -1301,7 +1304,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.11.1</span>
+              <span class="about-version-tag">v1.11.2</span>
             </div>
           </div>
         </div>
@@ -1314,6 +1317,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.11.2]</span>
+              <span class="changelog-text">구글 검색 파비콘(절대경로 및 192px/ICO/SVG) 및 Site Name 스키마 강화, sitemap.xml 최신 갱신</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.11.1]</span>
               <span class="changelog-text">알까기 물리 종료 시 미정의 변수 참조 오류(ReferenceError) 수정으로 턴 넘김 복구, 감정표현 박수 이모티콘을 화남(😡)으로 교체</span>
             </div>
@@ -1513,7 +1520,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.11.1</span>
+        <span class="settings-version-badge">v1.11.2</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>

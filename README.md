@@ -1,6 +1,6 @@
 # 가치아케이드 (GachiArcade)
 
-[![Version](https://img.shields.io/badge/version-1.11.1-blue.svg)](https://github.com/mellowhales/gachi-acade)
+[![Version](https://img.shields.io/badge/version-1.11.2-blue.svg)](https://github.com/mellowhales/gachi-acade)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 웹 브라우저에서 별도 설치 없이 링크를 통해 즐길 수 있는 실시간 멀티플레이 웹 아케이드 플랫폼입니다.
@@ -87,6 +87,9 @@
 
 ## 변경 이력 (Changelog)
 
+- v1.11.2 (2026-10)
+  - 구글 검색 결과 파비콘(절대경로 및 192px PNG/ICO/SVG) 및 Site Name 스키마(WebSite Schema `@id`, `alternateName`) 구조화 데이터 강화
+  - sitemap.xml 최종 수정일(lastmod) 갱신으로 검색엔진 크롤러 재수집 유도
 - v1.11.1 (2026-10)
   - 알까기 물리 시뮬레이션 종료 시 미정의 변수(ReferenceError: hasFalling is not defined) 수정으로 턴 정상 전환 복구
   - 대기실 및 인게임 감정표현 박수 이모티콘을 화남(😡)으로 교체
