@@ -2918,6 +2918,17 @@ body {
   width: 100%;
 }
 
+.emoji-grid-2x2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+.btn-card-side-chat {
+  display: none !important;
+}
+
 /* 이모지 버튼 */
 .btn-emoji {
   background: transparent;
@@ -5319,23 +5330,24 @@ html, body {
   .player-slots {
     display: none !important;
   }
-  /* 🌟 참가자 목록: 정확히 2행(2줄) 높이 고정 & 초과 시 부드러운 스크롤 🌟 */
+  /* 🌟 참가자 목록: 2열 그리드 & 상하 부드러운 스크롤 (2행 고정 뷰포트 118px) 🌟 */
   #player-list {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 6px !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    height: 118px !important; /* 정확히 2줄(56px*2 + 6px = 118px) 고정 뷰포트 */
+    height: 118px !important; /* 정확히 2행 높이(56px*2 + 6px = 118px) 고정 뷰포트 */
     max-height: 118px !important;
     box-sizing: border-box !important;
     scrollbar-width: thin !important;
+    align-content: start !important;
   }
 
-  /* 🌟 개별 참가자 카드: 56px 높이로 2행 비례 최적화 & 1.5px 테두리/그림자 🌟 */
+  /* 🌟 개별 참가자 카드: 2열 그리드 핏 56px 높이 & 1.5px 테두리/그림자 🌟 */
   .player-item {
     width: 100% !important;
     min-width: 0 !important;
@@ -5345,10 +5357,10 @@ html, body {
     box-sizing: border-box !important;
     display: flex !important;
     align-items: center !important;
-    padding: 6px 10px !important;
-    font-size: 0.92rem !important;
+    padding: 4px 6px !important;
+    font-size: 0.85rem !important;
     border-radius: 12px !important;
-    gap: 10px !important;
+    gap: 6px !important;
     overflow: hidden !important;
     background: var(--bg-subtle, #f8fafc) !important;
     border: 1.5px solid #cbd5e1 !important;
@@ -5360,21 +5372,21 @@ html, body {
     background: var(--green-tint, #f0fff4) !important;
   }
   .player-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    font-size: 1.1rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    font-size: 0.95rem !important;
     border-radius: 50% !important;
     flex-shrink: 0 !important;
   }
   .player-avatar-wrap .player-level-badge {
-    min-width: 16px !important;
-    height: 15px !important;
-    font-size: 0.65rem !important;
+    min-width: 14px !important;
+    height: 13px !important;
+    font-size: 0.58rem !important;
     bottom: -3px !important;
     right: -3px !important;
-    padding: 1px 4px !important;
-    border-radius: 4px !important;
+    padding: 1px 3px !important;
+    border-radius: 3px !important;
     border: 1px solid #ffffff !important;
     box-shadow: none !important;
   }
@@ -5386,10 +5398,10 @@ html, body {
     flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: center !important;
-    gap: 2px !important;
+    gap: 1px !important;
   }
   .player-name {
-    font-size: 1.05rem !important;
+    font-size: 0.84rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -5403,9 +5415,9 @@ html, body {
     display: none !important;
   }
   .ready-badge {
-    font-size: 0.76rem !important;
-    padding: 4px 10px !important;
-    border-radius: 8px !important;
+    font-size: 0.65rem !important;
+    padding: 2px 5px !important;
+    border-radius: 6px !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
     font-weight: 800 !important;
@@ -5426,13 +5438,13 @@ html, body {
     border: 1px solid #f6e05e !important;
   }
 
-  /* 🌟 방 화면 이모티콘 패널: 참가자 카드 내부 우측에 자연스럽게 일체화 (118px) 🌟 */
+  /* 🌟 방 화면 이모티콘 & 채팅 패널: 상단 2x2 이모지 & 하단 로비형 채팅 버튼 🌟 */
   .room-emoji-panel {
     padding: 0 0 0 8px !important;
     border-radius: 0 !important;
-    gap: 4px !important;
-    width: 44px !important;
-    min-width: 44px !important;
+    gap: 6px !important;
+    width: 78px !important;
+    min-width: 78px !important;
     height: 118px !important; /* 참가자 2행(118px)과 정확히 일치 */
     max-height: 118px !important;
     border: none !important;
@@ -5440,15 +5452,25 @@ html, body {
     background: transparent !important;
     box-shadow: none !important;
     display: flex !important;
-    flex-direction: column !important; /* 세로 배치 */
+    flex-direction: column !important; /* 세로 배치: 상단 2x2 / 하단 채팅 */
     align-items: center !important;
-    justify-content: space-around !important;
+    justify-content: space-between !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
   }
-  .room-emoji-panel .btn-emoji {
+  .emoji-grid-2x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px !important;
+    width: 68px !important;
+    box-sizing: border-box !important;
+  }
+  .room-emoji-panel .btn-emoji,
+  .game-emoji-panel .btn-emoji {
     width: 32px !important;
-    height: 26px !important;
+    height: 30px !important;
+    min-width: 32px !important;
+    min-height: 30px !important;
     padding: 0 !important;
     border: none !important;
     background: transparent !important;
@@ -5459,12 +5481,49 @@ html, body {
     cursor: pointer !important;
     transition: transform 0.12s ease !important;
   }
-  .room-emoji-panel .btn-emoji:active {
+  .room-emoji-panel .btn-emoji:active,
+  .game-emoji-panel .btn-emoji:active {
     transform: scale(0.9) !important;
   }
-  .room-emoji-panel .emoji-img {
-    width: 22px !important;
-    height: 22px !important;
+  .room-emoji-panel .emoji-img,
+  .game-emoji-panel .emoji-img {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* 🌟 서브 패널 하단 로비형 채팅 버튼 🌟 */
+  .btn-card-side-chat {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    background: var(--bg-hover) !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    transition: background 0.18s ease, border-color 0.18s ease !important;
+  }
+  .btn-card-side-chat:active {
+    background: var(--bg-active) !important;
+    border-color: var(--green) !important;
+  }
+  .btn-card-side-chat i {
+    color: var(--green) !important;
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+  }
+  .btn-card-side-chat .chat-badge-dot {
+    position: absolute !important;
+    top: 5px !important;
+    right: 8px !important;
   }
 
   /* 🌟 모바일 방 화면 하단 팁 바 숨김 🌟 */
@@ -5574,7 +5633,7 @@ html, body {
     display: none !important; /* 공간 확보 위해 힌트 숨김 */
   }
 
-  /* 🌟 게임 목록: PC버전 스타일 2열 카드 (14px 라운딩 & 1.5px 테두리) 🌟 */
+  /* 🌟 게임 목록: PC버전 스타일 2열 카드 (14px 라운딩 & 1.5px 테두리, 스크롤바 숨김) 🌟 */
   .room-game-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -5588,8 +5647,14 @@ html, body {
     -webkit-overflow-scrolling: touch !important;
     touch-action: pan-y !important;
     padding: 2px 2px 6px 2px !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
     box-sizing: border-box !important;
+  }
+  .room-game-grid::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   .room-game-btn {
     display: flex !important;
@@ -5825,10 +5890,10 @@ html, body {
     flex-shrink: 0 !important;
   }
   .game-room-badge {
-    padding: 4px 10px !important;
-    font-size: 0.82rem !important;
-    font-weight: 800 !important;
-    border-radius: var(--radius-xs) !important;
+    display: none !important; /* 인게임에서 #0000 코드 및 관전중 숨김 */
+  }
+  .spectator-mode-badge {
+    display: none !important;
   }
   #btn-game-settings {
     width: 40px !important;
@@ -5939,23 +6004,24 @@ html, body {
   .gsp-header {
     display: none !important; /* 불필요한 '참가자 (2)' 제목 숨김으로 화면 높이 확보 */
   }
-  /* 🌟 참가자 목록: 정확히 2행(2줄) 높이 고정 & 초과 시 부드러운 스크롤 🌟 */
+  /* 🌟 참가자 목록: 2열 그리드 & 상하 부드러운 스크롤 (2행 고정 뷰포트 118px) 🌟 */
   .gsp-list {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 6px !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    height: 118px !important; /* 정확히 2줄(56px*2 + 6px = 118px) 고정 뷰포트 */
+    height: 118px !important; /* 정확히 2행 높이(56px*2 + 6px = 118px) 고정 뷰포트 */
     max-height: 118px !important;
     box-sizing: border-box !important;
     scrollbar-width: thin !important;
+    align-content: start !important;
   }
 
-  /* 🌟 인게임 개별 참가자 카드: 56px 높이로 2행 비례 최적화 & 1.5px 테두리/그림자 🌟 */
+  /* 🌟 인게임 개별 참가자 카드: 2열 그리드 핏 56px 높이 & 1.5px 테두리/그림자 🌟 */
   .gsp-item {
     width: 100% !important;
     min-width: 0 !important;
@@ -5965,10 +6031,10 @@ html, body {
     box-sizing: border-box !important;
     display: flex !important;
     align-items: center !important;
-    padding: 6px 10px !important;
-    font-size: 0.92rem !important;
+    padding: 4px 6px !important;
+    font-size: 0.85rem !important;
     border-radius: 12px !important;
-    gap: 10px !important;
+    gap: 6px !important;
     overflow: hidden !important;
     background: var(--bg-subtle, #f8fafc) !important;
     border: 1.5px solid #cbd5e1 !important;
@@ -5985,10 +6051,10 @@ html, body {
     background: var(--green-tint, #f0fff4) !important;
   }
   .gsp-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    font-size: 1.1rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    font-size: 0.95rem !important;
     border-radius: 50% !important;
     flex-shrink: 0 !important;
   }
@@ -6001,10 +6067,10 @@ html, body {
     flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: center !important;
-    gap: 2px !important;
+    gap: 1px !important;
   }
   .gsp-name {
-    font-size: 1.05rem !important;
+    font-size: 0.84rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -6012,36 +6078,28 @@ html, body {
     max-width: 100% !important;
   }
   .gsp-tag {
-    font-size: 0.76rem !important;
-    font-weight: 800 !important;
-    padding: 4px 10px !important;
-    border-radius: 8px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    line-height: 1.2 !important;
-    background: var(--bg-hover) !important;
-    color: var(--t3) !important;
-    border: 1px solid var(--border) !important;
+    display: none !important;
   }
   .gsp-spectator-header {
-    font-size: 0.78rem !important;
-    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+    padding: 2px 4px !important;
     color: var(--t3) !important;
+    grid-column: span 2 !important;
   }
   .gsp-spectator-item {
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 44px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
     opacity: 0.85 !important;
   }
 
-  /* 🌟 인게임 이모티콘 패널: 참가자 카드 내부 우측에 자연스럽게 일체화 (118px) 🌟 */
+  /* 🌟 인게임 이모티콘 & 채팅 패널: 상단 2x2 이모지 & 하단 로비형 채팅 버튼 🌟 */
   .game-emoji-panel {
     padding: 0 0 0 8px !important;
     border-radius: 0 !important;
-    gap: 4px !important;
-    width: 44px !important;
-    min-width: 44px !important;
+    gap: 6px !important;
+    width: 78px !important;
+    min-width: 78px !important;
     height: 118px !important; /* 참가자 2행(118px)과 정확히 일치 */
     max-height: 118px !important;
     border: none !important;
@@ -6049,29 +6107,12 @@ html, body {
     background: transparent !important;
     box-shadow: none !important;
     display: flex !important;
-    flex-direction: column !important; /* 세로 배치 */
+    flex-direction: column !important; /* 세로 배치: 상단 2x2 / 하단 채팅 */
     align-items: center !important;
-    justify-content: space-around !important;
+    justify-content: space-between !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
     align-self: auto !important;
-  }
-  .game-emoji-panel .btn-emoji {
-    width: 32px !important;
-    height: 26px !important;
-    min-width: 32px !important;
-    min-height: 26px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 8px !important;
-    border: none !important;
-    background: transparent !important;
-  }
-  .game-emoji-panel .emoji-img {
-    width: 22px !important;
-    height: 22px !important;
   }
 
   /* 🌟 인게임 메인 플레이 영역 카드 테두리/그림자/라운딩 🌟 */
@@ -9760,19 +9801,21 @@ html, body {
   width: 100%;
 }
 
-/* 인게임 이모지 패널 */
-.game-emoji-panel {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-around !important;
-  padding: 8px 10px;
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  box-sizing: border-box;
-  width: 100%;
+/* 인게임 이모지 패널 (데스크톱) */
+@media (min-width: 961px) {
+  .game-emoji-panel {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    padding: 8px 10px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    width: 100%;
+  }
 }
 
 /* 인게임 플레이어 리스트 아이템 상대 좌표 설정 (이모지 팝업용) */
@@ -12950,12 +12993,14 @@ html, body {
     color: #64748b !important;
   }
   [data-theme="dark"] .btn-mobile-lobby-chat,
+  [data-theme="dark"] .btn-card-side-chat,
   [data-theme="dark"] .btn-mobile-room-action {
     background: #1e293b !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     color: #cbd5e1 !important;
   }
   [data-theme="dark"] .btn-mobile-lobby-chat i,
+  [data-theme="dark"] .btn-card-side-chat i,
   [data-theme="dark"] .btn-mobile-room-action i {
     color: var(--green) !important;
   }

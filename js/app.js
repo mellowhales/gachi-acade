@@ -6991,14 +6991,18 @@
     if (!isMe) {
       const gameChatPanel = $('game-chat-panel');
       const gameBadge = $('mobile-chat-badge');
-      if (gameChatPanel && !gameChatPanel.classList.contains('mobile-open') && gameBadge) {
-        gameBadge.classList.remove('hidden');
+      const gameSideBadge = $('game-side-chat-badge');
+      if (gameChatPanel && !gameChatPanel.classList.contains('mobile-open')) {
+        if (gameBadge) gameBadge.classList.remove('hidden');
+        if (gameSideBadge) gameSideBadge.classList.remove('hidden');
       }
 
       const roomChatPanel = $('room-chat-panel');
       const roomBadge = $('room-mobile-chat-badge');
-      if (roomChatPanel && !roomChatPanel.classList.contains('mobile-open') && roomBadge) {
-        roomBadge.classList.remove('hidden');
+      const roomSideBadge = $('room-side-chat-badge');
+      if (roomChatPanel && !roomChatPanel.classList.contains('mobile-open')) {
+        if (roomBadge) roomBadge.classList.remove('hidden');
+        if (roomSideBadge) roomSideBadge.classList.remove('hidden');
       }
     }
 
@@ -7011,9 +7015,11 @@
     const chatPanel = $('game-chat-panel');
     const backdrop = $('mobile-chat-backdrop');
     const badge = $('mobile-chat-badge');
+    const sideBadge = $('game-side-chat-badge');
     if (chatPanel) chatPanel.classList.add('mobile-open');
     if (backdrop) backdrop.classList.remove('hidden');
     if (badge) badge.classList.add('hidden');
+    if (sideBadge) sideBadge.classList.add('hidden');
     const input = $('game-chat-input');
     if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
   }
@@ -7027,6 +7033,7 @@
   }
 
   if ($('btn-mobile-chat-toggle')) $('btn-mobile-chat-toggle').addEventListener('click', _openMobileChat);
+  if ($('btn-game-side-chat')) $('btn-game-side-chat').addEventListener('click', _openMobileChat);
   if ($('btn-close-mobile-chat')) $('btn-close-mobile-chat').addEventListener('click', _closeMobileChat);
   if ($('mobile-chat-backdrop')) $('mobile-chat-backdrop').addEventListener('click', _closeMobileChat);
 
@@ -7054,9 +7061,11 @@
     const chatPanel = $('room-chat-panel');
     const backdrop = $('room-mobile-chat-backdrop');
     const badge = $('room-mobile-chat-badge');
+    const sideBadge = $('room-side-chat-badge');
     if (chatPanel) chatPanel.classList.add('mobile-open');
     if (backdrop) backdrop.classList.remove('hidden');
     if (badge) badge.classList.add('hidden');
+    if (sideBadge) sideBadge.classList.add('hidden');
     _scrollRoomChatToBottom();
     const input = $('room-chat-input');
     if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
@@ -7071,6 +7080,7 @@
   }
 
   if ($('btn-room-mobile-chat-toggle')) $('btn-room-mobile-chat-toggle').addEventListener('click', _openRoomMobileChat);
+  if ($('btn-room-side-chat')) $('btn-room-side-chat').addEventListener('click', _openRoomMobileChat);
   if ($('btn-close-room-mobile-chat')) $('btn-close-room-mobile-chat').addEventListener('click', _closeRoomMobileChat);
   if ($('room-mobile-chat-backdrop')) $('room-mobile-chat-backdrop').addEventListener('click', _closeRoomMobileChat);
 

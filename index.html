@@ -645,19 +645,25 @@
         </div>
       </section>
 
-      <!-- 신규: 감정표현 이모지 패널 -->
-      <div class="room-emoji-panel card">
-        <button type="button" class="btn-emoji" data-emoji="😂" title="웃기">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f602.svg" alt="😂" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="😡" title="화남">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f621.svg" alt="😡" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="😮" title="놀람">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f62e.svg" alt="😮" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="🎉" title="축하">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
+      <!-- 신규: 감정표현 이모지 & 채팅 사이드 패널 -->
+      <div class="room-emoji-panel card" id="room-emoji-panel">
+        <div class="emoji-grid-2x2">
+          <button type="button" class="btn-emoji" data-emoji="😂" title="웃기">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f602.svg" alt="😂" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="😡" title="화남">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f621.svg" alt="😡" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="😮" title="놀람">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f62e.svg" alt="😮" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="🎉" title="축하">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
+          </button>
+        </div>
+        <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat" id="btn-room-side-chat" title="채팅 열기">
+          <i class="fa-solid fa-comment-dots"></i>
+          <span class="chat-badge-dot hidden" id="room-side-chat-badge"></span>
         </button>
       </div>
 
@@ -943,19 +949,25 @@
         </ul>
       </aside>
 
-      <!-- 인게임 이모지 패널 -->
-      <div class="game-emoji-panel card">
-        <button type="button" class="btn-emoji" data-emoji="😂" title="웃기">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f602.svg" alt="😂" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="😡" title="화남">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f621.svg" alt="😡" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="😮" title="놀람">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f62e.svg" alt="😮" class="emoji-img">
-        </button>
-        <button type="button" class="btn-emoji" data-emoji="🎉" title="축하">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
+      <!-- 인게임 이모지 & 채팅 사이드 패널 -->
+      <div class="game-emoji-panel card" id="game-emoji-panel">
+        <div class="emoji-grid-2x2">
+          <button type="button" class="btn-emoji" data-emoji="😂" title="웃기">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f602.svg" alt="😂" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="😡" title="화남">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f621.svg" alt="😡" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="😮" title="놀람">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f62e.svg" alt="😮" class="emoji-img">
+          </button>
+          <button type="button" class="btn-emoji" data-emoji="🎉" title="축하">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
+          </button>
+        </div>
+        <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat" id="btn-game-side-chat" title="채팅 열기">
+          <i class="fa-solid fa-comment-dots"></i>
+          <span class="chat-badge-dot hidden" id="game-side-chat-badge"></span>
         </button>
       </div>
 
@@ -1311,7 +1323,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.15.3</span>
+              <span class="about-version-tag">v1.16.0</span>
             </div>
           </div>
         </div>
@@ -1324,6 +1336,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.16.0]</span>
+              <span class="changelog-text">참가자 목록 2열 상하 스크롤 그리드 전환, 2x2 이모지 + 로비형 채팅 버튼 서브 패널 통합, 인게임 관전중/#0000 코드 제거, 체스 UI 화면 오버플로우 수정, 방 게임 그리드 스크롤바 숨김</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.15.3]</span>
               <span class="changelog-text">모바일 로비 프로필 닉네임 폰트 적정 크기 조정, 채팅/프로필/방참가 시 모바일 자동 포커스 방지(가상 키보드 불쑥 뜸 방지), 방 설정/만들기 카드 높이 컴팩트 핏 최적화</span>
             </div>
@@ -1603,7 +1619,7 @@
     <!-- 모달 푸터: 버전 표시 + 확인/닫기 버튼 -->
     <div class="settings-footer">
       <div class="settings-footer-info">
-        <span class="settings-version-badge">v1.15.3</span>
+        <span class="settings-version-badge">v1.16.0</span>
       </div>
       <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-settings">
         <span data-i18n="settings.close">닫기</span>
