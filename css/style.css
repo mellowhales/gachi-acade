@@ -1200,7 +1200,7 @@ body {
   .sidebar-header,
   .sidebar-profile-header {
     display: flex !important;
-    padding: 6px 12px 4px 12px !important;
+    padding: 4px 18px 8px 18px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -1217,40 +1217,41 @@ body {
     box-shadow: none !important;
   }
 
+  /* 1. 프로필 카드를 더 크게 & 우측 버튼 확대 */
   .home-user-bar {
     width: 100% !important;
     margin: 0 !important;
-    padding: 6px 12px !important;
-    height: 52px !important;
+    padding: 10px 16px !important;
+    height: 66px !important;
+    min-height: 66px !important;
     border-radius: var(--radius) !important;
-    box-shadow: none !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 12px !important;
     box-sizing: border-box !important;
   }
 
   .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
     border: 1px solid var(--border) !important;
-    box-shadow: none !important;
   }
   .home-user-bar .user-avatar-wrap {
     position: relative !important;
     flex-shrink: 0 !important;
   }
   .home-user-bar .user-avatar {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 0.95rem !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.15rem !important;
     border-radius: 50% !important;
   }
   .home-user-bar .user-level-badge {
     position: absolute !important;
     bottom: -2px !important;
     right: -2px !important;
-    font-size: 0.65rem !important;
-    padding: 1px 4px !important;
+    font-size: 0.72rem !important;
+    padding: 2px 5px !important;
   }
   .home-user-bar .user-label {
     display: none !important;
@@ -1258,13 +1259,13 @@ body {
   .home-user-bar .user-info {
     display: flex !important;
     flex-direction: column !important;
-    gap: 4px !important;
+    gap: 5px !important;
     flex: 1 !important;
     min-width: 0 !important;
   }
   .home-user-bar .user-name {
-    font-size: 0.95rem !important;
-    font-weight: 800 !important;
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
     color: var(--t1) !important;
     max-width: none !important;
     overflow: hidden !important;
@@ -1274,8 +1275,8 @@ body {
   }
   .home-user-bar .user-exp-track {
     width: 100% !important;
-    max-width: 160px !important;
-    height: 5px !important;
+    max-width: 170px !important;
+    height: 6px !important;
     background: var(--bg-subtle) !important;
     border-radius: 3px !important;
     overflow: hidden !important;
@@ -1286,19 +1287,21 @@ body {
     border-radius: 3px !important;
   }
 
-  /* 🌟 모바일 내 프로필 버튼 🌟 */
+  /* 🌟 모바일 프로필 편집 버튼: 텍스트 없이 크게 🌟 */
   .btn-user-profile-edit {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 5px !important;
-    padding: 5px 10px !important;
-    height: 30px !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
     border-radius: var(--radius-sm) !important;
     border: 1px solid var(--border) !important;
     background: var(--bg-hover) !important;
     color: var(--t1) !important;
-    font-size: 0.8rem !important;
-    font-weight: 700 !important;
+    font-size: 1.15rem !important;
     cursor: pointer !important;
     margin-left: auto !important;
     flex-shrink: 0 !important;
@@ -1306,25 +1309,23 @@ body {
     box-shadow: none !important;
   }
   .btn-user-profile-edit .btn-profile-label {
-    display: inline !important;
+    display: none !important; /* 내 프로필 글씨 제거 */
   }
 
-  /* 🌟 로비 상단바: 사진 스타일 좌측 로고, 우측 알림+설정 🌟 */
+  /* 🌟 2. 상단바 테두리/박스 제거: 위에 크게 로고와 제목, 친구와 설정 버튼 🌟 */
   .lobby-topbar {
-    height: 52px !important;
-    min-height: 52px !important;
-    max-height: 52px !important;
-    padding: 0 14px !important;
+    height: auto !important;
+    min-height: 54px !important;
+    max-height: none !important;
+    padding: 10px 18px 4px 18px !important; /* 3. 좌우 여백 18px */
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
     box-shadow: none !important;
-    border-bottom: 1px solid var(--border) !important;
+    border: none !important;
+    border-bottom: none !important;
     border-radius: 0 !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
     flex-wrap: nowrap !important;
     margin: 0 !important;
     width: 100% !important;
@@ -1332,7 +1333,7 @@ body {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
-    background: var(--bg-card) !important;
+    background: transparent !important;
   }
   .lobby-topbar .room-title {
     order: 1 !important;
@@ -1349,24 +1350,25 @@ body {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    gap: 8px !important;
+    gap: 10px !important;
   }
   .topbar-logo .logo-icon-wrap {
-    width: 32px !important;
-    height: 32px !important;
+    width: 38px !important;
+    height: 38px !important;
     border-radius: var(--radius-sm) !important;
     background: var(--green) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     flex-shrink: 0 !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
   }
   .topbar-logo .topbar-logo-svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 26px !important;
+    height: 26px !important;
   }
   .topbar-logo .logo-title {
-    font-size: 1.15rem !important;
+    font-size: 1.35rem !important;
     font-weight: 900 !important;
     color: var(--t1) !important;
     letter-spacing: -0.5px !important;
@@ -1388,11 +1390,11 @@ body {
     margin-left: auto !important;
   }
   .lobby-topbar-left #btn-marketplace {
-    display: none !important; /* 모바일 헤더에서는 종과 설정 2개로 단일화 */
+    display: none !important;
   }
   .lobby-topbar-left #btn-open-friends {
-    width: 36px !important;
-    height: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1407,7 +1409,7 @@ body {
   }
   .lobby-topbar-left .btn-icon-mobile {
     display: inline-block !important;
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
   }
 
   .lobby-topbar .room-header-actions {
@@ -1421,8 +1423,8 @@ body {
     margin-left: 2px !important;
   }
   #btn-open-settings {
-    width: 36px !important;
-    height: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1431,15 +1433,15 @@ body {
     border: none !important;
     color: var(--t1) !important;
     box-shadow: none !important;
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
   }
 
   .home-body-wrap {
     flex-direction: column !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    height: calc(100dvh - 52px) !important;
-    max-height: calc(100dvh - 52px) !important;
+    height: calc(100dvh - 54px) !important;
+    max-height: calc(100dvh - 54px) !important;
     overflow: hidden !important;
     width: 100% !important;
     display: flex !important;
@@ -1450,30 +1452,38 @@ body {
     display: none !important;
   }
 
-  /* 🌟 모바일 전용 [방 찾기] | [방 만들기] 상단 탭 🌟 */
+  /* 🌟 4. [방 찾기] | [방 만들기] 탭: 방 목록 카드와 빈틈없이 딱 붙도록 결합 🌟 */
   .mobile-lobby-tabs {
     display: flex !important;
     flex-shrink: 0 !important;
-    margin: 2px 12px 6px 12px !important;
-    background: var(--bg-subtle) !important;
+    margin: 0 !important;
+    background: var(--bg-hover) !important;
     border: 1px solid var(--border) !important;
-    border-radius: var(--radius) !important; /* 원래 라운딩 규격 10px */
-    padding: 3px !important;
+    border-bottom: none !important;
+    border-top-left-radius: var(--radius) !important;
+    border-top-right-radius: var(--radius) !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding: 4px 4px 0 4px !important;
     gap: 4px !important;
     box-sizing: border-box !important;
+    width: 100% !important;
   }
   .mobile-lobby-tab {
     flex: 1 !important;
-    height: 38px !important;
+    height: 40px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     border: none !important;
     background: transparent !important;
     color: var(--t2) !important;
-    font-size: 0.92rem !important;
+    font-size: 0.95rem !important;
     font-weight: 800 !important;
-    border-radius: var(--radius-sm) !important; /* 원래 라운딩 규격 8px */
+    border-top-left-radius: var(--radius-sm) !important;
+    border-top-right-radius: var(--radius-sm) !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
     cursor: pointer !important;
     transition: all 0.18s ease !important;
   }
@@ -1483,14 +1493,14 @@ body {
     box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3) !important;
   }
 
-  /* 🌟 메인 컨테이너 (스크롤 없이 한눈에 100dvh 원스크린 핏) 🌟 */
+  /* 🌟 3. 메인 컨테이너 (좌우 여백 18px로 넉넉하게) 🌟 */
   .home-main {
     flex: 1 1 auto !important;
     height: auto !important;
     max-height: none !important;
     min-height: 0 !important;
     overflow: hidden !important;
-    padding: 0 12px 10px 12px !important;
+    padding: 0 18px 12px 18px !important; /* 좌우 18px */
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
@@ -1502,7 +1512,7 @@ body {
   .home-lobby-container {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 0 !important; /* 탭과 방 목록 밀착 결합 */
     width: 100% !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
@@ -1514,7 +1524,7 @@ body {
     padding: 0 !important;
   }
 
-  /* 🌟 방 목록 카드 🌟 */
+  /* 🌟 4. 방 목록 카드: 탭과 상단 밀착 & 상단 라운딩 플랫 🌟 */
   .lobby-card {
     order: 1 !important;
     flex: 1 1 auto !important;
@@ -1522,8 +1532,11 @@ body {
     height: 100% !important;
     max-height: none !important;
     min-height: 0 !important;
-    padding: 10px 12px !important;
-    border-radius: var(--radius) !important; /* 원래 라운딩 규격 10px */
+    padding: 12px 14px !important;
+    border-top-left-radius: 0 !important; /* 상단 탭과 완벽 밀착 */
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: var(--radius) !important;
+    border-bottom-right-radius: var(--radius) !important;
     border: 1px solid var(--border) !important;
     box-shadow: none !important;
     display: flex !important;
@@ -1531,9 +1544,10 @@ body {
     gap: 8px !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+    margin-top: 0 !important;
   }
   .lobby-card .lobby-header {
-    padding: 0 0 2px 0 !important;
+    padding: 0 0 6px 0 !important;
     flex-shrink: 0 !important;
     display: flex !important;
     flex-direction: row !important;
@@ -1550,75 +1564,74 @@ body {
     align-items: center !important;
     justify-content: flex-start !important;
     width: auto !important;
-    gap: 8px !important;
+    gap: 0 !important;
   }
+
+  /* 4. '방 목록' 글씨 제거 */
   .lobby-card .lobby-title {
-    font-size: 0.95rem !important;
-    font-weight: 800 !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
+    display: none !important;
   }
+
+  /* 🌟 5. 방 목록 없앤 곳에 [전체] [공개방] [비밀방] 버튼 크게 & 초록색 활성화 🌟 */
   #lobby-filter-tabs {
     display: flex !important;
     flex-direction: row !important;
-    gap: 4px !important;
+    gap: 6px !important;
     margin-left: 0 !important;
     flex-shrink: 0 !important;
+    align-items: center !important;
   }
   .lobby-tab-btn,
-  #lobby-filter-tabs .lobby-tab-btn,
-  #shop-filter-tabs .lobby-tab-btn {
-    padding: 3px 8px !important;
-    font-size: 0.75rem !important;
-    font-weight: 700 !important;
+  #lobby-filter-tabs .lobby-tab-btn {
+    padding: 6px 14px !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
     border-radius: var(--radius-sm) !important;
     white-space: nowrap !important;
     gap: 4px !important;
-    height: 26px !important;
+    height: 34px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
+    background: var(--bg-hover) !important;
+    color: var(--t2) !important;
+    border: 1px solid var(--border) !important;
+    transition: all 0.18s ease !important;
+    cursor: pointer !important;
   }
-  #btn-refresh-lobby {
-    display: none !important; /* 모바일에서 새로고침 버튼 숨김 */
+  .lobby-tab-btn.active,
+  #lobby-filter-tabs .lobby-tab-btn.active {
+    background: var(--green) !important;
+    color: #ffffff !important;
+    border-color: var(--green) !important;
+    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3) !important;
   }
-  .lobby-title-area {
+  .lobby-tab-btn.active i,
+  #lobby-filter-tabs .lobby-tab-btn.active i {
+    color: #ffffff !important;
+  }
+
+  /* 🌟 6. '모든 게임' 테두리 없이 깔끔하게 선택 가능 🌟 */
+  .lobby-header-actions {
     display: flex !important;
-    flex-direction: row !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    width: 100% !important;
-    gap: 8px !important;
+    gap: 4px !important;
   }
-  .lobby-card .lobby-title {
+  #lobby-game-filter,
+  .lobby-game-select {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
     font-size: 0.92rem !important;
     font-weight: 800 !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-  #lobby-filter-tabs {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 3px !important;
-    margin-left: 0 !important;
-    flex-shrink: 0 !important;
-  }
-  .lobby-tab-btn,
-  #lobby-filter-tabs .lobby-tab-btn,
-  #shop-filter-tabs .lobby-tab-btn {
-    padding: 3px 7px !important;
-    font-size: 0.72rem !important;
-    border-radius: 6px !important;
-    white-space: nowrap !important;
-    gap: 3px !important;
-    height: 24px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    flex-shrink: 0 !important;
+    color: var(--t1) !important;
+    padding: 4px 6px !important;
+    cursor: pointer !important;
+    outline: none !important;
+    border-radius: var(--radius-sm) !important;
+    text-align: right !important;
   }
 
   /* 🌟 모바일 상점 헤더: 방 목록과 같은 쪽(1행 타이틀 바로 옆)에 탭 가로 배치 🌟 */
@@ -4924,6 +4937,7 @@ html, body {
     flex-direction: column !important;
   }
   /* 🌟 방 로비 상단바: 로비와 100% 동일한 전폭 앱 헤더 스타일 통일 🌟 */
+  /* 🌟 방 로비 상단: 상단바 박스/테두리 제거 및 시원한 앱 헤더 전환 🌟 */
   .room-header {
     display: flex !important;
     flex-direction: row !important;
@@ -4931,15 +4945,15 @@ html, body {
     justify-content: space-between !important;
     flex-wrap: nowrap !important;
     margin: 0 !important;
-    padding: 0 14px !important;
-    background: var(--bg-card) !important;
+    padding: 10px 18px 4px 18px !important; /* 좌우 18px */
+    background: transparent !important;
     border: none !important;
-    border-bottom: 1px solid var(--border) !important;
+    border-bottom: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    max-height: 52px !important;
+    height: auto !important;
+    min-height: 54px !important;
+    max-height: none !important;
     width: 100% !important;
     max-width: 100vw !important;
     box-sizing: border-box !important;
@@ -4950,19 +4964,19 @@ html, body {
     gap: 8px !important;
   }
 
-  /* 🌟 모바일 방 상단바 버튼들 통일: 테두리 있고(border: 1px solid var(--border)), 배경색 없음(background: transparent) 🌟 */
+  /* 🌟 모바일 방 상단바 버튼들 통일: 투명 배경 & 40px 🌟 */
   #btn-leave-room {
-    width: 34px !important;
-    height: 34px !important;
+    width: 40px !important;
+    height: 40px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: var(--radius-sm) !important;
     flex-shrink: 0 !important;
-    font-size: 1rem !important;
+    font-size: 1.25rem !important;
     background: transparent !important;
-    border: 1px solid var(--border) !important;
+    border: none !important;
     color: var(--t1) !important;
     box-shadow: none !important;
   }
@@ -4984,9 +4998,9 @@ html, body {
     display: none !important;
   }
   .room-code-badge {
-    font-size: 1.15rem !important;
+    font-size: 1.2rem !important;
     font-weight: 900 !important;
-    padding: 3px 10px !important;
+    padding: 4px 12px !important;
     letter-spacing: 2px !important;
     border-radius: var(--radius-xs) !important;
   }
@@ -4994,7 +5008,7 @@ html, body {
     display: none !important; /* 모바일에서 복사 버튼 숨김 - 룸 코드 뱃지 클릭으로 복사 가능 */
   }
 
-  /* 우측 상단바 액션 버튼 (친구 초대 & 환경설정 버튼 통일: 테두리 있고 배경색 없음) */
+  /* 우측 상단바 액션 버튼 (친구 초대 & 환경설정) */
   .room-header-actions {
     display: flex !important;
     align-items: center !important;
@@ -5003,18 +5017,20 @@ html, body {
   }
   #btn-room-invite,
   #btn-room-settings {
-    width: 34px !important;
-    height: 34px !important;
+    width: 40px !important;
+    height: 40px !important;
     padding: 0 !important;
     flex-shrink: 0 !important;
-    border: 1px solid var(--border) !important;
+    border: none !important;
     background: transparent !important;
     border-radius: var(--radius-sm) !important;
     box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 1rem !important;
+    font-size: 1.25rem !important;
+    color: var(--t1) !important;
+  }
     color: var(--t1) !important;
   }
 
@@ -5459,7 +5475,7 @@ html, body {
   flex-shrink: 0;
 }
 
-  /* 🌟 인게임 상단바: 로비/방과 100% 동일한 전폭 앱 헤더 스타일 통일 🌟 */
+  /* 🌟 인게임 상단: 상단바 박스/테두리 제거 및 시원한 앱 헤더 전환 🌟 */
   .game-header {
     position: sticky !important;
     top: 0 !important;
@@ -5470,34 +5486,36 @@ html, body {
     align-items: center !important;
     flex-wrap: nowrap !important;
     margin: 0 !important;
-    padding: 0 14px !important;
-    background: var(--bg-card) !important;
+    padding: 10px 18px 4px 18px !important; /* 좌우 18px */
+    background: transparent !important;
     border: none !important;
-    border-bottom: 1px solid var(--border) !important;
+    border-bottom: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     width: 100% !important;
     max-width: 100vw !important;
     box-sizing: border-box !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    max-height: 52px !important;
+    height: auto !important;
+    min-height: 54px !important;
+    max-height: none !important;
     gap: 8px !important;
   }
 
   /* 좌측: 방으로 돌아가기는 텍스트 숨기고 꺽쇄만 남김 */
   #btn-back-to-room {
-    width: 34px !important;
-    height: 34px !important;
+    width: 40px !important;
+    height: 40px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: var(--radius-sm) !important;
     flex-shrink: 0 !important;
-    font-size: 1.05rem !important;
-    background: var(--bg-hover) !important;
-    border: 1px solid var(--border) !important;
+    font-size: 1.25rem !important;
+    background: transparent !important;
+    border: none !important;
+    color: var(--t1) !important;
+    box-shadow: none !important;
   }
   #btn-back-to-room span {
     display: none !important; /* 모바일에서 '방으로 돌아가기' 텍스트 제거 */
@@ -5512,8 +5530,8 @@ html, body {
     text-overflow: ellipsis !important;
   }
   #current-game-title {
-    font-size: 1.02rem !important;
-    font-weight: 800 !important;
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
     color: var(--t1) !important;
     letter-spacing: -0.3px !important;
   }
@@ -5526,14 +5544,14 @@ html, body {
     flex-shrink: 0 !important;
   }
   .game-room-badge {
-    padding: 3px 8px !important;
-    font-size: 0.78rem !important;
+    padding: 4px 10px !important;
+    font-size: 0.82rem !important;
     font-weight: 800 !important;
     border-radius: var(--radius-xs) !important;
   }
   #btn-game-settings {
-    width: 34px !important;
-    height: 34px !important;
+    width: 40px !important;
+    height: 40px !important;
     flex-shrink: 0 !important;
     border: none !important;
     background: transparent !important;
@@ -5541,8 +5559,8 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 1rem !important;
-    color: var(--t2) !important;
+    font-size: 1.25rem !important;
+    color: var(--t1) !important;
   }
 
   /* 🌟 모바일 채팅 버튼: 화면 좌측 하단 원형 플로팅 액션 버튼(FAB)으로 배치 🌟 */
