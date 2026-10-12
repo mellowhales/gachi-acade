@@ -1466,19 +1466,22 @@ body {
     display: none !important;
   }
 
-  /* 🌟 3. [방 목록] | [상점] 탭: 전체 컨테이너 회색 배경 & 개별 버튼 배경 제거 🌟 */
+  /* 🌟 3. [방 목록] | [상점] 탭: 상단 라운딩(16px), 1.5px 회색 테두리, 하단 카드와 자연스럽게 일체형 결합 🌟 */
   .mobile-lobby-tabs {
     display: flex !important;
     flex-shrink: 0 !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 !important; /* 하단 여백 제거: 카드와 일체 결합 */
     background: #e9ecef !important; /* 전체 컨테이너 배경 회색 */
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    border-radius: 13px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+    border-radius: 16px 16px 0 0 !important; /* 상단만 둥근 모서리 라운딩 */
     padding: 3px !important;
     gap: 3px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    box-shadow: none !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+    position: relative !important;
+    z-index: 2 !important;
   }
   /* 미선택 탭: 버튼 배경색 없음 (투명) */
   .mobile-lobby-tab {
@@ -1535,7 +1538,7 @@ body {
     padding: 0 !important;
   }
 
-  /* 🌟 4. 방 목록 카드: 둥근 모서리(16px), 1.5px 회색 테두리 & 입체 회색 그림자 (스크롤 방지 고정) 🌟 */
+  /* 🌟 4. 방 목록 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
   .lobby-card {
     order: 1 !important;
     flex: 1 1 auto !important;
@@ -1544,9 +1547,10 @@ body {
     max-height: 100% !important;
     min-height: 0 !important;
     padding: 12px 14px !important;
-    border-radius: 16px !important; /* 4면 모두 둥근 모서리 라운딩 */
+    border-radius: 0 0 16px 16px !important; /* 하단만 둥근 모서리 라운딩 (상단 탭과 일체화) */
     border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 입체 회색 그림자 */
+    border-top: none !important; /* 상단 탭의 border-bottom과 일체화 */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important; /* 일체형 입체 회색 그림자 */
     background: var(--bg-card) !important;
     display: flex !important;
     flex-direction: column !important;
@@ -1968,7 +1972,7 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 카드: 둥근 모서리 라운딩(16px), 1.5px 회색 테두리 & 입체 회색 그림자 (스크롤 방지 고정) 🌟 */
+  /* 🌟 방 만들기 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
   .connect-card {
     order: 2 !important;
     flex: 1 1 auto !important;
@@ -1976,9 +1980,10 @@ body {
     max-height: 100% !important;
     min-height: 0 !important;
     padding: 12px 14px !important; /* lobby-card와 100% 동일 패딩 */
-    border-radius: 16px !important; /* 4면 모두 둥근 라운딩 */
+    border-radius: 0 0 16px 16px !important; /* 하단만 둥근 모서리 라운딩 (상단 탭과 일체화) */
     border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 선명한 입체 회색 그림자 */
+    border-top: none !important; /* 상단 탭의 border-bottom과 일체화 */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important; /* 일체형 입체 회색 그림자 */
     margin: 0 !important;
     display: none !important;
     flex-direction: column !important;
@@ -1988,10 +1993,71 @@ body {
     box-sizing: border-box !important;
     background: var(--bg-card) !important;
   }
-  .connect-tabs {
-    display: none !important; /* 상단 [방 찾기|방 만들기] 탭으로 제어하므로 숨김 */
+
+  /* 🌟 상점 카드 (모바일): 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
+  .lobby-shop-card {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    border-radius: 0 0 16px 16px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-top: none !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    background: var(--bg-card) !important;
   }
+  /* 🌟 방 설정 내부 토글 탭: [방 만들기] | [방 참가] 복원 🌟 */
+  .connect-tabs {
+    display: flex !important;
+    background: #e9ecef !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    border-radius: 12px !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    margin: 0 0 10px 0 !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .connect-tabs .ctab {
+    flex: 1 !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #495057 !important;
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+    border-radius: 9px !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease !important;
+    padding: 0 8px !important;
+  }
+  .connect-tabs .ctab.active {
+    background: var(--green) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  }
+  .connect-tabs .ctab.active i {
+    color: #ffffff !important;
+  }
+  .connect-tabs .ctab:not(.active) i {
+    color: #64748b !important;
+  }
+
   .connect-card .ctab-panel {
+    display: none !important;
+  }
+  .connect-card .ctab-panel.active {
     gap: 6px !important;
     display: flex !important;
     flex-direction: column !important;
@@ -2001,9 +2067,6 @@ body {
     justify-content: space-between !important;
     overflow: hidden !important;
   }
-  #panel-join {
-    display: none !important;
-  }
   .connect-card .create-room-options {
     display: flex !important;
     flex-direction: column !important;
@@ -2011,6 +2074,30 @@ body {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     justify-content: center !important;
+  }
+  #panel-join .join-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+  #panel-join .code-input-field {
+    text-align: center !important;
+    letter-spacing: 8px !important;
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    height: 48px !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+  }
+  #panel-join .panel-desc-box {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
   }
   .connect-card .btn-lg {
     display: flex !important;
@@ -12648,11 +12735,21 @@ html, body {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
     border: 1.5px solid #cbd5e1 !important;
   }
+  .mobile-lobby-tabs {
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+  }
   .lobby-card,
   .connect-card,
   .lobby-shop-card {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 0 0 16px 16px !important;
     border: 1.5px solid #cbd5e1 !important;
+    border-top: none !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+    margin-top: 0 !important;
   }
   .btn-lobby-long-chat {
     border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
@@ -12664,11 +12761,20 @@ html, body {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
+  [data-theme="dark"] .mobile-lobby-tabs {
+    background: #1e293b !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25), -2px 0 8px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.15) !important;
+  }
   [data-theme="dark"] .lobby-card,
   [data-theme="dark"] .connect-card,
   [data-theme="dark"] .lobby-shop-card {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+    border-radius: 0 0 16px 16px !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    border-top: none !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), -2px 0 8px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.15) !important;
+    margin-top: 0 !important;
   }
   [data-theme="dark"] .btn-lobby-long-chat {
     border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
@@ -12676,7 +12782,6 @@ html, body {
   }
 
   /* 5. 다크 모드: 탭 컨테이너 회색 배경 & 개별 버튼 배경 제거 (투명화) */
-  [data-theme="dark"] .mobile-lobby-tabs,
   [data-theme="dark"] #lobby-filter-tabs,
   [data-theme="dark"] #shop-filter-tabs {
     background: #1e293b !important;
@@ -12710,6 +12815,31 @@ html, body {
     border: none !important;
     box-shadow: none !important;
     color: #f1f5f9 !important;
+  }
+  /* 다크모드 방 설정 내부 토글 탭 */
+  [data-theme="dark"] .connect-tabs {
+    background: #1e293b !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  [data-theme="dark"] .connect-tabs .ctab:not(.active) {
+    background: transparent !important;
+    color: #94a3b8 !important;
+  }
+  [data-theme="dark"] .connect-tabs .ctab:not(.active) i {
+    color: #64748b !important;
+  }
+  [data-theme="dark"] .connect-tabs .ctab.active {
+    background: var(--green) !important;
+    color: #ffffff !important;
+  }
+  [data-theme="dark"] #panel-join .code-input-field {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
+  [data-theme="dark"] #panel-join .panel-desc-box {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
   }
 }
 
