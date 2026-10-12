@@ -12487,32 +12487,31 @@ html, body {
   opacity: 0.7;
 }
 
-/* 1. 로비 사이드바 하단 배너 (300x250) */
+/* 1. 로비 사이드바 하단 배너: 가치클라우드 (300x250) */
 .arcade-ad-sidebar-home {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 6px;
+  width: calc(100% - 20px);
+  margin: 10px 10px 8px 10px;
+  flex-shrink: 0;
 }
 .arcade-ad-sidebar-home .arcade-ad-content {
-  min-height: 250px;
-}
-
-/* 2. 방 대기실 좌측 하단 배너 (300x250) */
-.arcade-ad-room-left {
+  min-height: unset;
+  aspect-ratio: 300 / 250;
   width: 100%;
-  margin-top: 10px;
+  padding: 0;
+  background: transparent;
 }
-.arcade-ad-room-left .arcade-ad-content {
-  min-height: 250px;
-}
-
-/* 3. 인게임 좌측 하단 배너 (300x250) */
-.arcade-ad-game-left {
+.arcade-banner-img {
   width: 100%;
-  margin-top: 10px;
+  height: 100%;
+  aspect-ratio: 300 / 250;
+  display: block;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
-.arcade-ad-game-left .arcade-ad-content {
-  min-height: 250px;
+.arcade-ad-wrapper:hover .arcade-banner-img {
+  transform: scale(1.02);
+  filter: brightness(1.04);
 }
 
 /* 4. 사이드바 / 설정창 후원 스마트링크 버튼 */
