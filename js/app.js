@@ -864,10 +864,12 @@
       document.body.removeAttribute('data-theme');
     }
 
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', theme === 'dark' ? '#0f172a' : '#f6f8f7');
-    }
+    const targetColor = theme === 'dark' ? '#0f172a' : '#f6f8f7';
+    document.querySelectorAll('meta[name="theme-color"]').forEach(el => {
+      el.setAttribute('content', targetColor);
+    });
+    const msNavColor = document.querySelector('meta[name="msapplication-navbutton-color"]');
+    if (msNavColor) msNavColor.setAttribute('content', targetColor);
 
     const btnLight = $('btn-theme-light');
     const btnDark = $('btn-theme-dark');
@@ -1605,10 +1607,18 @@
     const roomCard = $('lobby-room-card');
     const shopCard = $('lobby-shop-card');
     const btn = $('btn-marketplace') || $('btn-toggle-shop');
+    const homeScreen = $('screen-home');
 
     if (_isShopActive) {
       if (roomCard) roomCard.classList.add('hidden');
       if (shopCard) shopCard.classList.remove('hidden');
+      if (homeScreen) {
+        homeScreen.classList.remove('mobile-show-create');
+        homeScreen.classList.add('mobile-shop-active');
+      }
+      if ($('tab-mobile-shop')) $('tab-mobile-shop').classList.add('active');
+      if ($('tab-mobile-room-list')) $('tab-mobile-room-list').classList.remove('active');
+      if (typeof _updateMobileRoomActionBtn === 'function') _updateMobileRoomActionBtn('hidden');
       if (btn) {
         btn.innerHTML = '<i class="fa-solid fa-layer-group"></i>';
         btn.title = '방 목록으로 돌아가기';
@@ -1619,6 +1629,10 @@
     } else {
       if (roomCard) roomCard.classList.remove('hidden');
       if (shopCard) shopCard.classList.add('hidden');
+      if (homeScreen) homeScreen.classList.remove('mobile-shop-active');
+      if ($('tab-mobile-room-list')) $('tab-mobile-room-list').classList.add('active');
+      if ($('tab-mobile-shop')) $('tab-mobile-shop').classList.remove('active');
+      if (typeof _updateMobileRoomActionBtn === 'function') _updateMobileRoomActionBtn('settings');
       if (btn) {
         btn.innerHTML = '<i class="fa-solid fa-store"></i>';
         btn.title = '상점 열기';
@@ -4771,27 +4785,99 @@
     });
   }
 
-  // 🌟 모바일 전용 탭 전환 ([방 찾기] | [방 만들기]) 🌟
-  if ($('tab-mobile-find-room') && $('tab-mobile-create-room')) {
-    $('tab-mobile-find-room').addEventListener('click', () => {
+  // 🌟 모바일 전용 탭 전환 ([방 목록] | [상점]) & 방 설정/방 만들기 인터랙션 🌟
+  function _updateMobileRoomActionBtn(mode) {
+    const btn = $('btn-mobile-room-action');
+    if (!btn) return;
+    if (mode === 'hidden') {
+      btn.style.display = 'none';
+      return;
+    }
+    btn.style.display = '';
+    if (mode === 'create') {
+      btn.classList.add('is-create-mode');
+      btn.innerHTML = '<i class="fa-solid fa-plus"></i><span>방 만들기</span>';
+    } else {
+      btn.classList.remove('is-create-mode');
+      btn.innerHTML = '<i class="fa-solid fa-sliders"></i><span>방 설정</span>';
+    }
+  }
+
+  const tabMobileRoomList = $('tab-mobile-room-list');
+  const tabMobileShop = $('tab-mobile-shop');
+
+  function _switchToMobileRoomList() {
+    if (tabMobileRoomList) tabMobileRoomList.classList.add('active');
+    if (tabMobileShop) tabMobileShop.classList.remove('active');
+    const homeScreen = $('screen-home');
+    if (homeScreen) {
+      homeScreen.classList.remove('mobile-show-create');
+      homeScreen.classList.remove('mobile-shop-active');
+    }
+    _toggleLobbyShop(false);
+    _updateMobileRoomActionBtn('settings');
+  }
+
+  function _switchToMobileShop() {
+    if (tabMobileShop) tabMobileShop.classList.add('active');
+    if (tabMobileRoomList) tabMobileRoomList.classList.remove('active');
+    const homeScreen = $('screen-home');
+    if (homeScreen) {
+      homeScreen.classList.remove('mobile-show-create');
+      homeScreen.classList.add('mobile-shop-active');
+    }
+    _toggleLobbyShop(true);
+    _updateMobileRoomActionBtn('hidden');
+  }
+
+  if (tabMobileRoomList) {
+    tabMobileRoomList.addEventListener('click', () => {
       Sound.playClick();
-      $('tab-mobile-find-room').classList.add('active');
-      $('tab-mobile-create-room').classList.remove('active');
+      _switchToMobileRoomList();
+    });
+  }
+
+  if (tabMobileShop) {
+    tabMobileShop.addEventListener('click', () => {
+      Sound.playClick();
+      _switchToMobileShop();
+    });
+  }
+
+  // 🌟 모바일 하단 [방 설정] ↔ [방 만들기] 액션 버튼 클릭 이벤트 🌟
+  const btnMobileRoomAction = $('btn-mobile-room-action');
+  if (btnMobileRoomAction) {
+    btnMobileRoomAction.addEventListener('click', () => {
+      Sound.playClick();
+      const homeScreen = $('screen-home');
+      const isCreateMode = btnMobileRoomAction.classList.contains('is-create-mode');
+
+      if (!isCreateMode) {
+        // [방 설정] 클릭: 방 목록 카드를 방 만들기 UI로 전환 & 버튼을 [방 만들기]로 변경
+        if (homeScreen) homeScreen.classList.add('mobile-show-create');
+        _updateMobileRoomActionBtn('create');
+        // 방 만들기 패널 활성화
+        if ($('tab-create')) $('tab-create').classList.add('active');
+        if ($('tab-join')) $('tab-join').classList.remove('active');
+        if ($('panel-create')) $('panel-create').classList.add('active');
+        if ($('panel-join')) $('panel-join').classList.remove('active');
+      } else {
+        // [방 만들기] 클릭: 실제 방 생성 트리거
+        if ($('btn-create-room')) {
+          $('btn-create-room').click();
+        }
+      }
+    });
+  }
+
+  // 🌟 방 만들기 UI 상단 [돌아가기] 버튼 클릭 이벤트 🌟
+  const btnBackToRoomList = $('btn-back-to-room-list');
+  if (btnBackToRoomList) {
+    btnBackToRoomList.addEventListener('click', () => {
+      Sound.playClick();
       const homeScreen = $('screen-home');
       if (homeScreen) homeScreen.classList.remove('mobile-show-create');
-    });
-
-    $('tab-mobile-create-room').addEventListener('click', () => {
-      Sound.playClick();
-      $('tab-mobile-create-room').classList.add('active');
-      $('tab-mobile-find-room').classList.remove('active');
-      const homeScreen = $('screen-home');
-      if (homeScreen) homeScreen.classList.add('mobile-show-create');
-      // 방 만들기 패널 활성화
-      if ($('tab-create')) $('tab-create').classList.add('active');
-      if ($('tab-join')) $('tab-join').classList.remove('active');
-      if ($('panel-create')) $('panel-create').classList.add('active');
-      if ($('panel-join')) $('panel-join').classList.remove('active');
+      _updateMobileRoomActionBtn('settings');
     });
   }
 
