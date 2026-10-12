@@ -4220,6 +4220,13 @@
       if (actionBadge) actionBadge.classList.add('hidden');
       const input = $('lobby-chat-input');
       if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
+      const box = $('lobby-chat-messages');
+      if (box) {
+        box.scrollTop = box.scrollHeight;
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(() => { if (box) box.scrollTop = box.scrollHeight; });
+        }
+      }
     }
 
     function _closeLobbyMobileChat() {
@@ -7020,8 +7027,23 @@
     if (backdrop) backdrop.classList.remove('hidden');
     if (badge) badge.classList.add('hidden');
     if (sideBadge) sideBadge.classList.add('hidden');
+    _scrollGameChatToBottom();
     const input = $('game-chat-input');
     if (input && window.innerWidth > 960) setTimeout(() => input.focus(), 150);
+  }
+
+  function _scrollGameChatToBottom() {
+    const el = $('game-chat-messages');
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    }
+    setTimeout(() => {
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
   }
 
   function _closeMobileChat() {

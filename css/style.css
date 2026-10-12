@@ -1010,7 +1010,7 @@ body {
   justify-content: space-between;
   flex-shrink: 0;
   padding-bottom: 4px;
-  border-bottom: 1px solid var(--border-sub);
+  border-bottom: none;
 }
 
 .lobby-chat-title {
@@ -1030,6 +1030,11 @@ body {
   flex-direction: column;
   gap: 3px;
   padding-right: 4px;
+}
+.lobby-chat-messages::before {
+  content: '';
+  margin-top: auto !important;
+  flex-shrink: 0;
 }
 
 .lobby-chat-welcome {
@@ -1131,7 +1136,7 @@ body {
   gap: 6px;
   flex-shrink: 0;
   padding-top: 4px;
-  border-top: 1px solid var(--border-sub);
+  border-top: none;
 }
 
 .lobby-chat-input {
@@ -1988,8 +1993,8 @@ body {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 12px 16px !important;
-    border-bottom: 1px solid var(--border-sub) !important;
+    padding: 16px 20px 8px 20px !important;
+    border-bottom: none !important;
     margin: 0 !important;
   }
   .lobby-chat-card .lobby-chat-messages {
@@ -1997,14 +2002,21 @@ body {
     max-height: none !important;
     min-height: 0 !important;
     overflow-y: auto !important;
-    padding: 12px 14px !important;
+    padding: 8px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .lobby-chat-card .lobby-chat-messages::before {
+    content: '' !important;
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
   }
   .lobby-chat-card .lobby-chat-form {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
-    padding: 10px 12px !important;
-    border-top: 1px solid var(--border-sub) !important;
+    padding: 6px 18px 14px 18px !important;
+    border-top: none !important;
     background: var(--bg-card) !important;
     box-sizing: border-box !important;
     margin: 0 !important;
@@ -3358,8 +3370,6 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
   box-sizing: border-box;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
 }
 .room-game-grid::-webkit-scrollbar {
   width: 5px;
@@ -3596,9 +3606,9 @@ body {
 }
 
 .gcp-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-sub);
-  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: none;
+  margin-bottom: 8px;
   flex-shrink: 0 !important;
 }
 .gcp-header h4 {
@@ -3626,6 +3636,11 @@ body {
   gap: 10px;
   scrollbar-width: thin;
 }
+.chat-messages-wrap::before {
+  content: '';
+  margin-top: auto !important;
+  flex-shrink: 0;
+}
 .chat-messages-wrap::-webkit-scrollbar { width: 4px; }
 .chat-messages-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
@@ -3644,10 +3659,10 @@ body {
   display: flex;
   flex-direction: column;
   max-width: 85%;
-  animation: fadeInMsg 0.18s ease;
+  animation: fadeInMsg 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes fadeInMsg {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -3699,8 +3714,8 @@ body {
 .chat-input-form {
   display: flex;
   gap: 6px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-sub);
+  padding-top: 8px;
+  border-top: none;
   margin-top: auto;
   width: 100%;
   box-sizing: border-box;
@@ -5362,6 +5377,9 @@ html, body {
 
   /* 🌟 참가자 목록 패널: 외부 테두리/그림자 투명화로 일체형 결합 (2줄 118px 고정 스크롤 뷰포트) 🌟 */
   .room-players-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
     width: auto !important;
@@ -5400,7 +5418,11 @@ html, body {
     flex-direction: column !important;
     gap: 6px !important;
     width: 100% !important;
-    margin-top: 6px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .player-slots:empty {
+    display: none !important;
   }
   .player-slot-empty {
     width: 100% !important;
@@ -5858,8 +5880,6 @@ html, body {
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
     box-sizing: border-box !important;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%) !important;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%) !important;
   }
   .room-game-grid::-webkit-scrollbar {
     display: none !important;
@@ -6018,14 +6038,21 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 12px 16px !important;
-    border-bottom: 1px solid var(--border-sub) !important;
+    padding: 16px 20px 8px 20px !important;
+    border-bottom: none !important;
     margin: 0 !important;
   }
   .room-chat-panel .chat-messages-wrap {
     flex: 1 !important;
     overflow-y: auto !important;
-    padding: 12px 14px !important;
+    padding: 8px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .room-chat-panel .chat-messages-wrap::before {
+    content: '' !important;
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
   }
   #btn-close-room-mobile-chat {
     display: inline-flex !important;
@@ -6398,27 +6425,34 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 12px 16px !important;
-    border-bottom: 1px solid var(--border-sub) !important;
+    padding: 16px 20px 8px 20px !important;
+    border-bottom: none !important;
     margin: 0 !important;
   }
   .game-chat-panel .chat-messages-wrap {
     flex: 1 !important;
     overflow-y: auto !important;
-    padding: 12px 14px !important;
+    padding: 8px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .game-chat-panel .chat-messages-wrap::before {
+    content: '' !important;
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
   }
   .btn-close-mobile-chat {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 / 인게임 모바일 채팅 입력폼 일체화 (버튼 내장 & 인풋 확대) 🌟 */
+  /* 🌟 방 / 인게임 모바일 채팅 입력폼 일체화 (버튼 내장 & 인풋 확대 & 구분선 제거) 🌟 */
   .room-chat-panel .chat-input-form,
   .game-chat-panel .chat-input-form {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
-    padding: 10px 12px !important;
-    border-top: 1px solid var(--border-sub) !important;
+    padding: 6px 18px 14px 18px !important;
+    border-top: none !important;
     background: var(--bg-card) !important;
     box-sizing: border-box !important;
     margin: 0 !important;
@@ -9679,7 +9713,7 @@ html, body {
   border-color: rgba(34, 197, 94, 0.35) !important;
 }
 [data-theme="dark"] .room-chat-panel .chat-input-form {
-  border-top-color: var(--border-sub) !important;
+  border-top: none !important;
 }
 [data-theme="dark"] .room-chat-panel .chat-input {
   background: var(--bg-subtle) !important;
@@ -11554,8 +11588,6 @@ html, body {
   scrollbar-gutter: stable;
   min-height: 0;
   padding-right: 4px;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
 }
 
 /* ── 상점 아이템 그리드 ── */
