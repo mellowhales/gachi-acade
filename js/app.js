@@ -8039,9 +8039,9 @@
     if (typeof currentGameModule !== 'undefined' && currentGameModule && typeof currentGameModule.onSidebarRedrawn === 'function') {
       currentGameModule.onSidebarRedrawn();
     }
-    if (typeof currentGameModule !== 'undefined' && currentGameModule && typeof currentGameModule.onSidebarRedrawn === 'function') {
-      currentGameModule.onSidebarRedrawn();
-    }
+    requestAnimationFrame(() => {
+      _scrollToCurrentTurnPlayer();
+    });
   }
 
   function _checkIsPlayerTurn(playerObj, playerIdx, currentTurnPlayerIdOrIdx, gameKey) {
@@ -8158,6 +8158,22 @@
         tagEl.innerHTML = _getPlayerOrderTag(selectedGameKey, idx, isTurn);
       }
     });
+
+    requestAnimationFrame(() => {
+      _scrollToCurrentTurnPlayer();
+    });
+  }
+
+  // 🌟 현재 턴 플레이어로 인게임 참가자 목록 자연스럽게 스크롤
+  function _scrollToCurrentTurnPlayer() {
+    const listEl = $('gsp-player-list');
+    if (!listEl) return;
+    const currentTurnEl = listEl.querySelector('.gsp-item.is-current-turn');
+    if (!currentTurnEl) return;
+    const listRect = listEl.getBoundingClientRect();
+    const itemRect = currentTurnEl.getBoundingClientRect();
+    const offsetWithinList = itemRect.top - listRect.top + listEl.scrollTop;
+    listEl.scrollTo({ top: Math.max(0, offsetWithinList), behavior: 'smooth' });
   }
 
   // 게임 결과 콜백

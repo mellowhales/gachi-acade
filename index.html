@@ -27,10 +27,10 @@
   <link rel="icon" type="image/png" sizes="192x192" href="https://gachiarcade.kro.kr/favicon.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="https://gachiarcade.kro.kr/favicon.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="https://gachiarcade.kro.kr/favicon.png" />
-  <meta name="theme-color" content="#f6f8f7" />
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8f7" />
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc" />
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a" />
-  <meta name="msapplication-navbutton-color" content="#f6f8f7" />
+  <meta name="msapplication-navbutton-color" content="#f8fafc" />
 
   <!-- 💬 카카오톡 & SNS 오픈그래프 (Open Graph) 메타 태그 -->
   <meta property="og:type" content="website" />
@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.17.0" />
-  <link rel="stylesheet" href="css/games.css?v=1.17.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.18.0" />
+  <link rel="stylesheet" href="css/games.css?v=1.18.0" />
 </head>
 <body>
 
@@ -658,15 +658,10 @@
             <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg" alt="🎉" class="emoji-img">
           </button>
         </div>
-        <div class="room-side-actions">
-          <button type="button" class="btn-card-side-action" id="btn-room-invite" title="친구 초대하기">
-            <i class="fa-solid fa-user-plus"></i>
-          </button>
-          <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat btn-card-side-sq" id="btn-room-side-chat" title="채팅 열기">
-            <i class="fa-solid fa-comment-dots"></i>
-            <span class="chat-badge-dot hidden" id="room-side-chat-badge"></span>
-          </button>
-        </div>
+        <button type="button" class="btn-mobile-lobby-chat btn-card-side-chat" id="btn-room-side-chat" title="채팅 열기">
+          <i class="fa-solid fa-comment-dots"></i>
+          <span class="chat-badge-dot hidden" id="room-side-chat-badge"></span>
+        </button>
       </div>
 
 
@@ -1270,7 +1265,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.17.0</span>
+              <span class="about-version-tag">v1.18.0</span>
             </div>
           </div>
         </div>
@@ -1283,6 +1278,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.18.0]</span>
+              <span class="changelog-text">참가자 대기 슬롯 및 클릭 초대 UI 복원, 현재 선택 게임 요약 배너 복원, 인게임 턴 플레이어 자동 스무스 스크롤, 게임/상점 스크롤 페이드 마스크, 모바일 안내메시지 숨김, 탭 하이라이트 박스 제거 및 배경색 연한 회색 조정</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.17.0]</span>
               <span class="changelog-text">모바일 채팅 UI 중앙 플로팅 팝업 모달 개편(부드러운 애니메이션, 입력칸 확대 및 전송 버튼 내장 일체화, 무테 닫기 버튼), 방 화면 친구 초대 버튼 사이드 이동 및 정사각형 배치, 설정 문의 탭 제거</span>
             </div>
@@ -2052,7 +2051,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.17.0"></script>
+<script src="js/app.js?v=1.18.0"></script>
 
 </body>
 </html>
