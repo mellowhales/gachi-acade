@@ -4012,17 +4012,18 @@ body {
 .gsp-item.is-current-turn {
   border: 2px solid var(--green) !important;
   box-shadow: 0 4px 14px rgba(72, 187, 120, 0.35);
-  animation: turnCardBounce 1.2s infinite ease-in-out;
+  animation: none !important;
+  transform: none !important;
 }
 
 @keyframes turnCardBounce {
   0%, 100% {
-    transform: scale(1);
+    transform: none;
     box-shadow: 0 4px 14px rgba(72, 187, 120, 0.35);
   }
   50% {
-    transform: scale(1.04) translateY(-1px);
-    box-shadow: 0 6px 18px rgba(72, 187, 120, 0.55);
+    transform: none;
+    box-shadow: 0 4px 14px rgba(72, 187, 120, 0.45);
   }
 }
 
@@ -5746,9 +5747,9 @@ html, body {
   .room-center-panel {
     width: 100% !important;
     max-width: 100% !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0px !important;
     min-height: 0 !important;
-    height: auto !important;
+    height: 100% !important;
     max-height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -5761,15 +5762,17 @@ html, body {
     background: var(--bg-card) !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    overscroll-behavior: none !important;
   }
 
   .game-select-panel {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0px !important;
     min-height: 0 !important;
     overflow: hidden !important;
+    overscroll-behavior: none !important;
     gap: 4px !important;
   }
   /* 🌟 모바일 현재 선택 게임 요약 배너 (약간 더 위에 배치, 게임 목록과 여백 확보) 🌟 */
@@ -5784,6 +5787,7 @@ html, body {
     margin: 0 0 10px 0 !important;
     flex-shrink: 0 !important;
     position: relative !important;
+    z-index: 2 !important;
     box-sizing: border-box !important;
   }
   .room-selected-game-banner .rsgb-icon-wrap {
@@ -5834,17 +5838,22 @@ html, body {
     display: none !important;
   }
 
-  /* 🌟 '게임 선택' 문구: 구분선 제거 및 콤팩트 배치 🌟 */
+  /* 🌟 '게임 선택' / 라운드 / 진영 헤더: 고정 높이(32px)로 카드 움찔거림 완전 방지 🌟 */
   .game-select-panel .panel-header {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 0 0 2px 0 !important;
-    gap: 4px !important;
-    min-height: auto !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 !important;
+    margin: 0 0 4px 0 !important;
+    gap: 0 !important;
     border-bottom: none !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
   }
   .game-select-panel.has-extra-settings .panel-title {
     display: none !important;
@@ -5855,6 +5864,8 @@ html, body {
     justify-content: center !important;
     text-align: center !important;
     margin: 0 auto !important;
+    height: 32px !important;
+    line-height: 32px !important;
     font-size: 0.95rem !important;
     font-weight: 800 !important;
     gap: 6px !important;
@@ -5862,23 +5873,25 @@ html, body {
   }
   .game-extra-settings-bar {
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
+    height: 32px !important;
     margin: 0 auto !important;
     gap: 6px !important;
   }
   .extra-setting-item {
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
     justify-content: center !important;
+    height: 32px !important;
     gap: 6px !important;
   }
   .side-select-toggle {
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     justify-content: center !important;
     gap: 4px !important;
   }
@@ -5897,7 +5910,7 @@ html, body {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
     width: 100% !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0px !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow-y: auto !important;
@@ -6304,6 +6317,8 @@ html, body {
   .gsp-item.is-current-turn {
     border-color: var(--green) !important;
     background: var(--green-tint, #f0fff4) !important;
+    animation: none !important;
+    transform: none !important;
   }
   .gsp-avatar {
     width: 38px !important;
@@ -9254,11 +9269,15 @@ html, body {
 [data-theme="dark"] .gsp-item.is-current-turn:not([class*="pcard-theme-"]) {
   background: rgba(34, 197, 94, 0.18) !important;
   border-color: var(--green) !important;
+  animation: none !important;
+  transform: none !important;
 }
 
 [data-theme="dark"] .gsp-item.is-current-turn[class*="pcard-theme-"] {
   border: 2px solid #22c55e !important;
   box-shadow: 0 0 16px rgba(34, 197, 94, 0.6) !important;
+  animation: none !important;
+  transform: none !important;
 }
 
 [data-theme="dark"] .chat-messages,

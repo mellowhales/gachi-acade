@@ -7437,6 +7437,12 @@
       }
     }
 
+    // 🌟 모바일 방 화면: 준비 상태 토글 시 패널 스크롤 밀림 방지하여 배너 항상 고정보장
+    const centerPanelEl = document.querySelector('.room-center-panel');
+    if (centerPanelEl && centerPanelEl.scrollTop !== 0) centerPanelEl.scrollTop = 0;
+    const selectPanelEl = document.querySelector('.game-select-panel');
+    if (selectPanelEl && selectPanelEl.scrollTop !== 0) selectPanelEl.scrollTop = 0;
+
     if ($('game-select-role-hint')) {
       if (playerCount >= 3) {
         $('game-select-role-hint').textContent = amIHost ? '3인 이상은 2~5인 게임만 선택 가능' : '방장만 변경 가능';
@@ -7528,13 +7534,18 @@
   });
 
   // 게스트 준비 버튼 토글
-  $('btn-ready').addEventListener('click', () => {
+  $('btn-ready').addEventListener('click', (e) => {
+    if (e) e.preventDefault();
     const amIHost = P2P.isHost() || isHostPlayer;
     if (amIHost) return;
     isMyReady = !isMyReady;
     Sound.playReady();
     P2P.send({ type: 'toggle_ready', isReady: isMyReady });
     _updateRoomUI();
+    const cp = document.querySelector('.room-center-panel');
+    if (cp && cp.scrollTop !== 0) cp.scrollTop = 0;
+    const sp = document.querySelector('.game-select-panel');
+    if (sp && sp.scrollTop !== 0) sp.scrollTop = 0;
   });
 
   // 방장 게임 시작 (개발자 모드 포함)
