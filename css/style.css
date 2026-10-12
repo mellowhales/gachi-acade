@@ -1535,23 +1535,23 @@ body {
     padding: 0 !important;
   }
 
-  /* 🌟 4. 방 목록 카드: 둥근 모서리(16px), 얇은 회색 테두리 & 선명한 회색 그림자 🌟 */
+  /* 🌟 4. 방 목록 카드: 둥근 모서리(16px), 1.5px 회색 테두리 & 입체 회색 그림자 (스크롤 방지 고정) 🌟 */
   .lobby-card {
     order: 1 !important;
     flex: 1 1 auto !important;
     width: 100% !important;
     height: 100% !important;
-    max-height: none !important;
+    max-height: 100% !important;
     min-height: 0 !important;
     padding: 12px 14px !important;
     border-radius: 16px !important; /* 4면 모두 둥근 모서리 라운딩 */
-    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.03) !important; /* 선명한 회색 그림자 */
+    border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 입체 회색 그림자 */
     background: var(--bg-card) !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
-    overflow: hidden !important;
+    overflow: hidden !important; /* 절대 스크롤 방지: 크기 고정 */
     box-sizing: border-box !important;
     margin-top: 0 !important;
   }
@@ -1870,7 +1870,7 @@ body {
     height: 32px !important;
   }
 
-  /* 🌟 모바일 전용 [와이드 채팅] 버튼: 사이트 고유 에메랄드 그린 컬러 & 회색 그림자 🌟 */
+  /* 🌟 모바일 전용 [와이드 채팅] 버튼: 사이트 고유 에메랄드 그린 컬러 & 테두리 + 회색 입체 그림자 🌟 */
   .btn-lobby-long-chat {
     display: flex !important;
     align-items: center !important;
@@ -1880,12 +1880,12 @@ body {
     height: 46px !important;
     min-height: 46px !important;
     background: var(--green) !important;
-    border: none !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.12) !important; /* 채팅 테두리 추가 */
     border-radius: 14px !important; /* 둥근 모서리 라운딩 */
     color: #ffffff !important;
     font-size: 1rem !important;
     font-weight: 800 !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important; /* 차분한 회색 그림자 적용 */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06) !important; /* 선명한 회색 그림자 */
     cursor: pointer !important;
     flex-shrink: 0 !important;
     margin-top: 10px !important; /* 상하 여백 넉넉하게 확보 */
@@ -1968,22 +1968,23 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 카드: 둥근 모서리 라운딩(16px), 얇은 회색 테두리 & 선명한 회색 그림자 🌟 */
+  /* 🌟 방 만들기 카드: 둥근 모서리 라운딩(16px), 1.5px 회색 테두리 & 입체 회색 그림자 (스크롤 방지 고정) 🌟 */
   .connect-card {
     order: 2 !important;
     flex: 1 1 auto !important;
     height: 100% !important;
-    max-height: none !important;
+    max-height: 100% !important;
     min-height: 0 !important;
-    padding: 14px 16px !important;
+    padding: 12px 14px !important; /* lobby-card와 100% 동일 패딩 */
     border-radius: 16px !important; /* 4면 모두 둥근 라운딩 */
-    border: 1.5px solid #cbd5e1 !important; /* 약간 굵은 선명한 연한 회색 테두리 */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.03) !important; /* 선명한 회색 그림자 */
+    border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* 선명한 입체 회색 그림자 */
     margin: 0 !important;
     display: none !important;
     flex-direction: column !important;
-    gap: 12px !important;
-    overflow-y: auto !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    overflow: hidden !important; /* 스크롤 절대 방지! 카드 크기 완전 고정 */
     box-sizing: border-box !important;
     background: var(--bg-card) !important;
   }
@@ -1991,11 +1992,14 @@ body {
     display: none !important; /* 상단 [방 찾기|방 만들기] 탭으로 제어하므로 숨김 */
   }
   .connect-card .ctab-panel {
-    gap: 10px !important;
+    gap: 6px !important;
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     justify-content: space-between !important;
+    overflow: hidden !important;
   }
   #panel-join {
     display: none !important;
@@ -2003,7 +2007,10 @@ body {
   .connect-card .create-room-options {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    justify-content: center !important;
   }
   .connect-card .btn-lg {
     display: flex !important;
@@ -2011,11 +2018,11 @@ body {
     justify-content: center !important;
     gap: 8px !important;
     width: 100% !important;
-    height: 44px !important;
-    min-height: 44px !important;
+    height: 42px !important; /* btn-mobile-room-action과 100% 동일한 42px */
+    min-height: 42px !important;
     background: var(--green) !important;
     color: #ffffff !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
     font-weight: 800 !important;
     border-radius: 12px !important;
     border: none !important;
@@ -2025,6 +2032,7 @@ body {
     margin-top: auto !important;
     margin-bottom: 0 !important;
     box-sizing: border-box !important;
+    flex-shrink: 0 !important;
   }
 
   /* 모바일 탭 상태 클래스 제어 */
@@ -12633,35 +12641,38 @@ html, body {
     box-shadow: none !important;
   }
 
-  /* 3. 프로필 카드 & 방 카드: 은은한 회색 음영을 주어 배경과의 명확한 구분감 생성 */
+  /* 3. 프로필 카드 & 방 목록/상점 카드 & 채팅 버튼: 명확한 회색 테두리 + 입체 회색 그림자 */
   .home-user-bar,
   .home-user-bar:not([class*="pcard-theme-"]),
   .home-user-bar[class*="pcard-theme-"] {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    border: 1.5px solid #cbd5e1 !important;
   }
   .lobby-card,
-  .connect-card {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  .connect-card,
+  .lobby-shop-card {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    border: 1.5px solid #cbd5e1 !important;
+  }
+  .btn-lobby-long-chat {
+    border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
   }
   [data-theme="dark"] .home-user-bar,
   [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]),
   [data-theme="dark"] .home-user-bar[class*="pcard-theme-"] {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
   [data-theme="dark"] .lobby-card,
-  [data-theme="dark"] .connect-card {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  [data-theme="dark"] .connect-card,
+  [data-theme="dark"] .lobby-shop-card {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
-
-  /* 4. 기본 프로필 카드: 다른 카드들과 100% 동일한 배경/테두리 지정 */
-  .home-user-bar:not([class*="pcard-theme-"]) {
-    background: var(--bg-card) !important;
-    border: 1.5px solid #cbd5e1 !important;
-  }
-  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]) {
-    background: var(--bg-card) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  [data-theme="dark"] .btn-lobby-long-chat {
+    border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
   }
 
   /* 5. 다크 모드: 탭 컨테이너 회색 배경 & 개별 버튼 배경 제거 (투명화) */
