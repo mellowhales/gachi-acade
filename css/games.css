@@ -101,13 +101,13 @@
 /* 내 턴: 배경색 없이 상쾌한 그린 텍스트 + 생동감 있는 펄스 닷 */
 .turn-indicator .turn-label.my-turn,
 .turn-label.my-turn {
-  color: var(--green, #10b981) !important;
+  color: var(--green, #83c774) !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 .turn-indicator .turn-label.my-turn i {
-  color: var(--green, #10b981) !important;
+  color: var(--green, #83c774) !important;
   animation: turnPulseDot 1.5s infinite;
 }
 
@@ -2194,8 +2194,8 @@
 .cm-timer-gauge-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #10b981 0%, #48bb78 100%);
-  box-shadow: 0 0 8px rgba(72, 187, 120, 0.4);
+  background: linear-gradient(90deg, #83c774 0%, #a5e897 100%);
+  box-shadow: 0 0 8px rgba(131, 199, 116, 0.4);
   transition: width 1s linear, background 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -2456,7 +2456,7 @@
 }
 .cm-solved-badge-floating i {
   font-size: 1.2rem;
-  color: #a7f3d0;
+  color: #a5e897;
 }
 
 .cm-guess-solved-msg {
@@ -2525,28 +2525,9 @@
   }
 }
 
-/* ── 🌟 캐치마인드 플레이어 카드 미니 점수 뱃지 (프로필 카드 크기 영향 제로) ── */
+/* ── 🌟 캐치마인드 플레이어 카드 점수 뱃지 (사용자 요청: 전면 숨김) ── */
 .cm-gsp-score-badge {
-  position: absolute !important;
-  right: 8px !important;
-  top: 6px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 2px !important;
-  font-size: 0.68rem !important;
-  font-weight: 800 !important;
-  color: #d97706 !important;
-  background: rgba(245, 158, 11, 0.12) !important;
-  border: 1px solid rgba(245, 158, 11, 0.25) !important;
-  border-radius: 6px !important;
-  padding: 1px 5px !important;
-  line-height: 1.2 !important;
-  z-index: 2 !important;
-  pointer-events: none !important;
-  box-sizing: border-box !important;
-}
-.gsp-item.can-manage .cm-gsp-score-badge {
-  right: 28px !important;
+  display: none !important;
 }
 
 /* ── 💬 참가자 사이드바 오답/정답 말풍선 (PC: 카드 우측 팝업, 모바일: 중앙 상단 플로팅) ── */
@@ -2595,13 +2576,13 @@
 }
 
 .gsp-speech-bubble.correct {
-  background: #15803d;
-  border-color: #4ade80;
+  background: #509941;
+  border-color: #83c774;
   color: #ffffff;
-  box-shadow: 0 8px 24px rgba(21, 128, 61, 0.5);
+  box-shadow: 0 8px 24px rgba(80, 153, 65, 0.5);
 }
 .gsp-speech-bubble.correct.fixed-pc::before {
-  border-color: transparent #15803d transparent transparent;
+  border-color: transparent #509941 transparent transparent;
 }
 
 @keyframes bubblePopRight {
@@ -4104,7 +4085,7 @@
 .tier-gold { background: rgba(245, 158, 11, 0.12); border-left: 4px solid #f59e0b; color: #fef08a; }
 .tier-purple { background: rgba(168, 85, 247, 0.12); border-left: 4px solid #a855f7; color: #e9d5ff; }
 .tier-blue { background: rgba(59, 130, 246, 0.12); border-left: 4px solid #3b82f6; color: #bfdbfe; }
-.tier-green { background: rgba(16, 185, 129, 0.12); border-left: 4px solid #10b981; color: #a7f3d0; }
+.tier-green { background: rgba(131, 199, 116, 0.12); border-left: 4px solid #83c774; color: #c3eec0; }
 .tier-red { background: rgba(239, 68, 68, 0.12); border-left: 4px solid #ef4444; color: #fecaca; }
 
 /* ── 모바일 반응형 ── */

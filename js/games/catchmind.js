@@ -2509,37 +2509,34 @@ const CatchmindGame = (() => {
     const bub = document.createElement('div');
     bub.setAttribute('data-bubble-player', playerId);
 
-    if (isMobile) {
-      // 🌟 모바일: 화면 상단 중앙에 플로팅 토스트로 노출 (오른쪽 말고 적당한 곳 플로팅)
-      bub.className = `gsp-speech-bubble mobile-floating ${isCorrect ? 'correct' : 'wrong'}`;
-      const pName = (player && player.name) ? _escapeHtml(player.name) : '';
-      bub.innerHTML = isCorrect
-        ? `<i class="fa-solid fa-circle-check" style="color:#4ade80;"></i> <b style="color:#fff;">${pName}</b>: ${text}`
-        : `<i class="fa-solid fa-circle-xmark" style="color:#f87171;"></i> <b style="color:#fff;">${pName}</b>: ${text}`;
-      document.body.appendChild(bub);
-    } else {
-      // 🌟 PC: 프로필 카드 오른쪽 바깥에 fixed로 정확히 팝업 (부모 컨테이너 overflow 클리핑 완전 방지)
-      bub.className = `gsp-speech-bubble fixed-pc ${isCorrect ? 'correct' : 'wrong'}`;
-      bub.innerHTML = isCorrect
-        ? `<i class="fa-solid fa-circle-check" style="color:#4ade80;"></i> ${text}`
-        : `<i class="fa-solid fa-circle-xmark" style="color:#f87171;"></i> ${text}`;
+    // 🌟 오답/정답 말풍선: PC와 모바일 모두 프로필 카드 옆쪽에 자연스럽게 팝업 🌟
+    bub.className = `gsp-speech-bubble fixed-pc ${isCorrect ? 'correct' : 'wrong'}`;
+    bub.innerHTML = isCorrect
+      ? `<i class="fa-solid fa-circle-check" style="color:#4ade80;"></i> ${text}`
+      : `<i class="fa-solid fa-circle-xmark" style="color:#f87171;"></i> ${text}`;
 
-      if (item) {
-        const rect = item.getBoundingClientRect();
-        bub.style.left = `${rect.right + 12}px`;
-        bub.style.top = `${rect.top + rect.height / 2}px`;
-        bub.style.transform = 'translateY(-50%)';
+    if (item) {
+      const rect = item.getBoundingClientRect();
+      const idealLeft = rect.right + 10;
+      // 모바일 등 좁은 화면에서 우측 뷰포트 벗어남 방지
+      if (idealLeft + 90 > window.innerWidth) {
+        bub.style.left = 'auto';
+        bub.style.right = '8px';
       } else {
-        bub.style.left = '280px';
-        bub.style.top = '120px';
+        bub.style.left = `${idealLeft}px`;
       }
-      document.body.appendChild(bub);
+      bub.style.top = `${rect.top + rect.height / 2}px`;
+      bub.style.transform = 'translateY(-50%)';
+    } else {
+      bub.style.left = '240px';
+      bub.style.top = '120px';
     }
+    document.body.appendChild(bub);
 
     // 2.8초 후 부드럽게 소멸
     setTimeout(() => {
       bub.style.opacity = '0';
-      bub.style.transform = isMobile ? 'translate(-50%, -10px) scale(0.9)' : 'translateY(-50%) scale(0.85)';
+      bub.style.transform = 'translateY(-50%) scale(0.85)';
       setTimeout(() => { if (bub.parentNode) bub.remove(); }, 220);
     }, 2800);
   }
@@ -2567,25 +2564,11 @@ const CatchmindGame = (() => {
 
       const pScore = (scores && typeof scores[p.id] === 'number') ? scores[p.id] : 0;
 
-      // 🌟 [항시 표기] 사이드바 플레이어 카드 전용 미니 점수 뱃지 (프로필 카드 크기 영향 제로)
-      let scoreBadge = item.querySelector('.cm-gsp-score-badge');
-      if (!scoreBadge) {
-        scoreBadge = document.createElement('span');
-        scoreBadge.className = 'cm-gsp-score-badge';
-        item.appendChild(scoreBadge);
-      }
-      // 기존에 혹시 .gsp-meta 내부에 들어가 있었다면 item 직속 자식으로 이동
-      if (scoreBadge.parentNode !== item) {
-        item.appendChild(scoreBadge);
-      }
-      if (item.querySelector('.btn-manage-trigger')) {
-        scoreBadge.style.right = '28px';
-      } else {
-        scoreBadge.style.right = '8px';
-      }
-      scoreBadge.innerHTML = `<i class="fa-solid fa-star" style="color:#f59e0b;font-size:0.58rem;"></i> ${pScore}점`;
+      // 🌟 [사용자 요청] 사이드바 플레이어 카드 점수 뱃지 완전 제거 🌟
+      const scoreBadge = item.querySelector('.cm-gsp-score-badge');
+      if (scoreBadge) scoreBadge.remove();
 
-      // 🌟 상단 헤더 내 점수 실시간 갱신
+      // 🌟 상단 헤더 내 점수 실시간 갱신 (헤더 전용)
       if (String(p.id) === String(myId)) {
         const myScoreEl = document.getElementById('cm-my-score-display');
         if (myScoreEl) myScoreEl.textContent = `내 점수: ${pScore}점`;
@@ -2602,11 +2585,12 @@ const CatchmindGame = (() => {
         roleHtml = '<span style="color:#2563eb;font-weight:900;"><i class="fa-solid fa-circle-check"></i> 정답!</span>';
         item.classList.remove('is-current-turn');
       } else {
-        roleHtml = '<span style="color:var(--t3);font-weight:700;"><i class="fa-solid fa-magnifying-glass"></i> 맞히는 중</span>';
+        // 🌟 [사용자 요청] "맞히는 중" 완전 제거, 깔끔하게 정답만 표시 🌟
+        roleHtml = '';
         item.classList.remove('is-current-turn');
       }
 
-      tagEl.innerHTML = `<span style="display:inline-flex; align-items:center;">${roleHtml}</span>`;
+      tagEl.innerHTML = roleHtml ? `<span style="display:inline-flex; align-items:center;">${roleHtml}</span>` : '';
     });
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {

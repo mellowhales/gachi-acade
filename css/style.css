@@ -21,15 +21,15 @@
   /* ── 테두리 ── */
   --border:       #e2e9e4;
   --border-sub:   #edf2ee;
-  --border-hi:    #b5e6c3;    /* 연두 포인트 테두리 */
+  --border-hi:    #bde3b3;    /* 연두 포인트 테두리 */
 
-  /* ── 파스텔 에메랄드 그린 포인트 ── */
-  --green:        #10b981;    /* 메인 에메랄드 그린 */
-  --green-hover:  #059669;    /* 버튼 호버 */
-  --green-deep:   #047857;    /* 짙은 연두 텍스트 */
-  --green-tint:   rgba(16, 185, 129, 0.08);    /* 연두 배경 틴트 */
-  --green-tint-hi:rgba(16, 185, 129, 0.16);
-  --green-border: rgba(16, 185, 129, 0.28);
+  /* ── 애플/세이지 연두 포인트 (#83c774) ── */
+  --green:        #83c774;    /* 메인 포인트 연두 그린 */
+  --green-hover:  #72b863;    /* 버튼 호버 */
+  --green-deep:   #509941;    /* 짙은 연두 텍스트 */
+  --green-tint:   rgba(131, 199, 116, 0.12);   /* 연두 배경 틴트 */
+  --green-tint-hi:rgba(131, 199, 116, 0.22);
+  --green-border: rgba(131, 199, 116, 0.35);
 
   /* ── 보조 포인트 컬러 ── */
   --yellow:       #d69e2e;    /* 방장/골드 */
@@ -65,7 +65,7 @@
   --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow:       0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-lg:    0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-green: 0 2px 6px rgba(16, 185, 129, 0.25);
+  --shadow-green: 0 2px 6px rgba(131, 199, 116, 0.3);
 
   --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -548,7 +548,7 @@ body {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #34d399 !important;
+  color: #83c774 !important;
   font-weight: 800 !important;
 }
 
@@ -562,7 +562,7 @@ body {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #6ee7b7 !important;
+  color: #a5e897 !important;
 }
 
 /* ── 💬 사이드바 게임 설명 말풍선 팝업 ── */
@@ -750,7 +750,7 @@ body {
   scroll-padding: 2px 0;
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.35) transparent;
+  scrollbar-color: rgba(131, 199, 116, 0.45) transparent;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -769,25 +769,25 @@ body {
 }
 
 .online-users-list::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.3);
+  background: rgba(131, 199, 116, 0.35);
   border-radius: 999px;
   transition: background 0.2s ease;
 }
 
 .online-users-list::-webkit-scrollbar-thumb:hover {
-  background: var(--green, #10b981);
+  background: var(--green, #83c774);
 }
 
 [data-theme="dark"] .online-users-list {
-  scrollbar-color: rgba(16, 185, 129, 0.45) transparent;
+  scrollbar-color: rgba(131, 199, 116, 0.5) transparent;
 }
 
 [data-theme="dark"] .online-users-list::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.42);
+  background: rgba(131, 199, 116, 0.45);
 }
 
 [data-theme="dark"] .online-users-list::-webkit-scrollbar-thumb:hover {
-  background: #34d399;
+  background: #9ae08c;
 }
 
 /* 🌟 공통 custom-scroll 클래스 슬림 스크롤바 🌟 */
@@ -865,7 +865,7 @@ body {
   left: 0;
   bottom: 0;
   width: 4px;
-  background: var(--green, #22c55e);
+  background: var(--green, #83c774);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -942,8 +942,8 @@ body {
 }
 
 .btn-view-stats:hover {
-  background: var(--green, #38a169) !important;
-  border-color: var(--green, #38a169) !important;
+  background: var(--green, #83c774) !important;
+  border-color: var(--green, #83c774) !important;
   color: #ffffff !important;
   transform: scale(1.08);
 }
@@ -966,10 +966,10 @@ body {
 
 [class*="pcard-theme-"] .btn-view-stats:hover,
 [class*="pcard-theme-"] .profile-preview-stats-btn:hover {
-  background: var(--green, #22c55e) !important;
+  background: var(--green, #83c774) !important;
   border-color: #ffffff !important;
   color: #ffffff !important;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5) !important;
+  box-shadow: 0 0 10px rgba(131, 199, 116, 0.6) !important;
 }
 
 .pcard-theme-royal-gold .btn-view-stats,
@@ -2684,7 +2684,7 @@ body {
 .side-btn.active {
   background: var(--green) !important;
   color: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 1px 3px rgba(131, 199, 116, 0.4);
 }
 .side-btn:hover:not(.active) {
   color: var(--t1);
@@ -2987,16 +2987,17 @@ body {
   box-sizing: border-box;
 }
 
-/* ── 방 헤더 ── */
+/* ── 방 헤더 (로비처럼 무테 & 투명 플랫 상단바) ── */
 .room-header {
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border: none;
+  border-bottom: none;
   padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   flex-shrink: 0;
   height: 56px;
   min-height: 56px;
@@ -3298,7 +3299,7 @@ body {
   left: 0;
   bottom: 0;
   width: 4px;
-  background: var(--green, #22c55e);
+  background: var(--green, #83c774);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -3529,9 +3530,9 @@ body {
   animation: pulseReady 1.2s infinite ease-in-out;
 }
 @keyframes pulseReady {
-  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); transform: scale(1); }
-  50%  { box-shadow: 0 0 16px 4px rgba(16, 185, 129, 0.35); transform: scale(1.02); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); transform: scale(1); }
+  0%   { box-shadow: 0 0 0 0 rgba(131, 199, 116, 0.6); transform: scale(1); }
+  50%  { box-shadow: 0 0 16px 4px rgba(131, 199, 116, 0.4); transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0 rgba(131, 199, 116, 0); transform: scale(1); }
 }
 
 .room-game-grid {
@@ -3578,9 +3579,9 @@ body {
   transform: scale(0.98);
 }
 .room-game-btn.selected {
-  border: none;
-  background: transparent;
-  box-shadow: none;
+  border: 2px solid var(--green) !important;
+  background: var(--green-tint, #f0fff4) !important;
+  box-shadow: 0 0 0 2px var(--green-border) !important;
 }
 .room-game-btn.disabled-3p {
   opacity: 0.45;
@@ -3650,7 +3651,7 @@ body {
 [data-theme="dark"] .room-game-btn.selected .rgb-tag {
   background: transparent !important;
   border: none !important;
-  color: #34d399 !important;
+  color: #83c774 !important;
   font-weight: 800 !important;
 }
 
@@ -3924,7 +3925,7 @@ body {
 .chat-input:focus {
   background: var(--bg-card);
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 0 3px rgba(131, 199, 116, 0.2);
 }
 .btn-chat-send {
   position: absolute;
@@ -3990,16 +3991,18 @@ body {
   border-radius: 4px;
 }
 
+/* ── 게임 헤더 (로비처럼 무테 & 투명 플랫 상단바) ── */
 .game-header {
   height: 64px;
   padding: 0 28px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border: none;
+  border-bottom: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   z-index: 20;
   box-sizing: border-box;
   position: sticky;
@@ -4161,7 +4164,7 @@ body {
   left: 0;
   bottom: 0;
   width: 4px;
-  background: var(--green, #22c55e);
+  background: var(--green, #83c774);
   pointer-events: none;
   z-index: 2;
   border-top-left-radius: inherit;
@@ -4330,7 +4333,7 @@ body {
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--green-hover);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 12px rgba(131, 199, 116, 0.4);
 }
 
 /* 2. Outline / Secondary 버튼 (테마 연동 중립 카드 룩) */
@@ -4435,7 +4438,7 @@ body {
 }
 .btn-start:hover:not(:disabled) {
   background: var(--green-hover);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 14px rgba(131, 199, 116, 0.45);
 }
 .btn-start:disabled {
   background: var(--border);
@@ -4453,7 +4456,7 @@ body {
   }
   50% {
     transform: scale(1.02);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
+    box-shadow: 0 4px 16px rgba(131, 199, 116, 0.5);
   }
   100% {
     transform: scale(1);
@@ -7369,25 +7372,9 @@ html, body {
   background: var(--coral-tint);
 }
 
-/* 점 3개 참가자 관리 전용 버튼 */
+/* 점 3개 참가자 관리 전용 버튼 (사용자 요청: 전면 숨김) */
 .btn-manage-trigger {
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  color: var(--t3);
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-}
-.btn-manage-trigger:hover {
-  background: var(--border-sub);
-  color: var(--t1);
-  transform: scale(1.15);
+  display: none !important;
 }
 
 /* 플레이어 목록 호버 효과 (방장일 때만 클릭 가능하도록) */
@@ -7775,9 +7762,9 @@ html, body {
 .yut-board-node.start-node {
   width: 31px;
   height: 31px;
-  border: 3px solid #14532d;
-  background: radial-gradient(circle at 35% 35%, #f0fdf4, #bbf7d0 65%, #22c55e 100%);
-  box-shadow: inset 0 2px 4px rgba(20, 83, 45, 0.4), 0 3px 8px rgba(0, 0, 0, 0.25), 0 0 0 2px #4ade80;
+  border: 3px solid #3e7332;
+  background: radial-gradient(circle at 35% 35%, #f4fbf1, #c8edbe 65%, #83c774 100%);
+  box-shadow: inset 0 2px 4px rgba(62, 115, 50, 0.4), 0 3px 8px rgba(0, 0, 0, 0.25), 0 0 0 2px #83c774;
 }
 .yut-board-node.start-node::before {
   width: 17px;
@@ -7878,7 +7865,7 @@ html, body {
 }
 .yut-board-piece.selected {
   transform: translate(-50%, -50%) scale(1.22) !important;
-  box-shadow: 0 0 0 3.5px #ffffff, 0 0 22px #22c55e, 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 0 0 3.5px #ffffff, 0 0 22px #83c774, 0 8px 18px rgba(0, 0, 0, 0.5) !important;
   animation: pieceSelectedBounce 0.9s infinite alternate ease-in-out;
 }
 @keyframes pieceSelectedBounce {
@@ -7975,7 +7962,7 @@ html, body {
 }
 .yut-waiting-token.selected {
   transform: scale(1.18) !important;
-  box-shadow: 0 0 0 3.5px #ffffff, 0 0 18px #22c55e !important;
+  box-shadow: 0 0 0 3.5px #ffffff, 0 0 18px #83c774 !important;
 }
 
 /* ── 2. 우측 컨트롤 패널 ── */
@@ -8010,10 +7997,10 @@ html, body {
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--primary);
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(131, 199, 116, 0.15);
   padding: 3px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(131, 199, 116, 0.35);
 }
 
 /* 🪵 윷놀이 멍석 아레나 매트 */
@@ -8164,7 +8151,7 @@ html, body {
   top: 0;
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+  background: linear-gradient(90deg, #83c774, #f59e0b, #ef4444);
   border-radius: 999px;
   transition: width 0.02s linear;
 }
@@ -8181,12 +8168,12 @@ html, body {
   user-select: none;
   touch-action: none;
   border-radius: var(--radius);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 14px rgba(131, 199, 116, 0.4);
   transition: transform 0.1s, box-shadow 0.15s;
 }
 .yut-power-btn:not(.disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 6px 20px rgba(131, 199, 116, 0.5);
 }
 .yut-power-btn:active {
   transform: scale(0.98);
@@ -8263,20 +8250,20 @@ html, body {
   justify-content: center;
 }
 .yut-finish-btn {
-  background: linear-gradient(135deg, #10b981, #059669) !important;
+  background: linear-gradient(135deg, #83c774, #62ab52) !important;
   color: #ffffff !important;
   font-size: 1.05rem !important;
   font-weight: 900 !important;
   padding: 10px 24px !important;
   border-radius: 999px !important;
   border: 2px solid #ffffff !important;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.6) !important;
+  box-shadow: 0 4px 18px rgba(131, 199, 116, 0.6) !important;
   cursor: pointer !important;
   animation: finishPulse 1s infinite alternate ease-in-out;
 }
 @keyframes finishPulse {
-  from { transform: scale(1); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5); }
-  to { transform: scale(1.08); box-shadow: 0 6px 22px rgba(16, 185, 129, 0.9); }
+  from { transform: scale(1); box-shadow: 0 4px 12px rgba(131, 199, 116, 0.5); }
+  to { transform: scale(1.08); box-shadow: 0 6px 22px rgba(131, 199, 116, 0.9); }
 }
 
 
@@ -9200,14 +9187,14 @@ html, body {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.9);
+  background: rgba(131, 199, 116, 0.95);
   border: 2px solid #ffffff;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.85);
+  box-shadow: 0 0 8px rgba(131, 199, 116, 0.85);
   transition: transform 0.15s ease;
 }
 .janggi-move-dot:hover .dot-inner {
   transform: scale(1.35);
-  background: #10b981;
+  background: #83c774;
 }
 
 .janggi-move-dot.is-capture {
@@ -9294,13 +9281,13 @@ html, body {
   --border-sub:   rgba(255, 255, 255, 0.09);    /* 카드 내부 구분선 및 서브 테두리 */
   --border-hi:    rgba(255, 255, 255, 0.22);    /* 하이라이트 테두리 */
 
-  /* ── 포인트 컬러 (표준 다크 모드 최적화 에메랄드 그린) ── */
-  --green:        #10b981;    /* 산뜻한 에메랄드 그린 */
-  --green-hover:  #34d399;    /* 그린 호버 (Green 400) */
-  --green-deep:   #6ee7b7;    /* 텍스트/뱃지용 밝은 민트 그린 (Green 300) */
-  --green-tint:   rgba(16, 185, 129, 0.16);
-  --green-tint-hi:rgba(16, 185, 129, 0.25);
-  --green-border: rgba(16, 185, 129, 0.35);
+  /* ── 포인트 컬러 (#83c774 연두 그린) ── */
+  --green:        #83c774;    /* 산뜻한 연두 그린 */
+  --green-hover:  #9ae08c;    /* 그린 호버 */
+  --green-deep:   #a5e897;    /* 텍스트/뱃지용 밝은 연두 그린 */
+  --green-tint:   rgba(131, 199, 116, 0.18);
+  --green-tint-hi:rgba(131, 199, 116, 0.28);
+  --green-border: rgba(131, 199, 116, 0.45);
 
   /* ── 보조 포인트 컬러 ── */
   --yellow:       #fbbf24;
@@ -9329,7 +9316,7 @@ html, body {
   --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow:       0 2px 4px rgba(0, 0, 0, 0.35);
   --shadow-lg:    0 6px 14px rgba(0, 0, 0, 0.45);
-  --shadow-green: 0 2px 8px rgba(16, 185, 129, 0.3);
+  --shadow-green: 0 2px 8px rgba(131, 199, 116, 0.35);
 }
 
 /* ── 다크모드 컴포넌트 세부 스타일링 ── */
@@ -9443,8 +9430,8 @@ html, body {
   border-color: var(--border);
 }
 [data-theme="dark"] .player-item.ready:not([class*="pcard-theme-"]) {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(131, 199, 116, 0.16);
+  border-color: rgba(131, 199, 116, 0.35);
 }
 
 [data-theme="dark"] .gsp-item:not([class*="pcard-theme-"]) {
@@ -9453,15 +9440,15 @@ html, body {
 }
 
 [data-theme="dark"] .gsp-item.is-current-turn:not([class*="pcard-theme-"]) {
-  background: rgba(34, 197, 94, 0.18) !important;
+  background: rgba(131, 199, 116, 0.22) !important;
   border-color: var(--green) !important;
   animation: none !important;
   transform: none !important;
 }
 
 [data-theme="dark"] .gsp-item.is-current-turn[class*="pcard-theme-"] {
-  border: 2px solid #22c55e !important;
-  box-shadow: 0 0 16px rgba(34, 197, 94, 0.6) !important;
+  border: 2px solid #83c774 !important;
+  box-shadow: 0 0 16px rgba(131, 199, 116, 0.6) !important;
   animation: none !important;
   transform: none !important;
 }
@@ -9577,7 +9564,7 @@ html, body {
   color: var(--t1) !important;
 }
 [data-theme="dark"] .score-cell.preview-active {
-  background: rgba(34, 197, 94, 0.16) !important;
+  background: rgba(131, 199, 116, 0.18) !important;
   border-color: var(--green) !important;
 }
 [data-theme="dark"] .score-cell.opp-preview-cell {
@@ -9617,7 +9604,7 @@ html, body {
 }
 [data-theme="dark"] .chess-clock-item.active {
   border-color: var(--green) !important;
-  background: rgba(34, 197, 94, 0.15) !important;
+  background: rgba(131, 199, 116, 0.18) !important;
 }
 
 [data-theme="dark"] .baskin-counter {
@@ -9633,9 +9620,9 @@ html, body {
   color: var(--t3) !important;
 }
 [data-theme="dark"] .baskin-num.called-p0 {
-  border-color: #4ade80 !important;
-  background: rgba(74, 222, 128, 0.22) !important;
-  color: #4ade80 !important;
+  border-color: #83c774 !important;
+  background: rgba(131, 199, 116, 0.22) !important;
+  color: #83c774 !important;
   font-weight: 900 !important;
 }
 [data-theme="dark"] .baskin-num.called-p1 {
@@ -9813,11 +9800,11 @@ html, body {
   border-color: var(--green) !important;
 }
 [data-theme="dark"] .bug-report-intro {
-  background: rgba(16, 185, 129, 0.12) !important;
-  border-color: rgba(16, 185, 129, 0.28) !important;
+  background: rgba(131, 199, 116, 0.12) !important;
+  border-color: rgba(131, 199, 116, 0.28) !important;
 }
 [data-theme="dark"] .bug-report-intro strong {
-  color: #6ee7b7 !important;
+  color: #a5e897 !important;
 }
 [data-theme="dark"] .about-brand-card {
   background: rgba(255, 255, 255, 0.04) !important;
@@ -9838,9 +9825,9 @@ html, body {
   border-color: var(--border) !important;
 }
 [data-theme="dark"] .rsgb-icon-wrap {
-  background: rgba(16, 185, 129, 0.15) !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
-  color: #34d399 !important;
+  background: rgba(131, 199, 116, 0.18) !important;
+  border-color: rgba(131, 199, 116, 0.35) !important;
+  color: #83c774 !important;
 }
 [data-theme="dark"] .extra-opt-btn {
   background: var(--bg-card) !important;
@@ -9940,9 +9927,9 @@ html, body {
   border: 1px solid var(--border) !important;
 }
 [data-theme="dark"] .chat-count-badge {
-  background: rgba(34, 197, 94, 0.15) !important;
+  background: rgba(131, 199, 116, 0.15) !important;
   color: var(--green-deep) !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
+  border-color: rgba(131, 199, 116, 0.35) !important;
 }
 [data-theme="dark"] .room-chat-panel .chat-input-form {
   border-top: none !important;
@@ -10070,7 +10057,7 @@ html, body {
   font-weight: 900 !important;
 }
 [data-theme="dark"] .subtotal-val.bonus-achieved {
-  color: #4ade80 !important;
+  color: #83c774 !important;
 }
 
 [data-theme="dark"] .row-bonus td {
@@ -10082,7 +10069,7 @@ html, body {
   font-weight: 900 !important;
 }
 [data-theme="dark"] .bonus-val-small {
-  color: #4ade80 !important;
+  color: #83c774 !important;
   font-weight: 900 !important;
 }
 [data-theme="dark"] .bonus-val-empty {
@@ -10131,9 +10118,9 @@ html, body {
   color: #f8fafc !important;
 }
 [data-theme="dark"] .btn-outline:hover {
-  background: rgba(16, 185, 129, 0.16) !important;
+  background: rgba(131, 199, 116, 0.16) !important;
   border-color: var(--green) !important;
-  color: #6ee7b7 !important;
+  color: #a5e897 !important;
 }
 [data-theme="dark"] .btn-secondary {
   background: rgba(255, 255, 255, 0.06) !important;
@@ -10151,9 +10138,9 @@ html, body {
   color: #cbd5e1 !important;
 }
 [data-theme="dark"] .btn-icon:hover:not(:disabled) {
-  background: rgba(16, 185, 129, 0.16) !important;
+  background: rgba(131, 199, 116, 0.2) !important;
   border-color: var(--green) !important;
-  color: #6ee7b7 !important;
+  color: var(--green-deep) !important;
 }
 [data-theme="dark"] .btn-ready {
   background: #1e293b !important;
@@ -10161,9 +10148,9 @@ html, body {
   color: #cbd5e1 !important;
 }
 [data-theme="dark"] .btn-ready:hover {
-  background: rgba(16, 185, 129, 0.16) !important;
+  background: rgba(131, 199, 116, 0.2) !important;
   border-color: var(--green) !important;
-  color: #6ee7b7 !important;
+  color: var(--green-deep) !important;
 }
 [data-theme="dark"] .btn-start:disabled {
   background: rgba(255, 255, 255, 0.08) !important;
@@ -10199,9 +10186,9 @@ html, body {
   color: var(--t1) !important;
 }
 [data-theme="dark"] .game-room-badge {
-  background: rgba(34, 197, 94, 0.15) !important;
+  background: rgba(131, 199, 116, 0.18) !important;
   color: var(--green-deep) !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
+  border-color: rgba(131, 199, 116, 0.35) !important;
 }
 [data-theme="dark"] #btn-game-settings {
   background: var(--bg-subtle) !important;
@@ -10298,9 +10285,9 @@ html, body {
   color: #ffffff !important;
 }
 [data-theme="dark"] .qd-goal-hint {
-  background: rgba(34, 197, 94, 0.15) !important;
+  background: rgba(131, 199, 116, 0.15) !important;
   color: var(--green-deep) !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
+  border-color: rgba(131, 199, 116, 0.35) !important;
 }
 
 /* ── 다크 모드: 베스킨라빈스 버튼 & 카드 ── */
@@ -11919,7 +11906,7 @@ html, body {
 }
 .shop-item-card:hover {
   border-color: var(--green);
-  box-shadow: 0 3px 12px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 3px 12px rgba(131, 199, 116, 0.25);
 }
 .shop-item-card.is-equipped {
   border-color: var(--green);
@@ -12221,7 +12208,7 @@ html, body {
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  background: var(--green, #10b981);
+  background: var(--green, #83c774);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 900;
@@ -12570,8 +12557,8 @@ html, body {
   background: #94a3b8;
 }
 .friends-status-dot.online {
-  background: var(--green, #10b981);
-  box-shadow: 0 0 6px var(--green, #10b981);
+  background: var(--green, #83c774);
+  box-shadow: 0 0 6px var(--green, #83c774);
 }
 
 .friends-info-box {
@@ -12610,7 +12597,7 @@ html, body {
   gap: 4px;
 }
 .friends-status-text.online {
-  color: var(--green, #10b981);
+  color: var(--green, #83c774);
   font-weight: 600;
 }
 
@@ -12814,9 +12801,9 @@ html, body {
   padding-right: 90px;
 }
 .btn-stats-friend.already-friend {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: var(--green, #10b981) !important;
-  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  background: rgba(131, 199, 116, 0.15) !important;
+  color: var(--green, #83c774) !important;
+  border: 1px solid rgba(131, 199, 116, 0.3) !important;
   cursor: default !important;
   box-shadow: none !important;
 }
@@ -12850,7 +12837,7 @@ html, body {
   flex-shrink: 0;
 }
 .btn-friend-accept {
-  background: var(--green, #10b981) !important;
+  background: var(--green, #83c774) !important;
   color: white !important;
   border: none !important;
   padding: 5px 10px !important;
@@ -12864,7 +12851,7 @@ html, body {
   transition: all 0.15s ease;
 }
 .btn-friend-accept:hover {
-  background: #059669 !important;
+  background: #72b863 !important;
   transform: translateY(-1px);
 }
 .btn-friend-reject {
@@ -13561,13 +13548,15 @@ html, body {
    (상단바 무테 구분선 전면 제거 & 카드 은은한 회색 음영 구분감)
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 960px) {
-  /* 1. 상단바 구분선/그림자 완전 제거 (로비/대기실/인게임 상단바 전면 무테 적용) */
+  /* 1. 상단바 구분선/배경/그림자 완전 제거 (로비/대기실/인게임 상단바 전면 무테 및 투명 적용) */
   .lobby-topbar,
   .room-header,
   .game-header,
   [data-theme="dark"] .lobby-topbar,
   [data-theme="dark"] .room-header,
   [data-theme="dark"] .game-header {
+    background: transparent !important;
+    background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
     border-bottom: none !important;
@@ -13588,9 +13577,7 @@ html, body {
   }
 
   /* 3. 프로필 카드 & 방 목록/상점 카드 & 채팅 버튼: 명확한 회색 테두리 + 입체 회색 그림자 */
-  .home-user-bar,
-  .home-user-bar:not([class*="pcard-theme-"]),
-  .home-user-bar[class*="pcard-theme-"] {
+  .home-user-bar:not([class*="pcard-theme-"]) {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
     border: 1.5px solid #cbd5e1 !important;
   }
@@ -13624,9 +13611,7 @@ html, body {
     border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
   }
-  [data-theme="dark"] .home-user-bar,
-  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]),
-  [data-theme="dark"] .home-user-bar[class*="pcard-theme-"] {
+  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]) {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
@@ -14029,9 +14014,11 @@ html, body {
     gap: 8px !important;
   }
 
-  /* 상단바 아이콘 버튼 (설정, 친구) — 아이콘 크기 대폭 확대 (44px & 1.35rem) */
+  /* 상단바 아이콘 버튼 (로비 설정, 친구, 방화면 설정, 게임화면 설정) — 크기 대폭 확대 (44px & 1.35rem) */
   #btn-open-settings,
-  #btn-open-friends {
+  #btn-open-friends,
+  #btn-room-settings,
+  #btn-game-settings {
     width: 44px !important;
     height: 44px !important;
     border-radius: 12px !important;
@@ -14046,16 +14033,51 @@ html, body {
   }
 
   #btn-open-settings i,
-  #btn-open-friends i {
+  #btn-open-friends i,
+  #btn-room-settings i,
+  #btn-game-settings i {
     font-size: 1.35rem !important;
   }
 
   #btn-open-settings:hover,
-  #btn-open-friends:hover {
+  #btn-open-friends:hover,
+  #btn-room-settings:hover,
+  #btn-game-settings:hover {
     border-color: transparent !important;
     background: var(--green-tint) !important;
     color: var(--green-deep) !important;
     transform: scale(1.08) !important;
+  }
+
+  /* 방 화면 및 게임 화면 헤더 & 로비/방 나가기 버튼 일체화 (로비처럼 무테 & 투명 상단바) */
+  .room-header:not(.lobby-topbar),
+  .game-header {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  #btn-leave-room,
+  #btn-back-to-room {
+    height: 44px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--t2) !important;
+    font-size: 0.92rem !important;
+    font-weight: 750 !important;
+    padding: 0 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.16s ease !important;
+  }
+  #btn-leave-room:hover,
+  #btn-back-to-room:hover {
+    background: var(--green-tint) !important;
+    color: var(--green-deep) !important;
+    transform: scale(1.04) !important;
   }
 
   /* ── ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -14103,12 +14125,9 @@ html, body {
     flex-shrink: 0 !important;
   }
 
-  /* 2-1. 내 프로필 카드 — 세로 크기 슬림화 (16px 라운딩, 1.5px 회색 테두리, 그림자 제거) */
+  /* 2-1. 내 프로필 카드 — 세로 크기 슬림화 (16px 라운딩, 상점 테마 정상 연동 보장) */
   .home-user-bar {
     border-radius: 16px !important;
-    border: 1.5px solid #cbd5e1 !important;
-    box-shadow: none !important;
-    background: var(--bg-card) !important;
     width: 100% !important;
     padding: 11px 16px !important; /* 세로 크기 줄임 */
     box-sizing: border-box !important;
@@ -14116,6 +14135,8 @@ html, body {
     align-items: center !important;
   }
   .home-user-bar:not([class*="pcard-theme-"]) {
+    border: 1.5px solid #cbd5e1 !important;
+    box-shadow: none !important;
     background: var(--bg-card) !important;
   }
   .home-user-bar .user-avatar-wrap {
@@ -14179,6 +14200,21 @@ html, body {
     border-color: var(--green) !important;
     color: var(--green-deep) !important;
     transform: translateY(-1px) scale(1.03) !important;
+  }
+  .home-user-bar[class*="pcard-theme-"] .btn-user-profile-edit {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+  }
+  .home-user-bar[class*="pcard-theme-"] .btn-user-profile-edit:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+  }
+  .home-user-bar.pcard-theme-royal-gold .btn-user-profile-edit {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(78, 52, 46, 0.25) !important;
+    color: #3e2723 !important;
   }
 
   /* 2-2. 사이드바 자리에 배치된 실시간 접속자 카드 (유연한 확장) */
@@ -14347,7 +14383,7 @@ html, body {
     background: var(--green) !important;
     color: #ffffff !important;
     border: none !important;
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
+    box-shadow: 0 2px 6px rgba(131, 199, 116, 0.35) !important;
   }
   .mobile-lobby-tab.active i {
     color: #ffffff !important;
@@ -14584,7 +14620,7 @@ html, body {
   }
   .lobby-chat-input:focus {
     border-color: var(--green) !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(131, 199, 116, 0.2) !important;
   }
 
   /* 전송 버튼을 입력칸 안에 배치 */
@@ -14676,11 +14712,10 @@ html, body {
     border: 1.5px solid #cbd5e1 !important;
     box-shadow: none !important;
   }
-  /* 🌟 모든 게임 버튼 배경색 & 테두리 완전 제거 (Borderless Minimal) 🌟 */
+  /* 🌟 모든 게임 버튼 평소 배경색 & 테두리 완전 제거 (선택 시에는 초록색 테두리 복원) 🌟 */
   .room-game-btn,
   .room-game-btn:hover:not(.disabled-3p):not(.disabled-game),
   .room-game-btn:active:not(.disabled-3p):not(.disabled-game),
-  .room-game-btn.selected,
   .sidebar-game-item,
   .sidebar-game-item:hover,
   .sidebar-game-item.active {
@@ -14697,13 +14732,18 @@ html, body {
     box-shadow: none !important;
   }
   .room-game-btn.selected {
+    border: 2px solid var(--green) !important;
+    background: var(--green-tint, #f0fff4) !important;
+    box-shadow: 0 0 0 2px var(--green-border) !important;
+  }
+  .room-game-btn .rgb-icon,
+  .sidebar-game-item .sg-icon,
+  .sidebar-game-item.active .sg-icon {
+    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
   }
-  .room-game-btn .rgb-icon,
-  .room-game-btn.selected .rgb-icon,
-  .sidebar-game-item .sg-icon,
-  .sidebar-game-item.active .sg-icon {
+  .room-game-btn.selected .rgb-icon {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -14819,7 +14859,7 @@ html, body {
   .game-chat-panel .chat-input:focus {
     background: var(--bg-card) !important;
     border-color: var(--green) !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(131, 199, 116, 0.2) !important;
   }
   .room-chat-panel .btn-chat-send,
   .game-chat-panel .btn-chat-send {
@@ -14857,15 +14897,19 @@ html, body {
   /* ── ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      🌙 7. 다크 모드 (Dark Mode Flat Support)
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ── */
-  [data-theme="dark"] .lobby-topbar {
+  [data-theme="dark"] .lobby-topbar,
+  [data-theme="dark"] .room-header,
+  [data-theme="dark"] .game-header {
     background: transparent !important;
     border-bottom: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
   [data-theme="dark"] .home-sidebar {
     background: transparent !important;
     border-right: none !important;
   }
-  [data-theme="dark"] .home-user-bar,
+  [data-theme="dark"] .home-user-bar:not([class*="pcard-theme-"]),
   [data-theme="dark"] .lobby-card,
   [data-theme="dark"] .connect-card,
   [data-theme="dark"] .online-users-card,
@@ -14917,11 +14961,19 @@ html, body {
 
   [data-theme="dark"] .room-game-btn,
   [data-theme="dark"] .room-game-btn:hover,
-  [data-theme="dark"] .room-game-btn.selected,
   [data-theme="dark"] .room-game-btn .rgb-icon,
-  [data-theme="dark"] .room-game-btn.selected .rgb-icon,
   [data-theme="dark"] .sidebar-game-item,
   [data-theme="dark"] .sidebar-game-item .sg-icon {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  [data-theme="dark"] .room-game-btn.selected {
+    border: 2px solid #83c774 !important;
+    background: rgba(131, 199, 116, 0.18) !important;
+    box-shadow: 0 0 0 2px rgba(131, 199, 116, 0.35) !important;
+  }
+  [data-theme="dark"] .room-game-btn.selected .rgb-icon {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -14929,16 +14981,16 @@ html, body {
 
   /* 🌟 다크 모드 참가자 준비 완료 & 내 순서 선명한 초록색 테두리 🌟 */
   [data-theme="dark"] .player-item.ready {
-    border: 2px solid #22c55e !important;
-    border-color: #22c55e !important;
-    background: rgba(34, 197, 94, 0.16) !important;
-    box-shadow: 0 0 0 1px #22c55e !important;
+    border: 2px solid #83c774 !important;
+    border-color: #83c774 !important;
+    background: rgba(131, 199, 116, 0.18) !important;
+    box-shadow: 0 0 0 1px #83c774 !important;
   }
   [data-theme="dark"] .gsp-item.is-current-turn {
-    border: 2px solid #22c55e !important;
-    border-color: #22c55e !important;
-    background: rgba(34, 197, 94, 0.18) !important;
-    box-shadow: 0 0 0 1px #22c55e !important;
+    border: 2px solid #83c774 !important;
+    border-color: #83c774 !important;
+    background: rgba(131, 199, 116, 0.22) !important;
+    box-shadow: 0 0 0 1px #83c774 !important;
   }
 
   [data-theme="dark"] .chat-msg.other .chat-bubble {
@@ -14952,7 +15004,7 @@ html, body {
     color: #cbd5e1 !important;
   }
   [data-theme="dark"] .home-user-bar .btn-user-profile-edit:hover {
-    background: rgba(16, 185, 129, 0.2) !important;
+    background: rgba(131, 199, 116, 0.22) !important;
     border-color: var(--green) !important;
     color: #ffffff !important;
   }

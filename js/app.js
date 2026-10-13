@@ -2094,14 +2094,18 @@
   /* ── 🎴 프로필 카드 구매, 장착 및 테마 적용 ── */
   function _applyProfileCardTheme(element, cardThemeId) {
     if (!element) return;
-    element.classList.forEach(cls => {
+    Array.from(element.classList).forEach(cls => {
       if (cls.startsWith('pcard-theme-')) {
         element.classList.remove(cls);
       }
     });
     const themeId = cardThemeId || 'default';
     if (themeId && themeId !== 'default') {
-      element.classList.add(`pcard-theme-${themeId}`);
+      const item = (typeof SHOP_PROFILE_CARDS !== 'undefined') ? SHOP_PROFILE_CARDS.find(c => c.id === themeId) : null;
+      const cls = (item && item.themeClass && item.themeClass !== 'default')
+        ? item.themeClass
+        : `pcard-theme-${String(themeId).replace(/_/g, '-')}`;
+      element.classList.add(cls);
     }
   }
 
@@ -7352,7 +7356,6 @@
           <div class="player-name ${p.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${p.nameColor && p.nameColor !== 'rainbow' ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${isThisHost ? '<i class="fa-solid fa-crown crown-icon"></i>' : ''}
-            ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
           </div>
           <div class="player-role"></div>
         </div>
@@ -8034,7 +8037,6 @@
           <div class="gsp-name ${p.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${p.nameColor && p.nameColor !== 'rainbow' ? `color:${p.nameColor}; font-weight:800;` : ''}">
             ${_escapeHtml(p.name)}
             ${p.isHost ? '<i class="fa-solid fa-crown" style="color:var(--yellow);font-size:0.75rem;"></i>' : ''}
-            ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
           </div>
           <div class="gsp-tag" style="font-weight:700;">${orderTag}</div>
         </div>
@@ -8087,7 +8089,6 @@
           <div class="gsp-meta">
             <div class="gsp-name ${sp.nameColor === 'rainbow' ? 'nickname-rainbow' : ''}" style="${sp.nameColor && sp.nameColor !== 'rainbow' ? `color:${sp.nameColor}; font-weight:800;` : ''}">
               ${_escapeHtml(sp.name)}
-              ${canManage ? '<button type="button" class="btn-manage-trigger" title="참가자 관리"><i class="fa-solid fa-ellipsis-vertical"></i></button>' : ''}
             </div>
             <div class="gsp-tag" style="color:var(--t3);font-size:0.7rem;"><i class="fa-regular fa-eye"></i> 실시간 관전 중</div>
           </div>
