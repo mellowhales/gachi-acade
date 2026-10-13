@@ -1510,6 +1510,10 @@ body {
     display: none !important;
   }
 
+  .lobby-card-col {
+    display: contents !important;
+  }
+
   /* 🌟 3. [방 목록] | [상점] 탭: 상단 라운딩(16px), 1.5px 회색 테두리, 하단 카드와 자연스럽게 일체형 결합 🌟 */
   .mobile-lobby-tabs {
     display: flex !important;
@@ -1523,7 +1527,7 @@ body {
     gap: 3px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+    box-shadow: none !important;
     position: relative !important;
     z-index: 2 !important;
   }
@@ -13971,10 +13975,7 @@ html, body {
 .topbar-live-users {
   display: none;
 }
-/* 📱 기본값: PC 전용 뷰 스위처 및 백드롭 기본 숨김 */
-.lobby-view-switcher {
-  display: none;
-}
+/* 📱 기본값: 프로필 모달 백드롭 기본 숨김 */
 .profile-modal-backdrop {
   display: none;
 }
@@ -14044,7 +14045,7 @@ html, body {
   }
 
   /* ── ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     🧭 2. 좌측 컬럼: 사이드바(게임목록) 제거 & 실시간 접속자 배치
+     🧭 2. 좌측 컬럼: 사이드바(게임목록) 제거 & 실시간 접속자 및 스폰서 배너 배치
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ── */
   .home-sidebar {
     width: clamp(280px, 21vw, 340px) !important;
@@ -14058,14 +14059,13 @@ html, body {
     padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 20px !important; /* 프로필 카드와 접속자 카드 사이 여백 크게 */
+    gap: 16px !important; /* 프로필 카드 / 접속자 카드 / 스폰서 배너 사이 균형 잡힌 여백 */
     box-sizing: border-box !important;
     overflow: hidden !important;
   }
 
-  /* 사이드바의 기존 게임 목록, 광고 배너, 푸터 제거 */
+  /* 사이드바의 기존 게임 목록, 푸터 제거 */
   .sidebar-games,
-  .arcade-ad-sidebar-home,
   .sidebar-footer {
     display: none !important;
   }
@@ -14079,38 +14079,38 @@ html, body {
     flex-shrink: 0 !important;
   }
 
-  /* 2-1. 내 프로필 카드 — 크기 대폭 확대 (16px 라운딩, 1.5px 회색 테두리, 그림자 제거) */
+  /* 2-1. 내 프로필 카드 — 세로 크기 슬림화 (16px 라운딩, 1.5px 회색 테두리, 그림자 제거) */
   .home-user-bar {
     border-radius: 16px !important;
     border: 1.5px solid #cbd5e1 !important;
     box-shadow: none !important;
     background: var(--bg-card) !important;
     width: 100% !important;
-    padding: 16px 18px !important; /* 크기 확대 */
+    padding: 11px 16px !important; /* 세로 크기 줄임 */
     box-sizing: border-box !important;
-    gap: 14px !important;
+    gap: 12px !important;
     align-items: center !important;
   }
   .home-user-bar:not([class*="pcard-theme-"]) {
     background: var(--bg-card) !important;
   }
   .home-user-bar .user-avatar-wrap {
-    width: 52px !important;
-    height: 52px !important;
+    width: 44px !important;
+    height: 44px !important;
     flex-shrink: 0 !important;
     position: relative !important;
   }
   .home-user-bar .user-avatar {
-    width: 52px !important;
-    height: 52px !important;
-    font-size: 1.65rem !important;
-    border-radius: 14px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.45rem !important;
+    border-radius: 12px !important;
   }
   .home-user-bar .user-level-badge {
-    font-size: 0.72rem !important;
-    padding: 2px 7px !important;
-    bottom: -4px !important;
-    right: -4px !important;
+    font-size: 0.7rem !important;
+    padding: 1px 6px !important;
+    bottom: -3px !important;
+    right: -3px !important;
     border-radius: 999px !important;
   }
   .home-user-bar .user-info {
@@ -14118,41 +14118,46 @@ html, body {
     min-width: 0 !important;
   }
   .home-user-bar .user-name {
-    font-size: 1.12rem !important;
+    font-size: 1.05rem !important;
     font-weight: 850 !important;
-    line-height: 1.25 !important;
+    line-height: 1.2 !important;
     letter-spacing: -0.3px !important;
   }
   .home-user-bar .user-exp-track {
-    height: 7px !important;
-    margin-top: 6px !important;
+    height: 6px !important;
+    margin-top: 5px !important;
     border-radius: 999px !important;
     background: #e2e8f0 !important;
   }
+  /* 🌟 프로필 편집 버튼 크기 확대 🌟 */
   .home-user-bar .btn-user-profile-edit {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     gap: 6px !important;
-    padding: 7px 12px !important;
-    height: 34px !important;
-    border-radius: 9px !important;
+    padding: 8px 14px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
     background: #f1f5f9 !important;
     border: 1.5px solid #cbd5e1 !important;
-    color: #475569 !important;
-    font-size: 0.8rem !important;
-    font-weight: 750 !important;
+    color: #334155 !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
     cursor: pointer !important;
     transition: all 0.16s ease !important;
     flex-shrink: 0 !important;
+  }
+  .home-user-bar .btn-user-profile-edit i {
+    font-size: 0.95rem !important;
   }
   .home-user-bar .btn-user-profile-edit:hover {
     background: var(--green-tint) !important;
     border-color: var(--green) !important;
     color: var(--green-deep) !important;
-    transform: translateY(-1px) !important;
+    transform: translateY(-1px) scale(1.03) !important;
   }
 
-  /* 2-2. 사이드바 자리에 배치된 실시간 접속자 카드 (풀 높이) */
+  /* 2-2. 사이드바 자리에 배치된 실시간 접속자 카드 (유연한 확장) */
   .home-sidebar .online-users-card {
     display: flex !important;
     flex: 1 1 0% !important;
@@ -14166,6 +14171,43 @@ html, body {
     padding: 14px 16px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+  }
+
+  /* 2-3. 접속 중인 플레이어 아래쪽 스폰서 배너 복원 (16px 라운딩, 1.5px 회색 테두리) */
+  .home-sidebar .arcade-ad-sidebar-home {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    border-radius: 16px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    background: var(--bg-card) !important;
+    padding: 8px 10px 10px 10px !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+  }
+  .home-sidebar .arcade-ad-sidebar-home .arcade-ad-label {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    color: var(--t3) !important;
+    letter-spacing: 0.8px !important;
+    margin-bottom: 5px !important;
+  }
+  .home-sidebar .arcade-ad-sidebar-home .arcade-ad-content {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    aspect-ratio: 300 / 180 !important;
+    max-height: 160px !important;
+  }
+  .home-sidebar .arcade-ad-sidebar-home .arcade-banner-img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 10px !important;
+    object-fit: cover !important;
   }
 
   .online-users-card .online-card-header {
@@ -14213,61 +14255,92 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  /* 방 목록 / 상점 카드 공통 — 16px 라운딩, 1.5px 테두리, 그림자 제거 */
-  .lobby-card {
-    border-radius: 16px !important;
+  /* 🌟 좌측 컬럼: [방 목록 | 상점] 상단 대형 탭 & 일체형 카드 🌟 */
+  .lobby-card-col {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 🌟 상단 대형 탭: [방 목록] | [상점] (16px 상단 라운딩, 1.5px 회색 테두리, 하단 카드와 일체 결합) 🌟 */
+  .mobile-lobby-tabs {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    background: #e9ecef !important;
     border: 1.5px solid #cbd5e1 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 48px !important;
+    box-shadow: none !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  .mobile-lobby-tab {
+    flex: 1 !important;
+    height: 40px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #495057 !important;
+    font-size: 0.98rem !important;
+    font-weight: 850 !important;
+    border-radius: 11px !important;
+    cursor: pointer !important;
+    transition: all 0.16s ease !important;
+    letter-spacing: -0.2px !important;
+  }
+  .mobile-lobby-tab i {
+    font-size: 1.05rem !important;
+    margin-right: 2px !important;
+    color: inherit !important;
+  }
+  .mobile-lobby-tab:hover:not(.active) {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: var(--t1) !important;
+  }
+  .mobile-lobby-tab.active {
+    background: var(--green) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
+  }
+  .mobile-lobby-tab.active i {
+    color: #ffffff !important;
+  }
+
+  /* 방 목록 / 상점 카드 공통 — 상단 탭과 일체화 (0 0 16px 16px 라운딩, border-top 없음) */
+  #lobby-room-card,
+  #lobby-shop-card,
+  .lobby-card-col .lobby-card:not(.lobby-profile-card) {
+    border-radius: 0 0 16px 16px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-top: none !important;
     box-shadow: none !important;
     background: var(--bg-card) !important;
     padding: 16px 20px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 14px !important;
-    height: 100% !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
     box-sizing: border-box !important;
   }
-
-  /* 🌟 상점 / 방 목록 뷰 스위처 (모바일 세그먼트 스타일, 좌측 미니 캡슐) 🌟 */
-  .lobby-view-switcher {
-    display: inline-flex !important;
-    align-items: center !important;
-    background: #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 3px !important;
-    gap: 3px !important;
-    margin-right: 12px !important;
-    flex-shrink: 0 !important;
-    border: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
-  .lvs-tab {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding: 5px 12px !important;
-    height: 30px !important;
-    border-radius: 8px !important;
-    border: none !important;
-    background: transparent !important;
-    color: #64748b !important;
-    font-size: 0.82rem !important;
-    font-weight: 750 !important;
-    cursor: pointer !important;
-    transition: all 0.16s ease !important;
-    white-space: nowrap !important;
-  }
-  .lvs-tab:hover:not(.active) {
-    background: rgba(0, 0, 0, 0.05) !important;
-    color: var(--t1) !important;
-  }
-  .lvs-tab.active {
-    background: var(--green) !important;
-    color: #ffffff !important;
-    font-weight: 850 !important;
-    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.28) !important;
-  }
-  .lvs-tab.active i {
-    color: #ffffff !important;
+  #lobby-room-card.hidden,
+  #lobby-shop-card.hidden {
+    display: none !important;
   }
 
   /* 방 목록 필터 탭 (세그먼트 컨트롤) */
@@ -14755,16 +14828,27 @@ html, body {
     color: #ffffff !important;
   }
 
-  [data-theme="dark"] .lobby-view-switcher {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+  [data-theme="dark"] .mobile-lobby-tabs {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.14) !important;
   }
-  [data-theme="dark"] .lvs-tab {
+  [data-theme="dark"] .mobile-lobby-tab {
     color: #94a3b8 !important;
   }
-  [data-theme="dark"] .lvs-tab.active {
+  [data-theme="dark"] .mobile-lobby-tab:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #f1f5f9 !important;
+  }
+  [data-theme="dark"] .mobile-lobby-tab.active {
     background: var(--green) !important;
     color: #ffffff !important;
+  }
+  [data-theme="dark"] #lobby-room-card,
+  [data-theme="dark"] #lobby-shop-card,
+  [data-theme="dark"] .lobby-card-col .lobby-card:not(.lobby-profile-card) {
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    border-top: none !important;
   }
 
   [data-theme="dark"] .lobby-profile-card {
@@ -14780,6 +14864,10 @@ html, body {
     background: rgba(239, 68, 68, 0.2) !important;
     color: #f87171 !important;
     border-color: #ef4444 !important;
+  }
+  [data-theme="dark"] .home-sidebar .arcade-ad-sidebar-home {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
   }
 
 } /* @media (min-width: 961px) END */

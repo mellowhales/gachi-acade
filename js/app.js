@@ -1319,27 +1319,7 @@
       _toggleLobbyShop(false);
     });
   }
-  // 🌟 상점 / 방 목록 세그먼트 스위처 (PC & 반응형)
-  ['btn-switch-rooms', 'btn-switch-rooms-shop'].forEach(id => {
-    const el = $(id);
-    if (el) {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        Sound.playClick();
-        _toggleLobbyShop(false);
-      });
-    }
-  });
-  ['btn-switch-shop', 'btn-switch-shop-shop'].forEach(id => {
-    const el = $(id);
-    if (el) {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        Sound.playClick();
-        _toggleLobbyShop(true);
-      });
-    }
-  });
+
   if ($('btn-toggle-sound')) $('btn-toggle-sound').addEventListener('click', _openSettingsModal);
   if ($('btn-room-settings')) $('btn-room-settings').addEventListener('click', _openSettingsModal);
   if ($('btn-game-settings')) $('btn-game-settings').addEventListener('click', _openSettingsModal);
@@ -1630,18 +1610,7 @@
     const btn = $('btn-marketplace') || $('btn-toggle-shop');
     const homeScreen = $('screen-home');
 
-    // 🌟 좌측 컴팩트 세그먼트 스위처 동기화
-    const swRooms = $('btn-switch-rooms');
-    const swShop = $('btn-switch-shop');
-    const swRoomsShop = $('btn-switch-rooms-shop');
-    const swShopShop = $('btn-switch-shop-shop');
-
     if (_isShopActive) {
-      if (swRooms) swRooms.classList.remove('active');
-      if (swShop) swShop.classList.add('active');
-      if (swRoomsShop) swRoomsShop.classList.remove('active');
-      if (swShopShop) swShopShop.classList.add('active');
-
       const profileCard = $('lobby-profile-card');
       if (profileCard && window.innerWidth <= 960) {
         profileCard.classList.add('hidden');
@@ -1664,10 +1633,6 @@
       _initShopTabs();
       _renderShopUI();
     } else {
-      if (swRooms) swRooms.classList.add('active');
-      if (swShop) swShop.classList.remove('active');
-      if (swRoomsShop) swRoomsShop.classList.add('active');
-      if (swShopShop) swShopShop.classList.remove('active');
 
       if (roomCard) roomCard.classList.remove('hidden');
       if (shopCard) shopCard.classList.add('hidden');

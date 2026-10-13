@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.19.4" />
-  <link rel="stylesheet" href="css/games.css?v=1.19.4" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.6" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.6" />
 </head>
 <body>
 
@@ -178,6 +178,16 @@
         </div>
         <div class="online-users-list custom-scroll" id="online-users-list">
           <!-- JS 동적 생성 -->
+        </div>
+      </div>
+
+      <!-- 📢 로비 사이드바 하단 배너: 가치클라우드 (접속자 카드 아래) -->
+      <div class="arcade-ad-wrapper arcade-ad-sidebar-home" aria-label="가치클라우드 스폰서 배너">
+        <span class="arcade-ad-label">SPONSORED</span>
+        <div class="arcade-ad-content" id="arcade-banner-home">
+          <a href="https://gachicloud.netlify.app" target="_blank" rel="noopener noreferrer" class="arcade-banner-link" title="가치클라우드 바로가기">
+            <img src="gachicloud.png" alt="가치클라우드 - 메신저 대신 웹으로 전송" class="arcade-banner-img" />
+          </a>
         </div>
       </div>
 
@@ -299,16 +309,6 @@
       </ul>
     </nav>
 
-    <!-- 📢 로비 사이드바 하단 배너: 가치클라우드 (300:250) -->
-    <div class="arcade-ad-wrapper arcade-ad-sidebar-home" aria-label="가치클라우드 스폰서 배너">
-      <span class="arcade-ad-label">SPONSORED</span>
-      <div class="arcade-ad-content" id="arcade-banner-home">
-        <a href="https://gachicloud.netlify.app" target="_blank" rel="noopener noreferrer" class="arcade-banner-link" title="가치클라우드 바로가기">
-          <img src="gachicloud.png" alt="가치클라우드 - 메신저 대신 웹으로 전송" class="arcade-banner-img" />
-        </a>
-      </div>
-    </div>
-
     <div class="sidebar-footer">
       <div class="sidebar-copyright">
         <span>© 2026 GachiArcade. All rights reserved.</span>
@@ -318,121 +318,101 @@
 
   <!-- 오른쪽: 메인 영역 (좌측: 실시간 공개 방 목록, 우측: 방 만들기/참가) -->
   <main class="home-main">
-    <!-- 🌟 모바일 전용 상단 탭: [방 목록] | [상점] 🌟 -->
-    <div class="mobile-lobby-tabs" id="mobile-lobby-tabs">
-      <button type="button" class="mobile-lobby-tab active" id="tab-mobile-room-list">
-        <i class="fa-solid fa-layer-group" style="font-size: 0.9rem; margin-right: 4px;"></i>
-        <span>방 목록</span>
-      </button>
-      <button type="button" class="mobile-lobby-tab" id="tab-mobile-shop">
-        <i class="fa-solid fa-store" style="font-size: 0.9rem; margin-right: 4px;"></i>
-        <span>상점</span>
-      </button>
-    </div>
-
     <div class="home-lobby-container">
       
-      <!-- 1. 좌측~중앙: 🌐 실시간 방 목록 (공개방 / 비밀방 필터 지원) -->
-      <div class="lobby-card card" id="lobby-room-card">
-        <div class="lobby-header">
-          <div class="lobby-title-area">
-            <!-- 🌟 상점 / 방 목록 전환 탭 (좌측 미니 캡슐) 🌟 -->
-            <div class="lobby-view-switcher" id="lobby-view-switcher">
-              <button type="button" class="lvs-tab active" id="btn-switch-rooms" title="방 목록">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>방 목록</span>
-              </button>
-              <button type="button" class="lvs-tab" id="btn-switch-shop" title="상점">
-                <i class="fa-solid fa-store"></i>
-                <span>상점</span>
-              </button>
-            </div>
-            <div class="lobby-tab-group" id="lobby-filter-tabs">
-              <button type="button" class="lobby-tab-btn active" data-lobby-tab="all" id="tab-lobby-all">
-                <i class="fa-solid fa-border-all"></i> 전체
-              </button>
-              <button type="button" class="lobby-tab-btn" data-lobby-tab="public" id="tab-lobby-public">
-                <i class="fa-solid fa-earth-americas"></i> 공개방
-              </button>
-              <button type="button" class="lobby-tab-btn" data-lobby-tab="private" id="tab-lobby-private">
-                <i class="fa-solid fa-lock"></i> 비밀방
-              </button>
-            </div>
-          </div>
-          <div class="lobby-header-actions">
-            <select id="lobby-game-filter" class="lobby-game-select" title="게임별 방 필터">
-              <option value="all">모든 게임</option>
-            </select>
-          </div>
-        </div>
-        <div class="lobby-list is-empty" id="lobby-room-list">
-          <div class="lobby-empty">
-            <i class="fa-regular fa-compass"></i>
-            <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
-          </div>
-        </div>
-        <!-- 🌟 방목록 카드 바로 아래 부착된 액션 바 (화면 잘림 완전 방지) 🌟 -->
-        <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
-          <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
-            <i class="fa-solid fa-comment-dots"></i>
-            <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
+      <!-- 1. 좌측 메인 컬럼: [방 목록 | 상점] 상단 대형 탭 및 카드 -->
+      <div class="lobby-card-col" id="lobby-card-col">
+        <!-- 🌟 상단 탭: [방 목록] | [상점] (모바일 & PC 공통 대형 탭) 🌟 -->
+        <div class="mobile-lobby-tabs" id="mobile-lobby-tabs">
+          <button type="button" class="mobile-lobby-tab active" id="tab-mobile-room-list">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>방 목록</span>
           </button>
-          <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
-            <i class="fa-solid fa-plus"></i>
-            <span>방 만들기</span>
+          <button type="button" class="mobile-lobby-tab" id="tab-mobile-shop">
+            <i class="fa-solid fa-store"></i>
+            <span>상점</span>
           </button>
         </div>
-      </div>
 
-      <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
-      <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
-        <div class="lobby-header shop-header">
-          <div class="lobby-title-area shop-title-area">
-            <!-- 🌟 상점 / 방 목록 전환 탭 (좌측 미니 캡슐) 🌟 -->
-            <div class="lobby-view-switcher" id="lobby-view-switcher-shop">
-              <button type="button" class="lvs-tab" id="btn-switch-rooms-shop" title="방 목록">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>방 목록</span>
-              </button>
-              <button type="button" class="lvs-tab active" id="btn-switch-shop-shop" title="상점">
-                <i class="fa-solid fa-store"></i>
-                <span>상점</span>
-              </button>
+        <!-- 1-1. 🌐 실시간 방 목록 (공개방 / 비밀방 필터 지원) -->
+        <div class="lobby-card card" id="lobby-room-card">
+          <div class="lobby-header">
+            <div class="lobby-title-area">
+              <div class="lobby-tab-group" id="lobby-filter-tabs">
+                <button type="button" class="lobby-tab-btn active" data-lobby-tab="all" id="tab-lobby-all">
+                  <i class="fa-solid fa-border-all"></i> 전체
+                </button>
+                <button type="button" class="lobby-tab-btn" data-lobby-tab="public" id="tab-lobby-public">
+                  <i class="fa-solid fa-earth-americas"></i> 공개방
+                </button>
+                <button type="button" class="lobby-tab-btn" data-lobby-tab="private" id="tab-lobby-private">
+                  <i class="fa-solid fa-lock"></i> 비밀방
+                </button>
+              </div>
             </div>
-            <div class="lobby-tab-group shop-tab-scroll" id="shop-filter-tabs">
-              <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
-                <i class="fa-solid fa-palette"></i> 닉네임
-              </button>
-              <button type="button" class="lobby-tab-btn" data-shop-tab="profile_card" id="tab-shop-profile-card">
-                <i class="fa-solid fa-id-card"></i> 프로필 카드
-              </button>
-              <button type="button" class="lobby-tab-btn" data-shop-tab="chat_bubble" id="tab-shop-chat-bubble">
-                <i class="fa-regular fa-comment-dots"></i> 말풍선
-              </button>
-              <button type="button" class="lobby-tab-btn" data-shop-tab="avatar_frame" id="tab-shop-avatar-frame">
-                <i class="fa-solid fa-square"></i> 테두리
-              </button>
-              <button type="button" class="lobby-tab-btn" data-shop-tab="victory_effect" id="tab-shop-victory-effect">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> 세레머니
-              </button>
+            <div class="lobby-header-actions">
+              <select id="lobby-game-filter" class="lobby-game-select" title="게임별 방 필터">
+                <option value="all">모든 게임</option>
+              </select>
             </div>
           </div>
-          <div class="shop-header-right">
-            <div class="shop-coin-pill">
-              <i class="fa-solid fa-coins"></i>
-              <strong id="shop-coin-balance">0</strong>
+          <div class="lobby-list is-empty" id="lobby-room-list">
+            <div class="lobby-empty">
+              <i class="fa-regular fa-compass"></i>
+              <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
             </div>
-            <button type="button" class="btn-icon sm" id="btn-close-shop" title="방 목록으로 돌아가기">
-              <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <!-- 🌟 방목록 카드 바로 아래 부착된 액션 바 (화면 잘림 완전 방지) 🌟 -->
+          <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
+            <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
+              <i class="fa-solid fa-comment-dots"></i>
+              <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
+            </button>
+            <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
+              <i class="fa-solid fa-plus"></i>
+              <span>방 만들기</span>
             </button>
           </div>
         </div>
-        <div class="shop-content custom-scroll">
-          <div class="shop-items-grid" id="shop-items-grid">
-            <!-- JS 동적 생성 -->
+
+        <!-- 1-2. 🛒 상점 카드 (방 목록 카드와 전환) -->
+        <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
+          <div class="lobby-header shop-header">
+            <div class="lobby-title-area shop-title-area">
+              <div class="lobby-tab-group shop-tab-scroll" id="shop-filter-tabs">
+                <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
+                  <i class="fa-solid fa-palette"></i> 닉네임
+                </button>
+                <button type="button" class="lobby-tab-btn" data-shop-tab="profile_card" id="tab-shop-profile-card">
+                  <i class="fa-solid fa-id-card"></i> 프로필 카드
+                </button>
+                <button type="button" class="lobby-tab-btn" data-shop-tab="chat_bubble" id="tab-shop-chat-bubble">
+                  <i class="fa-regular fa-comment-dots"></i> 말풍선
+                </button>
+                <button type="button" class="lobby-tab-btn" data-shop-tab="avatar_frame" id="tab-shop-avatar-frame">
+                  <i class="fa-solid fa-square"></i> 테두리
+                </button>
+                <button type="button" class="lobby-tab-btn" data-shop-tab="victory_effect" id="tab-shop-victory-effect">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> 세레머니
+                </button>
+              </div>
+            </div>
+            <div class="shop-header-right">
+              <div class="shop-coin-pill">
+                <i class="fa-solid fa-coins"></i>
+                <strong id="shop-coin-balance">0</strong>
+              </div>
+              <button type="button" class="btn-icon sm" id="btn-close-shop" title="방 목록으로 돌아가기">
+                <i class="fa-solid fa-layer-group"></i>
+              </button>
+            </div>
+          </div>
+          <div class="shop-content custom-scroll">
+            <div class="shop-items-grid" id="shop-items-grid">
+              <!-- JS 동적 생성 -->
+            </div>
           </div>
         </div>
-      </div>
 
       <!-- 1-3. 👤 프로필 편집 카드 (방 목록 카드 위치에 일체형 표시) -->
       <div class="lobby-card card lobby-profile-card hidden" id="lobby-profile-card">
@@ -528,7 +508,7 @@
             <span>저장</span>
           </button>
         </div>
-      </div>
+      </div> <!-- /.lobby-card-col -->
       <!-- 🌟 프로필 편집 팝업 모달 백드롭 🌟 -->
       <div class="profile-modal-backdrop hidden" id="profile-modal-backdrop"></div>
 
@@ -557,7 +537,7 @@
               type="text"
               id="lobby-chat-input"
               class="lobby-chat-input"
-              placeholder="메시지 입력 (최대 80자)..."
+              placeholder="메시지 입력..."
               maxlength="80"
               autocomplete="off"
               spellcheck="false"
@@ -2096,7 +2076,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.19.4"></script>
+<script src="js/app.js?v=1.19.6"></script>
 
 </body>
 </html>
