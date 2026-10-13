@@ -1566,7 +1566,8 @@ body {
   }
 
   /* 🌟 4. 방 목록 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
-  .lobby-card {
+  #lobby-room-card,
+  .lobby-card:not(.lobby-profile-card) {
     order: 1 !important;
     flex: 1 1 auto !important;
     width: 100% !important;
@@ -1614,8 +1615,8 @@ body {
     gap: 0 !important;
   }
 
-  /* 4. '방 목록' 글씨 제거 */
-  .lobby-card .lobby-title {
+  /* 4. '방 목록' 글씨만 숨김 (프로필 편집 등 타 카드 타이틀은 유지) */
+  #lobby-room-card .lobby-title {
     display: none !important;
   }
 
@@ -2094,6 +2095,7 @@ body {
     padding: 12px 14px 16px 14px !important;
     border-radius: 16px !important; /* 4면 온전한 둥근 모서리 라운딩 */
     border: 1.5px solid #cbd5e1 !important; /* 4면 온전한 테두리로 상단 끊김 완전 해결 */
+    border-top: 1.5px solid #cbd5e1 !important; /* 상단 테두리 완벽 마감 */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
     margin: 0 !important;
     display: none !important;
@@ -2137,6 +2139,7 @@ body {
     padding: 12px 14px !important;
     border-radius: 16px !important; /* 모바일에서 4면 온전한 16px 라운딩 */
     border: 1.5px solid #cbd5e1 !important; /* 끊김 없는 4면 회색 테두리 */
+    border-top: 1.5px solid #cbd5e1 !important; /* 상단 테두리 완벽 마감 */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
     margin: 0 !important;
     overflow: hidden !important;
@@ -2148,6 +2151,25 @@ body {
   .lobby-shop-card.hidden,
   .lobby-profile-card.hidden {
     display: none !important;
+  }
+  .profile-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    margin-bottom: 6px !important;
+    flex-shrink: 0 !important;
+  }
+  .profile-card-header .lobby-title {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    color: var(--t1) !important;
   }
   .lobby-profile-card .profile-card-content {
     flex: 1 1 0% !important;
@@ -13541,12 +13563,22 @@ html, body {
     border-bottom: 1.5px solid #cbd5e1 !important;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
   }
-  .lobby-card,
-  .connect-card,
-  .lobby-shop-card {
+  #lobby-room-card,
+  #lobby-shop-card {
     border-radius: 0 0 16px 16px !important;
     border: 1.5px solid #cbd5e1 !important;
     border-top: none !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+    margin-top: 0 !important;
+  }
+  /* 🌟 방 만들기 & 프로필 편집 카드: 상단 4면 온전한 16px 라운딩 및 1.5px 회색 윤곽선 마감 (상단 잘림 완전 방지) 🌟 */
+  .connect-card,
+  .lobby-profile-card,
+  .mobile-show-create .connect-card,
+  .mobile-profile-active #lobby-profile-card {
+    border-radius: 16px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-top: 1.5px solid #cbd5e1 !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important;
     margin-top: 0 !important;
   }
@@ -13566,12 +13598,21 @@ html, body {
     border-bottom: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25), -2px 0 8px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.15) !important;
   }
-  [data-theme="dark"] .lobby-card,
-  [data-theme="dark"] .connect-card,
-  [data-theme="dark"] .lobby-shop-card {
+  [data-theme="dark"] #lobby-room-card,
+  [data-theme="dark"] #lobby-shop-card {
     border-radius: 0 0 16px 16px !important;
     border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     border-top: none !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), -2px 0 8px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.15) !important;
+    margin-top: 0 !important;
+  }
+  [data-theme="dark"] .connect-card,
+  [data-theme="dark"] .lobby-profile-card,
+  [data-theme="dark"] .mobile-show-create .connect-card,
+  [data-theme="dark"] .mobile-profile-active #lobby-profile-card {
+    border-radius: 16px !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.18) !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), -2px 0 8px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.15) !important;
     margin-top: 0 !important;
   }
