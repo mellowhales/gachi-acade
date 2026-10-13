@@ -21,15 +21,15 @@
   /* ── 테두리 ── */
   --border:       #e2e9e4;
   --border-sub:   #edf2ee;
-  --border-hi:    #bde3b3;    /* 연두 포인트 테두리 */
+  --border-hi:    #b5e6c3;    /* 연두 포인트 테두리 */
 
-  /* ── 애플/세이지 연두 포인트 (#83c774) ── */
-  --green:        #83c774;    /* 메인 포인트 연두 그린 */
-  --green-hover:  #72b863;    /* 버튼 호버 */
-  --green-deep:   #509941;    /* 짙은 연두 텍스트 */
-  --green-tint:   rgba(131, 199, 116, 0.12);   /* 연두 배경 틴트 */
-  --green-tint-hi:rgba(131, 199, 116, 0.22);
-  --green-border: rgba(131, 199, 116, 0.35);
+  /* ── 클래식 에메랄드 그린 포인트 (기본값) ── */
+  --green:        #10b981;    /* 메인 에메랄드 그린 */
+  --green-hover:  #059669;    /* 버튼 호버 */
+  --green-deep:   #047857;    /* 짙은 연두 텍스트 */
+  --green-tint:   rgba(16, 185, 129, 0.08);    /* 연두 배경 틴트 */
+  --green-tint-hi:rgba(16, 185, 129, 0.16);
+  --green-border: rgba(16, 185, 129, 0.28);
 
   /* ── 보조 포인트 컬러 ── */
   --yellow:       #d69e2e;    /* 방장/골드 */
@@ -9281,13 +9281,13 @@ html, body {
   --border-sub:   rgba(255, 255, 255, 0.09);    /* 카드 내부 구분선 및 서브 테두리 */
   --border-hi:    rgba(255, 255, 255, 0.22);    /* 하이라이트 테두리 */
 
-  /* ── 포인트 컬러 (#83c774 연두 그린) ── */
-  --green:        #83c774;    /* 산뜻한 연두 그린 */
-  --green-hover:  #9ae08c;    /* 그린 호버 */
-  --green-deep:   #a5e897;    /* 텍스트/뱃지용 밝은 연두 그린 */
-  --green-tint:   rgba(131, 199, 116, 0.18);
-  --green-tint-hi:rgba(131, 199, 116, 0.28);
-  --green-border: rgba(131, 199, 116, 0.45);
+  /* ── 포인트 컬러 (표준 다크 모드 최적화 에메랄드 그린 - 기본값) ── */
+  --green:        #10b981;    /* 산뜻한 에메랄드 그린 */
+  --green-hover:  #34d399;    /* 그린 호버 (Green 400) */
+  --green-deep:   #6ee7b7;    /* 텍스트/뱃지용 밝은 민트 그린 (Green 300) */
+  --green-tint:   rgba(16, 185, 129, 0.16);
+  --green-tint-hi:rgba(16, 185, 129, 0.25);
+  --green-border: rgba(16, 185, 129, 0.35);
 
   /* ── 보조 포인트 컬러 ── */
   --yellow:       #fbbf24;
@@ -15052,3 +15052,48 @@ html, body {
   }
 
 } /* @media (min-width: 961px) END */
+
+/* ── 🎮 게임 화면 우측 상단 방 코드 숨김 ── */
+.game-room-badge {
+  display: none !important;
+}
+
+/* ── 🎨 환경설정: 포인트 색상 팔레트 칩 ── */
+.accent-color-palette {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  width: 100%;
+}
+.accent-chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+.accent-chip:hover {
+  transform: translateY(-2px) scale(1.12);
+}
+.accent-chip.active {
+  box-shadow: 0 0 0 2.5px var(--bg-card), 0 0 0 5px currentColor;
+  transform: scale(1.15);
+}
+.accent-chip.active::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  color: #ffffff;
+  font-size: 0.72rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}

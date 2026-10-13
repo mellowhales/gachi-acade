@@ -2547,13 +2547,9 @@ const CatchmindGame = (() => {
     const item = document.getElementById(`gsp-item-${idx}`);
     if (!item) return;
     item.classList.add('is-solved');
-    const meta = item.querySelector('.gsp-meta');
-    if (meta && !meta.querySelector('.gsp-solved-badge')) {
-      const badge = document.createElement('span');
-      badge.className = 'gsp-solved-badge';
-      badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> 정답';
-      meta.appendChild(badge);
-    }
+    // 🌟 [사용자 요청] 중복 정답 뱃지 생성 제거: 정답 표시는 tagEl 단일 영역으로 일원화
+    const oldBadge = item.querySelector('.gsp-solved-badge');
+    if (oldBadge) oldBadge.remove();
   }
 
   function _updateSidebarRoles() {
@@ -2582,15 +2578,16 @@ const CatchmindGame = (() => {
         roleHtml = '<span style="color:#ea580c;font-weight:900;"><i class="fa-solid fa-paintbrush"></i> 출제자</span>';
         item.classList.add('is-current-turn');
       } else if (solvedPlayers.has(p.id)) {
-        roleHtml = '<span style="color:#2563eb;font-weight:900;"><i class="fa-solid fa-circle-check"></i> 정답!</span>';
+        // 🌟 [사용자 요청] 이중 정답 방지: 맞히는 중이 '정답'으로만 단일 변경
+        roleHtml = '<span style="color:var(--green-deep, #10b981);font-weight:900;"><i class="fa-solid fa-circle-check"></i> 정답</span>';
         item.classList.remove('is-current-turn');
       } else {
-        // 🌟 [사용자 요청] "맞히는 중" 완전 제거, 깔끔하게 정답만 표시 🌟
-        roleHtml = '';
+        // 🌟 맞히기 전 상태: '맞히는 중' (정답 시 '정답'으로 교체됨)
+        roleHtml = '<span style="color:var(--t3);font-weight:700;"><i class="fa-solid fa-magnifying-glass"></i> 맞히는 중</span>';
         item.classList.remove('is-current-turn');
       }
 
-      tagEl.innerHTML = roleHtml ? `<span style="display:inline-flex; align-items:center;">${roleHtml}</span>` : '';
+      tagEl.innerHTML = `<span style="display:inline-flex; align-items:center;">${roleHtml}</span>`;
     });
 
     if (window.App && typeof window.App.updateInGameTurn === 'function') {

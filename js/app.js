@@ -853,6 +853,172 @@
   /* ── 화면 테마 (다크/라이트 모드) 시스템 ── */
   let currentTheme = localStorage.getItem('kr_arcade_theme') || 'light';
 
+  /* ── 🎨 포인트 색상 (액센트 테마) 시스템 ── */
+  const ACCENT_PRESETS = {
+    classic: {
+      name: '클래식 에메랄드',
+      color: '#10b981',
+      light: {
+        '--green': '#10b981',
+        '--green-hover': '#059669',
+        '--green-deep': '#047857',
+        '--green-tint': 'rgba(16, 185, 129, 0.08)',
+        '--green-tint-hi': 'rgba(16, 185, 129, 0.16)',
+        '--green-border': 'rgba(16, 185, 129, 0.28)',
+        '--shadow-green': '0 2px 6px rgba(16, 185, 129, 0.25)',
+      },
+      dark: {
+        '--green': '#10b981',
+        '--green-hover': '#34d399',
+        '--green-deep': '#6ee7b7',
+        '--green-tint': 'rgba(16, 185, 129, 0.16)',
+        '--green-tint-hi': 'rgba(16, 185, 129, 0.25)',
+        '--green-border': 'rgba(16, 185, 129, 0.35)',
+        '--shadow-green': '0 2px 8px rgba(16, 185, 129, 0.3)',
+      }
+    },
+    apple: {
+      name: '애플 연두',
+      color: '#83c774',
+      light: {
+        '--green': '#83c774',
+        '--green-hover': '#72b863',
+        '--green-deep': '#509941',
+        '--green-tint': 'rgba(131, 199, 116, 0.12)',
+        '--green-tint-hi': 'rgba(131, 199, 116, 0.22)',
+        '--green-border': 'rgba(131, 199, 116, 0.35)',
+        '--shadow-green': '0 2px 6px rgba(131, 199, 116, 0.25)',
+      },
+      dark: {
+        '--green': '#83c774',
+        '--green-hover': '#9ae08c',
+        '--green-deep': '#a5e897',
+        '--green-tint': 'rgba(131, 199, 116, 0.18)',
+        '--green-tint-hi': 'rgba(131, 199, 116, 0.28)',
+        '--green-border': 'rgba(131, 199, 116, 0.38)',
+        '--shadow-green': '0 2px 8px rgba(131, 199, 116, 0.3)',
+      }
+    },
+    blue: {
+      name: '오션 블루',
+      color: '#2563eb',
+      light: {
+        '--green': '#2563eb',
+        '--green-hover': '#1d4ed8',
+        '--green-deep': '#1e40af',
+        '--green-tint': 'rgba(37, 99, 235, 0.08)',
+        '--green-tint-hi': 'rgba(37, 99, 235, 0.16)',
+        '--green-border': 'rgba(37, 99, 235, 0.28)',
+        '--shadow-green': '0 2px 6px rgba(37, 99, 235, 0.25)',
+      },
+      dark: {
+        '--green': '#3b82f6',
+        '--green-hover': '#60a5fa',
+        '--green-deep': '#93c5fd',
+        '--green-tint': 'rgba(59, 130, 246, 0.16)',
+        '--green-tint-hi': 'rgba(59, 130, 246, 0.25)',
+        '--green-border': 'rgba(59, 130, 246, 0.35)',
+        '--shadow-green': '0 2px 8px rgba(59, 130, 246, 0.3)',
+      }
+    },
+    purple: {
+      name: '네온 바이올렛',
+      color: '#8b5cf6',
+      light: {
+        '--green': '#8b5cf6',
+        '--green-hover': '#7c3aed',
+        '--green-deep': '#6d28d9',
+        '--green-tint': 'rgba(139, 92, 246, 0.08)',
+        '--green-tint-hi': 'rgba(139, 92, 246, 0.16)',
+        '--green-border': 'rgba(139, 92, 246, 0.28)',
+        '--shadow-green': '0 2px 6px rgba(139, 92, 246, 0.25)',
+      },
+      dark: {
+        '--green': '#a78bfa',
+        '--green-hover': '#c4b5fd',
+        '--green-deep': '#ddd6fe',
+        '--green-tint': 'rgba(167, 139, 250, 0.16)',
+        '--green-tint-hi': 'rgba(167, 139, 250, 0.25)',
+        '--green-border': 'rgba(167, 139, 250, 0.35)',
+        '--shadow-green': '0 2px 8px rgba(167, 139, 250, 0.3)',
+      }
+    },
+    rose: {
+      name: '코랄 로즈',
+      color: '#f43f5e',
+      light: {
+        '--green': '#f43f5e',
+        '--green-hover': '#e11d48',
+        '--green-deep': '#be123c',
+        '--green-tint': 'rgba(244, 63, 94, 0.08)',
+        '--green-tint-hi': 'rgba(244, 63, 94, 0.16)',
+        '--green-border': 'rgba(244, 63, 94, 0.28)',
+        '--shadow-green': '0 2px 6px rgba(244, 63, 94, 0.25)',
+      },
+      dark: {
+        '--green': '#fb7185',
+        '--green-hover': '#fda4af',
+        '--green-deep': '#fecdd3',
+        '--green-tint': 'rgba(251, 113, 133, 0.16)',
+        '--green-tint-hi': 'rgba(251, 113, 133, 0.25)',
+        '--green-border': 'rgba(251, 113, 133, 0.35)',
+        '--shadow-green': '0 2px 8px rgba(251, 113, 133, 0.3)',
+      }
+    },
+    amber: {
+      name: '선셋 오렌지',
+      color: '#f59e0b',
+      light: {
+        '--green': '#f59e0b',
+        '--green-hover': '#d97706',
+        '--green-deep': '#b45309',
+        '--green-tint': 'rgba(245, 158, 11, 0.08)',
+        '--green-tint-hi': 'rgba(245, 158, 11, 0.16)',
+        '--green-border': 'rgba(245, 158, 11, 0.28)',
+        '--shadow-green': '0 2px 6px rgba(245, 158, 11, 0.25)',
+      },
+      dark: {
+        '--green': '#fbbf24',
+        '--green-hover': '#fcd34d',
+        '--green-deep': '#fef08a',
+        '--green-tint': 'rgba(251, 191, 36, 0.16)',
+        '--green-tint-hi': 'rgba(251, 191, 36, 0.25)',
+        '--green-border': 'rgba(251, 191, 36, 0.35)',
+        '--shadow-green': '0 2px 8px rgba(251, 191, 36, 0.3)',
+      }
+    }
+  };
+
+  let currentAccentColor = localStorage.getItem('kr_arcade_accent') || 'classic';
+
+  function _applyAccentColor(accentKey) {
+    if (!ACCENT_PRESETS[accentKey]) accentKey = 'classic';
+    currentAccentColor = accentKey;
+    localStorage.setItem('kr_arcade_accent', accentKey);
+    document.documentElement.setAttribute('data-accent', accentKey);
+
+    const preset = ACCENT_PRESETS[accentKey];
+    const mode = (currentTheme === 'dark') ? 'dark' : 'light';
+    const vars = preset[mode];
+
+    for (const [key, val] of Object.entries(vars)) {
+      document.documentElement.style.setProperty(key, val);
+    }
+
+    const nameEl = $('accent-color-name');
+    if (nameEl) {
+      nameEl.textContent = preset.name;
+      nameEl.style.color = vars['--green'];
+    }
+
+    const paletteEl = $('accent-color-palette');
+    if (paletteEl) {
+      paletteEl.querySelectorAll('.accent-chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-accent') === accentKey);
+      });
+    }
+  }
+
   function _applyTheme(theme) {
     currentTheme = theme;
     localStorage.setItem('kr_arcade_theme', theme);
@@ -863,6 +1029,8 @@
       document.documentElement.removeAttribute('data-theme');
       document.body.removeAttribute('data-theme');
     }
+
+    _applyAccentColor(currentAccentColor);
 
     const targetColor = theme === 'dark' ? '#0f172a' : '#f6f8f7';
     document.querySelectorAll('meta[name="theme-color"]').forEach(el => {
@@ -884,8 +1052,25 @@
     }
   }
 
+  function _initAccentColors() {
+    _applyAccentColor(currentAccentColor);
+    const paletteEl = $('accent-color-palette');
+    if (paletteEl) {
+      paletteEl.addEventListener('click', (e) => {
+        const chip = e.target.closest('.accent-chip');
+        if (!chip) return;
+        const accent = chip.getAttribute('data-accent');
+        if (accent && ACCENT_PRESETS[accent]) {
+          _applyAccentColor(accent);
+          if (typeof Sound !== 'undefined' && Sound.playPop) Sound.playPop();
+        }
+      });
+    }
+  }
+
   function _initTheme() {
     _applyTheme(currentTheme);
+    _initAccentColors();
     const btnLight = $('btn-theme-light');
     const btnDark = $('btn-theme-dark');
     if (btnLight) {

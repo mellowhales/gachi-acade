@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.19.12" />
-  <link rel="stylesheet" href="css/games.css?v=1.19.12" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.13" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.13" />
 </head>
 <body>
 
@@ -1167,6 +1167,25 @@
           </div>
         </div>
 
+        <!-- 포인트 색상 설정 -->
+        <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+          <div class="setting-meta" style="width: 100%; justify-content: space-between;">
+            <div class="setting-title">
+              <i class="fa-solid fa-palette" style="color:var(--green);"></i>
+              <span>포인트 색상</span>
+            </div>
+            <span id="accent-color-name" style="font-size:0.85rem; font-weight:800; color:var(--green);">클래식 에메랄드</span>
+          </div>
+          <div class="accent-color-palette" id="accent-color-palette">
+            <button type="button" class="accent-chip active" data-accent="classic" title="클래식 에메랄드 (기본)" style="background:#10b981; color:#10b981;"></button>
+            <button type="button" class="accent-chip" data-accent="apple" title="애플 연두" style="background:#83c774; color:#83c774;"></button>
+            <button type="button" class="accent-chip" data-accent="blue" title="오션 블루" style="background:#2563eb; color:#2563eb;"></button>
+            <button type="button" class="accent-chip" data-accent="purple" title="네온 바이올렛" style="background:#8b5cf6; color:#8b5cf6;"></button>
+            <button type="button" class="accent-chip" data-accent="rose" title="코랄 로즈" style="background:#f43f5e; color:#f43f5e;"></button>
+            <button type="button" class="accent-chip" data-accent="amber" title="선셋 오렌지" style="background:#f59e0b; color:#f59e0b;"></button>
+          </div>
+        </div>
+
         <!-- 부드러운 애니메이션 & 파티클 -->
         <div class="setting-item">
           <div class="setting-meta">
@@ -2060,7 +2079,7 @@
 <script src="js/games/wordchain.js"></script>
 <script src="js/games/apple.js"></script>
 <script src="js/games/typing.js"></script>
-<script src="js/games/catchmind.js?v=1.19.12"></script>
+<script src="js/games/catchmind.js?v=1.19.13"></script>
 <script src="js/games/yutnori.js"></script>
 <script src="js/games/yacht.js"></script>
 <script src="js/games/seotda.js"></script>
@@ -2069,7 +2088,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.19.12"></script>
+<script src="js/app.js?v=1.19.13"></script>
 
 </body>
 </html>
