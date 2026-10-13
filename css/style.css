@@ -1541,7 +1541,7 @@ body {
     max-height: none !important;
     min-height: 0 !important;
     overflow: hidden !important;
-    padding: 0 20px 16px 20px !important; /* 좌우 20px, 하단 16px */
+    padding: 0 20px 14px 20px !important; /* 좌우 20px, 하단 14px */
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
@@ -1555,9 +1555,9 @@ body {
     flex-direction: column !important;
     gap: 0 !important;
     width: 100% !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important; /* 남은 세로 공간을 균형있게 점유하여 하단 액션 버튼 밀림 방지 */
     min-height: 0 !important;
-    height: 100% !important;
+    height: auto !important;
     max-height: none !important;
     margin: 0 !important;
     overflow: visible !important; /* 카드 그림자가 사방으로 잘리지 않고 온전히 노출 */
@@ -1585,6 +1585,9 @@ body {
     overflow: hidden !important; /* 절대 스크롤 방지: 크기 고정 */
     box-sizing: border-box !important;
     margin-top: 0 !important;
+  }
+  .lobby-card.hidden {
+    display: none !important;
   }
   .lobby-card .lobby-header {
     padding: 0 0 6px 0 !important;
@@ -2117,6 +2120,27 @@ body {
     overflow: hidden !important;
     box-sizing: border-box !important;
     background: var(--bg-card) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .lobby-shop-card.hidden,
+  .lobby-profile-card.hidden {
+    display: none !important;
+  }
+  .lobby-profile-card .profile-card-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 6px 4px 12px 4px !important;
+    box-sizing: border-box !important;
+  }
+  .lobby-shop-card .shop-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
   }
   /* 🌟 방 설정 내부 토글 탭: [방 만들기] | [방 참가] 복원 🌟 */
   .connect-tabs {
@@ -2228,7 +2252,7 @@ body {
     flex-shrink: 0 !important;
   }
 
-  /* 모바일 탭 상태 클래스 제어 */
+  /* 🌟 모바일 탭 상태 클래스 제어 (방 만들기 모드) 🌟 */
   .mobile-show-create #lobby-room-card,
   .mobile-show-create #lobby-profile-card,
   .mobile-show-create #lobby-shop-card {
@@ -2237,17 +2261,34 @@ body {
   .mobile-show-create .connect-card {
     display: flex !important;
   }
-  .mobile-show-create .mobile-lobby-action-row,
-  .mobile-shop-active .mobile-lobby-action-row,
-  .mobile-profile-active .mobile-lobby-action-row {
+  .mobile-show-create .mobile-lobby-action-row {
     display: none !important;
   }
+
+  /* 🌟 모바일 탭 상태 클래스 제어 (상점 모드) 🌟 */
+  .mobile-shop-active #lobby-room-card,
+  .mobile-shop-active #lobby-profile-card,
+  .mobile-shop-active .connect-card {
+    display: none !important;
+  }
+  .mobile-shop-active #lobby-shop-card {
+    display: flex !important;
+  }
+  .mobile-shop-active .mobile-lobby-action-row {
+    display: none !important;
+  }
+
+  /* 🌟 모바일 탭 상태 클래스 제어 (프로필 모드) 🌟 */
   .mobile-profile-active #lobby-room-card,
-  .mobile-profile-active #lobby-shop-card {
+  .mobile-profile-active #lobby-shop-card,
+  .mobile-profile-active .connect-card {
     display: none !important;
   }
   .mobile-profile-active #lobby-profile-card {
     display: flex !important;
+  }
+  .mobile-profile-active .mobile-lobby-action-row {
+    display: none !important;
   }
 
   .room-body {
@@ -11625,6 +11666,11 @@ html, body {
 .lobby-shop-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .lobby-shop-card.hidden {
   display: none !important;
@@ -11634,6 +11680,11 @@ html, body {
 .lobby-profile-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .lobby-profile-card.hidden {
   display: none !important;

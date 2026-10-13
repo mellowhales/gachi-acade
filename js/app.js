@@ -1619,6 +1619,7 @@
       if (shopCard) shopCard.classList.remove('hidden');
       if (homeScreen) {
         homeScreen.classList.remove('mobile-show-create');
+        homeScreen.classList.remove('mobile-profile-active');
         homeScreen.classList.add('mobile-shop-active');
       }
       if ($('tab-mobile-shop')) $('tab-mobile-shop').classList.add('active');
@@ -4813,6 +4814,7 @@
     if (homeScreen) {
       homeScreen.classList.remove('mobile-show-create');
       homeScreen.classList.remove('mobile-shop-active');
+      homeScreen.classList.remove('mobile-profile-active');
     }
     _toggleLobbyShop(false);
     if (typeof _closeProfileModal === 'function') _closeProfileModal(true);
@@ -4824,6 +4826,7 @@
     const homeScreen = $('screen-home');
     if (homeScreen) {
       homeScreen.classList.remove('mobile-show-create');
+      homeScreen.classList.remove('mobile-profile-active');
       homeScreen.classList.add('mobile-shop-active');
     }
     if (typeof _closeProfileModal === 'function') _closeProfileModal(true);
@@ -4980,6 +4983,7 @@
     const homeScreen = $('screen-home');
     if (homeScreen) {
       homeScreen.classList.remove('mobile-show-create');
+      homeScreen.classList.remove('mobile-shop-active');
       homeScreen.classList.add('mobile-profile-active');
     }
 
