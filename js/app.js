@@ -4993,7 +4993,9 @@
   }
 
   function _closeProfileModal(skipHistory = false) {
-    if (!skipHistory && _backHistoryIfModal('profile')) return;
+    if (!skipHistory) {
+      _backHistoryIfModal('profile');
+    }
     const card = $('lobby-profile-card') || $('profile-bubble-popup');
     if (card) {
       card.classList.add('hidden');
@@ -8856,6 +8858,10 @@
      ===================================================================== */
   window.addEventListener('popstate', (e) => {
     // 1. Close modals if they are open
+    if ($('lobby-profile-card') && !$('lobby-profile-card').classList.contains('hidden')) {
+      _closeProfileModal(true);
+      return;
+    }
     if ($('modal-friends') && !$('modal-friends').classList.contains('hidden')) {
       $('modal-friends').classList.add('hidden');
       return;

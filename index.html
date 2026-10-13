@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.18.7" />
-  <link rel="stylesheet" href="css/games.css?v=1.18.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.18.8" />
+  <link rel="stylesheet" href="css/games.css?v=1.18.8" />
 </head>
 <body>
 
@@ -350,6 +350,16 @@
             <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
           </div>
         </div>
+        <!-- 🌟 방목록 카드 바로 아래 부착된 액션 바 (화면 잘림 완전 방지) 🌟 -->
+        <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
+          <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
+            <i class="fa-solid fa-comment-dots"></i>
+            <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
+          </button>
+          <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
+            <i class="fa-solid fa-plus"></i>
+            <span>방 만들기</span>
+          </button>
         </div>
       </div>
 
@@ -401,11 +411,6 @@
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <span class="lobby-title"><i class="fa-solid fa-user-pen" style="color:var(--green);"></i> 프로필 편집</span>
-          </div>
-          <div class="lobby-header-actions">
-            <button type="button" class="btn-icon sm" id="btn-close-profile" title="방 목록으로 돌아가기">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
           </div>
         </div>
         <div class="profile-card-content custom-scroll">
@@ -477,17 +482,17 @@
             <label class="profile-section-label">배경 색상</label>
             <div class="avatar-color-grid" id="avatar-color-grid"></div>
           </div>
+        </div>
 
-          <!-- 버튼 -->
-          <div class="profile-btn-row">
-            <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
-              <span>취소</span>
-            </button>
-            <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
-              <i class="fa-solid fa-check"></i>
-              <span>저장</span>
-            </button>
-          </div>
+        <!-- 🌟 하단 고정 액션 바 (취소 / 저장) - 스크롤 없이 항상 화면 하단 고정 🌟 -->
+        <div class="profile-card-footer" id="profile-card-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
+            <span>취소</span>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
+            <i class="fa-solid fa-check"></i>
+            <span>저장</span>
+          </button>
         </div>
       </div>
 
@@ -668,17 +673,6 @@
     </div> <!-- /.lobby-right-col -->
   </div> <!-- /.home-lobby-container -->
 
-    <!-- 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 만들기 버튼] (카드 바깥 하단 배치) 🌟 -->
-    <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
-      <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
-        <i class="fa-solid fa-comment-dots"></i>
-        <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
-      </button>
-      <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
-        <i class="fa-solid fa-plus"></i>
-        <span>방 만들기</span>
-      </button>
-    </div>
   </main>
   </div> <!-- /.home-body-wrap -->
 </div>
@@ -1358,7 +1352,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.18.7</span>
+              <span class="about-version-tag">v1.18.8</span>
             </div>
           </div>
         </div>
@@ -1371,6 +1365,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.18.8]</span>
+              <span class="changelog-text">모바일 방 목록 카드 하단 액션 버튼 밀착 부착으로 화면 잘림 완전 방지, 방 만들기 카드 상단 테두리 복원 및 탭 단절감 해소, 프로필 편집 1회 클릭 즉시 닫힘 수정 및 우측 X버튼 제거, 프로필 편집 UI 컴팩트 단순화 및 취소/저장 버튼 카드 하단 고정 배치</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.18.7]</span>
               <span class="changelog-text">모바일 로비 하단 액션 버튼(채팅/방 만들기) 화면 벗어남 및 오버플로우 수정(컨테이너 flex 높이 핏 교정), 상점/프로필 설정/방 만들기 화면 전환 시 상호 배타적 카드 노출 및 내부 스크롤 격리로 UI 깨짐 완전 해결</span>
             </div>
@@ -2075,7 +2073,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.18.7"></script>
+<script src="js/app.js?v=1.18.8"></script>
 
 </body>
 </html>

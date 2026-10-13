@@ -1772,8 +1772,9 @@ body {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important; /* 방 카드 간 상하 간격 6px -> 8px 확대 */
-    flex: 1 !important;
-    height: 100% !important;
+    flex: 1 1 0% !important;
+    height: auto !important;
+    min-height: 0 !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding: 2px 4px 2px 2px !important;
@@ -1828,15 +1829,17 @@ body {
     display: none !important;
   }
 
-  /* 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 만들기 버튼] (카드 바깥 하단 배치) 🌟 */
+  /* 🌟 모바일 전용 하단 액션 바: 방 목록 카드 바로 아래 밀착 부착 (화면 잘림 완전 방지) 🌟 */
   .mobile-lobby-action-row {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 8px !important;
     width: 100% !important;
-    margin-top: 10px !important; /* 카드 외부 아래쪽 여백 배치 */
+    margin-top: auto !important; /* 카드 내부 최하단 밀착 */
     margin-bottom: 0 !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
     order: 99 !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
@@ -2080,31 +2083,30 @@ body {
     display: inline-flex !important;
   }
 
-  /* 🌟 방 만들기 카드: 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 (공백 최소화 컴팩트 핏) 🌟 */
+  /* 🌟 방 만들기 카드: 4면 온전한 라운딩(16px), 1.5px 회색 테두리로 상단 끊김 완벽 해소 🌟 */
   .connect-card {
-    order: 2 !important;
-    flex: 0 0 auto !important; /* 모바일에서 100% 억지 확장 방지: 공백 없이 컴팩트 핏 */
-    height: auto !important;
-    max-height: none !important;
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
     min-height: 0 !important;
     padding: 12px 14px 16px 14px !important;
-    border-radius: 0 0 16px 16px !important; /* 하단만 둥근 모서리 라운딩 (상단 탭과 일체화) */
-    border: 1.5px solid #cbd5e1 !important; /* 선명한 연한 회색 테두리 */
-    border-top: none !important; /* 상단 탭의 border-bottom과 일체화 */
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.02), 2px 0 8px rgba(0, 0, 0, 0.02) !important; /* 일체형 입체 회색 그림자 */
+    border-radius: 16px !important; /* 4면 온전한 둥근 모서리 라운딩 */
+    border: 1.5px solid #cbd5e1 !important; /* 4면 온전한 테두리로 상단 끊김 완전 해결 */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
     margin: 0 !important;
     display: none !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
     gap: 8px !important;
-    overflow: hidden !important;
+    overflow-y: auto !important;
     box-sizing: border-box !important;
     background: var(--bg-card) !important;
   }
 
-  /* 🌟 상점 및 프로필 카드 (모바일): 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
-  .lobby-shop-card,
-  .lobby-profile-card {
+  /* 🌟 상점 카드 (모바일): 상단 탭과 일체화 🌟 */
+  .lobby-shop-card {
     order: 1 !important;
     flex: 1 1 auto !important;
     width: 100% !important;
@@ -2123,17 +2125,54 @@ body {
     display: flex !important;
     flex-direction: column !important;
   }
+
+  /* 🌟 프로필 편집 카드 (모바일): 독립된 16px 카드 및 하단 고정 액션 바 🌟 */
+  .lobby-profile-card {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important; /* 모바일에서 4면 온전한 16px 라운딩 */
+    border: 1.5px solid #cbd5e1 !important; /* 끊김 없는 4면 회색 테두리 */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    background: var(--bg-card) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
   .lobby-shop-card.hidden,
   .lobby-profile-card.hidden {
     display: none !important;
   }
   .lobby-profile-card .profile-card-content {
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    padding: 6px 4px 12px 4px !important;
+    padding: 4px 4px 10px 4px !important;
+    gap: 10px !important;
     box-sizing: border-box !important;
+  }
+  .lobby-profile-card .profile-card-footer {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    gap: 8px !important;
+    padding-top: 10px !important;
+    margin-top: auto !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .lobby-profile-card .profile-card-footer .btn {
+    flex: 1 !important;
+    height: 40px !important;
+    font-weight: 800 !important;
+    border-radius: 10px !important;
   }
   .lobby-shop-card .shop-content {
     flex: 1 1 auto !important;
@@ -2253,6 +2292,9 @@ body {
   }
 
   /* 🌟 모바일 탭 상태 클래스 제어 (방 만들기 모드) 🌟 */
+  .mobile-show-create .mobile-lobby-tabs {
+    display: none !important; /* 상단 탭 단절감 완전 해소 */
+  }
   .mobile-show-create #lobby-room-card,
   .mobile-show-create #lobby-profile-card,
   .mobile-show-create #lobby-shop-card {
@@ -2279,6 +2321,9 @@ body {
   }
 
   /* 🌟 모바일 탭 상태 클래스 제어 (프로필 모드) 🌟 */
+  .mobile-profile-active .mobile-lobby-tabs {
+    display: none !important; /* 상단 탭 단절감 완전 해소 */
+  }
   .mobile-profile-active #lobby-room-card,
   .mobile-profile-active #lobby-shop-card,
   .mobile-profile-active .connect-card {
@@ -11723,6 +11768,21 @@ html, body {
   flex-direction: column;
   gap: 16px;
   padding: 8px 4px 16px 4px;
+}
+
+.profile-card-footer {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding-top: 12px;
+  margin-top: auto;
+  border-top: 1px solid var(--border-sub, rgba(0, 0, 0, 0.08));
+}
+.profile-card-footer .btn {
+  flex: 1;
+  height: 38px;
+  font-weight: 800;
+  border-radius: var(--radius-sm, 8px);
 }
 
 .shop-header {
