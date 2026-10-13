@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.18.9" />
-  <link rel="stylesheet" href="css/games.css?v=1.18.9" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.0" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.0" />
 </head>
 <body>
 
@@ -497,7 +497,20 @@
       </div>
 
       <!-- 2. 우측: 접속자 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
-      <div class="lobby-right-col">
+      <div class="lobby-right-col" id="lobby-right-col">
+        <!-- 🌟 데스크톱 전용 소셜 허브 탭 (전체 채팅 / 접속자 전환) 🌟 -->
+        <div class="social-hub-tabs" id="social-hub-tabs">
+          <button type="button" class="social-hub-tab active" data-social-tab="chat" id="tab-social-chat">
+            <i class="fa-solid fa-comment-dots"></i>
+            <span>전체 채팅</span>
+          </button>
+          <button type="button" class="social-hub-tab" data-social-tab="users" id="tab-social-users">
+            <i class="fa-solid fa-users"></i>
+            <span>접속자</span>
+            <span class="social-tab-badge" id="social-tab-users-badge">1</span>
+          </button>
+        </div>
+
         <!-- 2-1. 상단: 현재 접속 중인 플레이어 카드 (높이 반으로 축소, 클릭 시 전적 모달) -->
         <div class="online-users-card card" id="online-users-card">
           <div class="online-card-header">

@@ -3266,6 +3266,8 @@
     });
 
     if (countEl) countEl.textContent = `${list.length}명`;
+    const socialTabBadge = $('social-tab-users-badge');
+    if (socialTabBadge) socialTabBadge.textContent = String(list.length);
 
     listEl.innerHTML = list.map((user, idx) => {
       const isMe = (myPresenceKey && user.presenceKey === myPresenceKey) ||
@@ -4248,6 +4250,21 @@
     if ($('btn-mobile-lobby-chat')) $('btn-mobile-lobby-chat').addEventListener('click', _openLobbyMobileChat);
     if ($('btn-close-lobby-mobile-chat')) $('btn-close-lobby-mobile-chat').addEventListener('click', _closeLobbyMobileChat);
     if ($('lobby-mobile-chat-backdrop')) $('lobby-mobile-chat-backdrop').addEventListener('click', _closeLobbyMobileChat);
+
+    // 🌟 데스크톱 전용 소셜 허브 탭 (전체 채팅 vs 접속자 목록) 토글 리스너
+    const socialTabs = document.querySelectorAll('.social-hub-tab');
+    socialTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.socialTab;
+        socialTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const rightCol = $('lobby-right-col');
+        if (rightCol) {
+          rightCol.classList.remove('view-users', 'view-chat');
+          rightCol.classList.add(target === 'users' ? 'view-users' : 'view-chat');
+        }
+      });
+    });
   }
 
   function _appendLobbyChatMessage(msg, isLocal) {
