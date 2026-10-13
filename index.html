@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.18.9" />
-  <link rel="stylesheet" href="css/games.css?v=1.18.9" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.2" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.2" />
 </head>
 <body>
 
@@ -115,13 +115,17 @@
       </button>
     </div>
 
-    <!-- 중앙: 가치아케이드 로고 -->
+    <!-- 중앙: 가치아케이드 로고 & 실시간 접속자 뱃지 -->
     <div class="room-title">
       <div class="topbar-logo">
         <div class="logo-icon-wrap">
           <img src="favicon.png" alt="가치아케이드 로고" class="topbar-logo-svg" />
         </div>
         <span class="logo-title">가치아케이드</span>
+      </div>
+      <div class="topbar-live-users" id="topbar-live-users" title="현재 접속 중인 플레이어">
+        <span class="online-live-dot"></span>
+        <span id="topbar-online-count">접속 중 1명</span>
       </div>
     </div>
 
@@ -164,6 +168,23 @@
             <i class="fa-solid fa-user-pen"></i>
             <span class="btn-profile-label">내 프로필</span>
           </button>
+        </div>
+      </div>
+
+      <!-- 🌟 실시간 접속자 카드 (사이드바 위치 배치) 🌟 -->
+      <div class="online-users-card card" id="online-users-card">
+        <div class="online-card-header">
+          <div class="online-card-title">
+            <span class="online-live-dot"></span>
+            <span>접속 중인 플레이어</span>
+            <span class="online-count-badge" id="online-users-count">1명</span>
+          </div>
+          <button type="button" class="btn-icon sm" id="btn-refresh-online-users" title="접속자 새로고침">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+        <div class="online-users-list custom-scroll" id="online-users-list">
+          <!-- JS 동적 생성 -->
         </div>
       </div>
 
@@ -496,26 +517,9 @@
         </div>
       </div>
 
-      <!-- 2. 우측: 접속자 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
+      <!-- 2. 우측: 전체 채팅 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
       <div class="lobby-right-col">
-        <!-- 2-1. 상단: 현재 접속 중인 플레이어 카드 (높이 반으로 축소, 클릭 시 전적 모달) -->
-        <div class="online-users-card card" id="online-users-card">
-          <div class="online-card-header">
-            <div class="online-card-title">
-              <span class="online-live-dot"></span>
-              <span>접속 중인 플레이어</span>
-              <span class="online-count-badge" id="online-users-count">1명</span>
-            </div>
-            <button type="button" class="btn-icon sm" id="btn-refresh-online-users" title="접속자 새로고침">
-              <i class="fa-solid fa-rotate-right"></i>
-            </button>
-          </div>
-          <div class="online-users-list custom-scroll" id="online-users-list">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-
-        <!-- 2-2. 중간: 💬 로비 전체 채팅방 (프로필 이름: 메시지 형식) -->
+        <!-- 2-1. 상단: 💬 로비 전체 채팅방 (프로필 이름: 메시지 형식) -->
         <div class="lobby-chat-card card" id="lobby-chat-card">
           <div class="lobby-chat-header">
             <div class="lobby-chat-title">

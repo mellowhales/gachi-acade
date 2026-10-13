@@ -3266,6 +3266,8 @@
     });
 
     if (countEl) countEl.textContent = `${list.length}명`;
+    const topbarCount = $('topbar-online-count');
+    if (topbarCount) topbarCount.textContent = `접속 중 ${list.length}명`;
 
     listEl.innerHTML = list.map((user, idx) => {
       const isMe = (myPresenceKey && user.presenceKey === myPresenceKey) ||
