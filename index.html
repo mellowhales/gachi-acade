@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.19.2" />
-  <link rel="stylesheet" href="css/games.css?v=1.19.2" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.4" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.4" />
 </head>
 <body>
 
@@ -115,17 +115,13 @@
       </button>
     </div>
 
-    <!-- 중앙: 가치아케이드 로고 & 실시간 접속자 뱃지 -->
+    <!-- 중앙: 가치아케이드 로고 -->
     <div class="room-title">
       <div class="topbar-logo">
         <div class="logo-icon-wrap">
           <img src="favicon.png" alt="가치아케이드 로고" class="topbar-logo-svg" />
         </div>
         <span class="logo-title">가치아케이드</span>
-      </div>
-      <div class="topbar-live-users" id="topbar-live-users" title="현재 접속 중인 플레이어">
-        <span class="online-live-dot"></span>
-        <span id="topbar-online-count">접속 중 1명</span>
       </div>
     </div>
 
@@ -179,9 +175,6 @@
             <span>접속 중인 플레이어</span>
             <span class="online-count-badge" id="online-users-count">1명</span>
           </div>
-          <button type="button" class="btn-icon sm" id="btn-refresh-online-users" title="접속자 새로고침">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
         </div>
         <div class="online-users-list custom-scroll" id="online-users-list">
           <!-- JS 동적 생성 -->
@@ -343,7 +336,17 @@
       <div class="lobby-card card" id="lobby-room-card">
         <div class="lobby-header">
           <div class="lobby-title-area">
-            <span class="lobby-title"><i class="fa-solid fa-layer-group"></i> 방 목록</span>
+            <!-- 🌟 상점 / 방 목록 전환 탭 (좌측 미니 캡슐) 🌟 -->
+            <div class="lobby-view-switcher" id="lobby-view-switcher">
+              <button type="button" class="lvs-tab active" id="btn-switch-rooms" title="방 목록">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>방 목록</span>
+              </button>
+              <button type="button" class="lvs-tab" id="btn-switch-shop" title="상점">
+                <i class="fa-solid fa-store"></i>
+                <span>상점</span>
+              </button>
+            </div>
             <div class="lobby-tab-group" id="lobby-filter-tabs">
               <button type="button" class="lobby-tab-btn active" data-lobby-tab="all" id="tab-lobby-all">
                 <i class="fa-solid fa-border-all"></i> 전체
@@ -360,9 +363,6 @@
             <select id="lobby-game-filter" class="lobby-game-select" title="게임별 방 필터">
               <option value="all">모든 게임</option>
             </select>
-            <button type="button" class="btn-icon sm" id="btn-refresh-lobby" title="목록 새로고침">
-              <i class="fa-solid fa-rotate-right"></i>
-            </button>
           </div>
         </div>
         <div class="lobby-list is-empty" id="lobby-room-list">
@@ -388,7 +388,17 @@
       <div class="lobby-card card lobby-shop-card hidden" id="lobby-shop-card">
         <div class="lobby-header shop-header">
           <div class="lobby-title-area shop-title-area">
-            <span class="lobby-title"><i class="fa-solid fa-store" style="color:var(--yellow);"></i> 상점</span>
+            <!-- 🌟 상점 / 방 목록 전환 탭 (좌측 미니 캡슐) 🌟 -->
+            <div class="lobby-view-switcher" id="lobby-view-switcher-shop">
+              <button type="button" class="lvs-tab" id="btn-switch-rooms-shop" title="방 목록">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>방 목록</span>
+              </button>
+              <button type="button" class="lvs-tab active" id="btn-switch-shop-shop" title="상점">
+                <i class="fa-solid fa-store"></i>
+                <span>상점</span>
+              </button>
+            </div>
             <div class="lobby-tab-group shop-tab-scroll" id="shop-filter-tabs">
               <button type="button" class="lobby-tab-btn active" data-shop-tab="nickname" id="tab-shop-nickname">
                 <i class="fa-solid fa-palette"></i> 닉네임
@@ -428,11 +438,14 @@
       <div class="lobby-card card lobby-profile-card hidden" id="lobby-profile-card">
         <div class="lobby-header profile-card-header">
           <div class="lobby-title-area">
-            <button type="button" class="btn-icon sm btn-back-from-profile" id="btn-back-from-profile" title="방 목록으로 돌아가기">
+            <button type="button" class="btn-icon sm btn-back-from-profile" id="btn-back-from-profile" title="돌아가기">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <span class="lobby-title"><i class="fa-solid fa-user-pen" style="color:var(--green);"></i> 프로필 편집</span>
           </div>
+          <button type="button" class="btn-icon sm btn-close-profile-modal" id="btn-close-profile" title="닫기">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
         <div class="profile-card-content custom-scroll">
           <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
@@ -516,6 +529,8 @@
           </button>
         </div>
       </div>
+      <!-- 🌟 프로필 편집 팝업 모달 백드롭 🌟 -->
+      <div class="profile-modal-backdrop hidden" id="profile-modal-backdrop"></div>
 
       <!-- 2. 우측: 전체 채팅 카드 + 방 만들기/참가 패널 (하단 일치 컬럼) -->
       <div class="lobby-right-col">
@@ -2081,7 +2096,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.18.9"></script>
+<script src="js/app.js?v=1.19.4"></script>
 
 </body>
 </html>
