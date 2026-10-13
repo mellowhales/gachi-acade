@@ -14038,8 +14038,8 @@ html, body {
      🌬️ 1-1. 상단바와 카드 사이 여백 + 카드 간격 대폭 확장 (Spacious Layout)
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ── */
   .home-body-wrap {
-    padding: 22px 28px 24px 28px !important; /* 상단바와 카드 사이 여백 충분히 확보 */
-    gap: 28px !important; /* 카드 사이사이 여백 크게 */
+    padding: 16px 24px 18px 24px !important; /* 상단바와 카드 사이 균형 잡힌 여백 확보 */
+    gap: 22px !important; /* 컬럼 사이 여백 */
     box-sizing: border-box !important;
     overflow: hidden !important;
   }
@@ -14059,7 +14059,7 @@ html, body {
     padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 16px !important; /* 프로필 카드 / 접속자 카드 / 스폰서 배너 사이 균형 잡힌 여백 */
+    gap: 12px !important; /* 프로필 카드 / 접속자 카드 / 스폰서 배너 사이 균형 잡힌 여백 */
     box-sizing: border-box !important;
     overflow: hidden !important;
   }
@@ -14200,14 +14200,15 @@ html, body {
     border-radius: 10px !important;
     overflow: hidden !important;
     width: 100% !important;
-    aspect-ratio: 300 / 180 !important;
-    max-height: 160px !important;
+    aspect-ratio: 300 / 250 !important;
+    max-height: 220px !important;
   }
   .home-sidebar .arcade-ad-sidebar-home .arcade-banner-img {
     width: 100% !important;
     height: 100% !important;
     border-radius: 10px !important;
-    object-fit: cover !important;
+    aspect-ratio: 300 / 250 !important;
+    object-fit: contain !important;
   }
 
   .online-users-card .online-card-header {
@@ -14249,7 +14250,7 @@ html, body {
   .home-lobby-container {
     display: grid !important;
     grid-template-columns: 1fr clamp(310px, 23vw, 380px) !important;
-    gap: 28px !important; /* 카드 사이 여백 크게 */
+    gap: 22px !important; /* 카드 사이 여백 */
     height: 100% !important;
     max-height: 100% !important;
     box-sizing: border-box !important;
