@@ -1825,16 +1825,16 @@ body {
     display: none !important;
   }
 
-  /* 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 설정 버튼] 🌟 */
+  /* 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 만들기 버튼] (카드 바깥 하단 배치) 🌟 */
   .mobile-lobby-action-row {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 8px !important;
     width: 100% !important;
-    margin-top: auto !important; /* 카드 내부 하단 밀착 배치 */
+    margin-top: 10px !important; /* 카드 외부 아래쪽 여백 배치 */
     margin-bottom: 0 !important;
-    order: 99 !important; /* 항상 카드 내부 맨 아래로 */
+    order: 99 !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
   }
@@ -2044,8 +2044,8 @@ body {
   }
   .lobby-chat-card .btn-lobby-chat-send {
     position: absolute !important;
-    right: 18px !important;
-    top: 50% !important;
+    right: 24px !important;
+    top: 28px !important;
     transform: translateY(-50%) !important;
     width: 32px !important;
     height: 32px !important;
@@ -2071,6 +2071,7 @@ body {
   .lobby-chat-card .btn-lobby-chat-send i {
     font-size: 0.85rem !important;
     margin: 0 !important;
+    transform: translate(-1px, 1px) !important;
   }
   #btn-close-lobby-mobile-chat {
     display: inline-flex !important;
@@ -2098,8 +2099,9 @@ body {
     background: var(--bg-card) !important;
   }
 
-  /* 🌟 상점 카드 (모바일): 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
-  .lobby-shop-card {
+  /* 🌟 상점 및 프로필 카드 (모바일): 하단 라운딩(16px), 1.5px 회색 테두리 & 상단 탭과 일체화 🌟 */
+  .lobby-shop-card,
+  .lobby-profile-card {
     order: 1 !important;
     flex: 1 1 auto !important;
     width: 100% !important;
@@ -2227,10 +2229,24 @@ body {
   }
 
   /* 모바일 탭 상태 클래스 제어 */
-  .mobile-show-create #lobby-room-card {
+  .mobile-show-create #lobby-room-card,
+  .mobile-show-create #lobby-profile-card,
+  .mobile-show-create #lobby-shop-card {
     display: none !important;
   }
   .mobile-show-create .connect-card {
+    display: flex !important;
+  }
+  .mobile-show-create .mobile-lobby-action-row,
+  .mobile-shop-active .mobile-lobby-action-row,
+  .mobile-profile-active .mobile-lobby-action-row {
+    display: none !important;
+  }
+  .mobile-profile-active #lobby-room-card,
+  .mobile-profile-active #lobby-shop-card {
+    display: none !important;
+  }
+  .mobile-profile-active #lobby-profile-card {
     display: flex !important;
   }
 
@@ -3105,6 +3121,23 @@ body {
 }
 
 /* ── 1. 왼쪽: 플레이어 목록 ── */
+.room-players-panel,
+#player-list,
+.game-sidebar-players,
+.gsp-list {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.room-players-panel::-webkit-scrollbar,
+#player-list::-webkit-scrollbar,
+.game-sidebar-players::-webkit-scrollbar,
+.gsp-list::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 .room-players-panel {
   padding: 20px 18px;
   display: flex;
@@ -5420,7 +5453,8 @@ html, body {
     background: transparent !important;
     box-shadow: none !important;
     flex-shrink: 0 !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
   .room-players-panel .panel-header {
     display: none !important;
@@ -6286,7 +6320,8 @@ html, body {
     height: 118px !important; /* 정확히 2줄(56px*2 + 6px = 118px) 고정 뷰포트 */
     max-height: 118px !important;
     box-sizing: border-box !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
 
   /* 🌟 인게임 개별 참가자 카드: 1열 56px 높이 & 1.5px 테두리/그림자 🌟 */
@@ -6519,8 +6554,8 @@ html, body {
   .room-chat-panel .btn-chat-send,
   .game-chat-panel .btn-chat-send {
     position: absolute !important;
-    right: 18px !important;
-    top: 50% !important;
+    right: 24px !important;
+    top: 28px !important;
     transform: translateY(-50%) !important;
     width: 32px !important;
     height: 32px !important;
@@ -6548,6 +6583,7 @@ html, body {
   .game-chat-panel .btn-chat-send i {
     font-size: 0.85rem !important;
     margin: 0 !important;
+    transform: translate(-1px, 1px) !important;
   }
 
   /* 🌟 모바일 채팅 닫기 버튼: 테두리 제거 & 깔끔한 무테 디자인 🌟 */
@@ -11592,6 +11628,50 @@ html, body {
 }
 .lobby-shop-card.hidden {
   display: none !important;
+}
+
+/* 👤 프로필 편집 카드 (Lobby Profile Card) */
+.lobby-profile-card {
+  display: flex;
+  flex-direction: column;
+}
+.lobby-profile-card.hidden {
+  display: none !important;
+}
+
+.profile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.profile-card-header .btn-back-from-profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: var(--t1);
+  cursor: pointer;
+  padding: 0;
+  margin-right: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s ease;
+}
+.profile-card-header .btn-back-from-profile:active {
+  opacity: 0.6;
+}
+.profile-card-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 4px 16px 4px;
 }
 
 .shop-header {

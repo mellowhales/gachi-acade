@@ -1610,6 +1610,11 @@
     const homeScreen = $('screen-home');
 
     if (_isShopActive) {
+      const profileCard = $('lobby-profile-card');
+      if (profileCard) {
+        profileCard.classList.add('hidden');
+        profileCard.classList.remove('active');
+      }
       if (roomCard) roomCard.classList.add('hidden');
       if (shopCard) shopCard.classList.remove('hidden');
       if (homeScreen) {
@@ -4810,6 +4815,7 @@
       homeScreen.classList.remove('mobile-shop-active');
     }
     _toggleLobbyShop(false);
+    if (typeof _closeProfileModal === 'function') _closeProfileModal(true);
   }
 
   function _switchToMobileShop() {
@@ -4820,6 +4826,7 @@
       homeScreen.classList.remove('mobile-show-create');
       homeScreen.classList.add('mobile-shop-active');
     }
+    if (typeof _closeProfileModal === 'function') _closeProfileModal(true);
     _toggleLobbyShop(true);
   }
 
@@ -4933,11 +4940,11 @@
   let _tempSelectedColor = myAvatarColor;
 
   function _openProfileModal() {
-    const popup = $('profile-bubble-popup');
-    if (!popup) return;
+    const card = $('lobby-profile-card') || $('profile-bubble-popup');
+    if (!card) return;
 
-    // 이미 열려있으면 히스토리 push 없이 바로 닫기 (두 번 클릭 문제 방지)
-    if (popup.classList.contains('active')) {
+    // 이미 열려있으면 히스토리 push 없이 바로 닫기 (두 번 클릭 시 닫기)
+    if (card.classList.contains('active')) {
       _closeProfileModal(true);
       return;
     }
@@ -4959,24 +4966,22 @@
       _updateProfileAuthUI(typeof AppSupabase !== 'undefined' ? AppSupabase.getCurrentUser() : null);
     }
 
-    // 🌟 위치 계산 (프로필 편집 버튼 기준 스마트 말풍선 배치)
-    const btn = $('btn-change-nickname') || $('home-user-avatar');
-    if (btn) {
-      const rect = btn.getBoundingClientRect();
-      const isMobile = window.innerWidth <= 1024;
-      if (isMobile) {
-        popup.style.left = '50%';
-        popup.style.top = Math.max(10, rect.bottom + 8) + 'px';
-        popup.style.transform = 'translateX(-50%)';
-      } else {
-        popup.style.left = Math.min(window.innerWidth - 340, rect.right + 14) + 'px';
-        popup.style.top = Math.max(16, rect.top - 30) + 'px';
-        popup.style.transform = 'none';
-      }
+    // 🌟 상점이 열려있다면 상점 닫기
+    if (typeof _toggleLobbyShop === 'function' && _isShopActive) {
+      _toggleLobbyShop(false);
     }
 
-    popup.classList.remove('hidden');
-    popup.classList.add('active');
+    // 🌟 방 목록 카드 숨기고 프로필 편집 일체형 카드 노출
+    const roomCard = $('lobby-room-card');
+    if (roomCard) roomCard.classList.add('hidden');
+    card.classList.remove('hidden');
+    card.classList.add('active');
+
+    const homeScreen = $('screen-home');
+    if (homeScreen) {
+      homeScreen.classList.remove('mobile-show-create');
+      homeScreen.classList.add('mobile-profile-active');
+    }
 
     setTimeout(() => {
       if ($('profile-input-nick') && window.innerWidth > 960) $('profile-input-nick').focus();
@@ -4985,10 +4990,18 @@
 
   function _closeProfileModal(skipHistory = false) {
     if (!skipHistory && _backHistoryIfModal('profile')) return;
-    const popup = $('profile-bubble-popup');
-    if (popup) {
-      popup.classList.add('hidden');
-      popup.classList.remove('active');
+    const card = $('lobby-profile-card') || $('profile-bubble-popup');
+    if (card) {
+      card.classList.add('hidden');
+      card.classList.remove('active');
+    }
+    const roomCard = $('lobby-room-card');
+    if (roomCard && !_isShopActive) {
+      roomCard.classList.remove('hidden');
+    }
+    const homeScreen = $('screen-home');
+    if (homeScreen) {
+      homeScreen.classList.remove('mobile-profile-active');
     }
   }
 
@@ -5131,8 +5144,18 @@
     e.stopPropagation();
     _openProfileModal();
   });
-  if ($('btn-close-profile')) $('btn-close-profile').addEventListener('click', _closeProfileModal);
-  if ($('btn-cancel-profile')) $('btn-cancel-profile').addEventListener('click', _closeProfileModal);
+  if ($('btn-back-from-profile')) $('btn-back-from-profile').addEventListener('click', () => {
+    Sound.playClick();
+    _closeProfileModal();
+  });
+  if ($('btn-close-profile')) $('btn-close-profile').addEventListener('click', () => {
+    Sound.playClick();
+    _closeProfileModal();
+  });
+  if ($('btn-cancel-profile')) $('btn-cancel-profile').addEventListener('click', () => {
+    Sound.playClick();
+    _closeProfileModal();
+  });
   if ($('btn-save-profile')) $('btn-save-profile').addEventListener('click', _handleSaveProfile);
   if ($('btn-random-profile')) $('btn-random-profile').addEventListener('click', _handleRandomizeProfile);
   if ($('profile-input-nick')) {

@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.18.5" />
-  <link rel="stylesheet" href="css/games.css?v=1.18.5" />
+  <link rel="stylesheet" href="css/style.css?v=1.18.6" />
+  <link rel="stylesheet" href="css/games.css?v=1.18.6" />
 </head>
 <body>
 
@@ -350,16 +350,6 @@
             <p>현재 열려있는 공개방이 없습니다.<br>새로운 방을 직접 만들어 보세요!</p>
           </div>
         </div>
-        <!-- 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 설정 버튼] 🌟 -->
-        <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
-          <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
-            <i class="fa-solid fa-comment-dots"></i>
-            <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
-          </button>
-          <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
-            <i class="fa-solid fa-sliders"></i>
-            <span>방 설정</span>
-          </button>
         </div>
       </div>
 
@@ -399,6 +389,104 @@
         <div class="shop-content custom-scroll">
           <div class="shop-items-grid" id="shop-items-grid">
             <!-- JS 동적 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-3. 👤 프로필 편집 카드 (방 목록 카드 위치에 일체형 표시) -->
+      <div class="lobby-card card lobby-profile-card hidden" id="lobby-profile-card">
+        <div class="lobby-header profile-card-header">
+          <div class="lobby-title-area">
+            <button type="button" class="btn-icon sm btn-back-from-profile" id="btn-back-from-profile" title="방 목록으로 돌아가기">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="lobby-title"><i class="fa-solid fa-user-pen" style="color:var(--green);"></i> 프로필 편집</span>
+          </div>
+          <div class="lobby-header-actions">
+            <button type="button" class="btn-icon sm" id="btn-close-profile" title="방 목록으로 돌아가기">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+        <div class="profile-card-content custom-scroll">
+          <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
+          <div class="profile-preview-area">
+            <!-- 통계 아이콘 미니 버튼 (아바타 카드 좌측 상단, 코인 반대편) -->
+            <button type="button" class="profile-preview-stats-btn" id="btn-open-my-stats" title="내 전적 통계 보기">
+              <i class="fa-solid fa-chart-simple"></i>
+            </button>
+
+            <!-- 코인 미니 뱃지 (아바타 카드 맨 오른쪽 상단) -->
+            <div class="profile-preview-badges">
+              <span class="profile-mini-coin"><i class="fa-solid fa-coins"></i> <span id="profile-coin-amount">0</span></span>
+            </div>
+
+            <div class="profile-preview-avatar-wrap">
+              <div class="profile-preview-avatar" id="profile-preview-avatar">
+                <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
+              </div>
+              <span class="profile-mini-level" id="profile-level-tag">1</span>
+            </div>
+            <div class="profile-preview-name" id="profile-preview-name">익명</div>
+            <!-- 경험치 게이지 -->
+            <div class="profile-exp-track" style="width:100%;margin-top:4px;">
+              <div class="profile-exp-fill" id="profile-exp-fill" style="width: 0%;"></div>
+            </div>
+            <span class="profile-exp-text" id="profile-exp-text">0 / 60 EXP</span>
+          </div>
+
+          <!-- 🌟 계정 연동 / 로그인 영역 -->
+          <div class="profile-auth-box" id="profile-auth-box">
+            <div class="profile-auth-info">
+              <i class="fa-solid fa-cloud profile-auth-icon" id="profile-auth-icon"></i>
+              <div class="profile-auth-text">
+                <span class="profile-auth-status" id="profile-auth-status">게스트 모드</span>
+                <span class="profile-auth-sub" id="profile-auth-sub">로그인하면 프로필이 클라우드에 보관됩니다.</span>
+              </div>
+            </div>
+            <div class="profile-auth-action" id="profile-auth-action">
+              <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
+                <i class="fa-solid fa-cloud"></i>
+                <span>클라우드 로그인</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 닉네임 입력 -->
+          <div class="profile-section">
+            <label class="profile-section-label">닉네임 (최대 6글자)</label>
+            <input
+              type="text"
+              id="profile-input-nick"
+              class="profile-input-nick"
+              placeholder="익명"
+              maxlength="6"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+
+          <!-- 동물 아이콘 선택 -->
+          <div class="profile-section">
+            <label class="profile-section-label">동물 아이콘</label>
+            <div class="avatar-icon-grid" id="avatar-icon-grid"></div>
+          </div>
+
+          <!-- 배경 색상 선택 -->
+          <div class="profile-section">
+            <label class="profile-section-label">배경 색상</label>
+            <div class="avatar-color-grid" id="avatar-color-grid"></div>
+          </div>
+
+          <!-- 버튼 -->
+          <div class="profile-btn-row">
+            <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
+              <span>취소</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
+              <i class="fa-solid fa-check"></i>
+              <span>저장</span>
+            </button>
           </div>
         </div>
       </div>
@@ -580,12 +668,17 @@
     </div> <!-- /.lobby-right-col -->
   </div> <!-- /.home-lobby-container -->
 
-    <!-- 🌟 모바일 전용 하단 긴 채팅 버튼 (접속자 제거 후 사이트 고유색상 와이드 배치) 🌟 -->
-    <button type="button" class="btn-lobby-long-chat" id="btn-lobby-long-chat">
-      <i class="fa-solid fa-comment-dots"></i>
-      <span>채팅</span>
-      <span class="chat-badge-dot hidden" id="lobby-long-chat-badge"></span>
-    </button>
+    <!-- 🌟 모바일 전용 하단 액션 바: [좌측 채팅 정사각형 버튼] + [우측 방 만들기 버튼] (카드 바깥 하단 배치) 🌟 -->
+    <div class="mobile-lobby-action-row" id="mobile-lobby-action-row">
+      <button type="button" class="btn-mobile-lobby-chat" id="btn-mobile-lobby-chat" title="전체 채팅 열기">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span class="chat-badge-dot hidden" id="mobile-lobby-chat-badge"></span>
+      </button>
+      <button type="button" class="btn-mobile-room-action" id="btn-mobile-room-action">
+        <i class="fa-solid fa-plus"></i>
+        <span>방 만들기</span>
+      </button>
+    </div>
   </main>
   </div> <!-- /.home-body-wrap -->
 </div>
@@ -1265,7 +1358,7 @@
           <div class="about-brand-info">
             <div class="about-title-row">
               <h4 class="about-app-name">GachiArcade</h4>
-              <span class="about-version-tag">v1.18.5</span>
+              <span class="about-version-tag">v1.18.6</span>
             </div>
           </div>
         </div>
@@ -1278,6 +1371,10 @@
           </div>
           <div class="settings-changelog-box" id="settings-changelog-box" style="height: 140px; overflow-y: auto;">
             <div class="changelog-entry current">
+              <span class="changelog-ver">[v1.18.6]</span>
+              <span class="changelog-text">프로필 편집 UI 로비 방 목록 카드 내 일체형 카드 이식 및 뒤로가기 버튼 추가, 모바일 채팅 및 방 만들기 액션 버튼을 카드 외부 하단으로 분리 및 '방 만들기' 문구 변경, 방/게임 화면 참가자 목록 스크롤바 투명화, 모바일 채팅 입력창 전송 버튼 수직/수평 정렬 및 아이콘 오프셋 교정</span>
+            </div>
+            <div class="changelog-entry">
               <span class="changelog-ver">[v1.18.5]</span>
               <span class="changelog-text">모바일 방 화면 게임 선택/라운드/진영 설정 전환 시 카드 움찔거림 완전 방지(헤더 32px 고정), 준비 버튼 클릭 시 패널 스크롤 밀림 차단으로 게임 요약 배너 유지/덮어씌워짐 버그 수정, 인게임 턴 플레이어 바운스/확대 애니메이션 제거로 안정적인 화면 유지</span>
             </div>
@@ -1600,103 +1697,6 @@
       </button>
     </div>
   </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     POPUP: 프로필 편집 말풍선 팝업 (동물 아이콘 + 색상 + 닉네임)
-═══════════════════════════════════════════════════════════════ -->
-<div id="profile-bubble-popup" class="profile-bubble-popup hidden">
-  <div class="profile-bubble-arrow"></div>
-  <div class="profile-bubble-header">
-    <div class="profile-bubble-title">
-      <i class="fa-solid fa-user-pen"></i>
-      <span>프로필 편집</span>
-    </div>
-    <button type="button" class="btn-icon sm profile-bubble-close" id="btn-close-profile" title="닫기">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  </div>
-
-  <!-- 🌟 미리보기 영역 (아바타 + 이름 + 레벨/코인 배지) -->
-  <div class="profile-preview-area">
-    <!-- 통계 아이콘 미니 버튼 (아바타 카드 좌측 상단, 코인 반대편) -->
-    <button type="button" class="profile-preview-stats-btn" id="btn-open-my-stats" title="내 전적 통계 보기">
-      <i class="fa-solid fa-chart-simple"></i>
-    </button>
-
-    <!-- 코인 미니 뱃지 (아바타 카드 맨 오른쪽 상단) -->
-    <div class="profile-preview-badges">
-      <span class="profile-mini-coin"><i class="fa-solid fa-coins"></i> <span id="profile-coin-amount">0</span></span>
-    </div>
-
-    <div class="profile-preview-avatar-wrap">
-      <div class="profile-preview-avatar" id="profile-preview-avatar">
-        <i class="fa-solid fa-dog" id="profile-preview-icon"></i>
-      </div>
-      <span class="profile-mini-level" id="profile-level-tag">1</span>
-    </div>
-    <div class="profile-preview-name" id="profile-preview-name">익명</div>
-    <!-- 경험치 게이지 -->
-    <div class="profile-exp-track" style="width:100%;margin-top:4px;">
-      <div class="profile-exp-fill" id="profile-exp-fill" style="width: 0%;"></div>
-    </div>
-    <span class="profile-exp-text" id="profile-exp-text">0 / 60 EXP</span>
-  </div>
-
-  <!-- 🌟 계정 연동 / 로그인 영역 -->
-  <div class="profile-auth-box" id="profile-auth-box">
-    <div class="profile-auth-info">
-      <i class="fa-solid fa-cloud profile-auth-icon" id="profile-auth-icon"></i>
-      <div class="profile-auth-text">
-        <span class="profile-auth-status" id="profile-auth-status">게스트 모드</span>
-        <span class="profile-auth-sub" id="profile-auth-sub">로그인하면 프로필이 클라우드에 보관됩니다.</span>
-      </div>
-    </div>
-    <div class="profile-auth-action" id="profile-auth-action">
-      <button type="button" class="btn btn-primary btn-sm profile-auth-btn" id="btn-open-auth-modal">
-        <i class="fa-solid fa-cloud"></i>
-        <span>클라우드 로그인</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- 닉네임 입력 -->
-  <div class="profile-section">
-    <label class="profile-section-label">닉네임 (최대 6글자)</label>
-    <input
-      type="text"
-      id="profile-input-nick"
-      class="profile-input-nick"
-      placeholder="익명"
-      maxlength="6"
-      autocomplete="off"
-      spellcheck="false"
-    />
-  </div>
-
-  <!-- 동물 아이콘 선택 -->
-  <div class="profile-section">
-    <label class="profile-section-label">동물 아이콘</label>
-    <div class="avatar-icon-grid" id="avatar-icon-grid"></div>
-  </div>
-
-  <!-- 배경 색상 선택 -->
-  <div class="profile-section">
-    <label class="profile-section-label">배경 색상</label>
-    <div class="avatar-color-grid" id="avatar-color-grid"></div>
-  </div>
-
-  <!-- 버튼 -->
-  <div class="profile-btn-row">
-    <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-profile">
-      <span>취소</span>
-    </button>
-    <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
-      <i class="fa-solid fa-check"></i>
-      <span>저장</span>
-    </button>
-  </div>
-
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -2071,7 +2071,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.18.5"></script>
+<script src="js/app.js?v=1.18.6"></script>
 
 </body>
 </html>
