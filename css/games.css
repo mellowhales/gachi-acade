@@ -2525,34 +2525,55 @@
   }
 }
 
-/* ── 💬 참가자 사이드바 오답/정답 말풍선 (플레이어 우측 팝업 & 최상위 오버레이 덮어쓰기) ── */
+/* ── 🌟 캐치마인드 플레이어 카드 미니 점수 뱃지 (프로필 카드 크기 영향 제로) ── */
+.cm-gsp-score-badge {
+  position: absolute !important;
+  right: 8px !important;
+  top: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  color: #d97706 !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  border-radius: 6px !important;
+  padding: 1px 5px !important;
+  line-height: 1.2 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  box-sizing: border-box !important;
+}
+.gsp-item.can-manage .cm-gsp-score-badge {
+  right: 28px !important;
+}
+
+/* ── 💬 참가자 사이드바 오답/정답 말풍선 (PC: 카드 우측 팝업, 모바일: 중앙 상단 플로팅) ── */
 .gsp-item {
   position: relative;
-  overflow: visible !important;
 }
 
 .gsp-speech-bubble {
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
+  position: fixed;
   background: #1e293b;
   color: #f8fafc;
   font-size: 0.86rem;
   font-weight: 800;
   padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   white-space: nowrap;
-  z-index: 99999 !important; /* 🌟 다른 UI 요소를 모두 덮어쓰고 최상위 레이어에 표시 */
+  z-index: 999999 !important; /* 🌟 부모 클리핑 탈출 및 화면 최상위 보장 */
   pointer-events: none;
-  opacity: 0;
-  animation: bubblePopRight 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   border: 1.5px solid #334155;
   box-sizing: border-box;
+  animation: bubblePopRight 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.gsp-speech-bubble::before {
+/* PC 버전: 왼쪽 뾰족한 말풍선 꼬리 */
+.gsp-speech-bubble.fixed-pc::before {
   content: '';
   position: absolute;
   right: 100%;
@@ -2569,7 +2590,7 @@
   color: #fff5f5;
   box-shadow: 0 8px 24px rgba(116, 42, 42, 0.45);
 }
-.gsp-speech-bubble.wrong::before {
+.gsp-speech-bubble.wrong.fixed-pc::before {
   border-color: transparent #742a2a transparent transparent;
 }
 
@@ -2579,13 +2600,39 @@
   color: #ffffff;
   box-shadow: 0 8px 24px rgba(21, 128, 61, 0.5);
 }
-.gsp-speech-bubble.correct::before {
+.gsp-speech-bubble.correct.fixed-pc::before {
   border-color: transparent #15803d transparent transparent;
 }
 
 @keyframes bubblePopRight {
   0% { opacity: 0; transform: translateY(-50%) scale(0.7); }
   100% { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+/* 🌟 모바일 전용 플로팅 말풍선 토스트 스타일 (오른쪽 대신 상단 중앙 플로팅) 🌟 */
+.gsp-speech-bubble.mobile-floating {
+  position: fixed !important;
+  left: 50% !important;
+  top: 76px !important; /* 상단 헤더 바로 아래 */
+  transform: translateX(-50%) !important;
+  max-width: 90vw !important;
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  padding: 8px 18px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  animation: cmMobileFloatPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+.gsp-speech-bubble.mobile-floating::before {
+  display: none !important;
+}
+
+@keyframes cmMobileFloatPop {
+  0% { opacity: 0; transform: translate(-50%, -12px) scale(0.85); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
 /* ── ✅ 참가자 정답 맞힘 뱃지 스타일 ── */
@@ -2607,33 +2654,6 @@
   border-radius: 4px;
   margin-left: 4px;
   animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* 모바일 사이드바에서는 말풍선이 아래로 뜨도록 처리 */
-@media (max-width: 900px) {
-  .gsp-speech-bubble {
-    left: 50%;
-    top: calc(100% + 8px);
-    transform: translateX(-50%) scale(0.85);
-  }
-  .gsp-speech-bubble::before {
-    right: auto;
-    left: 50%;
-    bottom: 100%;
-    top: auto;
-    transform: translateX(-50%);
-    border-color: transparent transparent #1e293b transparent;
-  }
-  .gsp-speech-bubble.wrong::before {
-    border-color: transparent transparent #742a2a transparent;
-  }
-  .gsp-speech-bubble.correct::before {
-    border-color: transparent transparent #1c4532 transparent;
-  }
-  @keyframes bubblePop {
-    0% { opacity: 0; transform: translateX(-50%) scale(0.6); }
-    100% { opacity: 1; transform: translateX(-50%) scale(1); }
-  }
 }
 
 /* =====================================================================
