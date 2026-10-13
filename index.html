@@ -91,8 +91,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/i18n.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=1.19.7" />
-  <link rel="stylesheet" href="css/games.css?v=1.19.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.19.9" />
+  <link rel="stylesheet" href="css/games.css?v=1.19.9" />
 </head>
 <body>
 
@@ -103,17 +103,8 @@
 
   <!-- 🌟 로비 상단 바 🌟 -->
   <header class="room-header lobby-topbar">
-    <!-- 좌측: 마켓플레이스 & 친구 목록 버튼 -->
-    <div class="lobby-topbar-left">
-      <button type="button" class="btn-icon" id="btn-marketplace" title="상점 열기">
-        <i class="fa-solid fa-store"></i>
-      </button>
-      <button type="button" class="btn-icon" id="btn-open-friends" title="친구 / 알림" style="position:relative;">
-        <i class="fa-solid fa-user-group btn-icon-desktop"></i>
-        <i class="fa-solid fa-user-plus btn-icon-mobile"></i>
-        <span class="friends-online-badge hidden" id="friends-online-count-badge">0</span>
-      </button>
-    </div>
+    <!-- 좌측: 밸런서 (중앙 로고 정렬용) -->
+    <div class="lobby-topbar-left"></div>
 
     <!-- 중앙: 가치아케이드 로고 -->
     <div class="room-title">
@@ -125,8 +116,13 @@
       </div>
     </div>
 
-    <!-- 우측: 설정 버튼 -->
+    <!-- 우측: 친구 목록 & 설정 버튼 -->
     <div class="room-header-actions" style="display:flex; align-items:center; gap:8px;">
+      <button type="button" class="btn-icon" id="btn-open-friends" title="친구 / 알림" style="position:relative;">
+        <i class="fa-solid fa-user-group btn-icon-desktop"></i>
+        <i class="fa-solid fa-user-plus btn-icon-mobile"></i>
+        <span class="friends-online-badge hidden" id="friends-online-count-badge">0</span>
+      </button>
       <button type="button" class="btn-icon" id="btn-open-settings" title="환경 설정 (소리/볼륨)">
         <i class="fa-solid fa-gear"></i>
       </button>
@@ -2077,7 +2073,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase.js"></script>
-<script src="js/app.js?v=1.19.7"></script>
+<script src="js/app.js?v=1.19.9"></script>
 
 </body>
 </html>

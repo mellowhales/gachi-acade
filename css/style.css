@@ -224,11 +224,12 @@ body {
 }
 
 .lobby-topbar .room-header-actions {
-  flex: 0 0 40px;
-  width: 40px;
+  flex: 0 0 auto;
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
 }
 
 #btn-open-settings, #btn-marketplace, #btn-open-friends {
@@ -1437,20 +1438,21 @@ body {
   }
 
   .lobby-topbar-left {
+    display: none !important;
+  }
+
+  .lobby-topbar .room-header-actions {
     order: 2 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    gap: 6px !important;
     width: auto !important;
     min-width: 0 !important;
     flex: 0 0 auto !important;
     margin-left: auto !important;
+    gap: 6px !important;
   }
-  .lobby-topbar-left #btn-marketplace {
-    display: none !important;
-  }
-  .lobby-topbar-left #btn-open-friends {
+  #btn-open-friends {
     width: 40px !important;
     height: 40px !important;
     display: inline-flex !important;
@@ -1462,23 +1464,12 @@ body {
     color: var(--t1) !important;
     box-shadow: none !important;
   }
-  .lobby-topbar-left .btn-icon-desktop {
+  #btn-open-friends .btn-icon-desktop {
     display: none !important;
   }
-  .lobby-topbar-left .btn-icon-mobile {
+  #btn-open-friends .btn-icon-mobile {
     display: inline-block !important;
     font-size: 1.35rem !important;
-  }
-
-  .lobby-topbar .room-header-actions {
-    order: 3 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    width: auto !important;
-    min-width: 0 !important;
-    flex: 0 0 auto !important;
-    margin-left: 2px !important;
   }
   #btn-open-settings {
     width: 40px !important;
@@ -3570,26 +3561,26 @@ body {
   padding: 16px 18px;
   min-height: 100px;
   border-radius: 14px;
-  background: var(--bg-hover);
-  border: 1.5px solid var(--border);
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
   box-sizing: border-box;
 }
 .room-game-btn:hover:not(.disabled-3p):not(.disabled-game) {
-  border-color: var(--green);
-  background: var(--bg-card);
+  border: none;
+  background: transparent;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 .room-game-btn:active:not(.disabled-3p):not(.disabled-game) {
   transform: scale(0.98);
 }
 .room-game-btn.selected {
-  border-color: var(--green);
-  background: var(--green-tint);
-  box-shadow: 0 0 0 2px var(--green-border);
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 .room-game-btn.disabled-3p {
   opacity: 0.45;
@@ -3604,19 +3595,25 @@ body {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm);
-  background: #ffffff;
-  border: 1px solid var(--border);
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
   color: var(--green);
   margin-bottom: 12px;
+  transition: transform 0.15s ease;
 }
 .room-game-btn.selected .rgb-icon {
-  background: var(--green);
-  color: #ffffff;
-  border-color: var(--green);
+  background: transparent;
+  color: var(--green);
+  border: none;
+  transform: scale(1.1);
+}
+.room-game-btn.selected .rgb-info strong {
+  color: var(--green);
+  font-weight: 800;
 }
 
 .rgb-info strong {
@@ -3900,44 +3897,63 @@ body {
 }
 
 .chat-input-form {
+  position: relative;
   display: flex;
-  gap: 6px;
+  align-items: center;
   padding-top: 8px;
   border-top: none;
   margin-top: auto;
   width: 100%;
   box-sizing: border-box;
-  align-items: center;
 }
 .chat-input {
-  flex: 1;
-  min-width: 0; /* 🌟 버튼 밖으로 튀어나옴 방지 핵심 */
-  padding: 8px 10px;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 46px 0 14px;
   border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-family: inherit;
   outline: none;
-  background: var(--bg-hover);
+  background: var(--bg-subtle);
+  color: var(--t1);
   transition: all 0.18s ease;
   box-sizing: border-box;
 }
 .chat-input:focus {
-  background: #ffffff;
+  background: var(--bg-card);
   border-color: var(--green);
-  box-shadow: 0 0 0 2px var(--green-tint);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
 }
 .btn-chat-send {
-  width: 36px;
-  height: 36px;
+  position: absolute;
+  right: 6px;
+  top: calc(50% + 4px);
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   padding: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
+  border-radius: 9px;
+  border: none;
+  background: var(--green);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  z-index: 2;
   box-sizing: border-box;
+}
+.btn-chat-send i {
+  font-size: 0.85rem;
+  transform: translate(-1px, 1px);
+}
+.btn-chat-send:hover {
+  background: var(--green-deep);
+  transform: translateY(-50%) scale(1.06);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -9499,26 +9515,22 @@ html, body {
   color: var(--t1) !important;
 }
 
-[data-theme="dark"] .room-game-btn {
-  background: var(--bg-subtle) !important;
-  border-color: var(--border) !important;
-}
-[data-theme="dark"] .room-game-btn:hover {
-  border-color: var(--green) !important;
-}
+[data-theme="dark"] .room-game-btn,
+[data-theme="dark"] .room-game-btn:hover,
 [data-theme="dark"] .room-game-btn.selected {
-  background: var(--green-tint) !important;
-  border-color: var(--green) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+[data-theme="dark"] .room-game-btn .rgb-icon,
 [data-theme="dark"] .room-game-btn.selected .rgb-icon {
-  background: var(--green) !important;
-  color: #ffffff !important;
-  border-color: var(--green) !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--green) !important;
 }
 [data-theme="dark"] .rgb-icon {
-  background: var(--bg-card) !important;
-  border-color: var(--border) !important;
-  color: var(--green) !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 [data-theme="dark"] .setting-item {
@@ -13921,7 +13933,7 @@ html, body {
   width: 100%;
   height: 100%;
   text-decoration: none;
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
 }
@@ -13931,7 +13943,7 @@ html, body {
   aspect-ratio: 300 / 250;
   display: block;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 .arcade-ad-wrapper:hover .arcade-banner-img,
@@ -14002,9 +14014,23 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  /* 상단바 아이콘 버튼 (설정, 마켓플레이스, 친구) — 아이콘 크기 대폭 확대 (44px & 1.35rem) */
+  /* 상단바 좌우 밸런스 (중앙 로고 완벽 센터링) */
+  .lobby-topbar-left {
+    flex: 0 0 96px !important;
+    width: 96px !important;
+  }
+
+  .lobby-topbar .room-header-actions {
+    flex: 0 0 96px !important;
+    width: 96px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+
+  /* 상단바 아이콘 버튼 (설정, 친구) — 아이콘 크기 대폭 확대 (44px & 1.35rem) */
   #btn-open-settings,
-  #btn-marketplace,
   #btn-open-friends {
     width: 44px !important;
     height: 44px !important;
@@ -14020,13 +14046,11 @@ html, body {
   }
 
   #btn-open-settings i,
-  #btn-marketplace i,
   #btn-open-friends i {
     font-size: 1.35rem !important;
   }
 
   #btn-open-settings:hover,
-  #btn-marketplace:hover,
   #btn-open-friends:hover {
     border-color: transparent !important;
     background: var(--green-tint) !important;
@@ -14197,18 +14221,27 @@ html, body {
     margin-bottom: 5px !important;
   }
   .home-sidebar .arcade-ad-sidebar-home .arcade-ad-content {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     overflow: hidden !important;
     width: 100% !important;
     aspect-ratio: 300 / 250 !important;
     max-height: 220px !important;
   }
+  .home-sidebar .arcade-ad-sidebar-home .arcade-banner-link {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
   .home-sidebar .arcade-ad-sidebar-home .arcade-banner-img {
     width: 100% !important;
     height: 100% !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
     aspect-ratio: 300 / 250 !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
+    display: block !important;
   }
 
   .online-users-card .online-card-header {
@@ -14643,7 +14676,7 @@ html, body {
     border: 1.5px solid #cbd5e1 !important;
     box-shadow: none !important;
   }
-  /* 🌟 모든 게임 버튼 배경 완전 제거 (Flat Minimal) 🌟 */
+  /* 🌟 모든 게임 버튼 배경색 & 테두리 완전 제거 (Borderless Minimal) 🌟 */
   .room-game-btn,
   .room-game-btn:hover:not(.disabled-3p):not(.disabled-game),
   .room-game-btn:active:not(.disabled-3p):not(.disabled-game),
@@ -14652,24 +14685,36 @@ html, body {
   .sidebar-game-item:hover,
   .sidebar-game-item.active {
     background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
   .room-game-btn {
-    border: 1.5px solid #cbd5e1 !important;
+    border: none !important;
     box-shadow: none !important;
   }
   .room-game-btn:hover:not(.disabled-3p):not(.disabled-game) {
-    border-color: var(--green) !important;
+    border: none !important;
     box-shadow: none !important;
   }
   .room-game-btn.selected {
-    border-color: var(--green) !important;
-    box-shadow: 0 0 0 2px var(--green-border) !important;
+    border: none !important;
+    box-shadow: none !important;
   }
   .room-game-btn .rgb-icon,
   .room-game-btn.selected .rgb-icon,
   .sidebar-game-item .sg-icon,
   .sidebar-game-item.active .sg-icon {
     background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .room-game-btn.selected .rgb-info strong {
+    color: var(--green) !important;
+    font-weight: 800 !important;
+  }
+  .room-game-btn.selected .rgb-icon {
+    color: var(--green) !important;
+    transform: scale(1.1) !important;
   }
   .room-chat-panel {
     border-radius: 16px !important;
@@ -14691,8 +14736,16 @@ html, body {
     border: 1.5px solid var(--border) !important;
     box-shadow: none !important;
   }
+  /* 🌟 방 화면 참가자: 준비 완료 시 모바일처럼 뚜렷하고 선명한 초록색 테두리 🌟 */
   .player-item.ready {
-    border-color: var(--green-border) !important;
+    border: 2px solid var(--green) !important;
+    border-color: var(--green) !important;
+    background: var(--green-tint, #f0fff4) !important;
+    box-shadow: 0 0 0 1px var(--green) !important;
+  }
+  .player-item.ready .ready-badge {
+    background: var(--green) !important;
+    color: #ffffff !important;
   }
   .player-slot-empty {
     border-radius: 10px !important;
@@ -14717,9 +14770,16 @@ html, body {
     border: 1.5px solid var(--border-sub) !important;
     box-shadow: none !important;
   }
+  /* 🌟 인게임 참가자: 내 순서(현재 턴)일 때 모바일처럼 뚜렷하고 선명한 초록색 테두리 🌟 */
   .gsp-item.is-current-turn {
     border: 2px solid var(--green) !important;
-    box-shadow: none !important;
+    border-color: var(--green) !important;
+    background: var(--green-tint, #f0fff4) !important;
+    box-shadow: 0 0 0 1px var(--green) !important;
+  }
+  .gsp-item.is-current-turn .gsp-tag {
+    color: var(--green-deep) !important;
+    font-weight: 800 !important;
   }
   .game-chat-panel {
     border-radius: 16px !important;
@@ -14731,13 +14791,67 @@ html, body {
     border-bottom-left-radius: 4px !important;
     box-shadow: none !important;
   }
-  .chat-input {
-    border: 1.5px solid var(--border) !important;
-    border-radius: 10px !important;
+  /* 🌟 방 화면 & 인게임 채팅 입력칸 로비 전체채팅 일체화 (높이 44px, 폰트 0.9rem, 전송버튼 내장) 🌟 */
+  .room-chat-panel .chat-input-form,
+  .game-chat-panel .chat-input-form {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 6px 0 0 0 !important;
+    border-top: none !important;
+    margin-top: auto !important;
+    box-sizing: border-box !important;
   }
-  .chat-input:focus {
+  .room-chat-panel .chat-input,
+  .game-chat-panel .chat-input {
+    width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 46px 0 14px !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 12px !important;
+    font-size: 0.9rem !important;
+    background: var(--bg-subtle) !important;
+    color: var(--t1) !important;
+    box-sizing: border-box !important;
+  }
+  .room-chat-panel .chat-input:focus,
+  .game-chat-panel .chat-input:focus {
+    background: var(--bg-card) !important;
     border-color: var(--green) !important;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+  }
+  .room-chat-panel .btn-chat-send,
+  .game-chat-panel .btn-chat-send {
+    position: absolute !important;
+    right: 6px !important;
+    top: calc(50% + 3px) !important;
+    transform: translateY(-50%) !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 9px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    background: var(--green) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    transition: all 0.16s ease !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+  }
+  .room-chat-panel .btn-chat-send i,
+  .game-chat-panel .btn-chat-send i {
+    font-size: 0.85rem !important;
+    transform: translate(-1px, 1px) !important;
+  }
+  .room-chat-panel .btn-chat-send:hover,
+  .game-chat-panel .btn-chat-send:hover {
+    background: var(--green-deep) !important;
+    transform: translateY(-50%) scale(1.06) !important;
   }
 
   /* ── ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -14809,8 +14923,22 @@ html, body {
   [data-theme="dark"] .sidebar-game-item,
   [data-theme="dark"] .sidebar-game-item .sg-icon {
     background: transparent !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
     box-shadow: none !important;
+  }
+
+  /* 🌟 다크 모드 참가자 준비 완료 & 내 순서 선명한 초록색 테두리 🌟 */
+  [data-theme="dark"] .player-item.ready {
+    border: 2px solid #22c55e !important;
+    border-color: #22c55e !important;
+    background: rgba(34, 197, 94, 0.16) !important;
+    box-shadow: 0 0 0 1px #22c55e !important;
+  }
+  [data-theme="dark"] .gsp-item.is-current-turn {
+    border: 2px solid #22c55e !important;
+    border-color: #22c55e !important;
+    background: rgba(34, 197, 94, 0.18) !important;
+    box-shadow: 0 0 0 1px #22c55e !important;
   }
 
   [data-theme="dark"] .chat-msg.other .chat-bubble {
